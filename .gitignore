@@ -1,17 +1,179 @@
-#Archivos de entorno
+# ================================
+# Entorno y configuraciones
+# ================================
+
+# Archivos de entorno
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-#Dependencias de Node.js
-node_modules/
+# Archivos de configuración personalizados
+*.config.js
+*.conf
 
-#Archivos de compilación
-build/
-dist/
-
-#Archivos de sistema
+# Archivos de sistema
 .DS_Store
 Thumbs.db
 
-#Archivos de IDE
+# Archivos de IDE
 .idea/
 .vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ================================
+# Dependencias y paquetes
+# ================================
+
+# Dependencias de Node.js
+node_modules/
+
+# Dependencias de Bower
+bower_components/
+
+# Dependencias de Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Dependencias de jspm
+jspm_packages/
+
+# Dependencias de Snowpack
+web_modules/
+
+# Archivos de bloqueo
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ================================
+# Logs y reportes
+# ================================
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Reportes de diagnóstico de Node.js
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# ================================
+# Build y compilación
+# ================================
+
+# Directorios de compilación
+build/
+dist/
+out/
+.next/
+.nuxt/
+
+# Archivos de compilación
+*.tsbuildinfo
+*.js.map
+*.css.map
+
+# Gatsby
+.cache/
+public/
+
+# Parcel
+.cache
+.parcel-cache
+
+# VuePress
+.vuepress/dist
+.temp
+.cache
+
+# Docusaurus
+.docusaurus/
+
+# ================================
+# Cachés y archivos temporales
+# ================================
+
+# Caché de npm/yarn
+.npm
+.yarn-integrity
+
+# Caché de TypeScript
+*.tsbuildinfo
+
+# Caché de ESLint y Stylelint
+.eslintcache
+.stylelintcache
+
+# Caché de Microbundle
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Caché de FuseBox
+.fusebox/
+
+# ================================
+# Testing y cobertura
+# ================================
+
+# Cobertura de código
+coverage/
+.nyc_output/
+*.lcov
+
+# Directorios de instrumentación
+lib-cov/
+
+# ================================
+# Archivos específicos de herramientas
+# ================================
+
+# Grunt
+.grunt
+
+# Serverless
+.serverless/
+
+# DynamoDB Local
+.dynamodb/
+
+# TernJS
+.tern-port
+
+# VSCode testing
+.vscode-test/
+
+# ================================
+# Otros
+# ================================
+
+# Archivos empaquetados de npm
+*.tgz
+
+# Historial de REPL de Node.js
+.node_repl_history
+
+# Archivos de bloqueo de procesos
+*.pid
+*.seed
+*.pid.lock
+
+# Archivos de configuración de node-waf
+.lock-wscript
+
+# Archivos binarios compilados
+build/Release
