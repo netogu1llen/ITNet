@@ -3,20 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <link rel="stylesheet" href="<%= process.env.PATH_SERVER %>styles.css">
+    <link rel="stylesheet" href="<%= process.env.PATH_SERVER %>styles.css"> 
 </head>
 <body>
-    <!-- Barra lateral -->
+    <!-- Sidebar (Header) -->
     <div class="sidebar" id="sidebar">
-        <h2 class="title is-4">Menú</h2>
-        <ul>
-            <li><a href="#">Opción 1</a></li>
-            <li><a href="#">Opción 2</a></li>
-            <li><a href="#">Opción 3</a></li>
-            <li><a href="#">Opción 4</a></li>
-        </ul>
+        <!-- Botón de hamburguesa -->
+        <button id="burgerButton" class="burger-button">
+            <img src="<%= process.env.PATH_SERVER %>Images/burger-icon.png" alt="Menú" width="30" height="30">
+        </button>
+
+        <!-- Logo -->
+        <a class="logo" href="<%= process.env.PATH_SERVER %>">
+            <img src="<%= process.env.PATH_SERVER %>Images/logo.png" alt="Logo" width="100">
+        </a>
+
+        <!-- Menú desplegable -->
+        <div class="menu" id="menu">
+            <ul>
+                <li><a href="<%= process.env.PATH_SERVER %>usuario">Usuario</a></li>
+                <li><a href="<%= process.env.PATH_SERVER %>misSucursales">expediente</a></li>
+                <li><a href="<%= process.env.PATH_SERVER %>misVersiones">Mis Tarjetas</a></li>
+                <li><a href="<%= process.env.PATH_SERVER %>miInformacion">Mi Información</a></li>
+                <li>
+                </li>
+            </ul>
+        </div>
     </div>
+
+    <script src="<%= process.env.PATH_SERVER %>js/sidebar.js"></script>
 </body>
 </html>
