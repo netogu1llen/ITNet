@@ -3,30 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <link rel="stylesheet" href="<%= process.env.PATH_SERVER %>styles.css"> 
+    <title>Sidebar con Material Icons</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="<%= process.env.PATH_SERVER %>styles.css">
 </head>
 <body>
-    <!-- Sidebar (Header) -->
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <!-- Botón de hamburguesa -->
         <button id="burgerButton" class="burger-button">
-            <img src="<%= process.env.PATH_SERVER %>Images/burger-icon.png" alt="Menú" width="30" height="30">
+            <i class="material-icons">menu</i> <!-- Icono de menú -->
         </button>
-
-        <!-- Logo -->
-        <a class="logo" href="<%= process.env.PATH_SERVER %>">
-            <img src="<%= process.env.PATH_SERVER %>Images/logo.png" alt="Logo" width="100">
-        </a>
 
         <!-- Menú desplegable -->
         <div class="menu" id="menu">
             <ul>
-                <li><a href="<%= process.env.PATH_SERVER %>usuario">Usuario</a></li>
-                <li><a href="<%= process.env.PATH_SERVER %>misSucursales">expediente</a></li>
-                <li><a href="<%= process.env.PATH_SERVER %>misVersiones">Mis Tarjetas</a></li>
-                <li><a href="<%= process.env.PATH_SERVER %>miInformacion">Mi Información</a></li>
+                <!-- Categoría: Usuario -->
                 <li>
+                    <i class="material-icons">person</i> <!-- Icono de usuario -->
+                    <span class="menu-text">Usuario</span>
+                </li>
+
+                <!-- Categoría: Expediente -->
+                <li>
+                    <i class="material-icons">folder</i> <!-- Icono de expediente -->
+                    <span class="menu-text">Expediente</span>
+                </li>
+
+                <!-- Categoría: Centro de Aprendizaje -->
+                <li>
+                    <i class="material-icons">school</i> <!-- Icono de centro de aprendizaje -->
+                    <span class="menu-text">Centro de Aprendizaje</span>
+                </li>
+
+                <!-- Categoría: Administración -->
+                <li>
+                    <i class="material-icons">settings</i> <!-- Icono de administración -->
+                    <span class="menu-text">Administración</span>
                 </li>
             </ul>
         </div>
