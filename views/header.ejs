@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar con Material Icons</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="<%= process.env.PATH_SERVER %>styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <!-- Botón de hamburguesa -->
+        <button id="burgerButton" class="burger-button">
+            <i class="material-icons">menu</i> <!-- Icono de menú -->
+        </button>
+
+        <!-- Menú desplegable -->
+        <div class="menu" id="menu">
+            <ul>
+                <!-- Categoría: Usuario -->
+                <li>
+                    <a href="<%= process.env.PATH_SERVER %>usuario" class="menu-link">
+                        <i class="material-icons">person</i> <!-- Icono de usuario -->
+                        <span class="menu-text">Usuario</span>
+                    </a>
+                </li>
+
+                <!-- Categoría: Expediente -->
+                <li>
+                    <a href="<%= process.env.PATH_SERVER %>expediente" class="menu-link">
+                        <i class="material-icons">medical_information</i> <!-- Icono de expediente -->
+                        <span class="menu-text">Expediente</span>
+                    </a>
+                </li>
+
+                <!-- Categoría: Centro de Aprendizaje -->
+                <li>
+                    <a href="<%= process.env.PATH_SERVER %>centro-aprendizaje" class="menu-link">
+                        <i class="material-icons">school</i> <!-- Icono de centro de aprendizaje -->
+                        <span class="menu-text">Centro de Conocimientos</span>
+                    </a>
+                </li>
+
+                <!-- Categoría: Administración -->
+                <li>
+                    <a href="<%= process.env.PATH_SERVER %>administracion" class="menu-link">
+                        <i class="material-icons">settings</i> <!-- Icono de administración -->
+                        <span class="menu-text">Administración</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="<%= process.env.PATH_SERVER %>js/sidebar.js"></script>
+</body>
+</html>

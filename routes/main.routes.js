@@ -7,7 +7,7 @@ const mainController = require('../controllers/main.controller');
 
 
 
-router.get('/', mainController.getSidebar);
+router.get('/', mainController.getHeader);
 
 
 
