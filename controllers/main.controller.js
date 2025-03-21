@@ -1,6 +1,6 @@
 const { request, response } = require("express");
 
 
-exports.getSidebar= (request, response, next) => {
-    response.render('sidebar');
+exports.getHeader= (request, response, next) => {
+    response.render('header');
 };
