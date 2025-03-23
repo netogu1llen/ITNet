@@ -1,0 +1,221 @@
+/* ==================== ESTILOS GENERALES ==================== */
+body {
+    margin: 0;
+    font-family: 'Encode Sans', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* ==================== SIDEBAR ==================== */
+.sidebar {
+    width: 50px; /* Tamaño reducido cuando está colapsado */
+    background-color: #FEA02F; /* Color de fondo */
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    color: #fff;
+    transition: width 0.3s ease; /* Animación de despliegue */
+    overflow: hidden; /* Oculta el texto cuando está colapsado */
+    z-index: 1000; /* Asegura que el sidebar esté por encima del contenido */
+}
+
+/* Estilos para el sidebar desplegado */
+.sidebar.is-active {
+    width: 235px; /* Tamaño desplegado */
+}
+
+/* Estilos para el botón de hamburguesa */
+.burger-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.burger-button .material-icons {
+    font-size: 35px; /* Tamaño del ícono */
+    color: #fff; /* Color del ícono */
+}
+
+/* Estilos para el menú desplegable */
+.menu ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.menu ul li {
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.menu ul li .material-icons {
+    font-size: 27px; /* Tamaño del ícono */
+    margin-right: 10px; /* Espacio entre el ícono y el texto */
+    flex-shrink: 0; /* Evita que el ícono se reduzca */
+}
+
+/* Estilos para el texto del menú */
+.menu ul li .menu-text {
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    opacity: 0; /* Oculta el texto inicialmente */
+    transition: opacity 0.3s ease; /* Animación de aparición */
+}
+
+/* Muestra el texto cuando el sidebar está desplegado */
+.sidebar.is-active .menu ul li .menu-text {
+    opacity: 1; /* Muestra el texto */
+}
+
+/* Estilos para los enlaces del menú */
+.menu ul li a.menu-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Elimina el subrayado del enlace */
+    color: #fff; /* Color del texto */
+    width: 100%; /* Ocupa todo el ancho disponible */
+    padding: 10px; /* Espaciado interno */
+}
+
+/* Cambia el color al pasar el mouse sobre los enlaces */
+.menu ul li a.menu-link:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+/* Estilos para los íconos */
+.menu ul li a.menu-link .material-icons {
+    font-size: 27px; /* Tamaño del ícono */
+    margin-right: 10px; /* Espacio entre el ícono y el texto */
+    flex-shrink: 0; /* Evita que el ícono se reduzca */
+}
+
+/* Estilos para el texto del menú */
+.menu ul li a.menu-link .menu-text {
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    opacity: 0; /* Oculta el texto inicialmente */
+    transition: opacity 0.3s ease; /* Animación de aparición */
+}
+
+/* Muestra el texto cuando el sidebar está desplegado */
+.sidebar.is-active .menu ul li a.menu-link .menu-text {
+    opacity: 1; /* Muestra el texto */
+}
+
+/* ==================== CONTENIDO PRINCIPAL ==================== */
+.container {
+    margin-left: 50px; /* Margen inicial igual al ancho del sidebar colapsado */
+    padding: 20px;
+    transition: margin-left 0.3s ease; /* Transición suave para el margen */
+    max-width: 800px; /* Ancho máximo del contenido */
+    margin-right: auto; /* Centrar el contenedor */
+    margin-left: auto; /* Centrar el contenedor */
+    text-align: center; /* Centrar el texto dentro del contenedor */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar elementos horizontalmente */
+}
+
+/* Ajustar el margen cuando el sidebar está expandido */
+.sidebar.is-active + .container {
+    margin-left: 235px; /* Margen igual al ancho del sidebar expandido */
+}
+
+/* Estilos para el título */
+.title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Estilos para el contenido */
+.content {
+    padding: 30px; /* Aumentar el espaciado interno */
+    margin-bottom: 30px; /* Aumentar el espacio debajo del contenido */
+    width: 100%; /* Ocupar todo el ancho disponible dentro del contenedor */
+    text-align: center; /* Centrar el texto dentro del contenido */
+    background-color: transparent; /* Sin fondo */
+    border-radius: 0; /* Sin bordes redondeados */
+    box-shadow: none; /* Sin sombra */
+}
+
+.content h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.content p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* ==================== BOTONES ==================== */
+
+/* Clase base para todos los botones */
+.button {
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    color: #fff; /* Color de texto común */
+}
+
+/* Botón de opción (Versión 1, Versión 2, etc.) */
+.button-option {
+    background-color: #F36283;
+}
+
+.button-option:hover {
+    background-color: #e05570;
+}
+
+/* Botón "Crear" */
+.button-create {
+    background-color: #007A7B;
+}
+
+.button-create:hover {
+    background-color: #006666;
+}
+
+/* Botón naranja (si aún lo necesitas) */
+.button-primary-orange {
+    background-color: #FEA02F;
+}
+
+.button-primary-orange:hover {
+    background-color: #e08c25;
+}
+
+/* Grupo de botones para opciones (Versión 1, Versión 2, etc.) */
+.button-group {
+    display: flex; /* Alinear los botones horizontalmente */
+    gap: 15px; /* Espacio entre los botones */
+    justify-content: center; /* Centrar los botones horizontalmente */
+    margin-bottom: 30px; /* Espacio debajo del grupo de botones */
+}
+
+/* ==================== ÍCONOS ==================== */
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+}
+
+/*prueba
