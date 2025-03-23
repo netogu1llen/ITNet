@@ -51,6 +51,3 @@ const generatePdfAndUploadToS3 = async (text, bucketName, fileName) => {
     throw err; // Lanza el error para manejarlo en el llamador.
   }
 };
-
-// Exportar la función
-module.exports = { generatePdfAndUploadToS3 };
