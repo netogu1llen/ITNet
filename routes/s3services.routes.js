@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Importar el servicio de S3
-const { generatePdfAndUploadToS3 } = require('../services/s3Service');
+const { generatePdfAndUploadToS3 } = require('../util/generatePdfAndUpload');
 
 /**
  * Ruta POST para generar un PDF y subirlo a S3.
