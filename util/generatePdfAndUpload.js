@@ -51,17 +51,3 @@ const generatePdfAndUploadToS3 = async (text, bucketName, fileName) => {
     throw err; // Lanza el error para manejarlo en el llamador.
   }
 };
-
-// Ejemplo de uso de la función.
-(async () => {
-  try {
-    const text = 'Hola, este es un PDF generado con PDFKit!';
-    const bucketName = 'tu-bucket-s3';
-    const fileName = 'archivo';
-
-    const fileUrl = await generatePdfAndUploadToS3(text, bucketName, fileName);
-    console.log('PDF subido a:', fileUrl);
-  } catch (err) {
-    console.error('Error en el proceso:', err);
-  }
-})();

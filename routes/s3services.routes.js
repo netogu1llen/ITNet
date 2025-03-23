@@ -1,7 +1,8 @@
 const express = require('express');
-const pdfService = require('../util/generatePdfAndUpload');
-
 const router = express.Router();
+
+// Importar el servicio de S3
+const { generatePdfAndUploadToS3 } = require('../services/s3Service');
 
 /**
  * Ruta POST para generar un PDF y subirlo a S3.
@@ -18,7 +19,7 @@ const router = express.Router();
 router.post('/generate-pdf', async (req, res) => {
   try {
     const { text, bucketName, fileName } = req.body;
-    const fileUrl = await pdfService.generatePdfAndUploadToS3(text, bucketName, fileName);
+    const fileUrl = await generatePdfAndUploadToS3(text, bucketName, fileName);
     res.json({ success: true, fileUrl });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
