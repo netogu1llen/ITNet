@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include('partials/head') %>
+    <title>Historiales Clínicos</title>
+</head>
+<body>
+    <%- include('partials/sidebar') %>
+
+    <div class="content">
+        <h1>Historiales Clínicos</h1>
+
+        <div>
+            <label for="filterUser">Usuario:</label>
+            <input type="text" id="filterUser" placeholder="Buscar por usuario">
+
+            <label for="filterDate">Fecha:</label>
+            <input type="date" id="filterDate">
+
+            <label for="filterType">Tipo de Historial:</label>
+            <select id="filterType">
+                <option value="">Todos</option>
+                <option value="nutrición">Nutrición</option>
+                <option value="psicología">Psicología</option>
+                <option value="patológico">Patológico</option>
+            </select>
+
+            <button id="filterBtn">Filtrar</button>
+        </div>
+
+        <table id="historialesTable" class="display">
+            <thead>
+                <tr>
+                    <th>ID Usuario</th>
+                    <th>ID Expediente</th>
+                    <th>Fecha de Creación</th>
+                    <th>Tipo de Historial</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+        </table>
+
+        <script src="/js/buscador.js"></script>
+        <script>
+            inicializarBuscador({
+                tablaID: 'historialesTable',
+                urlAPI: '/api/historiales',
+                columnas: [
+                    { data: 'idUsuario' },
+                    { data: 'idExpediente' },
+                    { data: 'fecha' },
+                    { data: 'tipo' },
+                    {
+                        data: null,
+                        render: function () {
+                            return `
+                                <button class="modify-btn">Modificar</button>
+                                <button class="delete-btn">Eliminar</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+        </script>
+    </div>
+</body>
+</html>
