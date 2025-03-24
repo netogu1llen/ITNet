@@ -56,6 +56,7 @@ app.use('/usuario', usuarioRoutes);
 const mainRoutes = require('./routes/main.routes.js');
 app.use('/', mainRoutes);
 
+
 // Manejo de errores 404 (Página no encontrada)
 app.use((req, res, next) => {
     res.status(404).render('404', {

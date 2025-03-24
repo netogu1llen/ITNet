@@ -7,7 +7,9 @@ const mainController = require('../controllers/main.controller');
 
 
 
-router.get('/', mainController.getHeader);
+router.get('/', (req, res) => {
+    res.render('login')
+});
 
 
 
