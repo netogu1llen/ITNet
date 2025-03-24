@@ -21,6 +21,7 @@
     "nodemon": "^3.1.9"
   },
   "dependencies": {
+    "aws-sdk": "^2.1692.0",
     "compression": "^1.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -29,6 +30,7 @@
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "pdfkit": "^0.16.0"
   }
 }
