@@ -1,24 +1,27 @@
 <%- include('partials/head') %>
 
-<!-- Agregar el contenedor de la vista de inicio -->
-<section class="home-container">
-    <!-- Fragmento 1: Título y semicírculo -->
-    <div class="first-fragment">
-        <!-- Título "Soffy" -->
-        <h1 class="title-soffy">Soffy</h1>
-        <!-- Salto de línea -->
-        <br>
-        <!-- Título "app" -->
-        <h2 class="title-app">app</h2>
-        <!-- Semicírculo -->
-        <div class="semicircle"></div>
-    </div>
-
-    <!-- Fragmento 2: Espacio vacío -->
-    <div class="second-fragment"></div>
-
-    <!-- Fragmento 3: Espacio para la imagen -->
-    <div class="third-fragment">
-        <img class="image" src="url-de-la-imagen" alt="Imagen de la vista de inicio">
-    </div>
-</section>
+<body>
+    <main class="container home-container">
+        <div class="tercios-container columns is-gapless is-mobile full-height">
+          <!-- Primer tercio -->
+          <div class="column is-one-third first-fragment">
+            <div class="title-container">
+              <h1 class="title-soffy">Soffy</h1>
+              <h1 class="title-app">app</h1>
+            </div>
+          </div>
+          
+          <!-- Segundo tercio (vacío) -->
+          <div class="column is-one-third second-fragment">
+            <div class="semicircle"></div>
+          </div>
+          
+          <!-- Tercer tercio -->
+          <div class="column is-one-third third-fragment">
+            <div class="image-container">
+              <img src="/images/placeholder.jpeg" alt="Soffy App" class="image">
+            </div>
+          </div>
+        </div>
+      </main>
+  </body>

@@ -218,4 +218,125 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/*prueba
+/* ==================== HOME PAGE ==================== */
+/* ESTILOS GENERALES */
+.home-container {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .columns.full-height {
+    height: 100%;
+    margin: 0;
+  }
+  
+  /* CONTENEDOR DE LOS TERCIOs */
+  .tercios-container {
+    display: flex;
+    width: 80%; /* Ancho máximo del contenedor */
+    height: 100vh;
+  }
+  
+  /* PRIMER TERCIO */
+  .first-fragment {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 33.33%;
+    height: 100vh; /* Establece la altura en 100vh */
+    position: relative;
+    float: left;
+  }
+  
+  .title-container {
+    text-align: center;
+    z-index: 10;
+  }
+  
+  .title-soffy {
+    font-family: 'Stuttgart', serif;
+    font-size: 4rem;
+    color: #333;
+    margin: 0;
+    line-height: 1;
+  }
+  
+  .title-app {
+    font-family: 'Stuttgart', serif;
+    font-size: 3rem;
+    color: #666;
+    margin: 0;
+    line-height: 1;
+  }
+  
+  /* SEGUNDO TERCIO CON SEMICÍRCULO */
+  .second-fragment {
+    position: relative;
+    height: 100vh; /* Establece la altura en 100vh */
+    width: 33.33%;
+    float: left;
+  }
+  
+  .semicircle {
+    position: absolute;
+    top: 50%;
+    left: 100%; /* Posición inicial en el borde derecho */
+    width: 50px; /* Grosor del semicírculo */
+    height: 200px; /* Altura del semicírculo */
+    background-color: #ff0707; /* Color del tercer fragmento */
+    
+    /* Forma de semicírculo vertical */
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    
+    transform: translateY(-50%); /* Centra verticalmente */
+    z-index: 1;
+  }
+  
+  /* TERCER TERCIO CON IMAGEN */
+  .third-fragment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f5f5;
+    height: 100vh; /* Establece la altura en 100vh */
+    width: 33.33%;
+    float: left;
+  }
+  
+  .image-container {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .title-soffy {
+      font-size: 3rem;
+    }
+    
+    .title-app {
+      font-size: 2rem;
+    }
+    
+    .semicircle {
+      width: 30px;
+      height: 150px;
+    }
+  }
