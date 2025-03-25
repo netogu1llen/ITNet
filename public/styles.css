@@ -247,10 +247,15 @@ body {
     margin-bottom: 110px; /* Ajusta la posición vertical del título */
   }
   
+  @font-face {
+    font-family: 'Stuttgart';
+    src: url('/fonts/Stuttgart.ttf') format('truetype');
+  }
+  
   .title-soffy {
-    font-family: 'Stuttgart', serif;
+    font-family: 'Stuttgart', sans-serif;
     font-size: 6rem;
-    color: #333;
+    color: #e75179;
     margin: 0;
     line-height: 1;
   }
@@ -258,9 +263,8 @@ body {
   .title-app {
     font-family: 'Stuttgart', serif;
     font-size: 4rem;
-    color: #666;
-    margin: 0;
-    line-height: 1;
+    color: #5185c0;
+    margin: 3px 0 0 0;
   }
   
   .third-fragment {
@@ -291,9 +295,9 @@ body {
   .semicircle {
     position: absolute;
     top: 50%;
-    right: 270px; /* Ajusta la posición horizontal para que esté en el lado derecho */
-    width: 15vw; /* Ajusta el ancho del semicírculo para que sea más pequeño */
-    height: 100vh; /* Ajusta la altura del semicírculo para que coincida con el tamaño de los tercios */
+    right: 360px; /* Ajusta la posición horizontal para que esté en el lado derecho */
+    width: 66.66vw; /* Ajusta el ancho del semicírculo para que sea más pequeño */
+    height: 110vh; /* Ajusta la altura del semicírculo para que coincida con el tamaño de los tercios */
     background-color: #f5f5f5;
     border-top-left-radius: 0; /* Ajusta el radio del semicírculo para que esté en el lado derecho */
     border-bottom-left-radius: 0;
