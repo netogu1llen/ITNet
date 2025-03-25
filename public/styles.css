@@ -266,6 +266,13 @@ body {
     color: #5185c0;
     margin: 3px 0 0 0;
   }
+
+  .subtitle {
+    font-family: 'Encode Sans', sans-serif;
+    font-size: 1.2rem;
+    color: #666;
+    margin: 70px 0 0 0;
+  }
   
   .third-fragment {
     width: 33.33%;
