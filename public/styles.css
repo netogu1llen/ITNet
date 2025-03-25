@@ -291,14 +291,14 @@ body {
   .semicircle {
     position: absolute;
     top: 50%;
-    left: -100px; /* Ajusta la posición horizontal */
-    width: 100px; /* Ajusta el ancho del semicírculo */
-    height: 200px; /* Ajusta la altura del semicírculo */
-    background-color: #ff0707;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-top-left-radius: 150px; /* Ajusta el radio del semicírculo */
-    border-bottom-left-radius: 150px;
+    right: 270px; /* Ajusta la posición horizontal para que esté en el lado derecho */
+    width: 15vw; /* Ajusta el ancho del semicírculo para que sea más pequeño */
+    height: 100vh; /* Ajusta la altura del semicírculo para que coincida con el tamaño de los tercios */
+    background-color: #f5f5f5;
+    border-top-left-radius: 0; /* Ajusta el radio del semicírculo para que esté en el lado derecho */
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 16.66vw; /* Ajusta el radio del semicírculo para que coincida con el tamaño reducido */
+    border-bottom-right-radius: 16.66vw;
     transform: translateY(-50%);
     z-index: 1;
   }
