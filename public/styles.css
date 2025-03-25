@@ -232,8 +232,8 @@ body {
     height: 100vh;
   }
   
-  .first-fragment, .second-fragment, .third-fragment {
-    width: 33.33%;
+  .first-second-fragment {
+    width: 66.66%;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -243,6 +243,7 @@ body {
   .title-container {
     text-align: center;
     z-index: 10;
+    width: 100%;
   }
   
   .title-soffy {
@@ -261,23 +262,14 @@ body {
     line-height: 1;
   }
   
-  .semicircle {
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    width: 50px;
-    height: 200px;
-    background-color: #ff0707;
-    border-top-right-radius: 100px;
-    border-bottom-right-radius: 100px;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    transform: translateY(-50%);
-    z-index: 1;
-  }
-  
   .third-fragment {
+    width: 33.33%;
+    height: 100vh;
     background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
   }
   
   .image-container {
@@ -286,10 +278,26 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
   }
   
   .image {
     max-width: 100%;
     max-height: 100%;
     object-fit: cover;
+  }
+  
+  .semicircle {
+    position: absolute;
+    top: 50%;
+    left: -100px; /* Ajusta la posición horizontal */
+    width: 100px; /* Ajusta el ancho del semicírculo */
+    height: 200px; /* Ajusta la altura del semicírculo */
+    background-color: #ff0707;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 150px; /* Ajusta el radio del semicírculo */
+    border-bottom-left-radius: 150px;
+    transform: translateY(-50%);
+    z-index: 1;
   }
