@@ -244,11 +244,12 @@ body {
     text-align: center;
     z-index: 10;
     width: 100%;
+    margin-bottom: 110px; /* Ajusta la posición vertical del título */
   }
   
   .title-soffy {
     font-family: 'Stuttgart', serif;
-    font-size: 4rem;
+    font-size: 6rem;
     color: #333;
     margin: 0;
     line-height: 1;
@@ -256,7 +257,7 @@ body {
   
   .title-app {
     font-family: 'Stuttgart', serif;
-    font-size: 3rem;
+    font-size: 4rem;
     color: #666;
     margin: 0;
     line-height: 1;
