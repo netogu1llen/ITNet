@@ -218,4 +218,114 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/*prueba
+/* ==================== HOME PAGE ==================== */
+.home-container {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .tercios-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+  }
+  
+  .first-second-fragment {
+    width: 66.66%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Cambia la propiedad align-items a flex-end */
+  }
+  
+  .title-container {
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+    margin-bottom: 110px; /* Ajusta la posición vertical del título */
+  }
+  
+  @font-face {
+    font-family: 'Stuttgart';
+    src: url('/fonts/Stuttgart.ttf') format('truetype');
+  }
+  
+  .title-soffy {
+    font-family: 'Stuttgart', sans-serif;
+    font-size: 6rem;
+    color: #e75179;
+    margin: 0;
+    line-height: 1;
+  }
+  
+  .title-app {
+    font-family: 'Stuttgart', serif;
+    font-size: 4rem;
+    color: #5185c0;
+    margin: 3px 0 0 0;
+  }
+
+  .subtitle {
+    font-family: 'Encode Sans', sans-serif;
+    font-size: 1.2rem;
+    color: #666;
+    margin: 50px 0 0 0;
+  }
+  
+  .third-fragment {
+    width: 33.33%;
+    height: 100vh;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .image-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .image {
+    max-width: 210%;
+    max-height: 210%;
+    object-fit: cover;
+  }
+  
+  .semicircle {
+    position: absolute;
+    top: 50%;
+    right: 500px; /* Ajusta la posición horizontal para que esté en el lado derecho */
+    width: 66.66vw; /* Ajusta el ancho del semicírculo para que sea más pequeño */
+    height: 150vh; /* Ajusta la altura del semicírculo para que coincida con el tamaño de los tercios */
+    background-color: #f5f5f5;
+    border-top-left-radius: 0; /* Ajusta el radio del semicírculo para que esté en el lado derecho */
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 33.33vw; /* Ajusta el radio del semicírculo para que coincida con el tamaño reducido */
+    border-bottom-right-radius: 33.33vw;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+
+  .download-button {
+    font-family: 'Encode Sans', sans-serif;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #5185c0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 70px 0 0 0;
+  }
+  
+  .download-button:hover {
+    background-color: #5185c0;
+  }
