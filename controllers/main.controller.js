@@ -1,6 +1,7 @@
 const { request, response } = require("express");
 
 
-exports.getHome= (request, response, next) => {
-    response.render('home');
+
+exports.getPacientes= (request, response, next) => {
+    response.render('trabajadores');
 };

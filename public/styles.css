@@ -329,3 +329,86 @@ body {
   .download-button:hover {
     background-color: #5185c0;
   }
+
+  /*CSS para Agregar Trabajadores*/
+  .main-container {
+    margin-left: 80px; /* para que no tape la sidebar */
+    padding: 40px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .form-container {
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #222;
+    transform: translateX(-10px); /* Ajuste fino a la izquierda */
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  input,
+  select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: #e07b00;
+  }
+  
+  .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px; /* separarlos un poco pero no tanto */
+        margin-top: 25px;
+      }
+  
+  .btn-guardar {
+    background-color: #183C5A;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .btn-guardar:hover {
+    background-color: #145073;
+  }
+  
+  .btn-cancelar {
+    background-color: #D84337;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s;
+  }
+  
+  .btn-cancelar:hover {
+    background-color: #B8372B;
+  }
+  
