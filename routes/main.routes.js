@@ -8,6 +8,7 @@ const mainController = require('../controllers/main.controller');
 const s3Routes = require('./s3services.routes');
 
 // Rutas principales
+router.get('/encuesta', mainController.getEncuestaNino);
 router.get('/', mainController.getHome);
 
 // Usar las rutas de S3 con un prefijo "/api"

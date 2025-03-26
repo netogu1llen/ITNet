@@ -1,0 +1,488 @@
+<%- include('partials/head') %>
+<body>
+    <div class="container_encuesta">
+        <h1 class="title">Entrevista para niños</h1>
+        <div class="encuesta_div">
+            <div class="header-info">
+                <p><strong>Nombre:</strong> Larissa Jiménez Aldemar</p>
+                <p><strong>Evaluador:</strong> Neto Gael Asturiano</p>
+                <p><strong>Hora:</strong> 16:45</p>
+                <p><strong>Fecha:</strong> 01 de marzo de 2025</p>
+            </div>
+
+            <form>
+                <!-- Pagina 1 -->
+                <div class="pagina" id="pagina1">
+                    <!-- Sección I: Datos Generales -->
+                    <fieldset class="encuesta_caja">
+                        <legend class="caja_titulo">I. DATOS GENERALES</legend>
+                        <div class="grupo_preguntas" style="gap: 250px;">
+                            <div>
+                                <label>¿Cómo te gusta que te llamen?</label> <br>
+                                <input type="text" name="nombre_preferido" class="input-field">
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Cuántos hermanos tienes?</label> <br>
+                                <div class="select-group">
+                                    <label>hombres</label>
+                                    <select name="hermanos_hombres" class="option-field">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                    <label>Mujeres</label>
+                                    <select name="hermanos_mujeres" class="option-field">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Cuál es la ocupación de tu papá?</label> <br>
+                                <input type="text" name="ocupacion_papa" class="input-field">
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Cuál es el trabajo de tu mamá?</label> <br>
+                                <input type="text" name="ocupacion_mama" class="input-field">
+                            </div>
+                        </div>
+                        <br>
+                        <div>
+                            <label>¿Por qué te traen al servicio de psicología?</label> <br>
+                            <textarea name="motivo_psicologia" class="long-field" rows="4" style="width: 1350px;"> </textarea>
+                        </div>
+                    </fieldset>
+
+                    <!-- Sección II: Contexto Escolar -->
+                    <fieldset class="encuesta_caja">
+                        <legend class="caja_titulo">II. CONTEXTO ESCOLAR</legend>
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Realizas tus tareas sin que te lo ordenen?</label> <br>
+                                <input type="text" name="tareas_autoordenadas" class="input-field">
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Qué tareas te gustan más?</label> <br>
+                                <textarea name="tareas_favoritas" class="long-field" rows="2" style="width: 200px;"></textarea>
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿En qué lugar haces tus tareas?</label> <br>
+                                <input type="text" name="lugar_tareas" class="input-field">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Quién te ayuda a hacer la tarea?</label> <br>
+                                <input type="text" name="ayuda_tarea" class="input-field">
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Te revisan tu tarea cuando terminas?</label> <br>
+                                <select name="revisan_tarea" class="option-field">
+                                    <option value="si">Sí</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>¿Quién?</label> <br>
+                                <input type="text" name="quien_revisa_tarea" class="input-field">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Sección III: Psicomotricidad -->
+                    <fieldset class="encuesta_caja">
+                        <legend class="caja_titulo">III. PSICOMOTRICIDAD</legend>
+                        <div class="grupo_preguntas" style="gap: 60px;">
+                            <div>
+                                <label>¿Tienes problemas cuando realizas trabajos manuales?</label> <br>
+                                <input type="text" name="problemas_manualidades" class="input-field">
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Se te hace difícil hacer trabajos de educación física?</label> <br>
+                                <input type="text" name="dificultades_ed_fisica" class="input-field">
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Cuáles?</label> <br>
+                                <input type="text" name="dificultades_especificas" class="input-field">
+                            </div>
+                            <br>
+                        </div>
+                        <div class="grupo_preguntas" style="gap: 60px;">
+                            <div>
+                                <label>¿Realizas algún deporte o actividad física?</label> <br>
+                                <input type="text" name="actividad_fisica" class="input-field">
+                            </div>
+                            <br>
+
+                            <div>
+                                <label>¿Cual?</label> <br>
+                                <input type="text" name="cual" class="input-field">
+                            </div>
+                            <br>
+
+                            <div>
+                                <label>¿Cuántas horas a la semana?</label> <br>
+                                <input type="number" name="horas_deporte" min="0" class="input-field">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="grupo_preguntas" style="gap: 125px;">
+                            <div>
+                                <label>¿Con quién?</label> <br>
+                                <input type="text" name="acompanante_deporte" class="input-field">
+                            </div>
+                        <br>
+                        <div>
+                            <label>¿Qué te gusta dibujar?</label> <br>
+                            <input type="text" name="gustos_dibujo" class="input-field">
+                        </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Pagina 2 -->
+                <div class="pagina" id="pagina2" style="display: none;">
+
+                    <!-- Sección IV: Desarrollo Conductal -->
+                    <fieldset class="encuesta_caja">
+                        <legend class="caja_titulo">IV. DESARROLLO CONDUCTAL</legend>
+                        <div class="grupo_preguntas" style="gap: 250px;">
+                            <div>
+                                <label>¿A qué hora te duermes?</label> <br>
+                                <select name="hora_dormir" class="input-field">
+                                    <option value="7">7 pm</option>
+                                    <option value="8">8 pm</option>
+                                    <option value="9">9 pm</option>
+                                    <option value="10">10 pm</option>
+                                    <option value="11">11 pm</option>
+                                    <option value="12">12 am</option>
+                                    <option value="1">1 am</option>
+                                    <option value="2">2 am</option>
+                                </select>
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Con quién duermes?</label> <br>
+                                <input type="text" name="con_quien_duermes" class="input-field">
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Necesitas algo para dormir?</label> <br>
+                                <input type="text" name="algo_dormir" class="input-field">
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿Hay algo que te cause miedo?</label> <br>
+                                <input type="text" name="causar_miedo" class="input-field">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿A que hora desayunas?</label> <br>
+                                <select name="hora_desayuno" class="input-field">
+                                    <option value="4">4 am</option>
+                                    <option value="5">5 am</option>
+                                    <option value="6">6 am</option>
+                                    <option value="7">7 am</option>
+                                    <option value="8">8 am</option>
+                                    <option value="9">9 am</option>
+                                    <option value="10">10 am</option>
+                                    <option value="11">11 am</option>
+                                    <option value="12">12 pm</option>
+                                </select>
+                            </div>
+                            <br>
+                            <div>
+                                <label>¿A que hora cenas?</label> <br>
+                                <select name="hora_cenar" class="input-field">
+                                    <option value="7">7 pm</option>
+                                    <option value="8">8 pm</option>
+                                    <option value="9">9 pm</option>
+                                    <option value="10">10 pm</option>
+                                    <option value="11">11 pm</option>
+                                    <option value="12">12 am</option>
+                                    <option value="1">1 am</option>
+                                    <option value="2">2 am</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>¿Comes algo antes de ir a la escuela?</label> <br>
+                                <input type="text" name="comer_antes_escuela" class="input-field">
+                            </div>
+                            <div>
+                                <label>¿Que alimento te gusta mas?</label> <br>
+                                <input type="text" name="alimento_gustar" class="input-field">
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Consume en exceso?</label>
+                                <div>
+                                    <input type="checkbox" name="refresco" value="refrescos">
+                                    <label for="refrescos">Refrescos</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="fritura" value="frituras">
+                                    <label for="frituras">Frituras</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="bebida" value="bebidas">
+                                    <label for="bebidas">Bebidas azucaradas</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="cafeina" value="cafeina">
+                                    <label for="cafeina">Cafeína</label>
+                                </div>
+                            </div>
+                                <div>
+                                    <label>¿Con que frecuencia?</label> <br>
+                                    <input type="text" name="frecuencia" class="input-field">
+                                </div>
+                        </div>
+                        <br>
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Cuentas con celular o videojuegos en casa (Xbox, PSP, etc)?</label>
+                                <input type="text" name="videojuegos" class="input-field">
+                            </div> 
+                            <div>
+                                <label>En caso de videojuego ¿En que parte de tu casa estan?</label> <br>
+                                <input type="text" name="lugar" class="input-field">
+                            </div>
+                            <div>
+                                <label>¿Cuantas horas le dedicas a los videojuegos?</label> <br>
+                                <select name="horas_videojuegos" class="input-field">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label>¿Que tipo de videojuegos acostumbras a jugar?</label> <br>
+                            <input type="text" name="tipo_juego" class="input-field">
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Acostumbras a jugar maquinitas en la calle?</label>
+                                <input type="text" name="jugar_maquinitas" class="input-field">
+                            </div> 
+                            <div>
+                                <label>¿Cuanto tiempo?</label> <br>
+                                <input type="text" name="tiempo" class="input-field">
+                            </div>
+                            <div>
+                                <label>¿Cuanto dinero le proporciona para las maquinitas?</label> <br>
+                                <input type="text" name="dinero_maquinitas" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Cuentas con celular o videojuegos en casa (Xbox, PSP, etc)?</label>
+                                <input type="text" name="videojuegos" class="input-field">
+                            </div> 
+                            <div>
+                                <label>En caso de videojuego ¿En que parte de tu casa estan?</label> <br>
+                                <input type="text" name="lugar" class="input-field">
+                            </div>
+                            <div>
+                                <label>¿Cuantas horas le dedicas a los videojuegos?</label> <br>
+                                <select name="horas_videojuegos" class="input-field">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label>¿Que tipo de videojuegos acostumbras a jugar?</label> <br>
+                            <input type="text" name="tipo_juego" class="input-field">
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Tienes computadora en casa?</label>
+                                <input type="text" name="computadora" class="input-field">
+                            </div> 
+                            <div>
+                                <label>¿Donde se localiza?</label> <br>
+                                <input type="text" name="compu_localiza" class="input-field">
+                            </div>
+                            <div>
+                                <label>¿Con quien compartes la computadora?</label> <br>
+                                <input type="text" name="compartir_compu" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Tienes internet en casa?</label>
+                                <input type="text" name="internet_casa" class="input-field">
+                            </div> 
+                            <div>
+                                <label>¿Cuanto tiempo pasas en internet?</label> <br>
+                                <input type="text" name="tiempo_internet" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿En caso de no tener computadora o internet en casa ¿Acostumbras a ir a un cibercafe?</label>
+                                <input type="text" name="cibercafe" class="input-field">
+                            </div> 
+                            <div>
+                                <label>¿Cuantos dias y cuanto tiempo?</label> <br>
+                                <input type="text" name="tiempo_dias" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Cuanto dinero te proporcionan para esta actividad?</label>
+                                <input type="text" name="dinero_actividad" class="input-field">
+                            </div> 
+                            <div>
+                                <label>¿Que actividades realizas en la computadora?</label> <br>
+                                <input type="text" name="actividad_computadora" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿Realiza algun deporte o actividad fisica?</label>
+                                <input type="text" name="realiza_actividad_fisica" class="input-field">
+                            </div> 
+                            <div>
+                                <label>¿cuantas horas a la semana?</label> <br>
+                                <input type="text" name="horas_semana" class="input-field">
+                            </div>
+                            <div>
+                                <label>¿que actividad(es) y con quien las realizas?</label> <br>
+                                <input type="text" name="actividad_y_quien" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿trabajas en algo?</label>
+                                <input type="text" name="trabajo" class="input-field">
+                            </div> 
+                            <div>
+                                <label>¿en que?</label> <br>
+                                <input type="text" name="en_que" class="input-field">
+                            </div>
+                            <div>
+                                <label>¿En donde y para que trabajas?</label> <br>
+                                <input type="text" name="lugar_trabajo" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="grupo_preguntas" style="gap: 120px;">
+                            <div>
+                                <label>¿que haces los sabados y domingos?</label>
+                                <input type="text" name="sabdos_domingos" class="input-field">
+                            </div> 
+                            <div>
+                                <label>¿que otra cosa te gusta hacer?</label> <br>
+                                <input type="text" name="gustar_hacer" class="input-field">
+                            </div>
+                            <div>
+                                <label>¿que tipo de revistas compras?</label> <br>
+                                <input type="text" name="tipo_revistas" class="input-field">
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                </div>
+            
+                <!-- Paginación -->
+                <div class="pagination">
+                    <button id="prevPage" class="button button-primary-orange">&#8592;</button>
+        
+                    <span id="page1" class="page-number active">1</span>
+                    <span id="page2" class="page-number">2</span>
+                    <span id="page3" class="page-number">3</span>
+
+                    <button id="nextPage" class="button button-primary-orange">&#8594;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    let currentPage = 1;
+    const totalPages = 3;
+
+    function showPage(n) {
+        for (let i = 1; i <= totalPages; i++) {
+            const page = document.getElementById(`pagina${i}`);
+            if (page) page.style.display = i === n ? "block" : "none";
+        }
+
+        document.querySelectorAll(".page-number").forEach(span => {
+            span.classList.remove("active");
+        });
+        document.getElementById(`page${n}`).classList.add("active");
+    }
+
+    document.getElementById("prevPage").addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    });
+
+    document.getElementById("nextPage").addEventListener("click", () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    });
+
+    document.querySelectorAll(".page-number").forEach(span => {
+        span.addEventListener("click", () => {
+            currentPage = parseInt(span.textContent);
+            showPage(currentPage);
+        });
+    });
+
+    showPage(currentPage);
+});
+
+    </script>
+</body>

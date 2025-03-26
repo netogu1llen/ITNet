@@ -329,3 +329,83 @@ body {
   .download-button:hover {
     background-color: #5185c0;
   }
+
+  /* ==================== Encuesta niños ==================== */
+  .container_encuesta {
+    background-color: #f0f0f0;
+    margin-left: auto;
+    margin-top: 20px;
+    margin-right: 20px;
+    width: 90%;
+    padding: 2rem;
+
+    border-radius: 5px;
+    border: solid lightgray 2px;
+  }
+
+  .encuesta_div {
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    border: solid lightgray 2px;
+  }
+  
+  .encuesta_caja {
+    border: solid gray 2px;
+    width: 95%;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 5px;
+    border: solid lightgray 2px;
+  }
+
+  .caja_titulo {
+    background-color: #f0f0f0;
+    width: 100%;
+    text-align: center;
+    margin-top: 15px;
+
+    border-radius: 5px;
+    border: solid lightgray 2px;
+  }
+
+  .header-info {
+    display:flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .grupo_preguntas {
+    display: flex;
+    
+  }
+
+  .input-field {
+    border-radius: 5px;
+    border: solid lightgray 2px;
+    width: 300px;
+  }
+
+  .option-field {
+    border-radius: 5px;
+    border: solid lightgray 2px;
+    width: 50px;
+  }
+
+  .long-field {
+    border-radius: 5px;
+    border: solid lightgray 2px;
+  }
+
+  .pagination {
+    display: flex;
+    width: 300px;
+    justify-content: space-around;
+    margin: 5px auto;
+  }
+
+  .pagination span {
+
+    padding: 0 5px;
+    margin: auto 0;
+  }
