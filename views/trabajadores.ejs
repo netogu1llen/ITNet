@@ -1,0 +1,50 @@
+<%- include('partials/head') %>
+
+<div class="main-container">
+  <div class="form-container">
+    <h1>Agregar Nuevo Trabajador</h1>
+
+    <form action="/trabajadores/agregar" method="POST">
+      <div class="form-group">
+        <label for="nombre">Nombre del Trabajador</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre(s)" required>
+      </div>
+
+      <div class="form-group">
+        <label for="apellidoP">Apellido Paterno</label>
+        <input type="text" id="apellidoP" name="apellidoP" placeholder="Apellido Paterno" required>
+      </div>
+
+      <div class="form-group">
+        <label for="apellidoM">Apellido Materno</label>
+        <input type="text" id="apellidoM" name="apellidoM" placeholder="Apellido Materno">
+      </div>
+
+      <div class="form-group">
+        <label for="area">Área</label>
+        <select id="area" name="area" required>
+          <option value="">Seleccione el Área</option>
+          <option value="administracion">Administración</option>
+          <option value="produccion">Producción</option>
+          <option value="ventas">Ventas</option>
+          <!-- Puedes agregar más opciones -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="profesion">Profesión</label>
+        <input type="text" id="profesion" name="profesion" placeholder="Inserte la profesión">
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="Inserte E-mail" required>
+      </div>
+
+      <div class="btn-container">
+        <button type="submit" class="btn-guardar">Guardar</button>
+        <a href="/trabajadores" class="btn-cancelar">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
