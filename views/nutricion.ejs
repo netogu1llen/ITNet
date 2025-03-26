@@ -1,7 +1,7 @@
 <%- include('partials/head') %>
 
 <!-- CSS desde CDN (permitido por CSP si no usas inline) -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="http://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 
 <section class="section">
   <div class="container">
@@ -21,8 +21,9 @@
 </section>
 
 <!-- JS desde CDN -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'nonce-randomNonceHere';">
+<script nonce="randomNonceHere" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script nonce="randomNonceHere" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
-<!-- Tu script externo -->
+
 <script src="/js/nutricion.js"></script>
