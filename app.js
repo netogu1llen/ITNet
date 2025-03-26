@@ -49,11 +49,16 @@ app.use((req, res, next) => {
 });
 
 // Rutas de usuario
-const usuarioRoutes = require('./routes/usuario.routes.js');
+const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
 
-// Rutas principales
-const mainRoutes = require('./routes/main.routes.js');
+// Rutas de nutrición
+const nutricionRoutes = require('./routes/nutricion.routes');
+app.use('/nutricion', nutricionRoutes);
+
+
+// Rutas principaless
+const mainRoutes = require('./routes/main.routes');
 app.use('/', mainRoutes);
 
 // Manejo de errores 404 (Página no encontrada)
