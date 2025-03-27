@@ -329,7 +329,7 @@ body {
   .download-button:hover {
     background-color: #5185c0;
   }
-<<<<<<< HEAD
+
 
   /*CSS para Agregar Trabajadores*/
   .main-container {
@@ -412,7 +412,7 @@ body {
   .btn-cancelar:hover {
     background-color: #B8372B;
   }
-=======
+
   body {
   font-family: Arial, sans-serif;
 }
@@ -568,7 +568,6 @@ body {
   
   /* ==================== Clinico V2 ==================== */
   
-<<<<<<< HEAD
   .box {
     background-color: #fff;
     padding: 1rem;
@@ -657,7 +656,4 @@ body {
     background-color: #015C92;
     color: white;
   }
-=======
->>>>>>> develop
->>>>>>> 98e914f9713ca478527d1c349892acfb39431434
-  
+
