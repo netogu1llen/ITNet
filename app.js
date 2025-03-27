@@ -56,6 +56,10 @@ app.use('/usuario', usuarioRoutes);
 const nutricionRoutes = require('./routes/nutricion.routes');
 app.use('/nutricion', nutricionRoutes);
 
+// Rutas de psicología
+const psicologiaRoutes = require('./routes/psicologia.routes');
+app.use('/psicologia', psicologiaRoutes);
+
 
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');

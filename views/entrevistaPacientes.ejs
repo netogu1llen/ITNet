@@ -1,0 +1,115 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="styles.css">
+<body>
+    <div class="container">
+        <div class="entrevista-container">
+            <!-- Encabezado -->
+            <header class="entrevista-header">
+                <h1 class="entrevista-title">
+                    <img src="/images/psicologia.png" width="50" height="50" alt="Psicología" class="header-icon">
+                    Entrevista para adulto
+                </h1>
+                <div class="entrevista-info">
+                    <p><strong>Larissa Jiménez Aldemar</strong></p>
+                    <p><strong>No. Expediente:</strong> 34</p>
+                    <p><strong>Hora:</strong> 16:45</p>
+                    <p><strong>Fecha:</strong> 01 de marzo de 2025</p>
+                </div>
+            </header>
+
+            <!-- Sección de Datos Generales -->
+            <section class="entrevista-section">
+                <h2 class="entrevista-section-title">I. Datos Generales</h2>
+                <div class="entrevista-grid">
+                    <div>
+                        <label>Nombre Completo</label>
+                        <input type="text" class="entrevista-input" name="nombre_completo" required>
+                    </div>
+                    <div>
+                        <label>Edad</label>
+                        <input type="number" class="entrevista-input" name="edad" min="18" max="120">
+                    </div>
+                    <div>
+                        <label>Sexo</label>
+                        <select class="entrevista-select" name="sexo" required>
+                            <option value="" disabled selected>Seleccione</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Ocupación</label>
+                        <input type="text" class="entrevista-input" name="ocupacion">
+                    </div>
+                    <div>
+                        <label>Escolaridad</label>
+                        <input type="text" class="entrevista-input" name="escolaridad">
+                    </div>
+                    <div>
+                        <label>Domicilio</label>
+                        <input type="text" class="entrevista-input" name="domicilio">
+                    </div>
+                    <div>
+                        <label>Motivo de consulta</label>
+                        <input type="text" class="entrevista-input" name="motivo">
+                    </div>
+                    <div>
+                        <label>Teléfono</label>
+                        <input type="tel" class="entrevista-input" name="telefono">
+                    </div>
+                    <div>
+                        <label>Remitido por</label>
+                        <input type="text" class="entrevista-input" name="remitido_por">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección del Psicograma -->
+            <section class="entrevista-section">
+                <h2 class="entrevista-section-title">II. Psicograma</h2>
+                <table class="entrevista-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Parentesco</th>
+                            <th>Edad</th>
+                            <th>Ocupación</th>
+                            <th>Escolaridad</th>
+                            <th>Carácter</th>
+                            <th>Sentimiento</th>
+                            <th>Relación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-psicograma">
+                        <!-- Primera fila por defecto -->
+                        <tr>
+                            <td><input type="text" class="entrevista-input" name="psicograma_nombre[]"></td>
+                            <td><input type="text" class="entrevista-input" name="psicograma_parentesco[]"></td>
+                            <td><input type="number" class="entrevista-input" name="psicograma_edad[]"></td>
+                            <td><input type="text" class="entrevista-input" name="psicograma_ocupacion[]"></td>
+                            <td><input type="text" class="entrevista-input" name="psicograma_escolaridad[]"></td>
+                            <td><input type="text" class="entrevista-input" name="psicograma_caracter[]"></td>
+                            <td><input type="text" class="entrevista-input" name="psicograma_sentimiento[]"></td>
+                            <td><input type="text" class="entrevista-input" name="psicograma_relacion[]"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Sección de Motivos de Consulta -->
+            <section class="entrevista-section">
+                <h2 class="entrevista-section-title">III. Motivos de Consulta</h2>
+                <label>Presente virtual. (Frecuencia, duración, intensidad)</label>
+                <textarea class="entrevista-textarea" name="motivos_consulta" placeholder="¿Qué fue lo último que ocurrió para que decidiera venir al psicólogo?"></textarea>
+            </section>
+            <div class="entrevista-pagination">
+                <button class="entrevista-page-btn arrow">&larr;</button>
+                <button class="entrevista-page-btn active">1</button>
+                <button class="entrevista-page-btn">2</button>
+                <button class="entrevista-page-btn">3</button>
+                <button class="entrevista-page-btn arrow">&rarr;</button>
+            </div>
+        </div>
+    </div>
+</body>
