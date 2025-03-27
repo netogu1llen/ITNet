@@ -7,6 +7,18 @@ const mockData = [
   function getAllHistoriales() {
     return mockData;
   }
-  
-  module.exports = { getAllHistoriales };
-  
+    
+const planesAlimenticiosMock = [
+  { id: 1, nombre: 'Paciente Uno', fecha: '2025-03-01' },
+  { id: 2, nombre: 'Paciente Dos', fecha: '2025-03-05' },
+  { id: 3, nombre: 'Paciente Tres', fecha: '2025-03-10' }
+];
+
+function getAllPlanesAlimenticios() {
+  return planesAlimenticiosMock;
+}
+
+module.exports = {
+  getAllHistoriales,
+  getAllPlanesAlimenticios
+};

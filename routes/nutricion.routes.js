@@ -5,4 +5,9 @@ const controller = require('../controllers/nutricion.controller');
 router.get('/', controller.renderNutricionView);
 router.get('/data', controller.getNutricionData);
 
+// Ruta para la vista de planes alimenticios
+router.get('/planes-alimenticios', controller.renderPlanesAlimenticios);
+// Ruta para obtener los datos de planes alimenticios
+router.get('/planes-alimenticios/data', controller.getPlanesAlimenticiosData);
+
 module.exports = router;
