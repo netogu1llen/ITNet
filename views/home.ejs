@@ -1,25 +1,396 @@
 <%- include('partials/head') %>
+    <style>
+        body {
+            background-color: #FFFFFF; /* Fondo blanco */
+            margin: 0;
+            padding: 0;
+            font-family: 'Encode Sans', sans-serif;
+        }
+        .gray-container {
+          width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
+          margin: 20px 20px 20px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
+          padding: 20px;
+          text-align: left;
+          background-color: #F2F2F2; /* Fondo gris claro */
+          border-radius: 7px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          display: flex;
+          flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
+          justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
+        }
+        .head-container {
+            width: 100%; /* Ocupa todo el ancho */
+            display: flex;
+            justify-content: space-between; /* Alinea título y botones */
+            margin-bottom: 20px; /* Añade un margen inferior para separar de los otros contenedores */
+        }
+        .head-title {
+            display: flex;
+            align-items: center; /* Alinea el icono y el título verticalmente */
+            font-size: 32px;
+            font-weight: Medium;
+            color: #000;
+        }
+        .title-letters{
+            display: flex;
+            align-items: center; /* Alinea el icono y el título verticalmente */
+            font-size: 14px;
+            font-weight: Bold;
+            color: #000;
+        }
+        .field-letters{
+            display: flex;
+            align-items: center; /* Alinea el icono y el título verticalmente */
+            font-size: 14px;
+            font-weight: Bold;
+            color: #595959;
+        }
+        .field-letters2{
+            display: flex;
+            text-align: right;
+            font-size: 14px;
+            font-weight: Bold;
+            color: #595959;
+        }
+        .data-letters {
+            display: flex;
+            align-items: center; /* Alinea el icono y el título verticalmente */
+            font-size: 14px;
+            font-weight: Bold;
+            color: #000;
+        }
+        .head-title img {
+            width: 30px; /* Ajusta el tamaño del icono */
+            height: 30px;
+            margin-right: 10px; /* Espacio entre el icono y el texto */
+        }
+        .buttons-container {
+            display: flex;
+            gap: 10px; /* Espacio entre los botones */
+            justify-content: flex-end; /* Alinea los botones a la derecha */
+        }
+        .white-container {
+            width: 48%; /* Ocupa el 50% del ancho disponible menos márgenes */
+            margin: 10px 0; /* Margen de 10px en la parte superior e inferior */
+            padding: 20px;
+            text-align: center;
+            justify-content: space-between;
+            background-color: #FFFFFF; /* Fondo blanco */
+            border-radius: 7px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #ddd; /* Un pequeño borde para diferenciarlo */
+        }
+        .white-container2 {
+            width: 98%; /* Ocupa el 50% del ancho disponible menos márgenes */
+            margin: 10px 0; /* Margen de 10px en la parte superior e inferior */
+            padding: 20px;
+            text-align: center;
+            background-color: #FFFFFF; /* Fondo blanco */
+            border-radius: 7px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #ddd; /* Un pequeño borde para diferenciarlo */
+        }
+        .white-container3 {
+          flex: 1;
+          min-width: 120px;
+          padding: 10px;
+          text-align: left;
+          background-color: #FFFFFF;
+          border-radius: 7px;
+          /*box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Le quitamos el sombreado por el momento*/
+          /*border: 1px solid #ddd; /* Le quitamos el borde por el momento*/
+        }
+        .white-container-row {
+            display: flex;
+            justify-content: space-between; /* Distribuye los elementos uniformemente */
+            gap: 10px; /* Espaciado entre los elementos */
+        }
+        .search-button {
+          background-color: #ffffff; /* Fondo blanco */
+          border: 2px solid #ccc; /* Borde gris claro */
+          padding: 10px 20px; /* Asegura que el botón tenga un tamaño adecuado */
+          font-size: 14px; /* Tamaño de fuente adecuado */
+          font-weight: bold;
+          color: #333;
+          border-radius: 20px; /* Bordes redondeados */
+          display: flex;
+          align-items: center; /* Centra el contenido verticalmente */
+          justify-content: center; /* Centra el contenido horizontalmente */
+          gap: 8px; /* Espacio entre el texto y el icono */
+          cursor: pointer;
+          transition: background-color 0.3s, border-color 0.3s; /* Transiciones suaves */
+        }
+        .search-button:hover {
+            background-color: #f1f1f1; /* Cambio de fondo al pasar el mouse */
+            border-color: #888; /* Cambio de color del borde al pasar el mouse */
+        }
+        .material-icons {
+            font-size: 20px; /* Tamaño del icono */
+        }
+        /* Contenedor A flexible */
+        .container-a {
+            display: flex;
+            width: 100%; /* Ocupa todo el ancho */
+            gap: 20px; /* Espacio entre los contenedores A */
+        }
+        .month-filter-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .month-filter-container select,
+        .month-filter-container button {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
+        .month-filter-container button {
+            background-color: #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .month-filter-container button:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
 <body>
-    <main class="home-container">
-        <div class="tercios-container">
-          <!-- Primer y segundo tercio (combinados) -->
-          <div class="first-second-fragment">
-            <div class="title-container">
-              <h1 class="title-soffy">Soffy</h1>
-              <h1 class="title-app">app</h1>
-              <p class="subtitle">Gestión eficiente y segura de expedientes y seguimientos para Fundación Soffy</p>
-              <button class="download-button">DESCARGAR SOFFYAPP</button>
+    <div class="gray-container">
+        <div class="head-container">
+            <div class="head-title">
+                <img src="/images/icono_salud.png" alt="Icono Salud"> <!-- Icono cargado desde la carpeta public -->
+                Oscar Javier Villeda Arteaga
             </div>
-            <div class="semicircle"></div>
-          </div>
-          
-          <!-- Tercer tercio -->
-          <div class="third-fragment">
-            <div class="image-container">
-              <img src="/images/PORTADA.png" alt="Soffy App" class="image">
+            <!-- Contenedor para los botones alineados a la derecha -->
+            <div class="buttons-container">
+                <button class="search-button">
+                    Buscar paciente
+                    <span class="material-icons">search</span>
+                </button>
+                <button class="search-button">
+                    Generar historia clinica
+                </button>
+                <button class="search-button">
+                    Planes alimenticios
+                </button>
             </div>
-          </div>
         </div>
-      </main>
-  </body>
+          <div class="container-a">
+            <div class="white-container">
+              <div class="title-letters">Datos generales del paciente:</div>
+              <br>
+              <div class="white-container-row">
+                  <div class="white-container3">
+                      <div class="field-letters"> > Nombre completo</div>
+                      <br>
+                      <div class="title-letters">   Oscar Javier Villeda Arteaga</div>
+                  </div>
+                  <div class="white-container3">
+                      <div class="field-letters"> > Responsable</div>
+                      <br>
+                      <div class="title-letters">   Reymundo Edmundo</div>
+                  </div>
+                  <div class="white-container3">
+                      <div class="field-letters"> > Parentesco</div>
+                      <br>
+                      <div class="title-letters">   Primo</div>
+                  </div>
+              </div>
+              <br>
+              <div class="white-container-row">
+                <div class="white-container3">
+                    <div class="field-letters"> > Sexo</div>
+                    <br>
+                    <div class="title-letters"> Masculino</div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Escuela</div>
+                    <br>
+                    <div class="title-letters"> Instituto Benito Juarez</div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Edad Responsable</div>
+                    <br>
+                    <div class="title-letters"> 48 años</div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Telefono</div>
+                    <br>
+                    <div class="title-letters"> 444859617</div>
+                </div>
+            </div>
+            <br>
+              <div class="white-container-row">
+                <div class="white-container3">
+                    <div class="field-letters"> > Fecha de nacimiento</div>
+                    <br>
+                    <div class="title-letters"> 01 de marzo de 2015</div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Edad paciente</div>
+                    <br>
+                    <div class="title-letters"> 10 años</div>
+                </div>
+                
+            </div>
+            </div>
+            <div class="white-container">
+            <div class="title-letters">Evolución Antropométrica - Comparativa Mensual</div>
+            <canvas id="grafico" 
+                data-labels='<%= JSON.stringify(datos.labels) %>' 
+                data-values='<%= JSON.stringify(datos.datasets) %>' 
+                width="600" 
+                height="300">
+            </canvas>
+            <div class="month-filter-container">
+                <select id="mes-inicio">
+                    <option value="Enero">Enero</option>
+                    <option value="Febrero">Febrero</option>
+                    <option value="Marzo">Marzo</option>
+                    <option value="Abril">Abril</option>
+                    <option value="Mayo">Mayo</option>
+                    <option value="Junio">Junio</option>
+                    <option value="Julio">Julio</option>
+                    <option value="Agosto">Agosto</option>
+                    <option value="Septiembre">Septiembre</option>
+                    <option value="Octubre">Octubre</option>
+                    <option value="Noviembre">Noviembre</option>
+                    <option value="Diciembre">Diciembre</option>
+                </select>
+            
+                <select id="mes-final">
+                    <option value="Enero">Enero</option>
+                    <option value="Febrero">Febrero</option>
+                    <option value="Marzo">Marzo</option>
+                    <option value="Abril">Abril</option>
+                    <option value="Mayo">Mayo</option>
+                    <option value="Junio">Junio</option>
+                    <option value="Julio">Julio</option>
+                    <option value="Agosto">Agosto</option>
+                    <option value="Septiembre">Septiembre</option>
+                    <option value="Octubre">Octubre</option>
+                    <option value="Noviembre">Noviembre</option>
+                    <option value="Diciembre">Diciembre</option>
+                </select>
+            
+                <button id="filtrar-meses">Filtrar</button>
+            </div>
+        </div>
+    </div>
+
+        <!-- Otro contenedor A con dos contenedores blancos alineados -->
+        <div class="container-a">
+            <div class="white-container">
+              <div class="title-letters">Antecedentes del paciente</div>
+              <br>
+              <div class="white-container-row">
+                <div class="white-container3">
+                    <div class="field-letters"> > Antecedentes heredofamiliares</div>
+                    <br>
+                    <div class="white-container-row">
+                        <div class="title-letters">Diabetes</div>
+                        <div class="field-letters2">Madre</div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Cancer</div>
+                        <div class="field-letters2">Ninguno</div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Dislipidemia</div>
+                        <div class="field-letters2">Abuelo paterno</div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Obesidad</div>
+                        <div class="field-letters2">Hermano</div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Anemia</div>
+                        <div class="field-letters2">Ninguno</div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Hipertension arterial</div>
+                        <div class="field-letters2">Padre y abuelo materno asdfasdfasdfasd</div>
+                    </div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Antecedentes personales</div>
+                    <br>
+                    <div class="white-container-row">
+                        <div class="title-letters">Peso al nacer</div>
+                        <div class="field-letters2">3.2kg</div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Talla al nacer</div>
+                        <div class="field-letters2">50cm</div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">SDG</div>
+                        <div class="field-letters2">Abuelo paterno</div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Tipo de parto</div>
+                        <div class="field-letters2">Vaginal</div>
+                    </div>
+                </div>
+            </div>
+            <div class="white-container3">
+                <div class="field-letters"> > Antecedentes de alimentacion</div>
+                <br>
+                <div class="white-container-row">
+                    <div class="title-letters">Lactancia exclusiva</div>
+                    <div class="field-letters">Mixta</div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Tiempo</div>
+                    <div class="field-letters">-6 meses</div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Edad de alimentacion complementaria  </div>
+                    <div class="field-letters">-6 meses</div>
+                </div>
+            </div>
+        </div>
+        <div class="white-container">
+            <div class="title-letters">Manejo Nutricional</div>
+            <br>
+            <div class="white-container3">
+                <br>
+                <div class="white-container-row">
+                    <div class="title-letters">Energia(kcal)</div>
+                    <div class="field-letters2">2000 kcal/día</div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Hidratos de carbono</div>
+                    <div class="field-letters2">250 g/día (50% de las kcal)</div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Lipidos</div>
+                    <div class="field-letters2">70 g/día (30% de las kcal)</div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Proteinas</div>
+                    <div class="field-letters2">100 g/día (20% de las kcal)</div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Fibra</div>
+                    <div class="field-letters2">30 g/día</div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Agua</div>
+                    <div class="field-letters2">2500 ml/día</div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="container-a">
+          <div class="white-container2">
+            <div class="title-letters">Sesiones</div>
+          </div>
+      </div>
+    </div>
+    
+    <script src="/js/chartConfig.js" type="module" defer></script>
+</body>
+</html>

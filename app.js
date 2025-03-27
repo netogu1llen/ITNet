@@ -8,7 +8,7 @@ const session = require('express-session');
 const path = require('path');
 
 const app = express();
-
+app.use('/node_modules', express.static('node_modules'));
 // Middleware de seguridad
 app.use(helmet());
 
