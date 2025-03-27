@@ -9,6 +9,7 @@ const s3Routes = require('./s3services.routes');
 
 // Rutas principales
 router.get('/', mainController.getHome);
+router.get('/historiaClinica', mainController.getHistoriaClinica);
 
 // Usar las rutas de S3 con un prefijo "/api"
 router.use('/api', s3Routes);
