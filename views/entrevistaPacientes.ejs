@@ -6,7 +6,7 @@
             <!-- Encabezado -->
             <header class="entrevista-header">
                 <h1 class="entrevista-title">
-                    <img src="/images/psicologia.png" width="50" height="50" alt="Psicología" class="header-icon">
+                    <img src="/images/psicologia.png" width="45" height="45" alt="Psicología" class="header-icon">
                     Entrevista para adulto
                 </h1>
                 <div class="entrevista-info">
@@ -17,99 +17,163 @@
                 </div>
             </header>
 
-            <!-- Sección de Datos Generales -->
-            <section class="entrevista-section">
-                <h2 class="entrevista-section-title">I. Datos Generales</h2>
-                <div class="entrevista-grid">
-                    <div>
-                        <label>Nombre Completo</label>
-                        <input type="text" class="entrevista-input" name="nombre_completo" required>
+            <!-- Página 1 (visible por defecto) -->
+            <div id="pagina-1" class="entrevista-pagina">
+                <!-- Sección de Datos Generales -->
+                <section class="entrevista-section">
+                    <h2 class="entrevista-section-title">I. Datos Generales</h2>
+                    <div class="entrevista-grid">
+                        <div>
+                            <label>Nombre Completo</label>
+                            <input type="text" class="entrevista-input" name="nombre_completo" required>
+                        </div>
+                        <div>
+                            <label>Edad</label>
+                            <input type="number" class="entrevista-input" name="edad" min="18" max="120">
+                        </div>
+                        <div>
+                            <label>Sexo</label>
+                            <select class="entrevista-select" name="sexo" required>
+                                <option value="" disabled selected>Seleccione</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Ocupación</label><input type="text" class="entrevista-input" name="ocupacion">
+                        </div>
+                        <div>
+                            <label>Escolaridad</label><input type="text" class="entrevista-input" name="escolaridad">
+                        </div>
+                        <div>
+                            <label>Domicilio</label><input type="text" class="entrevista-input" name="domicilio">
+                        </div>
+                        <div>
+                            <label>Motivo de consulta</label><input type="text" class="entrevista-input" name="motivo">
+                        </div>
+                        <div>
+                            <label>Teléfono</label><input type="tel" class="entrevista-input" name="telefono">
+                        </div>
+                        <div>
+                            <label>Remitido por</label><input type="text" class="entrevista-input" name="remitido_por">
+                        </div>
                     </div>
-                    <div>
-                        <label>Edad</label>
-                        <input type="number" class="entrevista-input" name="edad" min="18" max="120">
-                    </div>
-                    <div>
-                        <label>Sexo</label>
-                        <select class="entrevista-select" name="sexo" required>
-                            <option value="" disabled selected>Seleccione</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Ocupación</label>
-                        <input type="text" class="entrevista-input" name="ocupacion">
-                    </div>
-                    <div>
-                        <label>Escolaridad</label>
-                        <input type="text" class="entrevista-input" name="escolaridad">
-                    </div>
-                    <div>
-                        <label>Domicilio</label>
-                        <input type="text" class="entrevista-input" name="domicilio">
-                    </div>
-                    <div>
-                        <label>Motivo de consulta</label>
-                        <input type="text" class="entrevista-input" name="motivo">
-                    </div>
-                    <div>
-                        <label>Teléfono</label>
-                        <input type="tel" class="entrevista-input" name="telefono">
-                    </div>
-                    <div>
-                        <label>Remitido por</label>
-                        <input type="text" class="entrevista-input" name="remitido_por">
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Sección del Psicograma -->
-            <section class="entrevista-section">
-                <h2 class="entrevista-section-title">II. Psicograma</h2>
-                <table class="entrevista-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Parentesco</th>
-                            <th>Edad</th>
-                            <th>Ocupación</th>
-                            <th>Escolaridad</th>
-                            <th>Carácter</th>
-                            <th>Sentimiento</th>
-                            <th>Relación</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-psicograma">
-                        <!-- Primera fila por defecto -->
-                        <tr>
-                            <td><input type="text" class="entrevista-input" name="psicograma_nombre[]"></td>
-                            <td><input type="text" class="entrevista-input" name="psicograma_parentesco[]"></td>
-                            <td><input type="number" class="entrevista-input" name="psicograma_edad[]"></td>
-                            <td><input type="text" class="entrevista-input" name="psicograma_ocupacion[]"></td>
-                            <td><input type="text" class="entrevista-input" name="psicograma_escolaridad[]"></td>
-                            <td><input type="text" class="entrevista-input" name="psicograma_caracter[]"></td>
-                            <td><input type="text" class="entrevista-input" name="psicograma_sentimiento[]"></td>
-                            <td><input type="text" class="entrevista-input" name="psicograma_relacion[]"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+                <!-- Sección del Psicograma -->
+                <section class="entrevista-section">
+                    <h2 class="entrevista-section-title">II. Psicograma</h2>
+                    <table class="entrevista-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Parentesco</th>
+                                <th>Edad</th>
+                                <th>Ocupación</th>
+                                <th>Escolaridad</th>
+                                <th>Carácter</th>
+                                <th>Sentimiento</th>
+                                <th>Relación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-psicograma">
+                            <tr>
+                                <td><input type="text" class="entrevista-input" name="psicograma_nombre[]"></td>
+                                <td><input type="text" class="entrevista-input" name="psicograma_parentesco[]"></td>
+                                <td><input type="number" class="entrevista-input" name="psicograma_edad[]"></td>
+                                <td><input type="text" class="entrevista-input" name="psicograma_ocupacion[]"></td>
+                                <td><input type="text" class="entrevista-input" name="psicograma_escolaridad[]"></td>
+                                <td><input type="text" class="entrevista-input" name="psicograma_caracter[]"></td>
+                                <td><input type="text" class="entrevista-input" name="psicograma_sentimiento[]"></td>
+                                <td><input type="text" class="entrevista-input" name="psicograma_relacion[]"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button id="btn-agregar-fila" class="entrevista-btn">
+                        ＋
+                    </button>
+                </section>
 
-            <!-- Sección de Motivos de Consulta -->
-            <section class="entrevista-section">
-                <h2 class="entrevista-section-title">III. Motivos de Consulta</h2>
-                <label>Presente virtual. (Frecuencia, duración, intensidad)</label>
-                <textarea class="entrevista-textarea" name="motivos_consulta" placeholder="¿Qué fue lo último que ocurrió para que decidiera venir al psicólogo?"></textarea>
-            </section>
+                <!-- Sección de Motivos de Consulta -->
+                <section class="entrevista-section">
+                    <h2 class="entrevista-section-title">III. Motivos de Consulta</h2>
+                    <label>Presente virtual. (Frecuencia, duración, intensidad)</label>
+                    <textarea class="entrevista-textarea" name="motivos_consulta" placeholder="¿Qué fue lo último que ocurrió para que decidiera venir al psicólogo?"></textarea>
+                </section>
+            </div>
+
+            <!-- Página 2 (oculta por defecto) -->
+            <div id="pagina-2" class="entrevista-pagina" style="display:none;">
+                <!-- Sección de Cuadro Clínico -->
+                <section class="entrevista-section">
+                    <h2 class="entrevista-section-title">IV. Cuadro Clínico</h2>
+                    
+                    <div class="entrevista-grid">
+                        <div class="full-width">
+                            <label>¿Desde cuándo empezó el problema? (presente virtual)</label>
+                            <textarea class="entrevista-textarea" name="inicio_problema"></textarea>
+                        </div>
+                        
+                        <div class="full-width">
+                            <label>¿Cómo fue la última ocasión en que ocurrió el problema?</label>
+                            <textarea class="entrevista-textarea" name="ultima_ocasion"></textarea>
+                        </div>
+                        
+                        <div class="full-width">
+                            <label>¿Qué ocurría en su vida antes de que surgiera la situación? (factores desencadenantes)</label>
+                            <textarea class="entrevista-textarea" name="contexto_previo"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección de Factores Desencadenantes -->
+                <section class="entrevista-section">
+                    <h2 class="entrevista-section-title">V. Factores Desencadenantes</h2>
+                    
+                    <label>¿Qué otros aspectos se vinculan con el problema? (núcleo)</label>
+                    
+                    <table class="entrevista-table">
+                        <thead>
+                            <tr>
+                                <th>Factor Asociado</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Familia</td>
+                                <td><input type="text" class="entrevista-input" name="factor_familia"></td>
+                            </tr>
+                            <tr>
+                                <td>Pareja</td>
+                                <td><input type="text" class="entrevista-input" name="factor_pareja"></td>
+                            </tr>
+                            <tr>
+                                <td>Amistades</td>
+                                <td><input type="text" class="entrevista-input" name="factor_amistades"></td>
+                            </tr>
+                            <tr>
+                                <td>Escuela</td>
+                                <td><input type="text" class="entrevista-input" name="factor_escuela"></td>
+                            </tr>
+                            <tr>
+                                <td>Salud Física</td>
+                                <td><input type="text" class="entrevista-input" name="factor_salud"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- Paginación -->
             <div class="entrevista-pagination">
-                <button class="entrevista-page-btn arrow">&larr;</button>
-                <button class="entrevista-page-btn active">1</button>
-                <button class="entrevista-page-btn">2</button>
-                <button class="entrevista-page-btn">3</button>
-                <button class="entrevista-page-btn arrow">&rarr;</button>
+                <button class="entrevista-page-btn arrow" data-pagina="anterior">&larr;</button>
+                <button class="entrevista-page-btn" data-pagina="1">1</button>
+                <button class="entrevista-page-btn" data-pagina="2">2</button>
+                <button class="entrevista-page-btn arrow" data-pagina="siguiente">&rarr;</button>
             </div>
         </div>
     </div>
+    <script src="/js/psicologia.js"></script>
 </body>
