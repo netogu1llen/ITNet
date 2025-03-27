@@ -8,6 +8,7 @@ const mainController = require('../controllers/main.controller');
 const s3Routes = require('./s3services.routes');
 
 // Rutas principales
+router.get('/', mainController.getClinicaV2);
 router.get('/', mainController.getHome);
 router.get('/', mainController.getPacientes);
 router.get('/', mainController.getTrabajadores);

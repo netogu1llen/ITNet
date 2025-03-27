@@ -8,3 +8,7 @@ exports.getHome= (request, response, next) => {
 exports.getPaciente= (request, response, next) => {
     response.render('pacientes');
 };
+
+exports.getClinicaV2= (request, response, next) => {
+    response.render('historiaClinicaV2');
+};
