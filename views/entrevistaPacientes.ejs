@@ -322,15 +322,113 @@
                 </section>
             </div>
 
-            <!-- Paginación -->
-            <div class="entrevista-pagination">
-                <button class="entrevista-page-btn arrow" data-pagina="anterior">&larr;</button>
-                <button class="entrevista-page-btn" data-pagina="1">1</button>
-                <button class="entrevista-page-btn" data-pagina="2">2</button>
-                <button class="entrevista-page-btn" data-pagina="3">3</button>
-                <button class="entrevista-page-btn arrow" data-pagina="siguiente">&rarr;</button>
-            </div>
+        <!-- Página 4 -->
+        <div id="pagina-4" class="entrevista-pagina">
+            <!-- Sección de Conclusiones Evidentes -->
+            <section class="entrevista-section">
+                <h2 class="entrevista-section-title">VIII. Conclusiones Evidentes (Lo que está claro)</h2>
+                
+                <table class="conclusiones-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Descripción</th>
+                            <th colspan="4">Dinámica (explicación)</th>
+                        </tr>
+                        <tr>
+                            <th>Dimensión principal<br>(duración, frecuencia, intensidad)</th>
+                            <th>¿Por qué se generó?<br>(Causas, antecedentes históricos)</th>
+                            <th>¿Por qué se mantiene?<br>(Factores involucrados)</th>
+                            <th>Relación entre los diferentes problemas que se ven</th>
+                            <th>Recomendaciones técnicas<br>(sugerencias, etc.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="entrevista-input" name="problema1_desc" placeholder="PROBLEMA 1"></td>
+                            <td><textarea class="entrevista-textarea" name="problema1_dimension"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema1_generacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema1_mantenimiento"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema1_relacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema1_recomendaciones"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="entrevista-input" name="problema2_desc" placeholder="PROBLEMA 2"></td>
+                            <td><textarea class="entrevista-textarea" name="problema2_dimension"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema2_generacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema2_mantenimiento"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema2_relacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema2_recomendaciones"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="entrevista-input" name="problema3_desc" placeholder="PROBLEMA 3"></td>
+                            <td><textarea class="entrevista-textarea" name="problema3_dimension"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema3_generacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema3_mantenimiento"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema3_relacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="problema3_recomendaciones"></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Sección de Conclusiones Hipotéticas -->
+            <section class="entrevista-section">
+                <h2 class="entrevista-section-title">IX. Conclusiones Hipotéticas (Lo que hay que cambiar)</h2>
+                
+                <table class="conclusiones-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Descripción</th>
+                            <th colspan="4">Dinámica (explicación)</th>
+                        </tr>
+                        <tr>
+                            <th>Dimensión principal<br>(duración, frecuencia, intensidad)</th>
+                            <th>¿Por qué se generó?<br>(Causas, antecedentes históricos)</th>
+                            <th>¿Por qué se mantiene?<br>(Factores involucrados)</th>
+                            <th>Relación entre los diferentes problemas que se ven   </th>
+                            <th>Recomendaciones técnicas<br>(sugerencias, etc.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="entrevista-input" name="hipotesis1_desc" placeholder="PROBLEMA 1"></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis1_dimension"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis1_generacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis1_mantenimiento"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis1_relacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis1_recomendaciones"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="entrevista-input" name="hipotesis2_desc" placeholder="PROBLEMA 2"></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis2_dimension"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis2_generacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis2_mantenimiento"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis2_relacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis2_recomendaciones"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="entrevista-input" name="hipotesis3_desc" placeholder="PROBLEMA 3"></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis3_dimension"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis3_generacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis3_mantenimiento"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis3_relacion"></textarea></td>
+                            <td><textarea class="entrevista-textarea" name="hipotesis3_recomendaciones"></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
         </div>
-    </div>
-    <script src="/js/psicologia.js"></script>
+
+        <!-- Paginación Actualizada -->
+        <div class="entrevista-pagination">
+            <button class="entrevista-page-btn arrow" data-pagina="anterior">&larr;</button>
+            <button class="entrevista-page-btn" data-pagina="1">1</button>
+            <button class="entrevista-page-btn" data-pagina="2">2</button>
+            <button class="entrevista-page-btn" data-pagina="3">3</button>
+            <button class="entrevista-page-btn active" data-pagina="4">4</button>
+            <button class="entrevista-page-btn arrow" data-pagina="siguiente">&rarr;</button>
+        </div>
+        </div>
+        </div>
+<script src="/js/psicologia.js"></script>
 </body>
