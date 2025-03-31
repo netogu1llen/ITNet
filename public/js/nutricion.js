@@ -7,7 +7,7 @@ $(document).ready(function () {
       {
         data: null,
         render: function () {
-          return '<button class="button is-small is-light"><i class="fas fa-download"></i></button>';
+          return '<button class="button is-small is-light">⬇️</i></button>';
         }
       },
       {
