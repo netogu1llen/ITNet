@@ -49,8 +49,12 @@ app.use((req, res, next) => {
 });
 
 // Rutas de usuario
-const usuarioRoutes = require('./routes/usuario.routes.js');
+const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
+
+// Rutas de nutrición
+const nutricionRoutes = require('./routes/nutricion.routes');
+app.use('/nutricion', nutricionRoutes);
 
 // Rutas principales
 const mainRoutes = require('./routes/main.routes.js');
