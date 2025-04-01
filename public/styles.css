@@ -329,3 +329,16 @@ body {
   .download-button:hover {
     background-color: #5185c0;
   }
+
+  .header-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .header-bar .logo {
+    height: 40px;
+    width: auto;
+  }
+  
