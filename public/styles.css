@@ -10,7 +10,6 @@ body {
 .sidebar {
     width: 50px; /* Tamaño reducido cuando está colapsado */
     background-color: #FEA02F; /* Color de fondo */
-    padding: 10px;
     position: fixed;
     top: 0;
     left: 0;
@@ -35,6 +34,7 @@ body {
 }
 
 .burger-button .material-icons {
+    padding-top: 10px;
     font-size: 35px; /* Tamaño del ícono */
     color: #fff; /* Color del ícono */
 }
