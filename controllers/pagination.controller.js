@@ -1,6 +1,6 @@
 /**
  * @file Controlador genérico para paginación en múltiples vistas y modelos
- * @module controllers/paginacion.controller
+ * @module controllers/pagination.controller
  */
 
 /**
@@ -122,4 +122,4 @@ const PaginationController = {
     }
   };
   
-  module.exports = PaginacionController;
+  module.exports = PaginationController;

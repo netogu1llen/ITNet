@@ -1,0 +1,23 @@
+<!-- partials/pagination.ejs -->
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+    <a href="?page=<%= pagination.currentPage - 1 %>" 
+       class="pagination-previous <%= pagination.currentPage === 1 ? 'is-disabled' : '' %>">
+      Anterior
+    </a>
+    <a href="?page=<%= pagination.currentPage + 1 %>"
+       class="pagination-next <%= pagination.currentPage === pagination.totalPages ? 'is-disabled' : '' %>">
+      Siguiente
+    </a>
+    
+    <ul class="pagination-list">
+      <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+        <li>
+          <a href="?page=<%= i %>" 
+             class="pagination-link <%= pagination.currentPage === i ? 'is-current' : '' %>"
+             aria-label="Página <%= i %>">
+            <%= i %>
+          </a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
