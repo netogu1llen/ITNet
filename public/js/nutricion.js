@@ -35,7 +35,8 @@ $(document).ready(function () {
       }
     ]
   });
-  // Crear y agregar el logo dentro del wrapper
+  //ADICIONALES A LA TABLA//
+
   const logo = $('<img src="/images/manzana.png" alt="Logo" class="dt-logo">');
   const dtTopBar = $('<div class="dt-top-bar"></div>');
 
@@ -46,4 +47,10 @@ $(document).ready(function () {
 
   // Insertar la barra justo dentro del wrapper, antes de la tabla
   $('.dataTables_wrapper').prepend(dtTopBar);
+  
+  //Botones
+  const btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar paciente</button>');
+  dtTopBar.append(btnRegistrar);
+
+
 });
