@@ -329,3 +329,96 @@ body {
   .download-button:hover {
     background-color: #5185c0;
   }
+
+
+/* ==================== ESTILOS DE LA TABLA ==================== */
+/* DataTables CSS Bulma */
+
+/* Estilos para la barra de búsqueda */  
+.dataTables_filter {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    position: relative;
+}  
+
+.dataTables_filter  label {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+font-weight: 500;
+}
+
+.dataTables_filter input {
+border: 2px solid #ccc;
+border-radius: 10px;
+padding: 6px 12px;
+background-color: #f9f9f9;
+}
+
+.dataTables_length label{
+display : flex;
+align-items: center;
+gap:.5rem;
+font-weight: 500;
+    
+}
+/*Estilos arriba de la barra*/
+.dt-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dt-logo {
+  height: 40px;
+  width: auto;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*Inforamcion de arriba de los botones de paginación*/
+.dataTables_info {
+    margin-bottom: 1rem;
+    color: #555;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+/*-------------------------------------------------------------------------------------*/
+
+/*Botones de paginación*/
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+
+  background-color: #3b82f6;
+  border: 1px solid transparent;
+  color: white !important;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin: 0 3px;
+  font-size: 0.875rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background-color: #2563eb;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background-color: #2563eb;
+  font-weight: bold;
+}
+
+
+/*-------------------------------------------------------------------------------------*/
+/*Estilos tablas individuales*/
+
+/*Centrar el contenido de la tabla de nutrición*/
+#nutricionTable td,
+#nutricionTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+
