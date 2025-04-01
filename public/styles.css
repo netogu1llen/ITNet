@@ -39,6 +39,26 @@ body {
     color: #fff; /* Color del ícono */
 }
 
+/*Boton para guardar un formulario*/
+.button.is-save {
+    background-color: #013E5A;
+    color: white;
+  }
+  
+  .button.is-save:hover {
+    background-color: #002133;
+  }
+  /*Boton para cancelar el registro de un formulario*/
+  .button.is-cancel {
+    background-color: #d62828;
+    color: white;
+  }
+  
+  .button.is-cancel:hover {
+    background-color: #b91c1c;
+  }
+    
+
 /* Estilos para el menú desplegable */
 .menu ul {
     list-style-type: none;
@@ -329,3 +349,232 @@ body {
   .download-button:hover {
     background-color: #5185c0;
   }
+
+
+/* ==================== ESTILOS DE LA TABLA ==================== */
+/* DataTables CSS Bulma */
+
+/* Estilos para la barra de búsqueda */  
+.dataTables_filter {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    position: relative;
+}  
+
+.dataTables_filter  label {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+font-weight: 500;
+}
+
+.dataTables_filter input {
+border: 2px solid #ccc;
+border-radius: 10px;
+padding: 6px 12px;
+background-color: #f9f9f9;
+}
+
+.dataTables_length label{
+display : flex;
+align-items: center;
+gap:.5rem;
+font-weight: 500;
+    
+}
+/*Estilos arriba de la barra*/
+.dt-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dt-logo {
+  height: 40px;
+  width: auto;
+}
+
+/*-------------------------------------------------------------------------------------*/
+
+/*Inforamcion de arriba de los botones de paginación*/
+.dataTables_info {
+    margin-bottom: 1rem;
+    color: #555;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+/*-------------------------------------------------------------------------------------*/
+
+/*Botones de paginación*/
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+
+  background-color: #3b82f6;
+  border: 1px solid transparent;
+  color: white !important;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin: 0 3px;
+  font-size: 0.875rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background-color: #2563eb;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background-color: #2563eb;
+  font-weight: bold;
+}
+
+
+/*-------------------------------------------------------------------------------------*/
+/*Estilos tablas individuales*/
+
+/*Centrar el contenido de la tabla de nutrición*/
+#nutricionTable td,
+#nutricionTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+
+/* ==================== CONTENEDORES PARA FORMULARIOS ==================== */
+
+
+/*Contenedor gris que contiene formularios*/
+.gray-container {
+    width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
+    margin: 20px 20px 20px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
+    padding: 20px;
+    text-align: left;
+    background-color: #F2F2F2; /* Fondo gris claro */
+    border-radius: 7px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
+    justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
+}
+/*Contenedor para el titulo del tipo de documento que se esta usando(es el que tiene el icono a la izquierda)*/
+.head-container {
+    width: 100%; /* Ocupa todo el ancho */
+    display: flex;
+    justify-content: space-between; /* Alinea título y botones */
+    margin-bottom: 20px; /* Añade un margen inferior para separar de los otros contenedores */
+}
+/*Formato del titulo anterior*/
+.head-title {
+    display: flex;
+    align-items: center; /* Alinea el icono y el título verticalmente */
+    font-size: 32px;
+    font-weight: Medium;
+    color: #000;
+}
+/*Formato para las letras pequeñas del formulario de color negro*/
+.basic-black{
+    display: flex;
+    align-items: center; /* Alinea el icono y el título verticalmente */
+    font-size: 14px;
+    font-weight: Bold;
+    color: #000;
+}
+/*Formato para las letras pequeñas del formulario de color gris*/
+.basic-gray{
+    display: flex;
+    align-items: center; /* Alinea el icono y el título verticalmente */
+    font-size: 14px;
+    font-weight: Bold;
+    color: #595959;
+}
+/*Formato para el icono del encabezado*/
+.head-title img {
+    width: 30px; /* Ajusta el tamaño del icono */
+    height: 30px;
+    margin-right: 10px; /* Espacio entre el icono y el texto */
+}
+/*Formato del contenedor para los botones. Este contenedor te permite poner los botones hasta la derecha y en fil*/
+.buttons-container {
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+}
+/*Contenedor blanco que ocupa la mitad del espacio disponible a lo ancho*/
+.half-white-container {
+    display: inline-block;
+    width: 48%;
+    margin: 10px 0;
+    padding: 20px;
+    text-align: center;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ddd; /* Un pequeño borde para diferenciarlo */
+}
+/*Contenedor blanco que ocupa todo el espacio disponible a lo ancho*/
+.full-white-container{
+    width: 98%;
+    margin: 10px 0;
+    padding: 20px;
+    text-align: center;
+    background-color: #FFFFFF; /* Fondo blanco */
+    border-radius: 7px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ddd; /* Un pequeño borde para diferenciarlo */
+}
+/*Formato para los campos llenables de los formularios.*/
+/*Para hacer cambiar el numero de filas, se debe poner tal que asi: <textarea name="objetivo" required rows="4" required></textarea> */
+.multirow-form-container textarea {
+  width: 100%; /* Ocupa todo el ancho */
+  padding: 10px; /* Espaciado interno */
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 10px; /* Bordes redondeados */
+  box-sizing: border-box; /* Evita que el padding aumente el tamaño */
+  font-size: 14px; /* Tamaño del texto */
+  resize: none; /* Evita que el usuario cambie el tamaño del textarea */
+}
+/*Contenedor blanco que se usa para la dupla de un formulario, ejemplo: Nombre: Jaime. Es flexible */
+.element-container{
+    flex: 1;
+    min-width: 120px;
+    padding: 10px;
+    text-align: left;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+    /*box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Le quitamos el sombreado por el momento*/
+    /*border: 1px solid #ddd; /* Le quitamos el borde por el momento*/
+}
+/*Contenedor gris que se usa para los titulos de la seccion, ejemplo: 1.Psicologico, IX.Diagnostico y evolucion del paciente*/
+.element-container-gray {
+  width: 100%; /* Ocupa todo el ancho */
+  flex: 1;
+  min-width: 120px;
+  padding: 10px;
+  text-align: center;
+  background-color: #F2F2F2;
+  border-radius: 7px;
+    /*box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Le quitamos el sombreado por el momento*/
+    /*border: 1px solid #ddd; /* Le quitamos el borde por el momento*/
+}
+/*Contenedor blanco para poner los elementos del formulario en formato de filas*/
+/*Distribuye los elementos que contiene de forma uniforme, de modo que mantiene las mismas dimensiones sin importar si tiene 2 o 5 elementos*/
+/*ejemplo: Nombre: Jaime, Apellido Paterno: Trujillo, Apellido Materno: Ruiz*/
+.multirow-container {
+    display: flex;
+    justify-content: space-between; /* Distribuye los elementos uniformemente */
+    gap: 10px; /* Espaciado entre los elementos */
+}
+
+.multirow-table {
+    width: 100%; /* Ocupará todo el ancho disponible */
+    border-collapse: collapse; /* Unir bordes de celdas */
+  }
+.multirow-table th,
+.multirow-table td {
+  text-align: center;
+  border: 1px solid #e0e0e0;
+}

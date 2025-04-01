@@ -1,0 +1,171 @@
+<%- include('partials/head') %>
+<body>
+    <div class="gray-container">
+        <div class="head-container">
+            <div class="head-title">
+                <img src="/images/icono_psicologia.png" alt="Icono Salud">
+                SEGUIMIENTO PSICOLÓGICO
+            </div>
+              <div class="buttons-container">
+                <button class="button is-save" >
+                    Guardar
+                </button>
+                <button class="button is-cancel">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+            <div class="full-white-container">  
+                <div class="multirow-container">
+                    <div class="element-container">
+                        <div class="basic-black"> Larisa Jimenez Aldemar</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-black"> Neto Gael Asturiano</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-black"> 16:45</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-black"> Fecha: 01 de marzo de 2025</div>
+                    </div>
+                </div>
+                <hr>
+                <div class="full-white-container">
+                <div class="element-container-gray">
+                    <div class="multirow-container">
+                        <div class="basic-black" > 1.SEGUIMIENTO PSICOLÓGICO</div>
+                    </div>
+                </div>
+                <div>
+                <div class="multirow-container">
+                    <div class="element-container">
+                        <div class="basic-gray"> >Nombre</div>
+                        <br>
+                        <div class="basic-black">Oscar Javier Villeda Arteaga</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Fecha de nacimiento</div>
+                        <br>
+                        <div class="basic-black">01 de marzo de 2025</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Nombre de la escuela</div>
+                        <br>
+                        <div class="basic-black">Instituto Juarez</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Direccion</div>
+                        <br>
+                        <div class="basic-black">Montes del Prado</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Lateralidad</div>
+                        <br>
+                        <div class="basic-black">Pablo Picapiedra</div>
+                    </div>
+                </div>
+                <div class="multirow-container">
+                    <div class="element-container">
+                        <div class="basic-gray"> >Edad cronológica</div>
+                        <br>
+                        <div class="basic-black">48 años</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Dirección</div>
+                        <br>
+                        <div class="basic-black">Montes del prado</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Estatura</div>
+                        <br>
+                        <div class="basic-black">1.57</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Nombre del profesor</div>
+                        <br>
+                        <div class="basic-black">Pablo Picapiedra</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Grado que cursa</div>
+                        <br>
+                        <div class="basic-black">6 de primaria</div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Peso</div>
+                        <br>
+                        <div class="basic-black">50kg</div>
+                    </div>
+                </div>
+                <br>
+                <div class="basic-gray">Objetivo de la sesion:</div>
+                <div class="multirow-form-container">
+                    <textarea name="objetivo" required rows="4" required></textarea>
+                </div>
+                <div class="basic-gray">Justificacion de la sesion:</div>
+                <div class="multirow-form-container">
+                    <textarea name="objetivo" required rows="4" required></textarea>
+                </div>
+                <table class="multirow-table">
+                    <thead>
+                        <tr>
+                            <th>Actividad</th>
+                            <th>Tiempo</th>
+                            <th>Metodología</th>
+                            <th>Objetivo</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table">
+                        <tr>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="actividad" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="tiempo" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="metodologia" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="objetivoActividad" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="observaciones" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <button id="btn-agregar-fila" class="button is-save">
+                    ＋
+                </button>
+
+                <div class="basic-gray">Analisis psicológico:</div>
+                <div class="multirow-form-container">
+                    <textarea name="objetivo" required rows="4" required></textarea>
+                </div>
+                <div class="basic-gray">Recomendaciones:</div>
+                <div class="multirow-form-container">
+                    <textarea name="objetivo" required rows="4" required></textarea>
+                </div>
+                <div class="basic-gray">Bitácora de sesión:</div>
+                <div class="multirow-form-container">
+                    <textarea name="objetivo" required rows="4" required></textarea>
+                </div>
+            </div>
+            </div>
+    </div>
+    <script src="/js/psicologia.js"></script>
+</body>
+</html>
