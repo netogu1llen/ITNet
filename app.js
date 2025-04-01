@@ -52,6 +52,10 @@ app.use((req, res, next) => {
 const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
 
+// Rutas de psicologia
+const psicologiaRoutes = require('./routes/psicologia.routes');
+app.use('/psicologia', psicologiaRoutes);
+
 // Rutas de nutrición
 const nutricionRoutes = require('./routes/nutricion.routes');
 app.use('/nutricion', nutricionRoutes);
