@@ -21,7 +21,9 @@
     "nodemon": "^3.1.9"
   },
   "dependencies": {
+    "aws": "^0.0.3-2",
     "aws-sdk": "^2.1692.0",
+    "bulma": "^1.0.3",
     "compression": "^1.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

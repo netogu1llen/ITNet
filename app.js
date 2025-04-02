@@ -49,13 +49,26 @@ app.use((req, res, next) => {
 });
 
 // Rutas de usuario
-const usuarioRoutes = require('./routes/usuario.routes.js');
+const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
 
-// Rutas principales
-const mainRoutes = require('./routes/main.routes.js');
+// Rutas de nutrición
+const nutricionRoutes = require('./routes/nutricion.routes');
+app.use('/nutricion', nutricionRoutes);
+
+// Rutas de educación
+const educacionRoutes = require('./routes/educacion.routes');
+app.use('/educacion', educacionRoutes);
+
+// Rutas principaless
+const mainRoutes = require('./routes/main.routes');
 app.use('/', mainRoutes);
 
+app.use((req, res, next) => {
+    res.setHeader('Content-Type', 'text/css');
+    res.setHeader('Content-Type', 'application/javascript');
+    next();
+  });
 
 // Manejo de errores 404 (Página no encontrada)
 app.use((req, res, next) => {
