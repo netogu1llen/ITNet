@@ -52,11 +52,20 @@ const mockData = [
   ];
 
   const boletas_mockData = [
-    { id: 1, periodo: 'Enero 2024 - Marzo 2024', grado: 1, nivelEscolar: 'Primaria' },
-    { id: 2, periodo: 'Abril 2024 - Junio 2024', grado: 2, nivelEscolar: 'Primaria' },
-    { id: 3, periodo: 'Julio 2024 - Septiembre 2024', grado: 3, nivelEscolar: 'Primaria' },
-    { id: 4, periodo: 'Enero 2024 - Marzo 2024', grado: 4, nivelEscolar: 'Primaria' },
-    { id: 5, periodo: 'Abril 2024 - Junio 2024', grado: 5, nivelEscolar: 'Primaria' }
+    { id: 1, periodo: 'Enero 2024 - Marzo 2024', promedio: 9.5, grado: 1, nivelEscolar: 'Primaria' },
+    { id: 2, periodo: 'Abril 2024 - Junio 2024', promedio: 7.2, grado: 2, nivelEscolar: 'Primaria' },
+    { id: 3, periodo: 'Julio 2024 - Septiembre 2024', promedio: 9.2, grado: 3, nivelEscolar: 'Primaria' },
+    { id: 4, periodo: 'Enero 2024 - Marzo 2024', promedio: 7.9, grado: 4, nivelEscolar: 'Primaria' },
+    { id: 5, periodo: 'Abril 2024 - Junio 2024', promedio: 8.7, grado: 5, nivelEscolar: 'Primaria' }
+  ];
+
+  const materias_mockData = [
+    { id: 1, materia: 'Español', grado: 1, nivelEscolar: 'Primaria'},
+    { id: 2, materia: 'Matemáticas', grado: 3, nivelEscolar: 'Secundaria'},
+    { id: 3, materia: 'Historia', grado: 6, nivelEscolar: 'Primaria'},
+    { id: 4, materia: 'Algébra', grado: 2, nivelEscolar: 'Preparatoria'},
+    { id: 5, materia: 'Inglés', grado: 5, nivelEscolar: 'Primaria'},
+    
   ];
     
     function getAllAlumnos() {
@@ -66,8 +75,13 @@ const mockData = [
     function getAllBoletas() {
         return boletas_mockData;
     }
+
+    function getAllMaterias() {
+        return materias_mockData;
+    }
     
     module.exports = {
         getAllAlumnos,
         getAllBoletas,
+        getAllMaterias,
     };
