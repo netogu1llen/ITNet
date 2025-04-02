@@ -4,6 +4,7 @@ const controller = require('../controllers/educacion.controller');
 
 router.get('/', controller.renderEducacionView);
 router.get('/data', controller.getEducacionData);
-
+router.get('/boletas', controller.renderBoletasView)
+router.get('/boletas/data', controller.getBoletasData);
 
 module.exports = router;

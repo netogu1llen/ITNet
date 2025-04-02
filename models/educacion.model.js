@@ -50,12 +50,24 @@ const mockData = [
     { id: 49, nombre: 'Pedro Cordero', grado: 4, nivelEscolar: 'Preparatoria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
     { id: 50, nombre: 'Abril Castañeda', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Abril 2025 - Junio 2025' }
   ];
+
+  const boletas_mockData = [
+    { id: 1, periodo: 'Enero 2024 - Marzo 2024', grado: 1, nivelEscolar: 'Primaria' },
+    { id: 2, periodo: 'Abril 2024 - Junio 2024', grado: 2, nivelEscolar: 'Primaria' },
+    { id: 3, periodo: 'Julio 2024 - Septiembre 2024', grado: 3, nivelEscolar: 'Primaria' },
+    { id: 4, periodo: 'Enero 2024 - Marzo 2024', grado: 4, nivelEscolar: 'Primaria' },
+    { id: 5, periodo: 'Abril 2024 - Junio 2024', grado: 5, nivelEscolar: 'Primaria' }
+  ];
     
     function getAllAlumnos() {
         return mockData;
     }
-        
+    
+    function getAllBoletas() {
+        return boletas_mockData;
+    }
+    
     module.exports = {
         getAllAlumnos,
+        getAllBoletas,
     };
-    
