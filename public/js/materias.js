@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    const table = $('#boletasTable').DataTable({
+    const table = $('#materiasTable').DataTable({
       language: {
         info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
         infoEmpty: "No hay registros disponibles",
@@ -9,18 +9,11 @@ $(document).ready(function () {
           next: "Siguiente"
         },
         lengthMenu: "Mostrar _MENU_ registros por página",
-        search: "Buscar usuario:"
+        search: "Buscar Materia:"
       },
-      ajax: '/educacion/boletas/data',
+      ajax: '/educacion/materias/data',
       columns: [
-        { data: 'periodo' },
-        {
-            data: null,
-            render: function () {
-              return '<button class="button is-small is-light">⬇️</button>';
-            }
-          },
-        { data: 'promedio'},
+        { data: 'materia' },
         { data: 'grado' },
         { data: 'nivelEscolar' },
         {
@@ -34,12 +27,12 @@ $(document).ready(function () {
             render: function () {
               return '<button class="button is-small is-danger">Eliminar</button>';
             }
-          }
+          },
       ]
     });
 
     //Adicionales de la tabla
-    const logo = $('<img src="/images/boletas.png" alt="Logo" class="dt-logo">');
+    const logo = $('<img src="/images/materias.png" alt="Logo" class="dt-logo">');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
 
     // Agregar logo y mover controles
@@ -51,9 +44,7 @@ $(document).ready(function () {
     $('.dataTables_wrapper').prepend(dtTopBar);
 
     //Botones
-    const btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
+    const btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar Materia</button>');
     dtTopBar.append(btnRegistrar);
-
-    const btnVer = $('<button class="button is-success is-small registrar-btn">Ver Boleta</button>');
-    dtTopBar.append(btnVer);
+    
 });

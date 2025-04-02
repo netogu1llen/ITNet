@@ -17,3 +17,12 @@ exports.renderBoletasView = (req, res) => {
     const data = Educacion.getAllBoletas();
     res.json({ data });
   };
+ 
+  exports.renderMateriasView = (req, res) => {
+    res.render('materias');
+  };
+  
+  exports.getMateriasData = (req, res) => {
+    const data = Educacion.getAllMaterias();
+    res.json({ data });
+  };
