@@ -49,4 +49,10 @@ $(document).ready(function () {
      // Insertar la barra justo dentro del wrapper, antes de la tabla
     $('.dataTables_wrapper').prepend(dtTopBar);
 
+    //Botones
+    const btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
+    dtTopBar.append(btnRegistrar);
+    
+    const btnVer = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
+    dtTopBar.append(btnVer);
 });
