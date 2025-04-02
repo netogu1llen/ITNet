@@ -1,0 +1,61 @@
+const mockData = [
+    { id: 1, nombre: 'Jonathan Dario Guillen', grado: 3, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 2, nombre: 'Camila Rojas', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 3, nombre: 'Luis Ruiz', grado: 6, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 4, nombre: 'Sofía González', grado: 1, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 5, nombre: 'Carlos Martínez', grado: 4, nivelEscolar: 'Preparatoria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 6, nombre: 'Andrea López', grado: 2, nivelEscolar: 'Secundaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 7, nombre: 'Mariana Torres', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 8, nombre: 'David Herrera', grado: 3, nivelEscolar: 'Secundaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 9, nombre: 'Alejandro Castillo', grado: 4, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 10, nombre: 'Isabela Sánchez', grado: 6, nivelEscolar: 'Primaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 11, nombre: 'Jorge Ramírez', grado: 1, nivelEscolar: 'Secundaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 12, nombre: 'Daniela Fernández', grado: 2, nivelEscolar: 'Preparatoria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 13, nombre: 'Fernando Vega', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 14, nombre: 'Valentina Romero', grado: 3, nivelEscolar: 'Secundaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 15, nombre: 'Sebastián Mendoza', grado: 6, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 16, nombre: 'Natalia Ortega', grado: 2, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 17, nombre: 'Iván Morales', grado: 4, nivelEscolar: 'Preparatoria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 18, nombre: 'Renata Jiménez', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 19, nombre: 'Andrés Navarro', grado: 1, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 20, nombre: 'Lucía Delgado', grado: 6, nivelEscolar: 'Primaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 21, nombre: 'Mateo Silva', grado: 2, nivelEscolar: 'Secundaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 22, nombre: 'Julieta Cabrera', grado: 3, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 23, nombre: 'Tomás Ríos', grado: 4, nivelEscolar: 'Preparatoria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 24, nombre: 'Emma Salazar', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 25, nombre: 'Santiago Peña', grado: 1, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 26, nombre: 'Mía Estrada', grado: 3, nivelEscolar: 'Secundaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 27, nombre: 'Gabriel Aguirre', grado: 6, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 28, nombre: 'Paula Núñez', grado: 2, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 29, nombre: 'Elías Guerrero', grado: 4, nivelEscolar: 'Preparatoria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 30, nombre: 'Ximena Herrera', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 31, nombre: 'Ángel Flores', grado: 6, nivelEscolar: 'Primaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 32, nombre: 'Martina Vargas', grado: 3, nivelEscolar: 'Secundaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 33, nombre: 'Emiliano Ríos', grado: 2, nivelEscolar: 'Preparatoria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 34, nombre: 'Laura Pineda', grado: 1, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 35, nombre: 'Benjamín Soto', grado: 4, nivelEscolar: 'Primaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 36, nombre: 'Valeria Muñoz', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 37, nombre: 'Diego Carrillo', grado: 3, nivelEscolar: 'Secundaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 38, nombre: 'Antonella Lozano', grado: 2, nivelEscolar: 'Preparatoria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 39, nombre: 'Facundo Cárdenas', grado: 6, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 40, nombre: 'Bianca Zamora', grado: 4, nivelEscolar: 'Primaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 41, nombre: 'Thiago Medina', grado: 1, nivelEscolar: 'Secundaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 42, nombre: 'Florencia Rangel', grado: 2, nivelEscolar: 'Preparatoria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 43, nombre: 'Agustín Duarte', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 44, nombre: 'Alma Espinoza', grado: 3, nivelEscolar: 'Secundaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 45, nombre: 'Maximiliano Ponce', grado: 4, nivelEscolar: 'Primaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 46, nombre: 'Zoe Acosta', grado: 6, nivelEscolar: 'Primaria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 47, nombre: 'Bruno Molina', grado: 2, nivelEscolar: 'Secundaria', periodoEscolar: 'Abril 2025 - Junio 2025' },
+    { id: 48, nombre: 'Juliana Fuentes', grado: 1, nivelEscolar: 'Secundaria', periodoEscolar: 'Julio 2025 - Septiembre 2025' },
+    { id: 49, nombre: 'Pedro Cordero', grado: 4, nivelEscolar: 'Preparatoria', periodoEscolar: 'Enero 2025 - Marzo 2025' },
+    { id: 50, nombre: 'Abril Castañeda', grado: 5, nivelEscolar: 'Primaria', periodoEscolar: 'Abril 2025 - Junio 2025' }
+  ];
+    
+    function getAllAlumnos() {
+        return mockData;
+    }
+        
+    module.exports = {
+        getAllAlumnos,
+    };
+    

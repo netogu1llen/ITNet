@@ -56,6 +56,9 @@ app.use('/usuario', usuarioRoutes);
 const nutricionRoutes = require('./routes/nutricion.routes');
 app.use('/nutricion', nutricionRoutes);
 
+// Rutas de educación
+const educacionRoutes = require('./routes/educacion.routes');
+app.use('/educacion', educacionRoutes);
 
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');
