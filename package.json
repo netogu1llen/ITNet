@@ -33,6 +33,7 @@
     "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
     "morgan": "^1.10.0",
-    "pdfkit": "^0.16.0"
+    "pdfkit": "^0.16.0",
+    "sweetalert2": "^11.17.2"
   }
 }
