@@ -441,6 +441,13 @@ font-weight: 500;
   vertical-align: middle;
 }
 
+/*Centrar el contenido de la tabla de alumnos*/
+#alumnosTable td,
+#alumnosTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+
 
 
 /* ==================== CONTENEDORES PARA FORMULARIOS ==================== */

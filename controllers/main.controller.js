@@ -16,4 +16,3 @@ response.render('main/pacientes');
 exports.getTrabajadores = (request, response) => {
 response.render('main/trabajadores');
 };
-  
