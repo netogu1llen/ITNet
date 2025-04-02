@@ -1,19 +1,44 @@
 const Seguimiento = require('../models/psicologia.model');
 
-async function getSeguimiento(req, res) {
+const getSeguimiento = async (req, res) => {
     try {
         const idExpediente = req.params.id;
+        console.log('idExpediente:', idExpediente);
 
-        // Obtener todos los datos ya guardados de dos tablas
         const objetivos = await Seguimiento.getObjetivosByExpediente(idExpediente);
         const seguimiento = await Seguimiento.getSeguimientoByExpediente(idExpediente);
-        
-        res.render('editarSegPsico', {objetivos, seguimiento });
+
+        if (objetivos.length === 0 || seguimiento.length === 0) {
+            console.error('No se encontraron datos');
+            return res.status(404).send('No se encontraron datos');
+        }
+
+        res.render('editarSegPsico', { objetivos, seguimiento });
 
     } catch (error) {
         console.error('Error al obtener la información:', error.message);
         res.status(500).send('Error al obtener la información');
     }
-}
+};
 
-module.exports = {getSeguimiento};
+
+const actualizarSeguimiento = async (req, res) => {
+    try {
+        const idExpediente = req.params.id;
+        const { objetivo, justificacion, actividad, tiempo, metodologia, objetivoActividad, observaciones, analisis, recomendaciones, bitacora } = req.body;
+
+        await Seguimiento.actualizarSeguimiento(idExpediente, {objetivo, justificacion, analisis, recomendaciones, bitacora});
+
+        actividad.forEach(async (act, i) => {
+            await Seguimiento.actualizarObjetivo(idExpediente, {actividad: act, tiempo: tiempo[i], metodologia: metodologia[i], objetivo: objetivoActividad[i], observaciones: observaciones[i]});
+        });
+
+        res.redirect(`/psicologia/${idExpediente}`);
+        
+    } catch (error) {
+        console.error('Error al actualizar:', error.message);
+        res.status(500).send('Error al actualizar');
+    }
+};
+
+module.exports = { getSeguimiento, actualizarSeguimiento };

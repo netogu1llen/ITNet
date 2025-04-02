@@ -7,10 +7,12 @@
                 SEGUIMIENTO PSICOLÓGICO
             </div>
             <div class="buttons-container">
-                <button class="button is-save">Guardar</button>
+                <form action="/psicologia/seguimiento/editar/<%= seguimiento[0].idExpediente %>" method="POST">
+                    <button class="button is-save" type="submit">Guardar</button>
                 <button class="button is-cancel">Cancelar</button>
             </div>
         </div>
+
         <div class="full-white-container">  
             <div class="multirow-container">
                 <div class="element-container">
@@ -124,27 +126,27 @@
                         <tr>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="actividad" required rows="4"><%= obj.actividad %></textarea>
+                                    <textarea name="actividad[]" required rows="4"><%= obj.actividad %></textarea>
                                 </div>
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="tiempo" required rows="4"><%= obj.tiempo %></textarea>
+                                    <textarea name="tiempo[]" required rows="4"><%= obj.tiempo %></textarea>
                                 </div>
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="metodologia" required rows="4"><%= obj.metodologia %></textarea>
+                                    <textarea name="metodologia[]" required rows="4"><%= obj.metodologia %></textarea>
                                 </div>
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="objetivoActividad" required rows="4"><%= obj.objetivo %></textarea>
+                                    <textarea name="objetivoActividad[]" required rows="4"><%= obj.objetivo %></textarea>
                                 </div>
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="observaciones" required rows="4"><%= obj.observaciones %></textarea>
+                                    <textarea name="observaciones[]" required rows="4"><%= obj.observaciones %></textarea>
                                 </div>
                             </td>
                         </tr>
@@ -172,6 +174,7 @@
                     </div>
                 <% } %>                    
             </div>
+        </form>
         </div>
     </div>
     <script src="/js/psicologia.js"></script>
