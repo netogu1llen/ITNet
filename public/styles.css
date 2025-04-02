@@ -329,27 +329,12 @@ body {
   .download-button:hover {
     background-color: #5185c0;
   }
-  body {
-  font-family: Arial, sans-serif;
-}
-
-.container {
-  width: 80%;
-  margin: 40px auto;
-  text-align: center;
-}
 
 .titulo-principal {
   font-size: 24px;
   margin-bottom: 20px;
 }
 
-.formulario {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-s
 .titulo-campo {
   font-size: 18px;
   margin-bottom: 10px;
@@ -368,21 +353,6 @@ s
 .input-campo::placeholder {
   color: #ccc;
 }
-
-/* CSS para pacientes */
-body {
-    font-family: 'Encode Sans', sans-serif;
-    background-color: #fff;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    max-width: 900px;
-    margin: auto;
-    padding: 40px 20px;
-    text-align: center;
-  }
   
   h1 {
     font-size: 28px;
@@ -600,15 +570,6 @@ body {
   gap: 8px;
   font-family: 'Encode Sans', sans-serif;
   font-weight: 500;
-}
-
-/* Estilos para la paginación */
-.entrevista-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 40px;
-  font-family: 'Encode Sans', sans-serif;
 }
 
 .entrevista-page-btn {
