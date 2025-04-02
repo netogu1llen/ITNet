@@ -2,225 +2,262 @@
 
 <body>
   <main clas="container">
-
+    <!-- Página 1 - Todo tu contenido actual -->
+    <div class="entrevista-pagina">
       <div class="box" style="background-color: #f2f2f2;">
         <h1 class="has-text-black pl-6"><img src="/images/salud.png" alt="Salud Icon" style="height: 30px;">  Historia Clínica</h1>
-      <div class="pl-6" >
-        <div class="box" style="background-color: #ffffff; ">
-          <div class="columns">
-            <div class="column has-text-black has-text-weight-semibold">Larisa Jiménez</div>
-            <div class="column has-text-black has-text-weight-semibold">No. Expediente: 34</div>
-            <div class="column has-text-black has-text-weight-semibold">16:45</div>
-            <div class="column has-text-black has-text-weight-semibold">Fecha: 01 de marzo de 2025</div>
-          </div>
-          <hr class="has-background-grey-lighter">
-          <!--Datos compemetarios -->
-          <!--PARTE UNO-->
-          <div class="columns">
-            <!--!COLUMNA IZQUIERDA-->
-            <div class="column pr-6">
-              <div class="columns">
-                <div class="column" style="border:2px">Nombre Completo<input class="input" type="text"/></div>
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff; ">
+            <div class="columns">
+              <div class="column has-text-black has-text-weight-semibold">Larisa Jiménez</div>
+              <div class="column has-text-black has-text-weight-semibold">No. Expediente: 34</div>
+              <div class="column has-text-black has-text-weight-semibold">16:45</div>
+              <div class="column has-text-black has-text-weight-semibold">Fecha: 01 de marzo de 2025</div>
+            </div>
+            <hr class="has-background-grey-lighter">
+            
+            <!-- PARTE UNO -->
+            <div class="columns">
+              <!-- COLUMNA IZQUIERDA -->
+              <div class="column pr-6">
+                <div class="columns">
+                  <div class="column" style="border:2px">Nombre Completo<input class="input" type="text"/></div>
+                </div>
+                <div class="columns">
+                  <div class="column">Escuela<input class="input" type="text"/></div>
+                  <div class="column"> Sexo
+                    <select class="input">
+                      <option value="" disabled selected>Sexo</option>
+                      <option value="value1">Masculino</option>
+                      <option value="value2">Femenino</option>
+                      <option value="value3">Otro</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="columns">
+                  <div class="column">Fecha de nacimiento<input class="input" type="date"/></div>
+                  <div class="column">Edad<input class="input" type="number"/></div>
+                  <div class="column">Grado<input class="input" type="number"/></div>
+                </div>
               </div>
-              <div class="columns">
-                <div class="column">Escuela<input class="input" type="text"/></div>
-                <div class="column">Sexo<input class="input" type="text"/></div> <!--!CAMBIAR POR UN DROPDOWN-->
-              </div>
-              <div class="columns">
-                <div class="column">Fecha de nacimiento<input class="input" type="text"/></div>
-                <div class="column">Edad<input class="input" type="text"/></div> <!--!CAMBIAR POR UN DROPDOWN-->
-                <div class="column">Grado<input class="input" type="text"/></div> <!--!CAMBIAR POR UN DROPDOWN-->
+              
+              <!-- COLUMNA DERECHA -->
+              <div class="column is-half pl-6 is-align-items-end">
+                <div class="columns">
+                  <div class="column is-half">Nombre del responsable<input class="input" type="text"/></div>
+                  <div class="column is-one-quarter">Edad<input class="input" type="int"/></div>
+                </div>
+                <div class="columns">
+                  <div class="column">Dirección<input class="input" type="text"/></div>
+                  <div class="column">Teléfono<input class="input" type="text"/></div>
+                  <div class="column">Estado Civil<input class="input" type="text"/></div>
+                </div>
+                <div class="columns">
+                  <div class="column">Correo electróico<input class="input" type="text"/></div>
+                  <div class="column">Parentesco<input class="input" type="text"/></div>
+                  <div class="column">Ocupación<input class="input" type="text"/></div>
+                </div>
               </div>
             </div>
-            <!--COLUMNA DERECHA-->
-            <div class="column is-half pl-6 is-align-items-end">
-              <div class="columns">
-                <div class="column is-half">Nombre del responsable<input class="input" type="text"/></div>
-                <div class="column is-one-quarter">Edad<input class="input" type="text"/></div> <!--!CAMBIAR POR UN DROPDOWN-->
-              </div>
-              <div class="columns">
-                <div class="column">Dirección<input class="input" type="text"/></div>
-                <div class="column">Teléfono<input class="input" type="text"/></div>
-                <div class="column">Estado Civil<input class="input" type="text"/></div> <!--!CAMBIAR POR UN DROPDOWN-->
-              </div>
-              <div class="columns">
-                <div class="column">Correo electróico<input class="input" type="text"/></div>
-                <div class="column">Parentesco<input class="input" type="text"/></div>
-                <div class="column">Ocupación<input class="input" type="text"/></div>
-              </div>
-            </div>
-          </div>
-          <!--PARTE DOS-->
-          <!--Tabla 1 -->
-          <div class="container">
-            <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+            
+            <!-- PARTE DOS -->
+            <div class="container">
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
-                    <tr>
-                        <th colspan="3" class="has-text-black" style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color:#f2f2f2; border-top-left-radius: 10px; border-top-right-radius: 10px;">l. ANTECEDENTES HEREDOFAMILIARES</th>
-                    </tr>
+                  <tr>
+                    <th colspan="3" class="has-text-black" style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color:#f2f2f2; border-top-left-radius: 10px; border-top-right-radius: 10px;">l. ANTECEDENTES HEREDOFAMILIARES</th>
+                  </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Diabetes</td>
+                  <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Diabetes</td>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Cáncer</td>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Dislipidemia</td>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Obesidad</td>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Anemia</td>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Hipertensión arterial</td>
+                    <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- PARTE TRES -->
+            <div class="columns">
+              <!-- COLUMNA IZQUIERDA -->
+              <div class="column is-half">
+                <div class="container">
+                  <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                    <thead>
+                      <tr>
+                        <th colspan="3" class="has-text-black" style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color:#f2f2f2; border-top-left-radius: 10px; border-top-right-radius: 10px;">ll. ANTECEDENTES PERSONALES</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Peso al nacer</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                            <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Cáncer</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Talla al nacer</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                            <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Dislipidemia</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de alimentación recibida</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                            <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Obesidad</td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">SDG</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                            <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
-                    </tr>
-                    <tr>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de parto</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Complicaciones durante el embarazo ¿Cuáles?</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- COLUMNA DERECHA -->
+              <div class="column">
+                <div class="container">
+                  <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                    <thead>
+                      <tr>
+                        <th colspan="3" class="has-text-black" style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color:#f2f2f2; border-top-left-radius: 10px; border-top-right-radius: 10px;">lll. ANTECEDENTES DE ALIMENTACIÓN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">tipo</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tiempo</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Edad de alimentación complementaria</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Alimentos introducidos el 1er año</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                        </td>
+                      </tr>
+                      <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Anemia</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                            <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
-                    </tr>
-                    <tr>
+                      </tr>
+                      <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Hipertensión arterial</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                            <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
-                    </tr>
-                </tbody>
-            </table>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-          <!--PARTE TRES-->
-          <div class="columns">
-            <!--COLUMNA IZQUIERDA-->
-            <div class="column is-half">
-              <div class="container">
-                <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
-                    <thead>
-                        <tr>
-                            <th colspan="3" class="has-text-black" style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color:#f2f2f2; border-top-left-radius: 10px; border-top-right-radius: 10px;">ll. ANTECEDENTES PERSONALES</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Peso al nacer</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Talla al nacer</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de alimentación recibida</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">SDG</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de parto</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Complicaciones durante el embarazo ¿Cuáles?</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-              </div>
-              </div>
-
-            <!--COLUMNA IZQUIERDA-->
-            <div class="column">
-              <div class="container">
-                <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
-                    <thead>
-                        <tr>
-                            <th colspan="3" class="has-text-black" style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color:#f2f2f2; border-top-left-radius: 10px; border-top-right-radius: 10px;">lll. ANTECEDENTES DE ALIMENTACIÓN</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">tipo</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tiempo</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Edad de alimentación complementaria</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Alimentos introducidos el 1er año</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Anemia</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Hipertensión arterial</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-              </div>  
-
-
-    
-
       </div>
     </div>
 
+    <!-- Página 2 -->
+    <div class="entrevista-pagina" style="display: none;">
+      <div class="box" style="background-color: #f2f2f2;">
+        <h1 class="has-text-black pl-6">Historia Clínica - Página 2</h1>
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff; min-height: 500px; display: flex; justify-content: center; align-items: center;">
+            <h2 class="title is-2">Contenido de la Página 2</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Página 3 -->
+    <div class="entrevista-pagina" style="display: none;">
+      <div class="box" style="background-color: #f2f2f2;">
+        <h1 class="has-text-black pl-6">Historia Clínica - Página 3</h1>
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff; min-height: 500px; display: flex; justify-content: center; align-items: center;">
+            <h2 class="title is-2">Contenido de la Página 3</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Página 4 -->
+    <div class="entrevista-pagina" style="display: none;">
+      <div class="box" style="background-color: #f2f2f2;">
+        <h1 class="has-text-black pl-6">Historia Clínica - Página 4</h1>
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff; min-height: 500px; display: flex; justify-content: center; align-items: center;">
+            <h2 class="title is-2">Contenido de la Página 4</h2>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Paginación -->
-    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-      <a class="pagination-previous">Previous</a>
-      <a class="pagination-next">Next page</a>
-      <ul class="pagination-list">
-          <li><a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a></li>
-          <li><a class="pagination-link" aria-label="Goto page 2">2</a></li>
-          <li><a class="pagination-link" aria-label="Goto page 3">3</a></li>
-      </ul>
-  </nav>
-
-
+    <div class="entrevista-pagination">
+      <%- include('partials/pagination', { totalPaginas: 4, paginaActual: 1 }) %>
+    </div>
   </main>
 </body>
 </html>
