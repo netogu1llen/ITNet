@@ -1,10 +1,19 @@
-const { request, response } = require("express");
+const Seguimiento = require('../models/psicologia.model');
 
+async function getSeguimiento(req, res) {
+    try {
+        const idExpediente = req.params.id;
 
-exports.get_registrar_seguimiento= (request, response, next) => {
-    response.render('registrarSeguimiento');
-};
+        // Obtener todos los datos ya guardados de dos tablas
+        const objetivos = await Seguimiento.getObjetivosByExpediente(idExpediente);
+        const seguimiento = await Seguimiento.getSeguimientoByExpediente(idExpediente);
+        
+        res.render('editarSegPsico', {objetivos, seguimiento });
 
-exports.getSeguimiento = (request, response) => {
-    response.render('editarSegPsico');
-};
+    } catch (error) {
+        console.error('Error al obtener la información:', error.message);
+        res.status(500).send('Error al obtener la información');
+    }
+}
+
+module.exports = {getSeguimiento};
