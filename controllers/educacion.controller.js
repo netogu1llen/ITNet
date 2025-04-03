@@ -32,3 +32,12 @@ exports.renderBoletasView = (req, res) => {
     const materias = Educacion.getAllMateriasReg();
     res.render('registrarBoleta', { materias });
   };
+
+exports.renderRegistrarMateriaView = (req, res) => {
+  res.render('registrarMateria');
+};
+
+exports.renderModificarMateriaView = (req, res) => {
+  res.render('modificarMateria');
+};
+  

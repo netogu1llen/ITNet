@@ -723,3 +723,33 @@ body {
 .boton button:hover {
   background-color: #275bb5;
 }
+
+
+/* ==================== Materias ==================== */
+
+.section.materia-page {
+  margin-left: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.materia-container {
+  max-width: 800px;
+  text-align: center;
+}
+
+.materia-icon {
+  width: 90px;
+  height: auto;
+}
+
+.materia-form .select {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.materia-form button {
+  margin-top: 40px;
+}
