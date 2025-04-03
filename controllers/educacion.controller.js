@@ -17,3 +17,9 @@ exports.renderBoletasView = (req, res) => {
     const data = Educacion.getAllBoletas();
     res.json({ data });
   };
+
+exports.renderRegistrarMateriaView = (req, res) => {
+  res.render('registrarMateria');
+};
+
+  

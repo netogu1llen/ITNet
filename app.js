@@ -60,6 +60,10 @@ app.use('/nutricion', nutricionRoutes);
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
 
+// Registrar materias
+const materiaRoutes = require('./routes/materia.routes');
+app.use('/materia', materiaRoutes);
+
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');
 app.use('/', mainRoutes);
