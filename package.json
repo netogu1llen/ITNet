@@ -33,6 +33,7 @@
     "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
     "morgan": "^1.10.0",
+    "mysql2": "^3.14.0",
     "pdfkit": "^0.16.0"
   }
 }
