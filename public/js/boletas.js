@@ -20,6 +20,7 @@ $(document).ready(function () {
               return '<button class="button is-small is-light">⬇️</button>';
             }
           },
+        { data: 'promedio'},
         { data: 'grado' },
         { data: 'nivelEscolar' },
         {
@@ -52,7 +53,36 @@ $(document).ready(function () {
     //Botones
     const btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
     dtTopBar.append(btnRegistrar);
-    
-    const btnVer = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
+
+    const btnVer = $('<button class="button is-success is-small registrar-btn">Ver Materias</button>');
     dtTopBar.append(btnVer);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tabla = document.getElementById('tablaMaterias');
+
+  document.querySelectorAll('.check-materia').forEach((checkbox) => {
+    checkbox.addEventListener('change', (e) => {
+      const materia = e.target.dataset.materia;
+
+      // Si está marcado, agregamos fila
+      if (e.target.checked) {
+        if (!tabla.querySelector(`tr[data-materia="${materia}"]`)) {
+          const fila = document.createElement('tr');
+          fila.setAttribute('data-materia', materia);
+          fila.innerHTML = `
+            <td>${materia}</td>
+            <td><input type="text" placeholder="0 - 10"></td>
+          `;
+          tabla.appendChild(fila);
+        }
+      } else {
+        // Si se desmarca, eliminamos fila
+        const fila = tabla.querySelector(`tr[data-materia="${materia}"]`);
+        if (fila) {
+          fila.remove();
+        }
+      }
+    });
+  });
 });

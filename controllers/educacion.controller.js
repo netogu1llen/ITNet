@@ -17,6 +17,21 @@ exports.renderBoletasView = (req, res) => {
     const data = Educacion.getAllBoletas();
     res.json({ data });
   };
+ 
+  exports.renderMateriasView = (req, res) => {
+    res.render('materias');
+  };
+  
+  exports.getMateriasData = (req, res) => {
+    const data = Educacion.getAllMaterias();
+    res.json({ data });
+  };
+
+
+  exports.renderRegistrarBoletaView = (req, res) => {
+    const materias = Educacion.getAllMateriasReg();
+    res.render('registrarBoleta', { materias });
+  };
 
 exports.renderRegistrarMateriaView = (req, res) => {
   res.render('registrarMateria');
