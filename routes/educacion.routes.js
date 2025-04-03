@@ -7,6 +7,6 @@ router.get('/data', controller.getEducacionData);
 router.get('/boletas', controller.renderBoletasView)
 router.get('/boletas/data', controller.getBoletasData);
 router.get('/registrar-materia', controller.renderRegistrarMateriaView);
-
+router.get('/modificar-materia', controller.renderModificarMateriaView);
 
 module.exports = router;

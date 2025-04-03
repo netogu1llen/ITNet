@@ -3,25 +3,18 @@
 
 <section class="section materia-page">
   <div class="container materia-container">
-    <!-- Ícono, título y botón cerrar -->
     <img src="/images/libro.png" alt="Icono libro" class="materia-icon">
     <h1 class="title is-3">Modificar Materia</h1>
 
-    <a href="/materia" class="button is-white" style="position: absolute; top: 0; right: 0;">✖</a>
-
-    <!-- Formulario -->
-    <form class="materia-form" method="POST" action="/materia/modificar">
-      <!-- Campo oculto con el ID -->
-      <input type="hidden" name="id" value="<%= materia.id %>">
-
+    <form class="materia-form" method="POST" action="/materia/Modificar">
       <div class="columns is-centered">
         <div class="column">
           <label class="basic-gray">Nombre de la materia</label>
-          <input class="input" type="text" name="nombreMateria" value="<%= materia.nombre %>" required>
+          <input class="input" type="text" name="nombreMateria" placeholder="Ej. Español" required>
         </div>
         <div class="column">
           <label class="basic-gray">Nivel escolar</label>
-          <input class="input" type="text" name="nivelEscolar" value="<%= materia.nivel %>" required>
+          <input class="input" type="text" name="nivelEscolar" placeholder="Ej. Secundaria" required>
         </div>
       </div>
 
@@ -29,18 +22,18 @@
         <label class="basic-gray">Grado</label>
         <div class="select is-fullwidth">
           <select name="grado" required>
-            <option value="1" <%= materia.grado === '1' ? 'selected' : '' %>>1°</option>
-            <option value="2" <%= materia.grado === '2' ? 'selected' : '' %>>2°</option>
-            <option value="3" <%= materia.grado === '3' ? 'selected' : '' %>>3°</option>
-            <option value="4" <%= materia.grado === '4' ? 'selected' : '' %>>4°</option>
-            <option value="5" <%= materia.grado === '5' ? 'selected' : '' %>>5°</option>
-            <option value="6" <%= materia.grado === '6' ? 'selected' : '' %>>6°</option>
+            <option value="" disabled selected>Selecciona un grado</option>
+            <option value="1">1°</option>
+            <option value="2">2°</option>
+            <option value="3">3°</option>
+            <option value="4">4°</option>
+            <option value="5">5°</option>
+            <option value="6">6°</option>
           </select>
         </div>
       </div>
 
-      <!-- Botón -->
-      <button type="submit" class="button is-save">Guardar Materia</button>
+      <button type="submit" class="button is-save">Guardar Cambios</button>
     </form>
   </div>
 </section>

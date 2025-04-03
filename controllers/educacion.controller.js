@@ -22,4 +22,7 @@ exports.renderRegistrarMateriaView = (req, res) => {
   res.render('registrarMateria');
 };
 
+exports.renderModificarMateriaView = (req, res) => {
+  res.render('modificarMateria');
+};
   
