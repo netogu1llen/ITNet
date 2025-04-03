@@ -67,6 +67,15 @@ const mockData = [
     { id: 5, materia: 'Inglés', grado: 5, nivelEscolar: 'Primaria'},
     
   ];
+
+  const regMateria_mockdata = [
+    { id: 1, materia: 'Español'},
+    { id: 1, materia: 'Matemáticas'},
+    { id: 1, materia: 'Historia'},
+    { id: 1, materia: 'Gegrafía'},
+    { id: 1, materia: 'Algebra'},
+    { id: 1, materia: 'Inglés'},
+  ];
     
     function getAllAlumnos() {
         return mockData;
@@ -79,9 +88,14 @@ const mockData = [
     function getAllMaterias() {
         return materias_mockData;
     }
+
+    function getAllMateriasReg() {
+        return regMateria_mockdata;
+    }
     
     module.exports = {
         getAllAlumnos,
         getAllBoletas,
         getAllMaterias,
+        getAllMateriasReg,
     };

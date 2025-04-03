@@ -26,3 +26,9 @@ exports.renderBoletasView = (req, res) => {
     const data = Educacion.getAllMaterias();
     res.json({ data });
   };
+
+
+  exports.renderRegistrarBoletaView = (req, res) => {
+    const materias = Educacion.getAllMateriasReg();
+    res.render('registrarBoleta', { materias });
+  };

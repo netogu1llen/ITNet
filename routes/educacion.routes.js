@@ -8,5 +8,6 @@ router.get('/boletas', controller.renderBoletasView)
 router.get('/boletas/data', controller.getBoletasData);
 router.get('/materias', controller.renderMateriasView);
 router.get('/materias/data', controller.getMateriasData);
+router.get('/registrarBoleta', controller.renderRegistrarBoletaView);
 
 module.exports = router;
