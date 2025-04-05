@@ -40,71 +40,53 @@
                 <div>
                 <div class="multirow-container">
                     <div class="element-container">
-                        <div class="basic-gray"> >Nombre</div>
+                        <div class="basic-gray"> >Nombre</div>                  
                         <br>
-                        <div class="basic-black">Oscar Javier Villeda Arteaga</div>
+                        <div class="basic-black">
+                            <%= datosGenerales.nombres %> <%= datosGenerales.apellidoP %> <%= datosGenerales.apellidoM %>
+                        </div>        
                     </div>
                     <div class="element-container">
                         <div class="basic-gray"> >Fecha de nacimiento</div>
                         <br>
-                        <div class="basic-black">01 de marzo de 2025</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Nombre de la escuela</div>
-                        <br>
-                        <div class="basic-black">Instituto Juarez</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Direccion</div>
-                        <br>
-                        <div class="basic-black">Montes del Prado</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Lateralidad</div>
-                        <br>
-                        <div class="basic-black">Pablo Picapiedra</div>
+                        <div class="basic-black"><%= datosGenerales.fechaNacimiento ? new Date(datosGenerales.fechaNacimiento).toISOString().split('T')[0] : 'Sin dato' %></div>
                     </div>
                 </div>
                 <div class="multirow-container">
                     <div class="element-container">
                         <div class="basic-gray"> >Edad cronológica</div>
                         <br>
-                        <div class="basic-black">48 años</div>
+                        <div class="basic-black"><%= datosGenerales.edad  || 'Sin dato' %></div>
                     </div>
                     <div class="element-container">
                         <div class="basic-gray"> >Dirección</div>
                         <br>
-                        <div class="basic-black">Montes del prado</div>
+                        <div class="basic-black"><%= datosGenerales.direccion  || 'Sin dato' %></div>
                     </div>
                     <div class="element-container">
                         <div class="basic-gray"> >Estatura</div>
                         <br>
-                        <div class="basic-black">1.57</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Nombre del profesor</div>
-                        <br>
-                        <div class="basic-black">Pablo Picapiedra</div>
+                        <div class="basic-black"><%= datosGenerales.talla || 'Sin dato' %></div>
                     </div>
                     <div class="element-container">
                         <div class="basic-gray"> >Grado que cursa</div>
                         <br>
-                        <div class="basic-black">6 de primaria</div>
+                        <div class="basic-black"><%= datosGenerales.grado || 'Sin dato' %></div>
                     </div>
                     <div class="element-container">
                         <div class="basic-gray"> >Peso</div>
                         <br>
-                        <div class="basic-black">50kg</div>
+                        <div class="basic-black"><%= datosGenerales.peso || 'Sin dato' %></div>
                     </div>
                 </div>
                 <br>
                 <div class="basic-gray">Objetivo de la sesion:</div>
                 <div class="multirow-form-container">
-                    <textarea name="objetivo" required rows="4" required></textarea>
+                    <textarea name="objetivoSesion" id="objetivoSesion" required rows="4" required></textarea>
                 </div>
                 <div class="basic-gray">Justificacion de la sesion:</div>
                 <div class="multirow-form-container">
-                    <textarea name="objetivo" required rows="4" required></textarea>
+                    <textarea name="justificacionSesion" id="justificacionSesion" required rows="4" required></textarea>
                 </div>
                 <table class="multirow-table">
                     <thead>
@@ -153,15 +135,15 @@
 
                 <div class="basic-gray">Analisis psicológico:</div>
                 <div class="multirow-form-container">
-                    <textarea name="objetivo" required rows="4" required></textarea>
+                    <textarea name="analisisPsicologico" id="analisisPsicologico" required rows="4" required></textarea>
                 </div>
                 <div class="basic-gray">Recomendaciones:</div>
                 <div class="multirow-form-container">
-                    <textarea name="objetivo" required rows="4" required></textarea>
+                    <textarea name="recomendaciones" id="recomendaciones" required rows="4" required></textarea>
                 </div>
                 <div class="basic-gray">Bitácora de sesión:</div>
                 <div class="multirow-form-container">
-                    <textarea name="objetivo" required rows="4" required></textarea>
+                    <textarea name="bitacora" id="bitacora" required rows="4" required></textarea>
                 </div>
             </div>
             </div>

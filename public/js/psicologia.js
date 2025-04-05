@@ -1,18 +1,35 @@
 function enviarPost(url, data) {
+    // Mostrar la alerta de "procesando solicitud"
+    Swal.fire({
+        title: 'Procesando solicitud...',
+        text: 'Por favor espere.',
+        icon: 'info',
+        showConfirmButton: false, // No mostrar botón de confirmación
+        allowOutsideClick: false, // No permitir que se cierre fuera del cuadro
+        willOpen: () => {
+            Swal.showLoading(); // Mostrar el spinner de carga
+        }
+    });
     fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data.datos)
     })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(error => { throw new Error(error.mensaje || 'Error desconocido') });
+        }
+        return response.json();
+    })
+    .then(response => {
         Swal.fire({
             title: "Éxito!",
-            text: data.mensaje || "Operación realizada con éxito",
+            text: response.mensaje || "Operación realizada con éxito",
             icon: "success"
-        });
+        }).then(() => {
+            window.location.href = "/psicologia/"});
     })
     .catch(error => {
         console.error("Error:", error);
@@ -78,7 +95,64 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
-            enviarPost("/api/guardar", { accion: "guardar" });
+            const idExpediente = window.location.pathname.split('/').pop();
+
+            const analisisPsicologico = document.getElementById('analisisPsicologico').value;
+            const recomendaciones = document.getElementById('recomendaciones').value;
+            const bitacora = document.getElementById('bitacora').value;
+            const objetivoSesion = document.getElementById('objetivoSesion').value;
+            const justificacionSesion = document.getElementById('justificacionSesion').value;
+
+
+            const campos = [
+                { id: 'analisisPsicologico', nombre: 'Análisis Psicológico' },
+                { id: 'recomendaciones', nombre: 'Recomendaciones' },
+                { id: 'bitacora', nombre: 'Bitácora' },
+                { id: 'objetivoSesion', nombre: 'Objetivo de Sesión' },
+                { id: 'justificacionSesion', nombre: 'Justificación de Sesión' }
+            ];
+            
+            let camposVacios = [];
+            let camposInvalidos = [];
+            const regexInvalido = /['"%;<>\\]/; // Caracteres potencialmente peligrosos
+            
+            for (let campo of campos) {
+                const valor = document.getElementById(campo.id).value.trim();
+            
+                if (!valor) {
+                    camposVacios.push(campo.nombre);
+                } else if (regexInvalido.test(valor)) {
+                    camposInvalidos.push(campo.nombre);
+                }
+            }
+            
+            if (camposVacios.length > 0) {
+                Swal.fire({
+                    title: "Campos vacíos",
+                    text: `Por favor completa los siguientes campos: ${camposVacios.join(', ')}`,
+                    icon: "error"
+                });
+                return;
+            }
+            
+            if (camposInvalidos.length > 0) {
+                Swal.fire({
+                    title: "Caracteres no permitidos",
+                    text: `Remueve los caracteres no validos de los siguientes campos: ${camposInvalidos.join(', ')}`,
+                    icon: "error"
+                });
+                return;
+            }
+
+            
+            const datos = {
+                objetivoSesion,
+                justificacionSesion,
+                analisisPsicologico,
+                recomendaciones,
+                bitacora
+            };
+            enviarPost(`/psicologia/seguimientos/registrar/${idExpediente}`, { accion: "registro", datos: datos});
         }
     });
 });
