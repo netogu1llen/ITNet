@@ -35,5 +35,6 @@ exports.googleCallback = async (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie('jwt').redirect('/login');
+  res.clearCookie('jwt');
+  res.redirect('/login');
 };
