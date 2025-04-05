@@ -24,8 +24,10 @@ exports.googleCallback = async (req, res, next) => {
     });
     
     // 4. Establecer cookie o enviar token
-    res.cookie('jwt', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
-       .redirect('/');
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Solo en producción
+    }).redirect('/');    
     
   } catch (error) {
     next(error); // Pasa el error al middleware de errores
