@@ -41,4 +41,31 @@ const actualizarSeguimiento = async (req, res) => {
     }
 };
 
-module.exports = { getSeguimiento, actualizarSeguimiento };
+// Función para renderizar la vista de expediente psicológico
+const renderExpedientePsicologico = (req, res) => {
+  try {
+      // Renderizar la vista sin cargar datos adicionales
+      res.render('expedientePsicologico');
+  } catch (error) {
+      console.error('Error al renderizar expediente psicológico:', error.message);
+      res.status(500).send('Error al cargar la vista del expediente psicológico');
+  }
+};
+
+
+// Función para eliminar un seguimiento psicológico
+const eliminarSeguimiento = async (req, res) => {
+  try {
+      const idSeguimiento = req.params.id;
+
+      // Llamar al modelo para eliminar el seguimiento
+      await Seguimiento.eliminarSeguimiento(idSeguimiento);
+
+      res.status(200).json({ message: 'Seguimiento eliminado correctamente' });
+  } catch (error) {
+      console.error('Error al eliminar seguimiento:', error.message);
+      res.status(500).json({ error: 'Error al eliminar el seguimiento' });
+  }
+};
+
+module.exports = { getSeguimiento, actualizarSeguimiento, eliminarSeguimiento, renderExpedientePsicologico };

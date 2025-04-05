@@ -56,6 +56,23 @@ class Seguimiento {
             throw new Error('Error al actualizar objetivos');
         }
     }
+    // Función para marcar un seguimiento y sus objetivos como eliminados
+    static eliminarSeguimiento(idSeguimiento) {
+        return new Promise((resolve, reject) => {
+          const querySeguimiento = 'UPDATE seguimientoPsicologico SET eliminado = 1 WHERE IDSeguimiento = ?';
+          const queryObjetivos = 'UPDATE objetivos SET eliminado = 1 WHERE IDExpediente = (SELECT IDExpediente FROM seguimientoPsicologico WHERE IDSeguimiento = ?)';
+      
+          db.query(querySeguimiento, [idSeguimiento], (err) => {
+            if (err) return reject(err);
+      
+            db.query(queryObjetivos, [idSeguimiento], (err) => {
+              if (err) return reject(err);
+      
+              resolve();
+            });
+          });
+        });
+      }
 
 }
 
