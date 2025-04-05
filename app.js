@@ -8,6 +8,9 @@ const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 
+const jwtSecret = process.env.JWT_SECRET; // Para firmar y verificar JWT
+const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
+
 const app = express();
 
 // Middleware de seguridad
