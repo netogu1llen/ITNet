@@ -4,10 +4,16 @@ exports.renderEducacionView = (req, res) => {
   res.render('educacion');
 };
 
-exports.getEducacionData = (req, res) => {
-  const data = Educacion.getAllAlumnos();
-  res.json({ data });
-};
+exports.getAlumnosInfo = async (req, res) => {
+    try {
+      const alumnos = await Educacion.getAlumnosInfo();
+      res.json({ data: alumnos });
+    } catch (error) {
+      console.error('Error al obtener datos de educación:', error); // <- Asegúrate de tener esto
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  };
+  
 
 exports.renderBoletasView = (req, res) => {
     res.render('boletas');
