@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const compression = require('compression');
 const session = require('express-session');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -31,6 +32,9 @@ app.set('views', path.join(__dirname, 'views'));
 // Middleware para procesar JSON y datos URL-encoded
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Midleware para el uso de cookies en sesión
+app.use(cookieParser());
 
 // Middleware de sesión
 app.use(session({
