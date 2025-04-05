@@ -9,6 +9,7 @@ router.get('/boletas/data', controller.getBoletasData);
 router.get('/materias', controller.renderMateriasView);
 router.get('/materias/data', controller.getMateriasData);
 router.get('/registrarBoleta', controller.renderRegistrarBoletaView);
+router.get('/modificarBoleta', controller.renderRegistrarBoletaView);
 router.get('/registrarMateria', controller.renderRegistrarMateriaView);
 router.get('/modificarMateria', controller.renderModificarMateriaView);
 

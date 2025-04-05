@@ -33,6 +33,10 @@ exports.renderBoletasView = (req, res) => {
     res.json({ data });
   };
 
+  exports.renderModificarBoletaView = (req, res) => {
+    const materias = Educacion.getAllMateriasReg();
+    res.render('registrarBoleta', { materias });
+  };
 
   exports.renderRegistrarBoletaView = (req, res) => {
     const materias = Educacion.getAllMateriasReg();
