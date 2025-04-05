@@ -10,7 +10,7 @@
  * @param {Function} next - Función para pasar el control al siguiente middleware.
  * @return {void|Object} Si hay error, devuelve respuesta JSON con código de estado.
  */
-const jwt = require('jsonwebtoken');
+const { verifyToken } = require('../utils/jwt');
 
 const authenticateJWT = (req, res, next) => {
   // Obtiene el token JWT de las cookies de la solicitud
@@ -24,7 +24,7 @@ const authenticateJWT = (req, res, next) => {
 
   try {
     // Verifica y decodifica el token usando la clave secreta de entorno
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = verifyToken(token);
     
     // Adjunta la información del usuario decodificada al objeto de solicitud
     // El token debería contener información básica del usuario (id, email, etc.)
