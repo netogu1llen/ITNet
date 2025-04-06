@@ -13,6 +13,8 @@ const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
 
 const app = express();
 
+app.use('/node_modules', express.static('node_modules'));
+
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
