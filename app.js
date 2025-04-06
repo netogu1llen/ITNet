@@ -83,6 +83,9 @@ app.use('/educacion', educacionRoutes);
 const mainRoutes = require('./routes/main.routes');
 app.use('/', mainRoutes);
 
+const pdf = require('./routes/pdf.routes');
+app.use('/', pdf); 
+
 app.use((req, res, next) => {
     res.setHeader('Content-Type', 'text/css');
     res.setHeader('Content-Type', 'application/javascript');
