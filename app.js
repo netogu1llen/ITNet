@@ -14,7 +14,17 @@ const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
 const app = express();
 
 // Middleware de seguridad
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", 'https://apis.google.com'],
+            styleSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com', "'unsafe-inline'"], // Agregar 'unsafe-inline'
+            imgSrc: ["'self'", 'https://www.google.com'],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        }
+    }
+}));
 
 // Middleware para permitir solicitudes de diferentes dominios (CORS)
 app.use(cors());
