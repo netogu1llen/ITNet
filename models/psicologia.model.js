@@ -1,62 +1,33 @@
 const db = require('../db');
 
-class Seguimiento {
-    static async getObjetivosByExpediente(idExpediente) {
-        try {
-            const result = await new Promise((resolve, reject) => {
-                db.query('SELECT * FROM objetivos WHERE idExpediente = ?', [idExpediente]);
-            });
-            
-            return result || [];
-        } catch (error) {
-            console.error('Error al obtener objetivos:', error);
-            throw new Error('Error al obtener objetivos');
-        }
-    }
-    
-    static async getSeguimientoByExpediente(idExpediente) {
-        try {
-            const result = await new Promise((resolve, reject) => {
-                db.query('SELECT * FROM seguimiento WHERE idExpediente = ?', [idExpediente]);
-            });
-            
-            return result || [];
-        } catch (error) {
-            console.error('Error al obtener seguimiento:', error);
-            throw new Error('Error al obtener seguimiento');
-        }
+exports.obtenerPorId = (id, callback) => {
+  db.query('SELECT * FROM seguimientopsicologico WHERE idSeguimiento = ?', [id], (err, results) => {
+    if (err) return callback(err);
+
+    if (results.length === 0) {
+      return callback(null, null);
     }
 
-    static async actualizarSeguimiento(idExpediente, { objetivo, justificacion, analisis, recomendaciones, bitacora }) {
-        try {
-            await new Promise((resolve, reject) => {
-                db.query('UPDATE seguimiento SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ? WHERE idExpediente = ?', 
-                [objetivo, justificacion, analisis, recomendaciones, bitacora, idExpediente], (err, result) => {
-                    if (err) reject(err);
-                    resolve(result);
-                });
-            });
-        } catch (error) {
-            console.error('Error al actualizar seguimiento:', error);
-            throw new Error('Error al actualizar seguimiento');
-        }
-    }
+    callback(null, results[0]);
+  });
+};
 
-    static async actualizarObjetivo(idExpediente, { actividad, tiempo, metodologia, objetivo, observaciones }) {
-        try {
-            await new Promise((resolve, reject) => {
-                db.query('UPDATE objetivos SET actividad = ?, tiempo = ?, metodologia = ?, objetivo = ?, observaciones = ? WHERE idExpediente = ?', 
-                [actividad, tiempo, metodologia, objetivo, observaciones, idExpediente], (err, result) => {
-                    if (err) reject(err);
-                    resolve(result);
-                });
-            });
-        } catch (error) {
-            console.error('Error al actualizar objetivos:', error);
-            throw new Error('Error al actualizar objetivos');
-        }
-    }
-
-}
-
-module.exports = Seguimiento;
+exports.obtenerObjetivosPorSeguimientoId = (id, callback) => {
+    db.query('SELECT * FROM objetivos WHERE idSeguimiento = ?', [id], callback);
+  };
+  
+// Obtener los datos del expediente
+exports.obtenerExpedientePorSeguimientoId = (idSeguimiento, callback) => {
+    const sql = `
+      SELECT e.nombres, e.apellidoP, e.apellidoM, e.numExpediente, e.fechaNacimiento, 
+             e.direccion, e.grado, e.curso
+      FROM expediente e
+      JOIN seguimientopsicologico s ON e.idExpediente = s.idExpediente
+      WHERE s.idSeguimiento = ?
+    `;
+    db.query(sql, [idSeguimiento], (err, results) => {
+      if (err) return callback(err);
+      callback(null, results[0]);
+    });
+  };
+  

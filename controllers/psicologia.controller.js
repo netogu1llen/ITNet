@@ -1,44 +1,37 @@
-const Seguimiento = require('../models/psicologia.model');
+const seguimientoModel = require('../models/psicologia.model');
 
-const getSeguimiento = async (req, res) => {
-    try {
-        const idExpediente = req.params.id;
-        console.log('idExpediente:', idExpediente);
-
-        const objetivos = await Seguimiento.getObjetivosByExpediente(idExpediente);
-        const seguimiento = await Seguimiento.getSeguimientoByExpediente(idExpediente);
-
-        if (objetivos.length === 0 || seguimiento.length === 0) {
-            console.error('No se encontraron datos');
-            return res.status(404).send('No se encontraron datos');
+exports.obtenerSeguimientoPorId = (req, res) => {
+    const id = req.params.id;
+  
+    seguimientoModel.obtenerPorId(id, (err, seguimiento) => {
+      if (err) {
+        console.error('Error al obtener el seguimiento:', err);
+        return res.status(500).send('Error en el servidor');
+      }
+  
+      if (!seguimiento) {
+        return res.status(404).send('Seguimiento no encontrado');
+      }
+  
+      seguimientoModel.obtenerObjetivosPorSeguimientoId(id, (err, objetivos) => {
+        if (err) {
+          console.error('Error al obtener los objetivos:', err);
+          return res.status(500).send('Error en el servidor');
         }
-
-        res.render('editarSegPsico', { objetivos, seguimiento });
-
-    } catch (error) {
-        console.error('Error al obtener la información:', error.message);
-        res.status(500).send('Error al obtener la información');
-    }
-};
-
-
-const actualizarSeguimiento = async (req, res) => {
-    try {
-        const idExpediente = req.params.id;
-        const { objetivo, justificacion, actividad, tiempo, metodologia, objetivoActividad, observaciones, analisis, recomendaciones, bitacora } = req.body;
-
-        await Seguimiento.actualizarSeguimiento(idExpediente, {objetivo, justificacion, analisis, recomendaciones, bitacora});
-
-        actividad.forEach(async (act, i) => {
-            await Seguimiento.actualizarObjetivo(idExpediente, {actividad: act, tiempo: tiempo[i], metodologia: metodologia[i], objetivo: objetivoActividad[i], observaciones: observaciones[i]});
+  
+        seguimientoModel.obtenerExpedientePorSeguimientoId(id, (err, expediente) => {
+          if (err) {
+            console.error('Error al obtener expediente:', err);
+            return res.status(500).send('Error en el servidor');
+          }
+  
+          res.render('editarSegPsico', {
+            seguimiento,
+            objetivos: objetivos || [],
+            expediente
+          });
         });
-
-        res.redirect(`/psicologia/${idExpediente}`);
-        
-    } catch (error) {
-        console.error('Error al actualizar:', error.message);
-        res.status(500).send('Error al actualizar');
-    }
-};
-
-module.exports = { getSeguimiento, actualizarSeguimiento };
+      });
+    });
+  };
+  

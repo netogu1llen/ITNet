@@ -7,13 +7,14 @@
                 SEGUIMIENTO PSICOLÓGICO
             </div>
             <div class="buttons-container">
-                <form action="/psicologia/seguimiento/editar/<%= seguimiento[0].idExpediente %>" method="POST">
+                <form action="/psicologia/seguimiento/editar/<%= seguimiento.idSeguimiento %>" method="POST">
                     <button class="button is-save" type="submit">Guardar</button>
                 <button class="button is-cancel">Cancelar</button>
             </div>
         </div>
 
         <div class="full-white-container">  
+            
             <div class="multirow-container">
                 <div class="element-container">
                     <div class="basic-black"> Larisa Jimenez Aldemar</div>
@@ -36,78 +37,79 @@
                         <div class="basic-black"> 1. SEGUIMIENTO PSICOLÓGICO</div>
                     </div>
                 </div>
+                <% if (expediente) { %>
+                    
+                    <div class="multirow-container">
+                        <div class="element-container">
+                            <div class="basic-gray"> >Nombre</div>
+                            <br>
+                            <div class="basic-black"><%= expediente.nombres %> <%= expediente.apellidoP %> </div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Fecha de nacimiento</div>
+                            <br>
+                            <div class="basic-black"><%= expediente.fechaNacimiento %></div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Nombre de la escuela</div>
+                            <br>
+                            <div class="basic-black">Instituto Juarez</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Dirección</div>
+                            <br>
+                            <div class="basic-black"><%= expediente.direccion %></div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Lateralidad</div>
+                            <br>
+                            <div class="basic-black">Pablo Picapiedra</div>
+                        </div>
+                    </div>
 
-                <div class="multirow-container">
-                    <div class="element-container">
-                        <div class="basic-gray"> >Nombre</div>
-                        <br>
-                        <div class="basic-black">Oscar Javier Villeda Arteaga</div>
+                    <div class="multirow-container">
+                        <div class="element-container">
+                            <div class="basic-gray"> >Edad cronológica</div>
+                            <br>
+                            <div class="basic-black">48 años</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Dirección</div>
+                            <br>
+                            <div class="basic-black">Montes del Prado</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Estatura</div>
+                            <br>
+                            <div class="basic-black">1.57</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Nombre del profesor</div>
+                            <br>
+                            <div class="basic-black">Pablo Picapiedra</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Grado que cursa</div>
+                            <br>
+                            <div class="basic-black"><%= expediente.grado %> de <%= expediente.curso %>!/div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Peso</div>
+                            <br>
+                            <div class="basic-black">50kg</div>
+                        </div>
                     </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Fecha de nacimiento</div>
-                        <br>
-                        <div class="basic-black">01 de marzo de 2025</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Nombre de la escuela</div>
-                        <br>
-                        <div class="basic-black">Instituto Juarez</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Dirección</div>
-                        <br>
-                        <div class="basic-black">Montes del Prado</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Lateralidad</div>
-                        <br>
-                        <div class="basic-black">Pablo Picapiedra</div>
-                    </div>
-                </div>
-
-                <div class="multirow-container">
-                    <div class="element-container">
-                        <div class="basic-gray"> >Edad cronológica</div>
-                        <br>
-                        <div class="basic-black">48 años</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Dirección</div>
-                        <br>
-                        <div class="basic-black">Montes del Prado</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Estatura</div>
-                        <br>
-                        <div class="basic-black">1.57</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Nombre del profesor</div>
-                        <br>
-                        <div class="basic-black">Pablo Picapiedra</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Grado que cursa</div>
-                        <br>
-                        <div class="basic-black">6 de primaria</div>
-                    </div>
-                    <div class="element-container">
-                        <div class="basic-gray"> >Peso</div>
-                        <br>
-                        <div class="basic-black">50kg</div>
-                    </div>
-                </div>
+                <% } %>
                 <br>
 
-                <% if (seguimiento.length > 0) { %>
-                    <% let seg = seguimiento[0]; %>
+                <% if (seguimiento) { %>
                     <div class="basic-gray">Objetivo de la sesión:</div>
                     <div class="multirow-form-container">
-                        <textarea name="objetivo" required rows="4"><%= seg.sesionObjetivo %></textarea>
+                        <textarea name="objetivo" required rows="4"><%= seguimiento.sesionObjetivo %></textarea>
                     </div>
                     <div class="basic-gray">Justificación de la sesión:</div>
                     <div class="multirow-form-container">
-                        <textarea name="justificacion" required rows="4"><%= seg.sesionJustificacion %></textarea>
+                        <textarea name="justificacion" required rows="4"><%= seguimiento.sesionJustificacion %></textarea>
                     </div>
                 <% } %>
 
@@ -158,19 +160,18 @@
                     ＋
                 </button>
 
-                <% if (seguimiento.length > 0) { %>
-                    <% let seg = seguimiento[0]; %>
+                <% if (seguimiento) { %>
                     <div class="basic-gray">Análisis psicológico:</div>
                     <div class="multirow-form-container">
-                        <textarea name="analisis" required rows="4"><%= seg.analisisPsicologico %></textarea>
+                        <textarea name="analisis" required rows="4"><%= seguimiento.analisisPsicologico %></textarea>
                     </div>
                     <div class="basic-gray">Recomendaciones:</div>
                     <div class="multirow-form-container">
-                        <textarea name="recomendaciones" required rows="4"><%= seg.recomendaciones %></textarea>
+                        <textarea name="recomendaciones" required rows="4"><%= seguimiento.recomendaciones %></textarea>
                     </div>
                     <div class="basic-gray">Bitácora de sesión:</div>
                     <div class="multirow-form-container">
-                        <textarea name="bitacora" required rows="4"><%= seg.sesionBitacora %></textarea>
+                        <textarea name="bitacora" required rows="4"><%= seguimiento.sesionBitacora %></textarea>
                     </div>
                 <% } %>                    
             </div>
