@@ -8,6 +8,7 @@ const session = require('express-session');
 const path = require('path');
 
 const app = express();
+app.use('/node_modules', express.static('node_modules'));
 
 // Middleware de seguridad
 app.use(helmet());
@@ -51,6 +52,10 @@ app.use((req, res, next) => {
 // Rutas de usuario
 const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
+
+// Rutas de usuarios (PLURAL)
+const usuariosRoutes = require('./routes/usuarios.routes');
+app.use('/usuarios', usuariosRoutes);
 
 // Rutas de nutrición
 const nutricionRoutes = require('./routes/nutricion.routes');
