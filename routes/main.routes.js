@@ -7,11 +7,13 @@ const mainController = require('../controllers/main.controller');
 // Importar rutas de S3
 const s3Routes = require('./s3services.routes');
 
-
-
+// Ruta para mostrar el login
 router.get('/login', (req, res) => {
-    res.render('login')
+    res.render('login', {
+        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID  // Pasar la variable GOOGLE_CLIENT_ID desde .env
+    });
 });
+
 // Rutas principales
 router.get('/', mainController.getHome);
 router.get('/clinica', mainController.getClinicaV2);

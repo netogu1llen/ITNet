@@ -6,11 +6,27 @@ const morgan = require('morgan');
 const compression = require('compression');
 const session = require('express-session');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+
+const jwtSecret = process.env.JWT_SECRET; // Para firmar y verificar JWT
+const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
 
 const app = express();
 
-// Middleware de seguridad
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", 'https://apis.google.com', 'https://accounts.google.com', "'unsafe-eval'"],
+            styleSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com', "'unsafe-inline'"],
+            imgSrc: ["'self'", 'https://www.google.com'],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+            frameSrc: ["'self'", 'https://accounts.google.com'],
+            connectSrc: ["'self'", 'https://accounts.google.com'],
+            upgradeInsecureRequests: []
+        }
+    }
+}));
 
 // Middleware para permitir solicitudes de diferentes dominios (CORS)
 app.use(cors());
@@ -31,6 +47,9 @@ app.set('views', path.join(__dirname, 'views'));
 // Middleware para procesar JSON y datos URL-encoded
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Midleware para el uso de cookies en sesión
+app.use(cookieParser());
 
 // Middleware de sesión
 app.use(session({

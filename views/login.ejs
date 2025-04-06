@@ -3,46 +3,28 @@
 <head>
     <title>Fundación Soffy</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com"> <!-- Modificar YOUR_CLIENT_ID por el del proyecto-->
+    <!-- Inyectamos el client_id desde la variable de entorno (será reemplazado por tu valor en el backend) -->
+    <meta name="google-signin-client_id" content="<%= GOOGLE_CLIENT_ID %>">
 </head>
 <body class="is-flex is-align-items-center is-justify-content-center p-5" style="height: 100vh; background-color: white;">
-    <div class="box  is-flex is-align-items-center is-justify-content-center" style="background-color: #F36283; width: 100%; height: 100%;">
+    <div class="box is-flex is-align-items-center is-justify-content-center" style="background-color: #F36283; width: 100%; height: 100%;">
         <div class="card" style="width: 400px; border-radius: 20px;">
             <div class="card-image has-text-centered pt-6">
                 <figure class="image is-128x128" style="display: inline-block;">
-                    <img src="/imagenes/soffy.png">
+                    <img src="/images/soffy.png">
                 </figure>
             </div>
             <div class="card-content has-text-centered">
                 <h2 class="title is-4 pb-3">Inicio de sesión</h2>
                 <div class="pt-5">
-                    <button class="button is-link is-fullwidth" style="background-color: #013E5A;" id="my-signin2">
-                        Iniciar sesión con Google
-                    </button>
-
-                    <script>
-                        function onSuccess(googleUser) {
-                            console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-                        }
-                        function onFailure(error) {
-                            console.log(error);
-                        }
-                        function renderButton() {
-                            gapi.signin2.render('my-signin2', {
-                                'scope': 'profile email',
-                                'width': 240,
-                                'height': 50,
-                                'longtitle': true,
-                                'theme': 'dark',
-                                'onsuccess': onSuccess,
-                                'onfailure': onFailure
-                            });
-                        }
-                    </script>
-                    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+                    <!-- Botón de Google -->
+                    <div id="my-signin2"></div> <!-- Aquí se renderiza el botón de Google -->
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Cargar el archivo JS que contiene la lógica de autenticación de Google -->
+    <script src="/js/googleAuth.js"></script>
 </body>
 </html>
