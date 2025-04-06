@@ -55,12 +55,34 @@ function renderButton() {
  */
 function loadGoogleAPI() {
     gapi.load('auth2', function() {
-        gapi.auth2.init().then(renderButton)
-            .catch(function(error) {
-                console.error('Error al inicializar Google Auth:', error);
+        gapi.auth2.init({
+            client_id: document.querySelector('meta[name="google-signin-client_id"]').getAttribute('content')
+        }).then(function() {
+            gapi.signin2.render('my-signin2', {
+                scope: 'profile email',
+                width: 240,
+                height: 50,
+                longtitle: true,
+                theme: 'dark'
             });
+        }).catch(function(error) {
+            console.error('Error al inicializar Google Auth:', error);
+        });
     });
 }
+
+// Cargar el script de Google solo después de que se haya completado
+function initGoogleAuth() {
+    const script = document.createElement('script');
+    script.src = "https://apis.google.com/js/platform.js";
+    script.async = true;
+    script.defer = true;
+    script.onload = loadGoogleAPI;
+
+    document.body.appendChild(script);  // Añadir el script a la página
+}
+
+window.onload = initGoogleAuth;  // Ejecutar la función cuando la página cargue
 
 // Inicializar la carga de la API cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', loadGoogleAPI);

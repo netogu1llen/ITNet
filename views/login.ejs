@@ -3,7 +3,7 @@
 <head>
     <title>Fundación Soffy</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <!-- Inyectamos el client_id desde la variable de entorno (será remplazado por tu valor en el backend) -->
+    <!-- Inyectamos el client_id desde la variable de entorno (será reemplazado por tu valor en el backend) -->
     <meta name="google-signin-client_id" content="<%= GOOGLE_CLIENT_ID %>">
 </head>
 <body class="is-flex is-align-items-center is-justify-content-center p-5" style="height: 100vh; background-color: white;">
@@ -24,8 +24,6 @@
         </div>
     </div>
 
-    <!-- Cargar la API de Google -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <!-- Cargar el archivo JS que contiene la lógica de autenticación de Google -->
     <script src="/js/googleAuth.js"></script>
 </body>
