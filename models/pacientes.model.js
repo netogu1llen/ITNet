@@ -40,5 +40,17 @@ class Pacientes {
             throw new Error('Error al actualizar seguimiento');
         }
     }
+    static async eliminarPaciente(idExpediente) {
+        try {
+            // Usamos el método de promesas para la consulta
+            await db.execute(
+                'UPDATE expediente SET eliminado = 1 WHERE IDExpediente= ?',
+                [idExpediente]
+            );
+        } catch (error) {
+            console.error('Error al registrar seguimiento:', error);
+            throw new Error('Error al actualizar seguimiento');
+        }
+    }
 }
 module.exports = Pacientes;
