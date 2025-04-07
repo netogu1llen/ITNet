@@ -12,6 +12,7 @@ const jwtSecret = process.env.JWT_SECRET; // Para firmar y verificar JWT
 const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
 
 const app = express();
+app.use('/node_modules', express.static('node_modules'));
 
 app.use('/node_modules', express.static('node_modules'));
 
@@ -72,6 +73,10 @@ app.use((req, res, next) => {
 // Rutas de usuario
 const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
+
+// Rutas de usuarios (PLURAL)
+const usuariosRoutes = require('./routes/usuarios.routes');
+app.use('/usuarios', usuariosRoutes);
 
 // Rutas de nutrición
 const nutricionRoutes = require('./routes/nutricion.routes');
