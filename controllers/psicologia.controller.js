@@ -40,7 +40,7 @@ const post_editar_seguimiento = async (req, res) => {
 
   try {
     // Actualizar el seguimiento
-    await Seguimiento.actualizarSeguimiento(id, {objetivoSesion,justificacionSesion,analisisPsicologico,recomendaciones,bitacora});
+    await Seguimiento.actualizarSeguimiento(id, objetivoSesion,justificacionSesion,analisisPsicologico,recomendaciones,bitacora);
 
     // Eliminar los objetivos existentes
     await Seguimiento.eliminarObjetivosPorSeguimientoId(id);
@@ -53,17 +53,10 @@ const post_editar_seguimiento = async (req, res) => {
       objetivo.length,
       observaciones.length
     );
+
     for (let i = 0; i < maxLength; i++) {
-      const obj = {
-        idSeguimiento: id,
-        actividad: actividad[i]?.trim() || '',
-        tiempo: tiempo[i]?.trim() || '',
-        metodologia: metodologia[i]?.trim() || '',
-        objetivo: objetivo[i]?.trim() || '',
-        observaciones: observaciones[i]?.trim() || ''
-      };
-      await Seguimiento.insertarObjetivos(obj);
-    }
+      await Seguimiento.insertarObjetivos(id, actividad[i], tiempo[i], metodologia[i], objetivo[i], observaciones[i]);
+     }
 
     // Redirigir al editar con estado de éxito
     res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
@@ -71,6 +64,8 @@ const post_editar_seguimiento = async (req, res) => {
     console.error('Error al actualizar seguimiento:', err);
     res.status(500).json({ mensaje: 'Error al actualizar. Favor de intentar en otro momento' });
   }
+
+
 };
 
 // Exportar las funciones

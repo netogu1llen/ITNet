@@ -131,28 +131,31 @@
                         <tr>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="actividad[]" required rows="4"><%= obj.actividad %></textarea>
+                                    <textarea name="actividad[]" id="actividad[]" required rows="4"><%= obj.actividad %></textarea>
                                 </div>
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="tiempo[]" required rows="4"><%= obj.tiempo %></textarea>
+                                    <textarea name="tiempo[]" id="tiempo[]" required rows="4"><%= obj.tiempo %></textarea>
                                 </div>
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="metodologia[]" required rows="4"><%= obj.metodologia %></textarea>
+                                    <textarea name="metodologia[]" id="metodologia[]" required rows="4"><%= obj.metodologia %></textarea>
                                 </div>
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="objetivo[]" required rows="4"><%= obj.objetivo %></textarea>
+                                    <textarea name="objetivo[]" id="objetivo[]" required rows="4"><%= obj.objetivo %></textarea>
                                 </div>
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="observaciones[]" required rows="4"><%= obj.observaciones %></textarea>
+                                    <textarea name="observaciones[]" id="observaciones[]" required rows="4"><%= obj.observaciones %></textarea>
                                 </div>
+                            </td>
+                            <td>
+                                <button class="button is-cancel" id="btn-eliminar-fila type="button">-</button>
                             </td>
                         </tr>
                         <% }); %>

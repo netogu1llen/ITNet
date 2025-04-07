@@ -44,7 +44,7 @@ class Seguimiento {
   }
 
   // Actualizar seguimiento
-  static async actualizarSeguimiento(id, {objetivoSesion,justificacionSesion,analisisPsicologico,recomendaciones,bitacora}) {
+  static async actualizarSeguimiento(id, objetivoSesion,justificacionSesion,analisisPsicologico,recomendaciones,bitacora) {
     
     try {
       await db.execute('UPDATE seguimientopsicologico SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ? WHERE IDSeguimiento = ?', [objetivoSesion, justificacionSesion, analisisPsicologico,recomendaciones,bitacora, id]);
@@ -56,19 +56,21 @@ class Seguimiento {
   // Eliminar objetivos por ID de seguimiento
   static async eliminarObjetivosPorSeguimientoId(id) {
     try {
-      await db.execute('UPDATE objetivos SET eliminado = 1 WHERE IDSeguimiento = ?', [id]);
+      await db.execute('DELETE FROM objetivos WHERE IDSeguimiento = ? AND eliminado = 0', [id]);
     } catch (err) {
+      console.error('Error al eliminaar los objetivos:', err);
       throw err;
     }
   }
 
   // Insertar objetivos
-  static async insertarObjetivos({idSeguimiento, actividad, tiempo, metodologia, objetivo, observaciones}) {
+  static async insertarObjetivos(id, actividad, tiempo, metodologia, objetivo, observaciones) {
     try {
-      await db.execute('INSERT INTO objetivos SET IDSeguimiento = ?, actividad = ?, tiempo = ?, metodologia = ?, objetivo = ?, observaciones = ?, eliminado = 0', [idSeguimiento, actividad, tiempo, metodologia, objetivo, observaciones]);
+      await db.execute('INSERT INTO objetivos SET IDSeguimiento = ?, actividad = ?, tiempo = ?, metodologia = ?, objetivo = ?, observaciones = ?, eliminado = 0', [id, actividad, tiempo, metodologia, objetivo, observaciones]);
     } catch (err) {
       console.error('Error al insertar los objetivos:', err);
       throw err;
+    
     }
   }
 }

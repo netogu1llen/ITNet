@@ -40,6 +40,28 @@ function enviarPost(url, data) {
       });
   });
 };
+
+// Definir la función cuando cargue la página
+document.addEventListener('DOMContentLoaded', function() {
+  configurarBotonesEliminarFila();
+});
+
+// Función y evento para eliminar las filas
+function configurarBotonesEliminarFila() {
+  const botonesEliminar = document.querySelectorAll('.is-cancel');
+  
+  botonesEliminar.forEach(boton => {boton.removeEventListener('click', eliminarFila); 
+    boton.addEventListener('click', eliminarFila);
+  });
+}
+
+function eliminarFila(event) {
+  const fila = event.target.closest('tr');
+  if (fila) {
+    fila.remove();
+  }
+}
+
 document.getElementById('btn-agregar-fila')?.addEventListener('click', function(e) {
   e.preventDefault();
   
@@ -52,27 +74,27 @@ document.getElementById('btn-agregar-fila')?.addEventListener('click', function(
   nuevaFila.innerHTML = `
     <td>
         <div class="multirow-form-container">
-            <textarea name="actividad[${index}]" required rows="3"></textarea>
+            <textarea name="actividad[]" id="actividad[${index}]" required rows="3" id=""></textarea>
         </div>
     </td>
     <td>
         <div class="multirow-form-container">
-            <textarea name="tiempo[${index}]" required rows="3"></textarea>
+            <textarea name="tiempo[]" id="tiempo[${index}]" required rows="3"></textarea>
         </div>
     </td>
     <td>
         <div class="multirow-form-container">
-            <textarea name="metodologia[${index}]" required rows="3"></textarea>
+            <textarea name="metodologia[]" id="metodologia[${index}]" required rows="3"></textarea>
         </div>
     </td>
     <td>
         <div class="multirow-form-container">
-            <textarea name="objetivo[${index}]" required rows="3"></textarea>
+            <textarea name="objetivo[]" id="objetivo[${index}]" required rows="3"></textarea>
         </div>
     </td>
     <td>
         <div class="multirow-form-container">
-            <textarea name="observaciones[${index}]" required rows="3"></textarea>
+            <textarea name="observaciones[]" id="observaciones[${index}]" required rows="3"></textarea>
         </div>
     </td>
     <td>
@@ -82,11 +104,9 @@ document.getElementById('btn-agregar-fila')?.addEventListener('click', function(
   
   tabla.appendChild(nuevaFila);
   
-  // Evento para eliminar fila
-  nuevaFila.querySelector('.is-cancel').addEventListener('click', function() {
-    tabla.removeChild(nuevaFila);
-  });
+  configurarBotonesEliminarFila();
 });
+
 
 // Botón Guardar Cambios con confirmación
 document.getElementById('btn-guardar').addEventListener('click', function() {
@@ -98,23 +118,25 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
     cancelButtonColor: "#d33",
     confirmButtonText: "Sí, estoy seguro",
     cancelButtonText: "Cancelar"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const idExpediente = window.location.pathname.split('/').pop();
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const idExpediente = window.location.pathname.split('/').pop();
+  
+        // Obtener los valores de los campos principales
+        const analisisPsicologico = document.getElementById('analisisPsicologico').value;
+        const recomendaciones = document.getElementById('recomendaciones').value;
+        const bitacora = document.getElementById('bitacora').value;
+        const objetivoSesion = document.getElementById('objetivoSesion').value;
+        const justificacionSesion = document.getElementById('justificacionSesion').value;
+  
+        // Obtener los valores de la tabla multi-fila (con las filas dinámicas)
+        const actividad = Array.from(document.querySelectorAll('textarea[name^="actividad[]"]')).map(input => input.value.trim());
+        const tiempo = Array.from(document.querySelectorAll('textarea[name^="tiempo[]"]')).map(input => input.value.trim());
+        const metodologia = Array.from(document.querySelectorAll('textarea[name^="metodologia[]"]')).map(input => input.value.trim());
+        const objetivo = Array.from(document.querySelectorAll('textarea[name^="objetivo[]"]')).map(input => input.value.trim());
+        const observaciones = Array.from(document.querySelectorAll('textarea[name^="observaciones[]"]')).map(input => input.value.trim());
 
-      // Obtener los valores de los campos principales
-      const analisisPsicologico = document.getElementById('analisisPsicologico').value;
-      const recomendaciones = document.getElementById('recomendaciones').value;
-      const bitacora = document.getElementById('bitacora').value;
-      const objetivoSesion = document.getElementById('objetivoSesion').value;
-      const justificacionSesion = document.getElementById('justificacionSesion').value;
 
-      // Obtener los valores de la tabla multi-fila (con las filas dinámicas)
-      const actividad = Array.from(document.querySelectorAll('textarea[name="actividad[]"]')).map(input => input.value.trim());
-      const tiempo = Array.from(document.querySelectorAll('textarea[name="tiempo[]"]')).map(input => input.value.trim());
-      const metodologia = Array.from(document.querySelectorAll('textarea[name="metodologia[]"]')).map(input => input.value.trim());
-      const objetivo = Array.from(document.querySelectorAll('textarea[name="objetivo[]"]')).map(input => input.value.trim());
-      const observaciones = Array.from(document.querySelectorAll('textarea[name="observaciones[]"]')).map(input => input.value.trim());
 
       const campos = [
         { id: 'analisisPsicologico', nombre: 'Análisis Psicológico' },
@@ -175,6 +197,7 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
     }
   });
 });
+
 // Botón Salir con opciones
 document.getElementById('btn-cancelar').addEventListener('click', function() {
   Swal.fire({
