@@ -82,6 +82,9 @@ app.use('/usuarios', usuariosRoutes);
 const nutricionRoutes = require('./routes/nutricion.routes');
 app.use('/nutricion', nutricionRoutes);
 
+// Rutas de psicologia
+const psicologiaRoutes = require('./routes/psicologia.routes');
+app.use('/psicologia', psicologiaRoutes);
 // Rutas de educación
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
