@@ -51,3 +51,11 @@ document.getElementById('btn-editar').addEventListener('click', function() {
         });
     }
 });
+document.getElementById('btn-registrar').addEventListener('click', function() {
+    const btnEditar = document.getElementById("btn-registrar");
+    if (btnEditar) {
+        btnEditar.addEventListener("click", () => {
+        window.location.href = `/pacientes/registrar`;
+        });
+    }
+});
