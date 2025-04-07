@@ -48,7 +48,7 @@ $(document).ready(function () {
   $(document).on('click', '.btn-modificar', function () {
     const id = $(this).data('id');
     $.get(`/educacion/materias/obtener/${id}`, function (materia) {
-      $('#modalModificar').find('[name="IDMateria"]').val(materia.IDMateria);
+      $('#modalModificar').find('[name="idMateria"]').val(materia.IDMateria);
       $('#modalModificar').find('[name="materia"]').val(materia.materia);
       $('#modalModificar').find('[name="grado"]').val(materia.grado);
       $('#modalModificar').find('[name="nvEscolar"]').val(materia.nvEscolar);
