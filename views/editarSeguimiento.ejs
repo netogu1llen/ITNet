@@ -7,9 +7,12 @@
                 SEGUIMIENTO PSICOLÓGICO
             </div>
             <div class="buttons-container">
-                <form id="form-seguimiento" action="/psicologia/seguimiento/editar/<%= seguimiento.idSeguimiento %>" method="POST">
-                    <button class="button is-save" type="button" id="btn-guardar">Guardar</button>
-                    <button class="button is-cancel" type="button" onclick="window.history.back()">Cancelar</button>                
+                <button class="button is-save" id="btn-guardar">
+                    Guardar
+                </button>
+                <button class="button is-cancel" id="btn-cancelar">
+                    Cancelar
+                </button>
             </div>
         </div>
 
@@ -105,11 +108,11 @@
                 <% if (seguimiento) { %>
                     <div class="basic-gray">Objetivo de la sesión:</div>
                     <div class="multirow-form-container">
-                        <textarea name="objetivo" required rows="4"><%= seguimiento.sesionObjetivo %></textarea>
+                        <textarea name="objetivoSesion" id= "objetivoSesion" required rows="4"><%= seguimiento.sesionObjetivo %></textarea>
                     </div>
                     <div class="basic-gray">Justificación de la sesión:</div>
                     <div class="multirow-form-container">
-                        <textarea name="justificacion" required rows="4"><%= seguimiento.sesionJustificacion %></textarea>
+                        <textarea name="justificacionSesion" id = "justificacionSesion" required rows="4"><%= seguimiento.sesionJustificacion %></textarea>
                     </div>
                 <% } %>
 
@@ -143,7 +146,7 @@
                             </td>
                             <td>
                                 <div class="multirow-form-container">
-                                    <textarea name="objetivoActividad[]" required rows="4"><%= obj.objetivo %></textarea>
+                                    <textarea name="objetivo[]" required rows="4"><%= obj.objetivo %></textarea>
                                 </div>
                             </td>
                             <td>
@@ -164,15 +167,15 @@
                 <% if (seguimiento) { %>
                     <div class="basic-gray">Análisis psicológico:</div>
                     <div class="multirow-form-container">
-                        <textarea name="analisis" required rows="4"><%= seguimiento.analisisPsicologico %></textarea>
+                        <textarea name="analisisPsicologico" id= "analisisPsicologico" required rows="4"><%= seguimiento.analisisPsicologico %></textarea>
                     </div>
                     <div class="basic-gray">Recomendaciones:</div>
                     <div class="multirow-form-container">
-                        <textarea name="recomendaciones" required rows="4"><%= seguimiento.recomendaciones %></textarea>
+                        <textarea name="recomendaciones" id= "recomendaciones" required rows="4"><%= seguimiento.recomendaciones %></textarea>
                     </div>
                     <div class="basic-gray">Bitácora de sesión:</div>
                     <div class="multirow-form-container">
-                        <textarea name="bitacora" required rows="4"><%= seguimiento.sesionBitacora %></textarea>
+                        <textarea name="bitacora" id= "bitacora" required rows="4"><%= seguimiento.sesionBitacora %></textarea>
                     </div>
                 <% } %>                    
             </div>
