@@ -30,4 +30,29 @@ exports.obtenerExpedientePorSeguimientoId = (idSeguimiento, callback) => {
       callback(null, results[0]);
     });
   };
+
+  // Métodos para actualizar
+  exports.actualizarSeguimiento = (id, data, callback) => {
+    db.query('UPDATE seguimientopsicologico SET ? WHERE idSeguimiento = ?', [data, id], callback);
+  };
+  
+  exports.eliminarObjetivosPorSeguimientoId = (id, callback) => {
+    db.query('DELETE FROM objetivos WHERE idSeguimiento = ?', [id], callback);
+  };
+  
+  exports.insertarObjetivos = (objetivos, callback) => {
+    console.log('Insertando objetivos en la base de datos:', objetivos);
+    
+    const query = 'INSERT INTO objetivos (idSeguimiento, actividad, tiempo, metodologia, objetivo, observaciones) VALUES ?';
+    
+    const values = objetivos.map(obj => [obj.idSeguimiento, obj.actividad, obj.tiempo, obj.metodologia, obj.objetivo, obj.observaciones]);
+  
+    db.query(query, [values], (err, result) => {
+      if (err) {
+        console.error('Error al insertar los objetivos:', err);
+        return callback(err);
+      }
+      callback(null, result);
+    });
+  };
   

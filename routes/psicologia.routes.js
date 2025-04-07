@@ -3,7 +3,6 @@ const router = express.Router();
 const psicologiaController = require('../controllers/psicologia.controller');
 
 router.get('/seguimiento/editar/:id', psicologiaController.obtenerSeguimientoPorId);
-
-//router.post('/seguimiento/editar/:id', psicologiaController.actualizarSeguimiento);
+router.post('/seguimiento/editar/:id', psicologiaController.actualizarSeguimiento);
 
 module.exports = router;
