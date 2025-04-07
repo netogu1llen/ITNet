@@ -8,6 +8,7 @@ const session = require('express-session');
 const path = require('path');
 
 const app = express();
+app.use('/node_modules', express.static('node_modules'));
 
 // Middleware de seguridad
 app.use(helmet());
@@ -59,6 +60,10 @@ app.use('/nutricion', nutricionRoutes);
 // Rutas de educación
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
+// Rutas de pacientes
+const pacientesRoutes = require('./routes/pacientes.routes');
+app.use('/pacientes', pacientesRoutes);
+
 
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');
