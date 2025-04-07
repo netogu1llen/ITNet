@@ -12,6 +12,7 @@ const jwtSecret = process.env.JWT_SECRET; // Para firmar y verificar JWT
 const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
 
 const app = express();
+app.use('/node_modules', express.static('node_modules'));
 
 app.use(helmet({
     contentSecurityPolicy: {
@@ -78,6 +79,10 @@ app.use('/nutricion', nutricionRoutes);
 // Rutas de educación
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
+
+// Configuración de rutas
+const psicologiaRoutes = require('./routes/psicologia.routes');
+app.use('/psicologia', psicologiaRoutes);
 
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');

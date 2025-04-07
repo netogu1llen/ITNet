@@ -1,0 +1,87 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/styles.css">
+
+<section class="section">
+  <div class="container">
+
+    <!-- Título principal -->
+    <h1 class="title">Expediente Psicologico</h1>
+
+    <!-- Barra superior de DataTable (creada dinámicamente con JS) -->
+    <div id="TopBar" class="dt-top-bar">
+      <!-- Logo, select, búsqueda y botón se inyectan desde el JS -->
+    </div>
+
+    <!-- Información General del Expediente (div blanco entre barra y tabla) -->
+    <div class="full-white-container">
+    <div class="multirow-container">
+      <div class="element-container">
+        <h2 class="basic-gray">Nombre</h2>
+        <h2 class="basic-black"><%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %></h2>
+      </div>
+      <div class="element-container">
+        <h2 class="basic-gray">ID del Expediente</h2>
+        <h2 class="basic-black"><%= expediente.idExpediente %></h2>
+      </div>
+      <div class="element-container">
+        <h2 class="basic-gray">Fecha de Creación</h2>
+        <h2 class="basic-black"><%= expediente.fechaCreacion %></h2>
+      </div>
+    </div>
+  
+    <div class="multirow-container">
+      <div class="element-container">
+        <h2 class="basic-gray">Contacto</h2>
+        <h2 class="basic-black"><%= expediente.contacto %></h2>
+      </div>
+      <div class="element-container">
+        <h2 class="basic-gray">Dirección</h2>
+        <h2 class="basic-black"><%= expediente.direccion %></h2>
+      </div>
+      <div class="element-container">
+        <h2 class="basic-gray">Grado</h2>
+        <h2 class="basic-black"><%= expediente.grado %></h2>
+      </div>
+      <div class="element-container">
+        <h2 class="basic-gray">Curso</h2>
+        <h2 class="basic-black"><%= expediente.curso %></h2>
+      </div>
+    </div>
+  </div>
+
+    <!-- Tabla -->
+    <div style="width: 100%; height: 900px;">
+    <table id="expedientePsicologicoTable" class="table is-striped is-hoverable is-fullwidth">
+      <thead>
+        <tr>
+          <th>Tipo de Documento</th>
+          <th>Fecha de Creación</th>
+          <th>Descargar</th>
+          <th>Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% documentos.forEach(documento => { %>
+          <tr>
+            <td><%= documento.tipo %></td>
+            <td><%= new Date(documento.fechaCreacion).toLocaleDateString() %></td>
+            <td>
+                <a href="/psicologia/documentos/descargar/<%= documento.id %>" class="">
+                  <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
+                </a>
+              </td>
+            <td>
+              <button class="button is-small is-danger btn-eliminar" data-id="<%= documento.id %>">Eliminar</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  </div>
+</section>
+
+<script src="/vendor/jquery-3.6.0.min.js"></script>
+<script src="/vendor/jquery.dataTables.min.js"></script>
+<script src="/js/expedientePsicologico.js"></script>
