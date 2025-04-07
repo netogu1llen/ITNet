@@ -1,4 +1,4 @@
-const Seguimiento = require('../models/seguimiento.model');
+const {Seguimiento} = require('../models/psicologia.model');
 const get_registrar_seguimiento= async (req, res) => {
     try {
         const idExpediente = req.params.id;
@@ -13,14 +13,33 @@ const get_registrar_seguimiento= async (req, res) => {
 const post_registrar_seguimiento= async (req, res) => {
     try {
         const idExpediente = req.params.id;
-        const { objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora } = req.body;
-        await Seguimiento.registrarSeguimiento(idExpediente, {objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora});
-
-        /*actividad.forEach(async (act, i) => {
-            await Seguimiento.registrarObjetivo(idExpediente, {actividad: act, tiempo: tiempo[i], metodologia: metodologia[i], objetivo: objetivoActividad[i], observaciones: observaciones[i]});
-        });
-        */
-        //res.redirect(`/psicologia/${idExpediente}`);
+        const {
+          objetivoSesion,
+          justificacionSesion,
+          analisisPsicologico,
+          recomendaciones,
+          bitacora,
+          actividad = [], 
+          tiempo = [],
+          metodologia = [],
+          objetivo= [],
+          observaciones = []
+        } = req.body;
+        const idSeguimiento = await Seguimiento.registrarSeguimiento(idExpediente,objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora);
+        console.log("Seguimiento",idSeguimiento);
+        // Crear nuevos objetivos
+        const maxLength = Math.max(
+          actividad.length,
+          tiempo.length,
+          metodologia.length,
+          objetivo.length,
+          observaciones.length
+        );
+        console.log(actividad, tiempo, metodologia, objetivo, observaciones);
+        for (let i = 0; i < maxLength; i++) {
+          await Seguimiento.registrarObjetivos(idSeguimiento, actividad[i], tiempo[i], metodologia[i], objetivo[i], observaciones[i]);
+        }
+        
         res.status(200).json({ mensaje: 'Datos registrados correctamente' });
         
     } catch (error) {

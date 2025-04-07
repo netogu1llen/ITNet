@@ -9,6 +9,7 @@
 .env.test.local
 .env.production.local
 util/database.js
+sql/soffy.sql
 
 # Archivos de configuración personalizados
 *.config.js
