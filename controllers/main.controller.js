@@ -16,3 +16,7 @@ response.render('main/pacientes');
 exports.getTrabajadores = (request, response) => {
 response.render('main/trabajadores');
 };
+
+exports.getHistoriaClinica = (request, response, next) => {
+response.render('historiaClinica');
+};

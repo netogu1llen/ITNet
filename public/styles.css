@@ -441,6 +441,7 @@ font-weight: 500;
   vertical-align: middle;
 }
 
+
 /*Centrar el contenido de la tabla de alumnos*/
 #alumnosTable td,
 #alumnosTable th {
@@ -461,7 +462,11 @@ font-weight: 500;
   text-align: center;
   vertical-align: middle;
 }
-
+#miEquipoTable td,
+#miEquipoTable th {
+  text-align: center;
+  vertical-align: middle;
+}
 
 /* ==================== CONTENEDORES PARA FORMULARIOS ==================== */
 
@@ -469,7 +474,7 @@ font-weight: 500;
 /*Contenedor gris que contiene formularios*/
 .gray-container {
     width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
-    margin: 20px 20px 20px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
+    margin: 0px 20px 0px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
     padding: 20px;
     text-align: left;
     background-color: #F2F2F2; /* Fondo gris claro */
