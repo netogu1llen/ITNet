@@ -4,7 +4,6 @@
  */
 
 const PDFDocument = require('pdfkit');
-const AWS = require('aws-sdk');
 const s3 = require('./s3Client');
 const stream = require('stream');
 
