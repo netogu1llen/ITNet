@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const s3 = require('../utils/s3Client');
 const { generatePdfAndUploadToS3 } = require('../util/generatePdfAndUpload');
 
 /**
