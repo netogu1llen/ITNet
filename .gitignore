@@ -178,3 +178,6 @@ lib-cov/
 build/Release
 
 util/database.js
+
+# Ignorar archivos SQL
+*.sql

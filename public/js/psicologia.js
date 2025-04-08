@@ -107,9 +107,134 @@ document.getElementById('btn-agregar-fila')?.addEventListener('click', function(
   configurarBotonesEliminarFila();
 });
 
-
+const btnGuardar = document.getElementById('btn-guardar');
 // Botón Guardar Cambios con confirmación
-document.getElementById('btn-guardar').addEventListener('click', function() {
+if (btnGuardar) {
+  btnGuardar.addEventListener('click', function() {
+    Swal.fire({
+      title: "Guardar cambios?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, estoy seguro",
+      cancelButtonText: "Cancelar"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const idExpediente = window.location.pathname.split('/').pop();
+    
+          // Obtener los valores de los campos principales
+          const analisisPsicologico = document.getElementById('analisisPsicologico').value;
+          const recomendaciones = document.getElementById('recomendaciones').value;
+          const bitacora = document.getElementById('bitacora').value;
+          const objetivoSesion = document.getElementById('objetivoSesion').value;
+          const justificacionSesion = document.getElementById('justificacionSesion').value;
+    
+          // Obtener los valores de la tabla multi-fila (con las filas dinámicas)
+          const actividad = Array.from(document.querySelectorAll('textarea[name^="actividad[]"]')).map(input => input.value.trim());
+          const tiempo = Array.from(document.querySelectorAll('textarea[name^="tiempo[]"]')).map(input => input.value.trim());
+          const metodologia = Array.from(document.querySelectorAll('textarea[name^="metodologia[]"]')).map(input => input.value.trim());
+          const objetivo = Array.from(document.querySelectorAll('textarea[name^="objetivo[]"]')).map(input => input.value.trim());
+          const observaciones = Array.from(document.querySelectorAll('textarea[name^="observaciones[]"]')).map(input => input.value.trim());
+          //Se hace validaciones de campos
+          const campos = [
+            { id: 'analisisPsicologico', nombre: 'Análisis Psicológico' },
+            { id: 'recomendaciones', nombre: 'Recomendaciones' },
+            { id: 'bitacora', nombre: 'Bitácora' },
+            { id: 'objetivoSesion', nombre: 'Objetivo de Sesión' },
+            { id: 'justificacionSesion', nombre: 'Justificación de Sesión' }
+          ];
+          
+          let camposVacios = [];
+          let camposInvalidos = [];
+          const regexInvalido = /['"%;<>\\]/; // Caracteres potencialmente peligrosos
+          
+          // Validar los campos del formulario
+          for (let campo of campos) {
+            const valor = document.getElementById(campo.id).value.trim();
+        
+            if (!valor) {
+              camposVacios.push(campo.nombre);
+            } else if (regexInvalido.test(valor)) {
+              camposInvalidos.push(campo.nombre);
+            }
+          }
+          // Validar cada fila de la tabla multifila
+          const nombreCamposTabla = ["Actividad", "Tiempo", "Metodología", "Objetivo", "Observaciones"];
+          const arraysTabla = [actividad, tiempo, metodologia, objetivo, observaciones];
+          for (let i = 0; i < actividad.length; i++) {
+            for (let j = 0; j < arraysTabla.length; j++) {
+              const valorCampo = arraysTabla[j][i];
+              const nombreCampo = `${nombreCamposTabla[j]} (Fila ${i + 1})`;
+    
+              if (!valorCampo) {
+                camposVacios.push(nombreCampo);
+              } else if (regexInvalido.test(valorCampo)) {
+                camposInvalidos.push(nombreCampo);
+              }
+            }
+          }
+    
+          if (camposVacios.length > 0) {
+            Swal.fire({
+              title: "Campos vacíos",
+              text: `Por favor completa los siguientes campos: ${camposVacios.join(', ')}`,
+              icon: "error"
+            });
+            return;
+          }
+          
+          if (camposInvalidos.length > 0) {
+            Swal.fire({
+              title: "Caracteres no permitidos",
+              text: `Remueve los caracteres no válidos de los siguientes campos: ${camposInvalidos.join(', ')}`,
+              icon: "error"
+            });
+            return;
+          }
+
+        // Crear un objeto con los datos principales
+        const datos = {
+          objetivoSesion,
+          justificacionSesion,
+          analisisPsicologico,
+          recomendaciones,
+          bitacora,
+          actividad,  // Datos de la tabla
+          tiempo,      // Datos de la tabla
+          metodologia, // Datos de la tabla
+          objetivo,    // Datos de la tabla
+          observaciones // Datos de la tabla
+        };
+        console.log(datos);
+        enviarPost(`/psicologia/seguimientos/editar/${idExpediente}`, { accion: "registro", datos: datos });
+      }
+    });
+  });
+}
+
+// Botón Salir con opciones
+document.getElementById('btn-cancelar').addEventListener('click', function() {
+  Swal.fire({
+      title: "Estas a punto de cancelar la operacion",
+      text: "Estas seguro?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si",
+      cancelButtonText: "No"
+  }).then((result) => {
+      if (result.isConfirmed) {
+          Swal.fire("No se guardaron los cambios", "", "info").then(() => {
+              window.location.href = "/psicologia"});
+      }
+  });
+});
+// Botón Registrar con confirmación
+const btnRegistrar = document.getElementById('btn-registrar');
+if (btnRegistrar) {
+  btnRegistrar.addEventListener('click', function() {
   Swal.fire({
     title: "Guardar cambios?",
     icon: "warning",
@@ -118,26 +243,25 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
     cancelButtonColor: "#d33",
     confirmButtonText: "Sí, estoy seguro",
     cancelButtonText: "Cancelar"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const idExpediente = window.location.pathname.split('/').pop();
-  
-        // Obtener los valores de los campos principales
-        const analisisPsicologico = document.getElementById('analisisPsicologico').value;
-        const recomendaciones = document.getElementById('recomendaciones').value;
-        const bitacora = document.getElementById('bitacora').value;
-        const objetivoSesion = document.getElementById('objetivoSesion').value;
-        const justificacionSesion = document.getElementById('justificacionSesion').value;
-  
-        // Obtener los valores de la tabla multi-fila (con las filas dinámicas)
-        const actividad = Array.from(document.querySelectorAll('textarea[name^="actividad[]"]')).map(input => input.value.trim());
-        const tiempo = Array.from(document.querySelectorAll('textarea[name^="tiempo[]"]')).map(input => input.value.trim());
-        const metodologia = Array.from(document.querySelectorAll('textarea[name^="metodologia[]"]')).map(input => input.value.trim());
-        const objetivo = Array.from(document.querySelectorAll('textarea[name^="objetivo[]"]')).map(input => input.value.trim());
-        const observaciones = Array.from(document.querySelectorAll('textarea[name^="observaciones[]"]')).map(input => input.value.trim());
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const idExpediente = window.location.pathname.split('/').pop();
 
+      // Obtener los valores de los campos principales
+      const analisisPsicologico = document.getElementById('analisisPsicologico').value;
+      const recomendaciones = document.getElementById('recomendaciones').value;
+      const bitacora = document.getElementById('bitacora').value;
+      const objetivoSesion = document.getElementById('objetivoSesion').value;
+      const justificacionSesion = document.getElementById('justificacionSesion').value;
 
+      // Obtener los valores de la tabla multi-fila (con las filas dinámicas)
+      const actividad = Array.from(document.querySelectorAll('textarea[name="actividad[]"]')).map(input => input.value.trim());
+      const tiempo = Array.from(document.querySelectorAll('textarea[name="tiempo[]"]')).map(input => input.value.trim());
+      const metodologia = Array.from(document.querySelectorAll('textarea[name="metodologia[]"]')).map(input => input.value.trim());
+      const objetivo = Array.from(document.querySelectorAll('textarea[name="objetivo[]"]')).map(input => input.value.trim());
+      const observaciones = Array.from(document.querySelectorAll('textarea[name="observaciones[]"]')).map(input => input.value.trim());
 
+      console.log(actividad, tiempo, metodologia, objetivo, observaciones);
       const campos = [
         { id: 'analisisPsicologico', nombre: 'Análisis Psicológico' },
         { id: 'recomendaciones', nombre: 'Recomendaciones' },
@@ -160,7 +284,22 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
           camposInvalidos.push(campo.nombre);
         }
       }
-      
+      // Validar cada fila de la tabla multifila
+      const nombreCamposTabla = ["Actividad", "Tiempo", "Metodología", "Objetivo", "Observaciones"];
+      const arraysTabla = [actividad, tiempo, metodologia, objetivo, observaciones];
+      for (let i = 0; i < actividad.length; i++) {
+        for (let j = 0; j < arraysTabla.length; j++) {
+          const valorCampo = arraysTabla[j][i];
+          const nombreCampo = `${nombreCamposTabla[j]} (Fila ${i + 1})`;
+
+          if (!valorCampo) {
+            camposVacios.push(nombreCampo);
+          } else if (regexInvalido.test(valorCampo)) {
+            camposInvalidos.push(nombreCampo);
+          }
+        }
+      }
+
       if (camposVacios.length > 0) {
         Swal.fire({
           title: "Campos vacíos",
@@ -192,27 +331,8 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
         objetivo,    // Datos de la tabla
         observaciones // Datos de la tabla
       };
-      console.log(datos);
-      enviarPost(`/psicologia/seguimientos/editar/${idExpediente}`, { accion: "registro", datos: datos });
+      enviarPost(`/psicologia/seguimientos/registrar/${idExpediente}`, { accion: "registro", datos: datos });
     }
   });
 });
-
-// Botón Salir con opciones
-document.getElementById('btn-cancelar').addEventListener('click', function() {
-  Swal.fire({
-      title: "Estas a punto de cancelar la operacion",
-      text: "Estas seguro?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si",
-      cancelButtonText: "No"
-  }).then((result) => {
-      if (result.isConfirmed) {
-          Swal.fire("No se guardaron los cambios", "", "info").then(() => {
-              window.location.href = "/psicologia"});
-      }
-  });
-});
+}
