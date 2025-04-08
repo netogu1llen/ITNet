@@ -41,9 +41,6 @@ app.use(morgan('combined'));
 // Middleware para servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
-//middleware para servir archivos estáticos de la carpeta uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // Configuración de la vista (EJS)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

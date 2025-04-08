@@ -105,28 +105,52 @@ $('#subirDocumentoForm').on('submit', function (e) {
         $('#modalRegistrarSeguimiento').css('display', 'flex'); // Abre el modal para registrar un seguimiento
     });
 
-    // Botón Eliminar Documento
+        // Botón Eliminar Documento
     $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
         const id = $(this).data('id');
-        if (confirm('¿Estás seguro de eliminar este documento? Esta acción no se puede deshacer.')) {
-            $.ajax({
-                url: `/psicologia/documentos/eliminar/${id}`,
-                type: 'DELETE',
-                success: function () {
-                    alert('El documento ha sido eliminado.');
-                    location.reload();
-                },
-                error: function (err) {
-                    alert('No se pudo eliminar el documento.');
-                    console.error(err);
-                }
-            });
-        }
+        
+        // Mostrar un SweetAlert2 de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/psicologia/documentos/eliminar/${id}`,
+                    type: 'DELETE',
+                    success: function () {
+                        // SweetAlert2 para indicar éxito
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Eliminado!',
+                            text: 'El documento ha sido eliminado.',
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (err) {
+                        // SweetAlert2 para error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo eliminar el documento.',
+                        });
+                        console.error(err);
+                    }
+                });
+            }
+        });
     });
 
 
+
     // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
-    $(document).on('click', '.fila-documento', function () {
+    $(document).on('click', '.fila-documento', function (event) {
         const documentoId = $(this).data('id');  // Obtener el ID del documento
         if (documentoId) {
             // Cambiar la URL para solo mostrar el documento
@@ -138,6 +162,12 @@ $('#subirDocumentoForm').on('submit', function (e) {
             console.error('ID del documento no encontrado.');
         }
     });
+
+    // Asegurarse de que el evento de clic en los botones no active la vista previa
+    $('#expedientePsicologicoTable').on('click', 'td a, td .btn-eliminar', function (event) {
+        event.stopPropagation();  // Detener la propagación del clic hacia la fila
+    });
+
 
     // CERRAR MODAL DE VISTA PREVIA
     $(document).on('click', '#modalVistaPreviaDocumento .modal-background, #modalVistaPreviaDocumento .delete', function () {
