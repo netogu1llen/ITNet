@@ -38,4 +38,6 @@ router.get('/documentos/descargar/:id', psicologiaController.descargarDocumento)
 // Ruta para eliminar un documento
 router.delete('/documentos/eliminar/:id', psicologiaController.eliminarDocumento);
 
+// Ruta para mostrar un documento en el iframe (vista previa)
+router.get('/documentos/ver/:id', psicologiaController.verDocumento);
 module.exports = router;

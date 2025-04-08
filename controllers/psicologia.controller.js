@@ -68,7 +68,7 @@ exports.descargarDocumento = async (req, res) => {
             return res.status(404).json({ error: 'Documento no encontrado' });
         }
 
-        const filePath = path.join(__dirname, '../uploads', documento.nombreArchivo);
+        const filePath = path.join(__dirname, '..', documento.nombreArchivo);
         if (!fs.existsSync(filePath)) {
             return res.status(404).json({ error: 'Archivo no encontrado en el servidor' });
         }
@@ -142,5 +142,66 @@ exports.subirDocumento = async (req, res) => {
     } catch (error) {
         console.error('Error al subir el documento:', error);
         res.status(500).json({ error: 'Error al subir el documento' });
+    }
+};
+
+// Asegúrate de que está correctamente exportada
+exports.verDocumento = async (req, res) => {
+    try {
+        const documentoId = req.params.id;
+        console.log('verDocumento con id:', documentoId);
+        
+        // Buscar el documento en la base de datos
+        const documento = await Psicologia.obtenerDocumentoPorId(documentoId);
+        
+        if (!documento) {
+            console.error('Documento no encontrado en la base de datos');
+            return res.status(404).send('Documento no encontrado');
+        }
+        
+        console.log('Documento encontrado:', documento);
+        
+        // Verificar cómo está almacenada la ruta
+        let rutaDocumento;
+        if (documento.ubicacion) {
+            // Si es una ruta relativa (comienza con 'uploads/')
+            if (documento.ubicacion.startsWith('uploads/') || documento.ubicacion.startsWith('uploads\\')) {
+                rutaDocumento = path.join(__dirname, '..', documento.ubicacion);
+            } else {
+                // Si ya es una ruta completa
+                rutaDocumento = documento.ubicacion;
+            }
+        } else {
+            // Si no hay una ubicación específica, intenta construir una basada en el ID
+            const nombreArchivo = documento.nombreArchivo || `${documentoId}.pdf`;
+            rutaDocumento = path.join(__dirname, '..', 'uploads', nombreArchivo);
+        }
+        
+        console.log('Intentando acceder al archivo en:', rutaDocumento);
+        
+        // Verificar si el archivo existe
+        if (fs.existsSync(rutaDocumento)) {
+            return res.sendFile(rutaDocumento);
+        } else {
+            // Verificar si existe en alguna otra ubicación común
+            const alternativas = [
+                path.join(__dirname, '..', 'uploads', path.basename(rutaDocumento)),
+                path.join(__dirname, '..', path.basename(rutaDocumento))
+            ];
+            
+            for (const alt of alternativas) {
+                console.log('Intentando ruta alternativa:', alt);
+                if (fs.existsSync(alt)) {
+                    return res.sendFile(alt);
+                }
+            }
+            
+            // Si llega aquí, no encontró el archivo
+            console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
+            return res.status(404).send('Archivo no encontrado');
+        }
+    } catch (error) {
+        console.error('Error al mostrar documento:', error);
+        return res.status(500).send('Error al procesar la solicitud');
     }
 };

@@ -123,4 +123,27 @@ $('#subirDocumentoForm').on('submit', function (e) {
             });
         }
     });
+
+
+    // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
+    $(document).on('click', '.fila-documento', function () {
+        const documentoId = $(this).data('id');  // Obtener el ID del documento
+        if (documentoId) {
+            // Cambiar la URL para solo mostrar el documento
+            const url = `/psicologia/documentos/ver/${documentoId}`; 
+            
+            $('#iframeVistaPreviaDocumento').attr('src', url);  // Establecer la URL en el iframe
+            $('#modalVistaPreviaDocumento').css('display', 'flex');  // Mostrar el modal con la vista previa
+        } else {
+            console.error('ID del documento no encontrado.');
+        }
+    });
+
+    // CERRAR MODAL DE VISTA PREVIA
+    $(document).on('click', '#modalVistaPreviaDocumento .modal-background, #modalVistaPreviaDocumento .delete', function () {
+        $('#modalVistaPreviaDocumento').css('display', 'none');
+        $('#iframeVistaPreviaDocumento').attr('src', '');  // Limpiar el iframe cuando se cierra
+    });
+
+
 });
