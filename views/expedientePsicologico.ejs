@@ -8,12 +8,12 @@
     <h1 class="title">Expediente Psicologico</h1>
 
     <!-- Barra superior de DataTable (creada dinámicamente con JS) -->
-    <div id="TopBar" class="dt-top-bar">
+    <div id="TopBar" class="exp-psicologico-wide">
       <!-- Logo, select, búsqueda y botón se inyectan desde el JS -->
     </div>
 
     <!-- Información General del Expediente (div blanco entre barra y tabla) -->
-    <div class="full-white-container">
+    <div class="full-white-container exp-psicologico-wide">
     <div class="multirow-container">
       <div class="element-container">
         <h2 class="basic-gray">Nombre</h2>
@@ -21,11 +21,11 @@
       </div>
       <div class="element-container">
         <h2 class="basic-gray">ID del Expediente</h2>
-        <h2 class="basic-black"><%= expediente.idExpediente %></h2>
+        <h2 class="basic-black"><%= expediente.IDExpediente %></h2>
       </div>
       <div class="element-container">
-        <h2 class="basic-gray">Fecha de Creación</h2>
-        <h2 class="basic-black"><%= expediente.fechaCreacion %></h2>
+        <h2 class="basic-gray">Fecha de Nacimiento</h2>
+    <h2 class="basic-black"><%= new Date(expediente.fechaNacimiento).toLocaleDateString() %></h2>
       </div>
     </div>
   

@@ -462,6 +462,12 @@ font-weight: 500;
   vertical-align: middle;
 }
 
+/*Centrar el contenido de la tabla de expediente psicologico*/
+#expedientePsicologicoTable td,
+#expedientePsicologicoTable th {
+  text-align: center;
+  vertical-align: middle;
+}
 
 /* ==================== CONTENEDORES PARA FORMULARIOS ==================== */
 
@@ -752,4 +758,13 @@ body {
 
 .materia-form button {
   margin-top: 40px;
+}
+
+/* =========== Expediente Psicologico =========== */
+
+/* Clase para alargar elementos en expedientePsicologico */
+.exp-psicologico-wide {
+  width: 100%; /* Ajusta el ancho para que coincida con la tabla */
+  margin-left: auto; /* Centra horizontalmente */
+  margin-right: auto; /* Centra horizontalmente */
 }

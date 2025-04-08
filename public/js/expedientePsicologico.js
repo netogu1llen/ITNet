@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    // Inicializar DataTable
     const table = $('#expedientePsicologicoTable').DataTable({
         language: {
             info: "Mostrando _START_ a _END_ de _TOTAL_ documentos",
@@ -19,20 +18,28 @@ $(document).ready(function () {
 
     // Crear barra superior personalizada
     const logo = $('<img src="/images/psychology.png" alt="Logo Psicologia" class="dt-logo">');
-    const registrarButton = $('<button class="button button-create" style="height: 30px;">Registrar Documento</button>');
+    const registrarDocumentoButton = $('<button class="button button-create" style="height: 30px;">Subir Documento</button>');
+    const registrarSeguimientoButton = $('<button class="button button-create" style="height: 30px;">Registrar Seguimiento</button>');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
 
     // Agregar elementos a la barra
     dtTopBar.append(logo);
     $('.dataTables_length').appendTo(dtTopBar);
     $('.dataTables_filter').appendTo(dtTopBar);
-    dtTopBar.append(registrarButton);
-    $('.dataTables_wrapper').prepend(dtTopBar);
+    dtTopBar.append(registrarDocumentoButton);
+    dtTopBar.append(registrarSeguimientoButton);
+    $('#TopBar').append(dtTopBar);
 
     // Acción del botón Registrar Documento
-    registrarButton.on('click', function () {
+    registrarDocumentoButton.on('click', function () {
         $('#modalRegistrar').css('display', 'flex'); // Abre el modal para registrar un documento
     });
+
+    // Acción del botón Registrar Seguimiento
+    registrarSeguimientoButton.on('click', function () {
+        $('#modalRegistrarSeguimiento').css('display', 'flex'); // Abre el modal para registrar un seguimiento
+    });
+
 
     // Botón Eliminar Documento
     $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
