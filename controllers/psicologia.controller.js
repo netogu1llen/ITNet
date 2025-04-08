@@ -10,7 +10,7 @@ const get_editar_seguimiento = async (req, res) => {
     }
 
     const objetivos = await Seguimiento.obtenerObjetivosPorSeguimientoId(id);
-    const expediente = await Seguimiento.obtenerExpedientePorSeguimientoId(id);
+    const expediente = await Seguimiento.getDatosGenerales(id);
 
     res.render('editarSeguimiento', {
       seguimiento,
@@ -70,8 +70,8 @@ const post_editar_seguimiento = async (req, res) => {
 const get_registrar_seguimiento= async (req, res) => {
     try {
         const idExpediente = req.params.id;
-        const datosGenerales = await Seguimiento.getDatosGenerales(idExpediente);
-        res.render('registrarSeguimiento', {datosGenerales: datosGenerales[0][0]});
+        const expediente = await Seguimiento.getDatosGenerales(idExpediente);
+        res.render('registrarSeguimiento', {expediente});
 
     } catch (error) {
         console.error('Error al obtener la información:', error.message);

@@ -17,15 +17,12 @@ router.get('/login', (req, res) => {
 
 // Rutas principales
 router.get('/', mainController.getHome);
-<<<<<<< HEAD
-=======
 router.get('/historiaClinica', mainController.getHistoriaClinica);
 router.get('/clinica', mainController.getClinicaV2);
 router.get('/pacientes', mainController.getPacientes);
 router.get('/trabajadores', mainController.getTrabajadores);
 
 
->>>>>>> develop
 // Usar las rutas de S3 con un prefijo "/api"
 router.use('/api', s3Routes);
 

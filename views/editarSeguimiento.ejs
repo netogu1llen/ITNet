@@ -16,23 +16,7 @@
             </div>
         </div>
 
-        <div class="full-white-container">  
-            
-            <div class="multirow-container">
-                <div class="element-container">
-                    <div class="basic-black"> Larisa Jimenez Aldemar</div>
-                </div>
-                <div class="element-container">
-                    <div class="basic-black"> Neto Gael Asturiano</div>
-                </div>
-                <div class="element-container">
-                    <div class="basic-black"> 16:45</div>
-                </div>
-                <div class="element-container">
-                    <div class="basic-black"> Fecha: 01 de marzo de 2025</div>
-                </div>
-            </div>
-            <hr>
+        <div class="full-white-container">
 
             <div class="full-white-container">
                 <div class="element-container-gray">
@@ -40,71 +24,48 @@
                         <div class="basic-black"> 1. SEGUIMIENTO PSICOLÓGICO</div>
                     </div>
                 </div>
-                <% if (expediente) { %>
-                    
-                    <div class="multirow-container">
-                        <div class="element-container">
-                            <div class="basic-gray"> >Nombre</div>
-                            <br>
-                            <div class="basic-black"><%= expediente.nombres %> <%= expediente.apellidoP %> </div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Fecha de nacimiento</div>
-                            <br>
-                            <div class="basic-black"><%= expediente.fechaNacimiento %></div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Nombre de la escuela</div>
-                            <br>
-                            <div class="basic-black">Instituto Juarez</div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Dirección</div>
-                            <br>
-                            <div class="basic-black"><%= expediente.direccion %></div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Lateralidad</div>
-                            <br>
-                            <div class="basic-black">Pablo Picapiedra</div>
-                        </div>
+                <div class="multirow-container">
+                    <div class="element-container">
+                        <div class="basic-gray"> >Nombre</div>                  
+                        <br>
+                        <div class="basic-black">
+                            <%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %>
+                        </div>        
                     </div>
-
-                    <div class="multirow-container">
-                        <div class="element-container">
-                            <div class="basic-gray"> >Edad cronológica</div>
-                            <br>
-                            <div class="basic-black">48 años</div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Dirección</div>
-                            <br>
-                            <div class="basic-black">Montes del Prado</div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Estatura</div>
-                            <br>
-                            <div class="basic-black">1.57</div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Nombre del profesor</div>
-                            <br>
-                            <div class="basic-black">Pablo Picapiedra</div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Grado que cursa</div>
-                            <br>
-                            <div class="basic-black"><%= expediente.grado %> de <%= expediente.curso %></div>
-                        </div>
-                        <div class="element-container">
-                            <div class="basic-gray"> >Peso</div>
-                            <br>
-                            <div class="basic-black">50kg</div>
-                        </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Fecha de nacimiento</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.fechaNacimiento ? new Date(expediente.fechaNacimiento).toISOString().split('T')[0] : 'Sin dato' %></div>
                     </div>
-                <% } %>
+                </div>
+                <div class="multirow-container">
+                    <div class="element-container">
+                        <div class="basic-gray"> >Edad cronológica</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.edad  || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Dirección</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.direccion  || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Estatura</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.talla || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Grado que cursa</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.grado || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Peso</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.peso || 'Sin dato' %></div>
+                    </div>
+                </div>
                 <br>
-
                 <% if (seguimiento) { %>
                     <div class="basic-gray">Objetivo de la sesión:</div>
                     <div class="multirow-form-container">
