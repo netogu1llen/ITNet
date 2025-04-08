@@ -1,0 +1,191 @@
+<%- include('partials/head') %>
+<body>
+    <div class="gray-container">
+        <div class="head-container">
+            <div class="head-title">
+                <img src="/images/icono_psicologia.png" alt="Icono Salud">
+                SEGUIMIENTO PSICOLÓGICO
+            </div>
+            <div class="buttons-container">
+                <button class="button is-save" id="btn-guardar">
+                    Guardar
+                </button>
+                <button class="button is-cancel" id="btn-cancelar">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+
+        <div class="full-white-container">  
+            
+            <div class="multirow-container">
+                <div class="element-container">
+                    <div class="basic-black"> Larisa Jimenez Aldemar</div>
+                </div>
+                <div class="element-container">
+                    <div class="basic-black"> Neto Gael Asturiano</div>
+                </div>
+                <div class="element-container">
+                    <div class="basic-black"> 16:45</div>
+                </div>
+                <div class="element-container">
+                    <div class="basic-black"> Fecha: 01 de marzo de 2025</div>
+                </div>
+            </div>
+            <hr>
+
+            <div class="full-white-container">
+                <div class="element-container-gray">
+                    <div class="multirow-container">
+                        <div class="basic-black"> 1. SEGUIMIENTO PSICOLÓGICO</div>
+                    </div>
+                </div>
+                <% if (expediente) { %>
+                    
+                    <div class="multirow-container">
+                        <div class="element-container">
+                            <div class="basic-gray"> >Nombre</div>
+                            <br>
+                            <div class="basic-black"><%= expediente.nombres %> <%= expediente.apellidoP %> </div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Fecha de nacimiento</div>
+                            <br>
+                            <div class="basic-black"><%= expediente.fechaNacimiento %></div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Nombre de la escuela</div>
+                            <br>
+                            <div class="basic-black">Instituto Juarez</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Dirección</div>
+                            <br>
+                            <div class="basic-black"><%= expediente.direccion %></div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Lateralidad</div>
+                            <br>
+                            <div class="basic-black">Pablo Picapiedra</div>
+                        </div>
+                    </div>
+
+                    <div class="multirow-container">
+                        <div class="element-container">
+                            <div class="basic-gray"> >Edad cronológica</div>
+                            <br>
+                            <div class="basic-black">48 años</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Dirección</div>
+                            <br>
+                            <div class="basic-black">Montes del Prado</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Estatura</div>
+                            <br>
+                            <div class="basic-black">1.57</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Nombre del profesor</div>
+                            <br>
+                            <div class="basic-black">Pablo Picapiedra</div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Grado que cursa</div>
+                            <br>
+                            <div class="basic-black"><%= expediente.grado %> de <%= expediente.curso %></div>
+                        </div>
+                        <div class="element-container">
+                            <div class="basic-gray"> >Peso</div>
+                            <br>
+                            <div class="basic-black">50kg</div>
+                        </div>
+                    </div>
+                <% } %>
+                <br>
+
+                <% if (seguimiento) { %>
+                    <div class="basic-gray">Objetivo de la sesión:</div>
+                    <div class="multirow-form-container">
+                        <textarea name="objetivoSesion" id= "objetivoSesion" required rows="4"><%= seguimiento.sesionObjetivo %></textarea>
+                    </div>
+                    <div class="basic-gray">Justificación de la sesión:</div>
+                    <div class="multirow-form-container">
+                        <textarea name="justificacionSesion" id = "justificacionSesion" required rows="4"><%= seguimiento.sesionJustificacion %></textarea>
+                    </div>
+                <% } %>
+
+                <table class="multirow-table">
+                    <thead>
+                        <tr>
+                            <th>Actividad</th>
+                            <th>Tiempo</th>
+                            <th>Metodología</th>
+                            <th>Objetivo</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table">
+                        <% objetivos.forEach(obj => { %>
+                        <tr>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="actividad[]" id="actividad[]" required rows="4"><%= obj.actividad %></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="tiempo[]" id="tiempo[]" required rows="4"><%= obj.tiempo %></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="metodologia[]" id="metodologia[]" required rows="4"><%= obj.metodologia %></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="objetivo[]" id="objetivo[]" required rows="4"><%= obj.objetivo %></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="observaciones[]" id="observaciones[]" required rows="4"><%= obj.observaciones %></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="button is-cancel" id="btn-eliminar-fila type="button">-</button>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                
+                
+                <button id="btn-agregar-fila" class="button is-save">
+                    ＋
+                </button>
+
+                <% if (seguimiento) { %>
+                    <div class="basic-gray">Análisis psicológico:</div>
+                    <div class="multirow-form-container">
+                        <textarea name="analisisPsicologico" id= "analisisPsicologico" required rows="4"><%= seguimiento.analisisPsicologico %></textarea>
+                    </div>
+                    <div class="basic-gray">Recomendaciones:</div>
+                    <div class="multirow-form-container">
+                        <textarea name="recomendaciones" id= "recomendaciones" required rows="4"><%= seguimiento.recomendaciones %></textarea>
+                    </div>
+                    <div class="basic-gray">Bitácora de sesión:</div>
+                    <div class="multirow-form-container">
+                        <textarea name="bitacora" id= "bitacora" required rows="4"><%= seguimiento.sesionBitacora %></textarea>
+                    </div>
+                <% } %>                    
+            </div>
+        
+        </div>
+    </div>
+</form>
+    <script src="/js/psicologia.js"></script>
+</body>
+</html>

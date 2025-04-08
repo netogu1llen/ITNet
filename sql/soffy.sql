@@ -100,7 +100,11 @@ CREATE TABLE boletaMateria (
 
 CREATE TABLE objetivos (
     IDObjetivo INT AUTO_INCREMENT PRIMARY KEY,
+<<<<<<< HEAD
     IDSeguimiento INT,
+=======
+    IDExpediente INT,
+>>>>>>> develop
     objetivo VARCHAR(100),
     actividad VARCHAR(100),
     tiempo VARCHAR(20),
