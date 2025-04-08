@@ -18,7 +18,7 @@ $(document).ready(function () {
 
     // Crear barra superior personalizada
     const logo = $('<img src="/images/psychology.png" alt="Logo Psicologia" class="dt-logo">');
-    const registrarDocumentoButton = $('<button class="button button-create" style="height: 30px;">Subir Documento</button>');
+    const subirDocumentoButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Documento</button>');
     const registrarSeguimientoButton = $('<button class="button button-create" style="height: 30px;">Registrar Seguimiento</button>');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
 
@@ -26,54 +26,101 @@ $(document).ready(function () {
     dtTopBar.append(logo);
     $('.dataTables_length').appendTo(dtTopBar);
     $('.dataTables_filter').appendTo(dtTopBar);
-    dtTopBar.append(registrarDocumentoButton);
+    dtTopBar.append(subirDocumentoButton);
     dtTopBar.append(registrarSeguimientoButton);
     $('#TopBar').append(dtTopBar);
 
-    // Acción del botón Registrar Documento
-    registrarDocumentoButton.on('click', function () {
-        $('#modalRegistrar').css('display', 'flex'); // Abre el modal para registrar un documento
+    // ABRIR MODAL
+    $(document).on('click', '.button-upload', function () {
+        $('#modalSubirDocumento').css('display', 'flex');
     });
+
+    // CERRAR MODAL
+    $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
+        $('#modalSubirDocumento').css('display', 'none');
+        $('#subirDocumentoForm')[0].reset();
+        $('#nombreArchivo').text('No hay archivo seleccionado');
+    });
+
+    // MOSTRAR NOMBRE DEL ARCHIVO
+    $('input[name="archivoDocumento"]').on('change', function () {
+        const archivo = $(this)[0].files[0];
+        $('#nombreArchivo').text(archivo ? archivo.name : 'No hay archivo seleccionado');
+    });
+
+   // ENVÍO DEL FORMULARIO
+$('#subirDocumentoForm').on('submit', function (e) {
+    e.preventDefault();
+
+    const nombreDocumento = $('input[name="nombreDocumento"]').val().trim();
+    const archivo = $('input[name="archivoDocumento"]')[0].files[0];
+
+    if (!archivo || archivo.type !== "application/pdf") {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Debe seleccionar un archivo PDF válido.'
+        });
+        return;
+    }
+
+    // Obtener el ID del expediente de la URL actual
+    const urlPath = window.location.pathname;
+    const expedienteId = urlPath.split('/').pop();
+
+    const formData = new FormData();
+    formData.append('nombreDocumento', nombreDocumento);
+    formData.append('archivoDocumento', archivo);
+
+    $.ajax({
+        url: `/psicologia/documentos/subir/${expedienteId}`,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Documento subido correctamente.'
+            }).then(() => {
+                $('#modalSubirDocumento').css('display', 'none');
+                location.reload();
+            });
+        },
+        error: function (xhr) {
+            console.error('Error al subir documento:', xhr);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al subir el documento. Por favor, intenta de nuevo.'
+            });
+        }
+    });
+});
+
 
     // Acción del botón Registrar Seguimiento
     registrarSeguimientoButton.on('click', function () {
         $('#modalRegistrarSeguimiento').css('display', 'flex'); // Abre el modal para registrar un seguimiento
     });
 
-
     // Botón Eliminar Documento
     $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
         const id = $(this).data('id');
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: 'Esta acción no se puede deshacer',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: `/psicologia/documentos/eliminar/${id}`,
-                    type: 'DELETE',
-                    success: function () {
-                        Swal.fire('Eliminado', 'El documento ha sido eliminado.', 'success');
-                        table.row($(this).parents('tr')).remove().draw();
-                    },
-                    error: function (err) {
-                        Swal.fire('Error', 'No se pudo eliminar el documento.', 'error');
-                        console.error(err);
-                    }
-                });
-            }
-        });
-    });
-
-    // Botón Descargar Documento
-    $('#expedientePsicologicoTable').on('click', '.btn-descargar', function () {
-        const id = $(this).data('id');
-        window.location.href = `/psicologia/documentos/descargar/${id}`;
+        if (confirm('¿Estás seguro de eliminar este documento? Esta acción no se puede deshacer.')) {
+            $.ajax({
+                url: `/psicologia/documentos/eliminar/${id}`,
+                type: 'DELETE',
+                success: function () {
+                    alert('El documento ha sido eliminado.');
+                    location.reload();
+                },
+                error: function (err) {
+                    alert('No se pudo eliminar el documento.');
+                    console.error(err);
+                }
+            });
+        }
     });
 });

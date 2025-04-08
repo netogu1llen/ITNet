@@ -14,7 +14,7 @@ class Psicologia {
             throw error;
         }
     }
-
+    
     // Obtener documentos de la tabla seguimientoPsicologico
     static async obtenerSeguimientosPsicologicos(idExpediente) {
         try {
@@ -28,7 +28,7 @@ class Psicologia {
             throw error;
         }
     }
-
+    
     // Obtener datos del expediente
     static async obtenerExpedientePorId(idExpediente) {
         try {
@@ -42,7 +42,7 @@ class Psicologia {
             throw error;
         }
     }
-
+    
     // Registrar un nuevo documento
     static async registrarDocumento({ idExpediente, tipo, fechaCreacion, nombreArchivo }) {
         try {
@@ -55,7 +55,7 @@ class Psicologia {
             throw error;
         }
     }
-
+    
     // Obtener un documento por ID
     static async obtenerDocumentoPorId(id) {
         try {
@@ -69,7 +69,7 @@ class Psicologia {
             throw error;
         }
     }
-
+    
     // Eliminar un documento
     static async eliminarDocumento(id) {
         try {
@@ -78,6 +78,22 @@ class Psicologia {
                 SET eliminado = 1
                 WHERE IDDocumento = ?
             `, [id]);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    // Método para subir documento (corregido para usar la tabla documentosAdjuntos)
+    static async subirPrueba({ IDExpediente, nombre, ubicacion, fecha, eliminado }) {
+        try {
+            console.log('Insertando en BD:', { IDExpediente, nombre, ubicacion, fecha, eliminado });
+            
+            const [result] = await db.execute(
+                `INSERT INTO documentosAdjuntos (IDExpediente, nombre, ubicacion, fecha, eliminado)
+                VALUES (?, ?, ?, ?, ?)`,
+                [IDExpediente, nombre, ubicacion, fecha, eliminado]
+            );
             return result;
         } catch (error) {
             throw error;

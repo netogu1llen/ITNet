@@ -176,3 +176,6 @@ lib-cov/
 
 # Archivos binarios compilados
 build/Release
+
+# Carpeta para docuentos
+/uploads

@@ -106,3 +106,41 @@ exports.eliminarDocumento = async (req, res) => {
         res.status(500).json({ error: 'Error al eliminar documento' });
     }
 };
+
+// Subir un documento
+exports.subirDocumento = async (req, res) => {
+    try {
+        const { nombreDocumento } = req.body;
+        const { IDExpediente } = req.params; // Obtener ID del expediente desde la URL
+
+        if (!req.file) {
+            return res.status(400).json({ error: 'Debe subir un archivo válido.' });
+        }
+
+        // Creamos la ruta completa al archivo
+        const ubicacion = req.file.path;
+        const fecha = new Date(); // Fecha actual
+        const eliminado = 0; // Por defecto, no eliminado
+
+        console.log('Subiendo documento:', {
+            IDExpediente,
+            nombre: nombreDocumento,
+            ubicacion,
+            fecha
+        });
+
+        // Guardar en la base de datos
+        const nuevoDocumento = await Psicologia.subirPrueba({
+            IDExpediente,
+            nombre: nombreDocumento,
+            ubicacion,
+            fecha,
+            eliminado
+        });
+
+        res.status(201).json({ message: 'Documento subido correctamente', documento: nuevoDocumento });
+    } catch (error) {
+        console.error('Error al subir el documento:', error);
+        res.status(500).json({ error: 'Error al subir el documento' });
+    }
+};

@@ -82,6 +82,60 @@
   </div>
 </section>
 
+
+<!-- Modal Subir Documento -->
+<div id="modalSubirDocumento" class="modal" style="display: none; z-index: 1050;">
+  <!-- Fondo oscuro -->
+  <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
+
+  <!-- Contenedor del modal -->
+  <div class="modal-card" style="width: 450px;">
+    <!-- Cabecera con botón de cierre -->
+    <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
+      <button class="delete" aria-label="close"></button>
+    </header>
+
+    <!-- Cuerpo del modal -->
+    <section class="modal-card-body" style="text-align: center;">
+      <h1 class="title is-4">Subir Documento</h1>
+      <p class="subtitle is-6" style="margin-bottom: 25px;">
+        Para asegurarse de que la importación sea correcta, <br>
+        debe escoger un archivo con formato “.pdf”.
+      </p>
+
+      <!-- Formulario -->
+      <form id="subirDocumentoForm" enctype="multipart/form-data" method="POST">
+        <!-- Nombre del documento -->
+        <div class="field">
+          <div class="control">
+            <input class="input" type="text" name="nombreDocumento" placeholder="Nombre del documento" required>
+          </div>
+        </div>
+
+        <!-- Archivo -->
+        <div class="field">
+          <div class="file has-name is-fullwidth">
+            <label class="file-label">
+              <input class="file-input" type="file" name="archivoDocumento" accept=".pdf" required>
+              <span class="file-cta">
+                <span class="file-label">Elegir archivo</span>
+              </span>
+              <span class="file-name" id="nombreArchivo">No hay archivo seleccionado</span>
+            </label>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
+      <button type="button" class="button is-cancel">Cancelar</button>
+      <button type="submit" form="subirDocumentoForm" class="button is-save">Subir</button>
+    </footer>
+  </div>
+</div>
+
+
 <script src="/vendor/jquery-3.6.0.min.js"></script>
 <script src="/vendor/jquery.dataTables.min.js"></script>
 <script src="/js/expedientePsicologico.js"></script>
