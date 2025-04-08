@@ -73,6 +73,27 @@ class Seguimiento {
     
     }
   }
+  static async getDatosGenerales(idExpediente) {
+        try {
+            const [result]= await db.execute('SELECT e.nombres, e.apellidoP,  e.apellidoM, e.fechaNacimiento,e.direccion, ea.peso, ea.talla,ea.edad, b.grado FROM expediente e LEFT JOIN evaluacionantropometrica ea ON e.IDExpediente = ea.IDExpediente LEFT JOIN boleta b ON e.IDExpediente = b.IDExpediente WHERE e.IDExpediente = ?;', [idExpediente]);
+            return result[0] || [];
+        } catch (error) {
+            console.error('Error al obtener seguimiento:', error);
+            throw new Error('Error al obtener seguimiento');
+        }
+    }
+    static async registrarSeguimiento(idExpediente, objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora) {
+        try {
+            // Usamos el método de promesas para la consulta
+            const [result] = await db.execute(
+                'INSERT INTO seguimientopsicologico SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ?, IDExpediente = ?, eliminado = 0',
+                [objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora, idExpediente]
+            );
+            return result.insertId;
+        } catch (error) {
+            console.error('Error al registrar seguimiento:', error);
+            throw new Error('Error al registrar seguimiento');
+        }
+    }
 }
-
 module.exports = Seguimiento;
