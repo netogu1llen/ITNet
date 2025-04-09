@@ -1,5 +1,14 @@
 const Pacientes = require('../models/pacientes.model');
 
+const getPacientes = async (req, res) => {
+  try {
+    res.render('pacientes');
+  } catch (error) {
+    console.error('Error al obtener la información:', error.message);
+    res.status(500).send('Error al obtener la información');
+  }
+};
+
 /**
  * Renderiza la vista para registrar un paciente.
  * @param {Request} req 
@@ -143,5 +152,6 @@ module.exports = {
   postRegistrarPaciente,
   getEditarPaciente,
   postEditarPaciente,
-  postEliminarPaciente
+  postEliminarPaciente,
+  getPacientes
 };
