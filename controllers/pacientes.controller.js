@@ -127,10 +127,21 @@ const postEditarPaciente = async (req, res) => {
     });
   }
 };
+const postEliminarPaciente= async (req, res) => {
+  try {
+      const idExpediente = req.params.id;     
+      await Pacientes.eliminarPaciente(idExpediente);
+      res.status(200).json({ mensaje: 'Datos eliminados correctamente' });
+  } catch (error) {
+      console.error('Error al eliminar:', error.message);
+      res.status(500).json({ mensaje: 'Error al eliminar. Favor de intentar en otro momento' });
+  }
+};
 
 module.exports = {
   getRegistrarPaciente,
   postRegistrarPaciente,
   getEditarPaciente,
-  postEditarPaciente
+  postEditarPaciente,
+  postEliminarPaciente
 };

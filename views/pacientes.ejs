@@ -1,78 +1,15 @@
 <%- include('partials/head') %>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agregar Nuevo Paciente</title>
-  <link rel="stylesheet" href="estilos.css">
-</head>
 <body>
-  <div class="container">
-    <h1>Agregar Nuevo Paciente</h1>
-    <form class="formulario">
-      <div class="fila">
-        <div class="campo">
-          <label>Nombre del Paciente</label>
-          <input type="text" placeholder="Nombre(s)">
-        </div>
-        <div class="campo">
-            <label>Sexo</label>
-            <select>
-              <option value="">Selecciona una opción</option>
-              <option value="masculino">Masculino</option>
-              <option value="femenino">Femenino</option>
-            </select>
-          </div>
-          
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Apellido Paterno</label>
-          <input type="text" placeholder="Apellido Paterno">
-        </div>
-        <div class="campo">
-          <label>Lugar de Residencia</label>
-          <input type="text" placeholder="Lugar de Residencia">
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Apellido Materno</label>
-          <input type="text" placeholder="Apellido Materno">
-        </div>
-        <div class="campo">
-          <label>Escuela</label>
-          <input type="text" placeholder="Nombre de Escuela">
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Fecha de Nacimiento</label>
-          <input type="date">
-        </div>
-        <div class="campo">
-          <label>Grado</label>
-          <input type="text" placeholder="Grado Escolar">
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo subir-foto">
-          <label for="foto">Subir Fotografía</label>
-          <input type="file" id="foto">
-        </div>
-      </div>
-
-      <div class="botones">
-        <button type="submit" class="guardar">Guardar</button>
-        <button type="button" class="cancelar">Cancelar</button>
-      </div>
-    </form>
-  </div>
+  <section class="section materia-page">
+    <button class="button is-save" id="btn-eliminar" data-id="<%= datos.idExpediente %>">
+      Eliminar expediente <%= datos.idExpediente %>
+    </button>
+    <button class="button is-cancel" id="btn-editar" data-id="<%= datos.idExpediente %>">
+      Editar expediente <%= datos.idExpediente %>
+    </button>
+    <button class="button is-cancel" id="btn-registrar">
+      Registrar nuevo expediente
+    </button>
+  </section>
+<script src="/js/pacientes.js"></script>
 </body>
-</html>
