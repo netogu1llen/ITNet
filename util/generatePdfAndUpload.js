@@ -4,7 +4,7 @@
  */
 
 const PDFDocument = require('pdfkit');
-const s3 = require('./s3Client');
+const AWS = require('aws-sdk');
 const stream = require('stream');
 
 // Configuración de AWS S3 usando variables de entorno.
