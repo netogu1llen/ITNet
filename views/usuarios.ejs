@@ -1,0 +1,199 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/styles.css">
+
+<section class="section">
+  <div class="container">
+    <h1 class="title">Usuarios</h1>
+
+    <!-- Contenedor para la barra superior -->
+    <div id="usuariosTopBar" class="dt-top-bar">
+      <!-- La imagen, el selector de registros, la barra de búsqueda y el botón de registrar se agregarán dinámicamente desde usuarios.js -->
+    </div>
+
+    <!-- Tabla -->
+    <div style="width: 100%; height: 900px;">
+      <table id="miEquipoTable" class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th>Nombre del Usuario</th>
+            <th>Fecha de Nacimiento</th>
+            <th>Rol</th>
+            <th>Modificar</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% usuarios.forEach(usuario => { %>
+            <tr>
+              <td><%= usuario.nombreUsuario %></td>
+              <td><%= new Date(usuario.fechaNacimiento).toLocaleDateString() %></td>
+              <td><%= usuario.rol || 'Sin rol' %></td>
+              <td>
+                <button class="button is-small is-info btn-modificar" data-id="<%= usuario.IDUsuario %>">Modificar</button>
+              </td>
+              <td>
+                <button class="button is-small is-danger btn-eliminar" data-id="<%= usuario.IDUsuario %>">Eliminar</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de Modificar Usuario -->
+<div id="modalModificar" class="modal" style="display: none; z-index: 1050;">
+    <!-- Fondo oscuro -->
+    <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
+  
+    <!-- Contenedor principal del modal -->
+    <div class="modal-card" style="width: 600px; max-height: 580px;">
+      
+      <!-- Cabecera con botón de cierre (X) -->
+      <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
+        <button class="delete" aria-label="close"></button>
+      </header>
+  
+      <!-- Cuerpo del modal -->
+      <section class="modal-card-body" style="text-align: center;">
+        <!-- Ícono e título centrados -->
+        <div style="margin-bottom: 20px;">
+          <img src="/images/modificarusuario.png" alt="Icono de usuario" style="width: 100px; height: 100px;">
+        </div>
+        <h1 class="title" style="margin-bottom: 30px;">Modificar Usuario</h1>
+  
+        <!-- Formulario con 2 filas (columns) para los campos -->
+        <form id="modificarForm" method="post">
+          <div class="columns">
+            <!-- Columna 1: Nombre de Usuario -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Nombre de Usuario:</label>
+                <div class="control">
+                    <input class="input" type="text" name="nombreUsuarioMod" maxlength="30" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+                </div>
+              </div>
+            </div>
+            <!-- Columna 2: Número de Teléfono -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Número de Teléfono:</label>
+                <div class="control">
+                    <input class="input" type="text" name="numTelefonoMod" maxlength="10" required pattern="\d+" title="Solo se permiten números">
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="columns">
+            <!-- Columna 1: Fecha de Nacimiento -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Fecha de Nacimiento:</label>
+                <div class="control">
+                  <input class="input" type="date" name="fechaNacimientoMod" required>
+                </div>
+              </div>
+            </div>
+            <!-- Columna 2: Contraseña -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Contraseña:</label>
+                <div class="control">
+                    <input class="input" type="password" name="contrasenaMod" maxlength="20" required minlength="6" title="La contraseña debe tener al menos 6 caracteres">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+  
+      <!-- Footer con botones -->
+      <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
+        <button type="button" class="button is-cancel">Cancelar</button>
+        <button type="submit" form="modificarForm" class="button is-save">Modificar Usuario</button>
+      </footer>
+    </div>
+</div>
+
+<!-- Modal de Registrar Usuario -->
+<div id="modalRegistrar" class="modal" style="display: none; z-index: 1050;">
+    <!-- Fondo oscuro -->
+    <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
+  
+    <!-- Contenedor principal del modal -->
+    <div class="modal-card" style="width: 600px; max-height: 580px;">
+      
+      <!-- Cabecera con botón de cierre (X) -->
+      <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
+        <button class="delete" aria-label="close"></button>
+      </header>
+  
+      <!-- Cuerpo del modal -->
+      <section class="modal-card-body" style="text-align: center;">
+        <!-- Ícono e título centrados -->
+        <div style="margin-bottom: 20px;">
+          <img src="/images/modificarusuario.png" alt="Icono de usuario" style="width: 100px; height: 100px;">
+        </div>
+        <h1 class="title" style="margin-bottom: 30px;">Registrar Usuario</h1>
+  
+        <!-- Formulario para registrar un nuevo usuario -->
+        <form id="registrarForm" method="post">
+          <div class="columns">
+            <!-- Columna 1: Nombre de Usuario -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Nombre de Usuario:</label>
+                <div class="control">
+                    <input class="input" type="text" name="nombreUsuarioReg" maxlength="30" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+                </div>
+              </div>
+            </div>
+            <!-- Columna 2: Número de Teléfono -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Número de Teléfono:</label>
+                <div class="control">
+                    <input class="input" type="text" name="numTelefonoReg" maxlength="10" required pattern="\d+" title="Solo se permiten números">
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="columns">
+            <!-- Columna 1: Fecha de Nacimiento -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Fecha de Nacimiento:</label>
+                <div class="control">
+                  <input class="input" type="date" name="fechaNacimientoReg" required>
+                </div>
+              </div>
+            </div>
+            <!-- Columna 2: Contraseña -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Contraseña:</label>
+                <div class="control">
+                  <input class="input" type="password" name="contrasenaReg" maxlength="20" required minlength="6" title="La contraseña debe tener al menos 6 caracteres">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </section>
+  
+      <!-- Footer con botones -->
+      <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
+        <button type="button" class="button is-cancel">Cancelar</button>
+        <button type="submit" form="registrarForm" class="button is-save">Registrar Usuario</button>
+      </footer>
+    </div>
+</div>
+
+
+<!-- Scripts -->
+<script src="/vendor/jquery-3.6.0.min.js"></script>
+<script src="/vendor/jquery.dataTables.min.js"></script>
+<script src="/js/usuarios.js"></script>

@@ -1,5 +1,6 @@
 const db = require('../util/database');
 
+
 class Pacientes {
   /**
    * Registra un nuevo paciente en la base de datos.
@@ -72,7 +73,11 @@ class Pacientes {
       console.log(idExpediente);
       // Usamos el método de promesas para la consulta
       const result = await db.execute(
-        'SELECT nombres, apellidoP, apellidoM, numExpediente, fechaNacimiento, contacto, direccion, enfermedades, medicamentos, estudioSocioeconomico, grado, curso, sangre FROM expediente WHERE IDExpediente = ?;',
+        `SELECT nombres, apellidoP, apellidoM, numExpediente,
+                fechaNacimiento, contacto, direccion, enfermedades,
+                medicamentos, estudioSocioeconomico, grado, curso, sangre
+         FROM expediente
+         WHERE IDExpediente = ?`,
         [idExpediente]
       );
       return result || [];
@@ -119,7 +124,12 @@ class Pacientes {
     try {
       // Usamos el método de promesas para la consulta
       const [result] = await db.execute(
-        'UPDATE expediente SET nombres = ?, apellidoP = ?, apellidoM = ?, numExpediente = ?, fechaNacimiento = ?, contacto = ?, direccion = ?, enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?, grado = ?, curso = ?, sangre = ? WHERE IDExpediente = ?',
+        `UPDATE expediente SET
+          nombres = ?, apellidoP = ?, apellidoM = ?, numExpediente = ?,
+          fechaNacimiento = ?, contacto = ?, direccion = ?,
+          enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
+          grado = ?, curso = ?, sangre = ?
+         WHERE IDExpediente = ?`,
         [
           nombres,
           apellidoP,
@@ -144,4 +154,6 @@ class Pacientes {
   }
 }
 
+
 module.exports = Pacientes;
+

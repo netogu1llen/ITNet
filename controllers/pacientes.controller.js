@@ -12,6 +12,19 @@ const getRegistrarPaciente = async (req, res) => {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');
   }
+
+/**
+ * Renderiza la vista para registrar un paciente.
+ * @param {Request} req 
+ * @param {Response} res 
+ */
+const getRegistrarPaciente = async (req, res) => {
+  try {
+    res.render('registrarPaciente');
+  } catch (error) {
+    console.error('Error al obtener la información:', error.message);
+    res.status(500).send('Error al obtener la información');
+  }
 };
 
 /**
