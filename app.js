@@ -85,6 +85,10 @@ const usuariosRoutes = require('./routes/usuarios.routes');
 app.use('/usuarios', usuariosRoutes);
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
+// Rutas de pacientes
+const pacientesRoutes = require('./routes/pacientes.routes');
+app.use('/pacientes', pacientesRoutes);
+
 
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');

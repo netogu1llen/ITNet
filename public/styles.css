@@ -562,6 +562,24 @@ font-weight: 500;
   font-size: 14px; /* Tamaño del texto */
   resize: none; /* Evita que el usuario cambie el tamaño del textarea */
 }
+.multirow-form-container input[type="text"]{
+  width: 100%; /* Ocupa todo el ancho */
+  padding: 10px; /* Espaciado interno */
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 10px; /* Bordes redondeados */
+  box-sizing: border-box; /* Evita que el padding aumente el tamaño */
+  font-size: 14px; /* Tamaño del texto */
+  resize: none; /* Evita que el usuario cambie el tamaño del textarea */
+}
+.multirow-form-container input[type="date"]{
+  width: 100%; /* Ocupa todo el ancho */
+  padding: 10px; /* Espaciado interno */
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 10px; /* Bordes redondeados */
+  box-sizing: border-box; /* Evita que el padding aumente el tamaño */
+  font-size: 14px; /* Tamaño del texto */
+  resize: none; /* Evita que el usuario cambie el tamaño del textarea */
+}
 /*Contenedor blanco que se usa para la dupla de un formulario, ejemplo: Nombre: Jaime. Es flexible */
 .element-container{
     flex: 1;
@@ -577,7 +595,7 @@ font-weight: 500;
 .element-container-gray {
   width: 100%; /* Ocupa todo el ancho */
   flex: 1;
-  min-width: 120px;
+  min-width: 200px;
   padding: 10px;
   text-align: center;
   background-color: #F2F2F2;
@@ -733,15 +751,16 @@ body {
 /* ==================== Materias ==================== */
 
 .section.materia-page {
-  margin-left: 50px;
+  width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   min-height: 100vh;
 }
 
 .materia-container {
-  max-width: 800px;
+  width: 100%;
+  min-width: 100vh;
   text-align: center;
 }
 
