@@ -26,6 +26,7 @@ const getRegistrarPaciente = async (req, res) => {
     res.status(500).send('Error al obtener la información');
   }
 };
+};
 
 /**
  * Registra un nuevo paciente a partir del formulario.
