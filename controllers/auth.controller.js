@@ -1,5 +1,5 @@
 const authService = require('../services/auth.service');
-const { generateUserToken } = require('../../../utils/jwt');
+const { generateUserToken } = require('../util/jwt');
 
 /**
  * Inicia el flujo de autenticación con Google OAuth.
