@@ -1,6 +1,6 @@
 const axios = require('axios');
 const userService = require('./user.service'); // Servicio separado para usuarios
-const { generateToken } = require('../utils/jwt');
+const { generateToken } = require('../util/jwt');
 
 class AuthService {
   constructor() {
