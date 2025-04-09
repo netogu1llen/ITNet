@@ -1,29 +1,144 @@
 <%- include('partials/head') %>
-
-<link rel="stylesheet" href="/public/styles.css">
+<link rel="stylesheet" href="/styles.css">
 
 <section class="section">
   <div class="container">
-    <h1 class="title">Boletas</h1>
-    <div style="width: 100%; height: 900px;">
+    <h1 class="title is-4">Boletas de <strong><%= nombreAlumno %></strong></h1>
+
+    <!-- Tabla -->
     <table id="boletasTable" class="table is-striped is-hoverable is-fullwidth">
       <thead>
         <tr>
           <th>Periodo</th>
-          <th>Boleta</th>
+          <th><i class="fas fa-download"></i></th>
           <th>Promedio</th>
-          <th>Grado Actual</th>
-          <th>Nivel Escolar</th>
+          <th>Grado</th>
+          <th>Curso</th>
           <th>Modificar</th>
           <th>Eliminar</th>
         </tr>
       </thead>
+      <tbody>
+        <% boletas.forEach(b => { %>
+          <tr>
+            <td><%= b.periodoEscolar %></td>
+            <td><a class="button is-small is-info"><i class="fas fa-download"></i></a></td>
+            <td><%= b.promedio %></td>
+            <td><%= b.grado %></td>
+            <td><%= b.curso %></td>
+            <td>
+              <button class="button is-small is-warning btn-modificar" data-id="<%= b.IDBoleta %>">Modificar</button>
+            </td>
+            <td>
+              <button class="button is-small is-danger btn-eliminar" data-id="<%= b.IDBoleta %>">Eliminar</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
     </table>
   </div>
-
-  </div>
 </section>
- 
+
+<!-- Modal Registrar Boleta -->
+<div id="modalRegistrarBoleta" class="modal" style="display: none;">
+  <div class="modal-background"></div>
+  <div class="modal-card" style="width: 700px;">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Registrar Boleta</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <form id="formRegistrarBoleta">
+        <input type="hidden" name="IDExpediente" value="<%= IDExpediente %>">
+
+        <div class="field">
+          <label class="label">Periodo Escolar</label>
+          <div class="control">
+            <input class="input" type="text" name="periodoEscolar" placeholder="Ej. 2024-2025" required>
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <p class="has-text-weight-semibold">Materias seleccionadas</p>
+            <table class="table is-fullwidth" id="tablaMateriasSeleccionadas">
+              <thead>
+                <tr>
+                  <th>Materia</th>
+                  <th>Calificación</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="column">
+            <p class="has-text-weight-semibold">Materias disponibles</p>
+            <table class="table is-fullwidth" id="tablaMateriasDisponibles">
+              <thead>
+                <tr>
+                  <th>Seleccionar</th>
+                  <th>Materia</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% materias.forEach(m => { %>
+                  <tr>
+                    <td>
+                      <input type="checkbox" class="checkMateria" value="<%= m.IDMateria %>" data-nombre="<%= m.materia %>">
+                    </td>
+                    <td><%= m.materia %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot">
+      <button type="submit" class="button is-primary" form="formRegistrarBoleta">Guardar</button>
+      <button type="button" class="button is-cancel">Cancelar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal Modificar Boleta -->
+<div id="modalModificarBoleta" class="modal" style="display: none;">
+  <div class="modal-background"></div>
+  <div class="modal-card" style="width: 700px;">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Modificar Boleta</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <form id="modificarForm">
+        <input type="hidden" name="idBoleta">
+        <div class="field">
+          <label class="label">Periodo Escolar</label>
+          <div class="control">
+            <input class="input" type="text" name="periodoEscolar" required>
+          </div>
+        </div>
+        <table class="table is-fullwidth" id="tablaMateriasModificar">
+          <thead>
+            <tr>
+              <th>Materia</th>
+              <th>Calificación</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </form>
+    </section>
+    <footer class="modal-card-foot">
+      <button type="submit" class="button is-primary" form="modificarForm">Guardar Cambios</button>
+      <button type="button" class="button is-cancel">Cancelar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- JS -->
 <script src="/vendor/jquery-3.6.0.min.js"></script>
 <script src="/vendor/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/boletas.js"></script>

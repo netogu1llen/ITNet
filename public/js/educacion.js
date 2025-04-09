@@ -18,7 +18,7 @@ $(document).ready(function () {
       { data: 'grado' },
       { data: 'curso' },
       {
-        data: 'idExpediente',
+        data: 'IDExpediente',
         render: function (data) {
           return `<a class="button is-small is-info" href="/educacion/boletas?idExpediente=${data}">Consultar</a>`;
         }
