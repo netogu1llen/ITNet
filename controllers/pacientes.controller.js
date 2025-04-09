@@ -2,7 +2,7 @@ const Pacientes = require('../models/pacientes.model');
 
 const getPacientes = async (req, res) => {
   try {
-    res.render('pacientes');
+    res.render('pacientes', {datos: 1});
   } catch (error) {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');
