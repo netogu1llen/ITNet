@@ -62,7 +62,75 @@ const postRegistrarPaciente = async (req, res) => {
   }
 };
 
+/**
+ * Renderiza la vista para editar la información de un paciente.
+ * @param {Request} req 
+ * @param {Response} res 
+ */
+const getEditarPaciente = async (req, res) => {
+  try {
+    const idExpediente = req.params.id;
+    const datosPaciente = await Pacientes.getPaciente(idExpediente);
+    res.render('editarPaciente', { datos: datosPaciente[0][0] });
+  } catch (error) {
+    console.error('Error al obtener la información:', error.message);
+    res.status(500).send('Error al obtener la información');
+  }
+};
+
+/**
+ * Actualiza la información de un paciente en la base de datos.
+ * @param {Request} req 
+ * @param {Response} res 
+ */
+const postEditarPaciente = async (req, res) => {
+  try {
+    const idExpediente = req.params.id;
+    const {
+      nombres,
+      apellidoP,
+      apellidoM,
+      numExpediente,
+      fechaNacimiento,
+      contacto,
+      direccion,
+      enfermedades,
+      medicamentos,
+      estudioSocioeconomico,
+      grado,
+      curso,
+      sangre
+    } = req.body;
+
+    await Pacientes.editarPaciente({
+      nombres,
+      apellidoP,
+      apellidoM,
+      numExpediente,
+      fechaNacimiento,
+      contacto,
+      direccion,
+      enfermedades,
+      medicamentos,
+      estudioSocioeconomico,
+      grado,
+      curso,
+      sangre,
+      idExpediente
+    });
+
+    res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
+  } catch (error) {
+    console.error('Error al actualizar paciente:', error.message);
+    res.status(500).json({
+      mensaje: 'Error al actualizar. Por favor, intenta nuevamente más tarde.'
+    });
+  }
+};
+
 module.exports = {
   getRegistrarPaciente,
-  postRegistrarPaciente
+  postRegistrarPaciente,
+  getEditarPaciente,
+  postEditarPaciente
 };
