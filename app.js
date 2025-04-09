@@ -68,6 +68,9 @@ app.use((req, res, next) => {
     next();
 });
 
+const authRoutes = require('./routes/auth.routes');
+app.use('/auth', authRoutes);
+
 // Rutas de usuario
 const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);

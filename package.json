@@ -24,6 +24,7 @@
     "@kurkle/color": "^0.3.4",
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.1692.0",
+    "axios": "^1.8.4",
     "bulma": "^1.0.3",
     "chart.js": "^4.4.8",
     "compression": "^1.8.0",
