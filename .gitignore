@@ -176,3 +176,8 @@ lib-cov/
 
 # Archivos binarios compilados
 build/Release
+
+util/database.js
+
+# Ignorar archivos SQL
+*.sql

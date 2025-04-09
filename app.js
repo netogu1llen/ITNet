@@ -6,12 +6,28 @@ const morgan = require('morgan');
 const compression = require('compression');
 const session = require('express-session');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+
+const jwtSecret = process.env.JWT_SECRET; // Para firmar y verificar JWT
+const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
 
 const app = express();
 app.use('/node_modules', express.static('node_modules'));
 
-// Middleware de seguridad
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", 'https://apis.google.com', 'https://accounts.google.com', "'unsafe-eval'"],
+            styleSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com', "'unsafe-inline'"],
+            imgSrc: ["'self'", 'https://www.google.com'],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+            frameSrc: ["'self'", 'https://accounts.google.com'],
+            connectSrc: ["'self'", 'https://accounts.google.com'],
+            upgradeInsecureRequests: []
+        }
+    }
+}));
 
 // Middleware para permitir solicitudes de diferentes dominios (CORS)
 app.use(cors());
@@ -33,6 +49,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Midleware para el uso de cookies en sesión
+app.use(cookieParser());
+
 // Middleware de sesión
 app.use(session({
     secret: process.env.SESSION_SECRET || 'mySecretKey', // Usa una clave secreta desde .env
@@ -53,11 +72,17 @@ app.use((req, res, next) => {
 const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
 
+// Rutas de psicologia
+const psicologiaRoutes = require('./routes/psicologia.routes');
+app.use('/psicologia', psicologiaRoutes);
+
 // Rutas de nutrición
 const nutricionRoutes = require('./routes/nutricion.routes');
 app.use('/nutricion', nutricionRoutes);
 
-// Rutas de educación
+// Rutas de usuarios (PLURAL)
+const usuariosRoutes = require('./routes/usuarios.routes');
+app.use('/usuarios', usuariosRoutes);
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
 // Rutas de pacientes
@@ -68,6 +93,9 @@ app.use('/pacientes', pacientesRoutes);
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');
 app.use('/', mainRoutes);
+
+const pdf = require('./routes/pdf.routes');
+app.use('/', pdf); 
 
 app.use((req, res, next) => {
     res.setHeader('Content-Type', 'text/css');

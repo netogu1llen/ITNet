@@ -1,0 +1,261 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/nutricionStyles.css">
+<body>
+    <div class="gray-container">
+        <div class="head-container">
+            <div class="head-title">
+                <img src="/images/icono_salud.png" alt="Icono Salud"> <!-- Icono cargado desde la carpeta public -->
+                Oscar Javier Villeda Arteaga
+            </div>
+            <!-- Contenedor para los botones alineados a la derecha -->
+            <div class="buttons-container">
+                <button class="search-button">
+                    Buscar paciente
+                    <span class="material-icons">search</span>
+                </button>
+                <button class="search-button">
+                    Generar historia clinica
+                </button>
+                <button class="search-button">
+                    Planes alimenticios
+                </button>
+            </div>
+        </div>
+          <div class="container-a">
+            <div class="white-container">
+              <div class="title-letters">Datos generales del paciente:</div>
+              <br>
+              <div class="white-container-row">
+                  <div class="white-container3">
+                      <div class="field-letters"> > Nombre completo</div>
+                      <br>
+                      <div class="title-letters"><%= datosGeneralesPaciente.nombres + " " + datosGeneralesPaciente.apellidoP + " " + datosGeneralesPaciente.apellidoM %></div>
+                  </div>
+                  <div class="white-container3">
+                      <div class="field-letters"> > Responsable</div>
+                      <br>
+                      <div class="title-letters"><%= datosGeneralesPaciente.responsable %></div>
+                  </div>
+                  <div class="white-container3">
+                      <div class="field-letters"> > Parentesco</div>
+                      <br>
+                      <div class="title-letters"><%= datosGeneralesPaciente.parentesco %></div>
+                  </div>
+              </div>
+              <br>
+              <div class="white-container-row">
+                <div class="white-container3">
+                    <div class="field-letters"> > Sexo</div>
+                    <br>
+                    <div class="title-letters"><%= datosGeneralesPaciente.sexo %></div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Escuela</div>
+                    <br>
+                    <div class="title-letters"><%= datosGeneralesPaciente.escuela %></div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Edad Responsable</div>
+                    <br>
+                    <div class="title-letters"><%= datosGeneralesPaciente.edadResponsable + " años"%></div>
+                </div>
+            </div>
+            <br>
+              <div class="white-container-row">
+                <div class="white-container3">
+                    <div class="field-letters"> > Telefono</div>
+                    <br>
+                    <div class="title-letters"><%= datosGeneralesPaciente.telefono %></div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Fecha de nacimiento</div>
+                    <br>
+                    <div class="title-letters"><%= datosGeneralesPaciente.fechaNacimiento %></div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Edad paciente</div>
+                    <br>
+                    <div class="title-letters"><%= datosGeneralesPaciente.edadPaciente + " años"%></div>
+                </div>
+                
+            </div>
+            </div>
+            <div class="white-container">
+            <div class="title-letters">Evolución Antropométrica - Comparativa Mensual</div>
+            <canvas id="grafico" 
+                data-labels='<%= JSON.stringify(evolucionAntropometrica.labels) %>' 
+                data-values='<%= JSON.stringify(evolucionAntropometrica.datasets) %>' 
+                width="600" 
+                height="300">
+            </canvas>
+            <div class="month-filter-container">
+                <select id="mes-inicio">
+                    <option value="Enero">Enero</option>
+                    <option value="Febrero">Febrero</option>
+                    <option value="Marzo">Marzo</option>
+                    <option value="Abril">Abril</option>
+                    <option value="Mayo">Mayo</option>
+                    <option value="Junio">Junio</option>
+                    <option value="Julio">Julio</option>
+                    <option value="Agosto">Agosto</option>
+                    <option value="Septiembre">Septiembre</option>
+                    <option value="Octubre">Octubre</option>
+                    <option value="Noviembre">Noviembre</option>
+                    <option value="Diciembre">Diciembre</option>
+                </select>
+            
+                <select id="mes-final">
+                    <option value="Enero">Enero</option>
+                    <option value="Febrero">Febrero</option>
+                    <option value="Marzo">Marzo</option>
+                    <option value="Abril">Abril</option>
+                    <option value="Mayo">Mayo</option>
+                    <option value="Junio">Junio</option>
+                    <option value="Julio">Julio</option>
+                    <option value="Agosto">Agosto</option>
+                    <option value="Septiembre">Septiembre</option>
+                    <option value="Octubre">Octubre</option>
+                    <option value="Noviembre">Noviembre</option>
+                    <option value="Diciembre">Diciembre</option>
+                </select>
+            
+                <button id="filtrar-meses">Filtrar</button>
+            </div>
+        </div>
+    </div>
+
+        <!-- Otro contenedor A con dos contenedores blancos alineados -->
+        <div class="container-a">
+            <div class="white-container">
+              <div class="title-letters">Antecedentes del paciente</div>
+              <br>
+              <div class="white-container-row">
+                <div class="white-container3">
+                    <div class="field-letters"> > Antecedentes heredofamiliares</div>
+                    <br>
+                    <div class="white-container-row">
+                        <div class="title-letters">Diabetes</div>
+                        <div class="field-letters2"><%= antecedentesHeredofamiliares.diabetes %></div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Cancer</div>
+                        <div class="field-letters2"><%= antecedentesHeredofamiliares.cancer %></div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Dislipidemia</div>
+                        <div class="field-letters2"><%= antecedentesHeredofamiliares.dislipidemia %></div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Obesidad</div>
+                        <div class="field-letters2"><%= antecedentesHeredofamiliares.obesidad %></div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Anemia</div>
+                        <div class="field-letters2"><%= antecedentesHeredofamiliares.anemia %></div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Hipertension arterial</div>
+                        <div class="field-letters2"><%= antecedentesHeredofamiliares.hipertensionArterial %></div>
+                    </div>
+                </div>
+                <div class="white-container3">
+                    <div class="field-letters"> > Antecedentes personales</div>
+                    <br>
+                    <div class="white-container-row">
+                        <div class="title-letters">Peso al nacer</div>
+                        <div class="field-letters2"><%= antecedentesPersonales.pesoNacer + "kg"%></div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Talla al nacer</div>
+                        <div class="field-letters2"><%= antecedentesPersonales.tallaNacer + "cm"%></div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">SDG</div>
+                        <div class="field-letters2"><%= antecedentesPersonales.sdg %></div>
+                    </div>
+                    <div class="white-container-row">
+                        <div class="title-letters">Tipo de parto</div>
+                        <div class="field-letters2"><%= antecedentesPersonales.tipoParto %></div>
+                    </div>
+                </div>
+            </div>
+            <div class="white-container3">
+                <div class="field-letters"> > Antecedentes de alimentacion</div>
+                <br>
+                <div class="white-container-row">
+                    <div class="title-letters">Lactancia exclusiva</div>
+                    <div class="field-letters"><%= antecedentesAlimentacion.lactanciaExclusiva %></div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Tiempo</div>
+                    <div class="field-letters"><%= antecedentesAlimentacion.tiempo %></div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Edad de alimentacion complementaria  </div>
+                    <div class="field-letters"><%= antecedentesAlimentacion.edadAlimentacionComplementaria %></div>
+                </div>
+            </div>
+        </div>
+        <div class= "white-container4" >
+        <div class="white-container2">
+            <div class="title-letters">Manejo Nutricional</div>
+            <br>
+            <div class="white-container3">
+                <br>
+                <div class="white-container-row">
+                    <div class="title-letters">Energia(kcal)</div>
+                    <div class="field-letters2"><%= manejoNutricional.energia + "kcal/día"%></div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Hidratos de carbono</div>
+                    <div class="field-letters2"><%= manejoNutricional.hidratosCarbono + "g/día"%></div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Lipidos</div>
+                    <div class="field-letters2"><%= manejoNutricional.lipidos + "g/día"%></div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Proteinas</div>
+                    <div class="field-letters2"><%= manejoNutricional.proteinas + "g/día"%></div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Fibra</div>
+                    <div class="field-letters2"><%= manejoNutricional.fibra + "g/día"%></div>
+                </div>
+                <div class="white-container-row">
+                    <div class="title-letters">Agua</div>
+                    <div class="field-letters2"><%= manejoNutricional.agua + "ml/día"%></div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+        <div class="container-a">
+          <div class="white-container2">
+            <div class="title-letters">Sesiones</div>
+            <br>
+            <section class="section">
+                <div class="white-container2">
+                  <table id="nutricionTable2" class="table is-striped is-hoverable is-fullwidth">
+                    <thead>
+                      <tr>
+                        <th>No.Sesion</th>
+                        <th>Fecha de Creación</th>
+                        <th>Descargar</th>
+                        <th>Modificar</th>
+                        <th>Eliminar</th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+              </section>
+          </div>
+      </div>
+    </div>
+    
+    <script src="/js/chartConfig.js" type="module" defer></script>
+    <script src="/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/vendor/jquery.dataTables.min.js"></script>
+    <script src="/js/nutricion.js"></script>
+</body>
+</html>
