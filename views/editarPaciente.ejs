@@ -1,0 +1,121 @@
+<%- include('partials/head') %>
+<body>
+<section class="section materia-page">
+  <div class="container materia-container">
+    <h1 class="title is-3">Registrar Paciente</h1>
+
+    <div class="multirow-container">
+      <div class="element-container-gray">
+        <label for="nombres">Nombres:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="nombres" name="nombres" maxlength="50" value="<%= datos.nombres || '' %>"><br>
+        </div>
+      </div>
+
+      <div class="element-container-gray">
+        <label for="apellidoP">Apellido Paterno:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="apellidoP" name="apellidoP" maxlength="30" value="<%= datos.apellidoP || '' %>"><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="multirow-container">
+      <div class="element-container-gray">
+        <label for="apellidoM">Apellido Materno:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="apellidoM" name="apellidoM" maxlength="30" value="<%= datos.apellidoM || '' %>"><br>
+        </div>
+      </div>
+
+      <div class="element-container-gray">
+        <label for="numExpediente">Número de Expediente:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="numExpediente" name="numExpediente" maxlength="15" value="<%= datos.numExpediente || '' %>"><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="multirow-container">
+      <div class="element-container-gray">
+        <label for="fechaNacimiento">Fecha de Nacimiento:</label><br>
+        <div class="multirow-form-container">
+          <input type="date" id="fechaNacimiento" name="fechaNacimiento"
+                 value="<%= datos.fechaNacimiento || '' %>"><br>
+        </div>
+      </div>
+
+      <div class="element-container-gray">
+        <label for="contacto">Contacto:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="contacto" name="contacto" maxlength="15" value="<%= datos.contacto || '' %>"><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="multirow-container">
+      <div class="element-container-gray">
+        <label for="direccion">Dirección:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="direccion" name="direccion" maxlength="100" value="<%= datos.direccion || '' %>"><br>
+        </div>
+      </div>
+
+      <div class="element-container-gray">
+        <label for="enfermedades">Enfermedades:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="enfermedades" name="enfermedades" maxlength="255" value="<%= datos.enfermedades || '' %>"><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="multirow-container">
+      <div class="element-container-gray">
+        <label for="medicamentos">Medicamentos:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="medicamentos" name="medicamentos" maxlength="255" value="<%= datos.medicamentos || '' %>"><br>
+        </div>
+      </div>
+
+      <div class="element-container-gray">
+        <label for="estudioSocioeconomico">Estudio Socioeconómico:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="estudioSocioeconomico" name="estudioSocioeconomico" maxlength="100" value="<%= datos.estudioSocioeconomico || '' %>"><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="multirow-container">
+      <div class="element-container-gray">
+        <label for="grado">Grado:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="grado" name="grado" maxlength="20" value="<%= datos.grado || '' %>"><br>
+        </div>
+      </div>
+
+      <div class="element-container-gray">
+        <label for="curso">Curso:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="curso" name="curso" maxlength="50" value="<%= datos.curso || '' %>"><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="multirow-container">
+      <div class="element-container-gray">
+        <label for="sangre">Tipo de Sangre:</label><br>
+        <div class="multirow-form-container">
+          <input type="text" id="sangre" name="sangre" maxlength="3" value="<%= datos.sangre || '' %>"><br><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="element-container-gray">
+      <button class="button is-save" id="btn-guardar">Guardar</button>
+      <button class="button is-cancel" id="btn-cancelar">Cancelar</button>
+    </div>
+  </div>
+</section>
+
+<script src="/js/editarPaciente.js"></script>
+</body>
