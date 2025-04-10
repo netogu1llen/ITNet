@@ -41,7 +41,7 @@
         <label for="fechaNacimiento">Fecha de Nacimiento:</label><br>
         <div class="multirow-form-container">
           <input type="date" id="fechaNacimiento" name="fechaNacimiento"
-                 value="<%= datos.fechaNacimiento ? datos.fechaNacimiento.toISOString().split('T')[0] : '' %>"><br>
+                 value="<%= datos.fechaNacimiento || '' %>"><br>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 const Pacientes = require('../models/pacientes.model');
+const { encrypt, decrypt } = require('../util/encryptData');
 
 const getPacientes = async (req, res) => {
   try {
@@ -45,22 +46,23 @@ const postRegistrarPaciente = async (req, res) => {
       curso,
       sangre
     } = req.body;
-
-    await Pacientes.registrarPaciente({
-      nombres,
-      apellidoP,
-      apellidoM,
+    // Encriptar los campos sensibles
+    const pacienteEncriptado = {
+      nombres: encrypt(nombres).encryptedData,
+      apellidoP: encrypt(apellidoP).encryptedData,
+      apellidoM: encrypt(apellidoM).encryptedData,
+      fechaNacimiento: encrypt(fechaNacimiento).encryptedData,
+      contacto: encrypt(contacto).encryptedData,
+      direccion: encrypt(direccion).encryptedData,
       numExpediente,
-      fechaNacimiento,
-      contacto,
-      direccion,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
       curso,
       sangre
-    });
+    };
+    await Pacientes.registrarPaciente(pacienteEncriptado);
 
     res.status(200).json({ mensaje: 'Datos registrados correctamente' });
   } catch (error) {
@@ -80,7 +82,20 @@ const getEditarPaciente = async (req, res) => {
   try {
     const idExpediente = req.params.id;
     const datosPaciente = await Pacientes.getPaciente(idExpediente);
-    res.render('editarPaciente', { datos: datosPaciente[0][0] });
+    let paciente = datosPaciente;
+
+    // Desencriptar campos sensibles
+    console.log(paciente.nombres);
+    paciente.nombres = decrypt(paciente.nombres);
+    paciente.apellidoP = decrypt(paciente.apellidoP);
+    paciente.apellidoM = decrypt(paciente.apellidoM);
+    paciente.fechaNacimiento = decrypt(paciente.fechaNacimiento);
+    paciente.contacto = decrypt(paciente.contacto);
+    paciente.direccion = decrypt(paciente.direccion);
+    console.log(paciente);
+
+
+    res.render('editarPaciente', { datos: paciente});
   } catch (error) {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');
@@ -112,13 +127,13 @@ const postEditarPaciente = async (req, res) => {
     } = req.body;
 
     await Pacientes.editarPaciente({
-      nombres,
-      apellidoP,
-      apellidoM,
+      nombres: encrypt(nombres).encryptedData,
+      apellidoP: encrypt(apellidoP).encryptedData,
+      apellidoM: encrypt(apellidoM).encryptedData,
+      fechaNacimiento: encrypt(fechaNacimiento).encryptedData,
+      contacto: encrypt(contacto).encryptedData,
+      direccion: encrypt(direccion).encryptedData,
       numExpediente,
-      fechaNacimiento,
-      contacto,
-      direccion,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,

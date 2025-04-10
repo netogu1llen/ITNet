@@ -1,4 +1,5 @@
 const Seguimiento = require('../models/psicologia.model');
+const { decrypt } = require('../util/encryptData');
 
 /**
  * Obtiene los datos de seguimiento para editar.
@@ -17,10 +18,18 @@ const getEditarSeguimiento = async (req, res) => {
     const objetivos = await Seguimiento.obtenerObjetivosPorSeguimientoId(id);
     const expediente = await Seguimiento.getDatosGenerales(id);
 
+    let paciente = expediente;
+
+    paciente.nombres = decrypt(paciente.nombres);
+    paciente.apellidoP = decrypt(paciente.apellidoP);
+    paciente.apellidoM = decrypt(paciente.apellidoM);
+    paciente.fechaNacimiento = decrypt(paciente.fechaNacimiento);
+    paciente.direccion = decrypt(paciente.direccion);
+
     res.render('editarSeguimiento', {
       seguimiento,
       objetivos: objetivos || [],
-      expediente
+      expediente: paciente
     });
   } catch (err) {
     console.error('Error al obtener seguimiento:', err);

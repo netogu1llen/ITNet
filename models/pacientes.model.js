@@ -8,10 +8,10 @@ class Pacientes {
    * @param {string} datosPaciente.nombres
    * @param {string} datosPaciente.apellidoP
    * @param {string} datosPaciente.apellidoM
-   * @param {string} datosPaciente.numExpediente
    * @param {string} datosPaciente.fechaNacimiento
    * @param {string} datosPaciente.contacto
    * @param {string} datosPaciente.direccion
+   * @param {string} datosPaciente.numExpediente
    * @param {string} datosPaciente.enfermedades
    * @param {string} datosPaciente.medicamentos
    * @param {string} datosPaciente.estudioSocioeconomico
@@ -23,17 +23,18 @@ class Pacientes {
     nombres,
     apellidoP,
     apellidoM,
-    numExpediente,
     fechaNacimiento,
     contacto,
     direccion,
+    numExpediente,
     enfermedades,
     medicamentos,
     estudioSocioeconomico,
     grado,
     curso,
     sangre
-  }) {
+  })
+  {
     try {
       await db.execute(
         `INSERT INTO expediente SET
@@ -72,7 +73,7 @@ class Pacientes {
     try {
       console.log(idExpediente);
       // Usamos el método de promesas para la consulta
-      const result = await db.execute(
+      const [result] = await db.execute(
         `SELECT nombres, apellidoP, apellidoM, numExpediente,
                 fechaNacimiento, contacto, direccion, enfermedades,
                 medicamentos, estudioSocioeconomico, grado, curso, sangre
@@ -80,7 +81,7 @@ class Pacientes {
          WHERE IDExpediente = ?`,
         [idExpediente]
       );
-      return result || [];
+      return result[0] || [];
     } catch (error) {
       console.error('Error al obtener paciente:', error);
       throw new Error('Error al obtener paciente');
@@ -93,10 +94,10 @@ class Pacientes {
    * @param {string} datosPaciente.nombres
    * @param {string} datosPaciente.apellidoP
    * @param {string} datosPaciente.apellidoM
-   * @param {string} datosPaciente.numExpediente
    * @param {string} datosPaciente.fechaNacimiento
    * @param {string} datosPaciente.contacto
-   * @param {string} datosPaciente.direccion
+   * @param {string} datosPaciente.direccion 
+   * @param {string} datosPaciente.numExpediente
    * @param {string} datosPaciente.enfermedades
    * @param {string} datosPaciente.medicamentos
    * @param {string} datosPaciente.estudioSocioeconomico
@@ -109,10 +110,10 @@ class Pacientes {
     nombres,
     apellidoP,
     apellidoM,
-    numExpediente,
     fechaNacimiento,
     contacto,
     direccion,
+    numExpediente,
     enfermedades,
     medicamentos,
     estudioSocioeconomico,
