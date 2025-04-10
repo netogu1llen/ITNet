@@ -62,19 +62,22 @@
       </thead>
       <tbody>
         <% documentos.forEach(documento => { %>
-          <tr class="fila-documento" data-id="<%= documento.idDocumento %>">
-              <td><%= documento.tipo %></td>
+          <tr class="fila-documento" 
+              data-id="<%= documento.idDocumento %>" 
+              data-tipo="<%= documento.tipo %>">
+              
+              <td><%= documento.tipo === 'seguimientoPsicologico' ? 'Seguimiento Psicológico' : documento.tipo %></td>
               <td><%= new Date(documento.fechaCreacion).toLocaleDateString() %></td>
               <td>
-                  <a href="/psicologia/documentos/descargar/<%= documento.idDocumento %>" class="">
-                      <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
-                  </a>
+                      <a href="/psicologia/documentos/descargar/<%= documento.idDocumento %>">
+                          <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
+                      </a>
               </td>
               <td>
                   <button class="button is-small is-danger btn-eliminar" data-id="<%= documento.idDocumento %>">Eliminar</button>
               </td>
           </tr>
-      <% }) %>
+      <% }) %>      
     </tbody>    
     </table>
   </div>

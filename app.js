@@ -72,17 +72,19 @@ app.use((req, res, next) => {
 const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
 
+// Rutas de psicologia
+const psicologiaRoutes = require('./routes/psicologia.routes');
+app.use('/psicologia', psicologiaRoutes);
+
 // Rutas de nutrición
 const nutricionRoutes = require('./routes/nutricion.routes');
 app.use('/nutricion', nutricionRoutes);
 
-// Rutas de educación
+// Rutas de usuarios (PLURAL)
+const usuariosRoutes = require('./routes/usuarios.routes');
+app.use('/usuarios', usuariosRoutes);
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
-
-// Configuración de rutas
-const psicologiaRoutes = require('./routes/psicologia.routes');
-app.use('/psicologia', psicologiaRoutes);
 
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');

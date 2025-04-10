@@ -179,3 +179,7 @@ build/Release
 
 # Carpeta para docuentos
 /uploads
+util/database.js
+
+# Ignorar archivos SQL
+*.sql

@@ -100,10 +100,16 @@ $('#subirDocumentoForm').on('submit', function (e) {
 });
 
 
-    // Acción del botón Registrar Seguimiento
-    registrarSeguimientoButton.on('click', function () {
-        $('#modalRegistrarSeguimiento').css('display', 'flex'); // Abre el modal para registrar un seguimiento
-    });
+        // Acción del botón Registrar Seguimiento
+        registrarSeguimientoButton.on('click', function () {
+            // Obtener el ID del expediente de la URL actual
+            const urlPath = window.location.pathname;
+            const expedienteId = urlPath.split('/').pop(); // Suponiendo que el ID está al final de la URL
+            const redirectUrl = `http://localhost:3000/psicologia/seguimientos/registrar/${expedienteId}`;
+
+            // Redirigir a la URL
+            window.location.href = redirectUrl;
+        });
 
         // Botón Eliminar Documento
     $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
@@ -150,18 +156,18 @@ $('#subirDocumentoForm').on('submit', function (e) {
 
 
     // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
-    $(document).on('click', '.fila-documento', function (event) {
-        const documentoId = $(this).data('id');  // Obtener el ID del documento
-        if (documentoId) {
-            // Cambiar la URL para solo mostrar el documento
-            const url = `/psicologia/documentos/ver/${documentoId}`; 
-            
-            $('#iframeVistaPreviaDocumento').attr('src', url);  // Establecer la URL en el iframe
-            $('#modalVistaPreviaDocumento').css('display', 'flex');  // Mostrar el modal con la vista previa
+    $(document).on('click', '.fila-documento', function () {
+        const documentoId = $(this).data('id');
+        const tipo = $(this).data('tipo');
+    
+        if (tipo === 'seguimientoPsicologico') {
+            window.location.href = `http://localhost:3000/psicologia/seguimientos/editar/${documentoId}`;
         } else {
-            console.error('ID del documento no encontrado.');
+            const url = `/psicologia/documentos/ver/${documentoId}`;
+            $('#iframeVistaPreviaDocumento').attr('src', url);
+            $('#modalVistaPreviaDocumento').css('display', 'flex');
         }
-    });
+    });    
 
     // Asegurarse de que el evento de clic en los botones no active la vista previa
     $('#expedientePsicologicoTable').on('click', 'td a, td .btn-eliminar', function (event) {
