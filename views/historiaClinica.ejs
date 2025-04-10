@@ -1,11 +1,16 @@
 <%- include('partials/head') %>
 
 <body>
-  <main clas="container">
+  
+  <main clas="container"> 
+    
     <!-- Página 1 - Todo tu contenido actual -->
     <div class="entrevista-pagina">
+      
       <div class="box" style="background-color: #f2f2f2;">
-        <h1 class="has-text-black pl-6"><img src="/images/salud.png" alt="Salud Icon" style="height: 30px;">  Historia Clínica</h1>
+        <h1 class="has-text-black pl-6"><img src="/images/salud.png" alt="Salud Icon" style="height: 30px;">  Historia Clínica
+          <button type="submit" class="button is-primary" style="margin-left: 75%;">Guardar</button>
+        </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff; ">
             <div class="columns">
@@ -15,6 +20,7 @@
               <div class="column has-text-black has-text-weight-semibold">Fecha: 01 de marzo de 2025</div>
             </div>
             <hr class="has-background-grey-lighter">
+            
             
             <!-- PARTE UNO -->
             <div class="columns">
@@ -502,36 +508,44 @@
             <hr class="has-background-grey-lighter">
     
             <!-- VII. INDICADORES BIOQUÍMICOS -->
-      <!-- VII. INDICADORES BIOQUÍMICOS -->
-          <div class="tabla">
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="8" style="text-align: left;">VII. INDICADORES BIOQUÍMICOS</th>
-                </tr>
-                <tr>
-                  <th>Parámetro Bioquímico</th>
-                  <th>Valor de referencia</th>
-                  <th>Fecha</th>
-                  <th>Fecha</th>
-                  <th>Fecha</th>
-                  <th>Fecha</th>
-                  <th>Fecha</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-              </tbody>
-            </table>
-          </div>
+            <div class="tabla">
+              <table>
+                <thead>
+                  <tr>
+                    <th colspan="8" style="text-align: left;">VII. INDICADORES BIOQUÍMICOS</th>
+                  </tr>
+                  <tr>
+                    <th>Parámetro Bioquímico</th>
+                    <th>Valor de referencia</th>
+                    <th>Fecha</th>
 
-    
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input class="input" type="text" placeholder="Parámetro..." /></td>
+                    <td><input class="input" type="text" placeholder="Valor de referencia..." /></td>
+                    <td><input class="input" type="date" /></td>
+                  </tr>
+                  <tr>
+                    <td><input class="input" type="text" placeholder="Parámetro..." /></td>
+                    <td><input class="input" type="text" placeholder="Valor de referencia..." /></td>
+                    <td><input class="input" type="date" /></td>
+                  </tr>
+                  <tr>
+                    <td><input class="input" type="text" placeholder="Parámetro..." /></td>
+                    <td><input class="input" type="text" placeholder="Valor de referencia..." /></td>
+                    <td><input class="input" type="date" /></td>
+                  </tr>
+                  <tr>
+                    <td><input class="input" type="text" placeholder="Parámetro..." /></td>
+                    <td><input class="input" type="text" placeholder="Valor de referencia..." /></td>
+                    <td><input class="input" type="date" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             <!-- VIII. EVALUACIÓN ANTROPOMÉTRICA -->
             <div class="tabla">
               <table>
@@ -546,16 +560,51 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td>Talla (m)</td><td></td><td></td></tr>
-                  <tr><td>Edad (a)</td><td></td><td></td></tr>
-                  <tr><td>Peso (kg)</td><td></td><td></td></tr>
-                  <tr><td>Peso ideal o ajustado (kg)</td><td></td><td></td></tr>
-                  <tr><td>IMC (kg/m2)</td><td></td><td></td></tr>
-                  <tr><td>Percentil de IMC</td><td></td><td></td></tr>
-                  <tr><td>Circunferencia cintura (cm)</td><td></td><td></td></tr>
-                  <tr><td>Circunferencia cadera (cm)</td><td></td><td></td></tr>
-                  <tr><td>Índice cintura/cadera</td><td></td><td></td></tr>
-                  <tr><td>ICT</td><td></td><td></td></tr>
+                  <tr>
+                    <td>Talla (m)</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
+                  <tr>
+                    <td>Edad (a)</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
+                  <tr>
+                    <td>Peso (kg)</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
+                  <tr>
+                    <td>Peso ideal o ajustado (kg)</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
+                  <tr>
+                    <td>IMC (kg/m2)</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
+                  <tr>
+                    <td>Circunferencia cintura</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
+                  <tr>
+                    <td>Circunferencia cadera</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
+                  <tr>
+                    <td>Índice cintura/cadera</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
+                  <tr>
+                    <td>ICT</td>
+                    <td><input class="input" type="text" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -565,20 +614,29 @@
               <table>
                 <thead>
                   <tr>
-                    <th>IX. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE</th>
+                    <th colspan="2" style="text-align: left;">IX. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>
-                      Diagnóstico y evolución:<br>
-                      <textarea class="textarea" rows="5" style="width: 100%; border: none;"></textarea>
-                    </td>
+                    <td style="width: 30%; font-weight: bold;">Diagnóstico principal:</td>
+                    <td><input class="input" type="text" placeholder="Escribe el diagnóstico principal..." style="width: 100%; border: none;" /></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 30%; font-weight: bold;">Diagnósticos secundarios:</td>
+                    <td><textarea class="textarea" rows="3" placeholder="Escribe los diagnósticos secundarios..." style="width: 100%; border: none;"></textarea></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 30%; font-weight: bold;">Evolución del paciente:</td>
+                    <td><textarea class="textarea" rows="5" placeholder="Describe la evolución del paciente..." style="width: 100%; border: none;"></textarea></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 30%; font-weight: bold;">Recomendaciones:</td>
+                    <td><textarea class="textarea" rows="3" placeholder="Escribe las recomendaciones..." style="width: 100%; border: none;"></textarea></td>
                   </tr>
                 </tbody>
               </table>
             </div>
-    
           </div>
         </div>
       </div>
@@ -604,12 +662,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
+                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;" ></td></tr>
+                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
                 </tbody>
               </table>
             </div>
@@ -623,12 +681,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td>Energía (kcal)</td><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Hidratos de carbono</td><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Lípidos</td><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Proteínas</td><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Fibra</td><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Agua</td><td><input class="input" type="text" style="width: 100%; border: none;"></td></tr>
+                  <tr><td>Energía (kcal)</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td>Hidratos de carbono</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td>Lípidos</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td>Proteínas</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td>Fibra</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
+                  <tr><td>Agua</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
                 </tbody>
               </table>
             </div>
