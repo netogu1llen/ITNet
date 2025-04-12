@@ -1,0 +1,220 @@
+<%- include('partials/head') %>
+<body>
+  <section class="modal-card-body" style="text-align: center;">
+    <!-- Ícono e título centrados -->
+    <div style="margin-bottom: 20px;">
+      <img src="/images/modificarusuario.png" alt="Icono de usuario" style="width: 100px; height: 100px;">
+    </div>
+    <h1 class="title" style="margin-bottom: 30px;">Registrar Paciente</h1>
+    <div class="white-container">
+    <div class="full-white-container">
+    <div class="multirow-container">
+      <div class="element-container"></div>
+      <div class="element-container"></div>
+      <div class="element-container">
+        <label for="numExpediente">Número de Expediente:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="numExpediente" name="numExpediente" maxlength="15"><br>
+        </div>
+      </div>
+      <div class="element-container"></div>
+      <div class="element-container"></div>
+    </div>
+    <hr>
+    <label for="direccion">Datos personales</label>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="nombres">Nombres:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="nombres" name="nombres" maxlength="50"><br> 
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="apellidoP">Apellido Paterno:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="apellidoP" name="apellidoP" maxlength="30"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="apellidoM">Apellido Materno:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="apellidoM" name="apellidoM" maxlength="30"><br>
+        </div>
+      </div>
+    </div>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="date" id="fechaNacimiento" name="fechaNacimiento"><br>
+        </div>
+      </div>
+
+      <div class="element-container">
+        <label for="contacto">Contacto:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="contacto" name="contacto" maxlength="15"><br>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <label for="direccion">Direccion de vivienda</label>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="direccion">Estado:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="estado" name="estado" maxlength="100"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="direccion">Ciudad:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="ciudad" name="ciudad" maxlength="100"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="direccion">Calle:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="calle" name="calle" maxlength="100"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="direccion">Codigo Postal:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="cp" name="cp" maxlength="100"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="direccion">Localidad:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="localidad" name="localidad" maxlength="100"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="direccion">Numero de casa:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="numCasa" name="numCasa" maxlength="100"><br>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <label for="direccion">Datos medicos</label>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="enfermedades">Enfermedades:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="enfermedades" name="enfermedades" maxlength="255"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="medicamentos">Medicamentos:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="medicamentos" name="medicamentos" maxlength="255"><br>
+        </div>
+      </div>
+    </div>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="curso">Estudio Socioeconómico:</label>
+        <br>
+        <div class="multirow-form-container">
+          <select id="estudioSocioeconomico" name="estudioSocioeconomico">
+            <option value="">Seleccione una opcion</option>
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+            
+          </select>
+          <br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="curso">Tipo de sangre:</label>
+        <br>
+        <div class="multirow-form-container">
+          <select id="sangre" name="sangre">
+            <option value="">Seleccione el tipo de sangre</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            
+          </select>
+          <br>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <label for="direccion">Datos academicos</label>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="grado">Grado:</label>
+        <br>
+        <div class="multirow-form-container">
+          <select id="grado" name="grado">
+            <option value="">Seleccione un grado</option>
+            <option value="1°">1°</option>
+            <option value="2°">2°</option>
+            <option value="3°">3°</option>
+            <option value="4°">4°</option>
+            <option value="5°">5°</option>
+            <option value="6°">6°</option>
+            <!-- Agrega más opciones según necesites -->
+          </select>
+          <br>
+        </div>
+      </div>
+    
+      <div class="element-container">
+        <label for="curso">Nivel escolar:</label>
+        <br>
+        <div class="multirow-form-container">
+          <select id="nvEscolar" name="nvEscolar">
+            <option value="">Seleccione nivel escolar</option>
+            <option value="Preescolar">Preescolar</option>
+            <option value="Primaria">Primaria</option>
+            <option value="Secundaria">Secundaria</option>
+            <option value="Preparatoria">Preparatoria</option>
+            <option value="Universidad">Universidad</option>
+            
+          </select>
+          <br>
+        </div>
+      </div>
+    </div>
+    <div class="multirow-container">
+    <div class="element-container"></div>
+    <div class="element-container"></div>
+    <div class="element-container">
+      <button class="button is-save" id="btn-guardar">
+          Guardar
+      </button>
+      <button class="button is-cancel" id="btn-cancelar">
+          Cancelar
+      </button>
+    </div>
+    <div class="element-container"></div>
+    <div class="element-container"></div>
+  </div>
+</div>
+</div>
+</section>
+<script src="/js/registrarPaciente.js"></script>
+</body>

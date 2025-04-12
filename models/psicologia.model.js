@@ -111,13 +111,12 @@ class Psicologia {
   // Obtener seguimiento por ID
   static async obtenerPorId(id) {
     try {
-      const [results] = await db.execute('SELECT * FROM seguimientopsicologico WHERE IDSeguimiento = ?', [id]);
+      const [results] = await db.execute(
+        'SELECT * FROM seguimientopsicologico WHERE IDSeguimiento = ?',
+        [id]
+      );
 
-      if (results.length === 0) {
-        return null;
-      }
-
-      return results[0];
+      return results.length === 0 ? null : results[0];
     } catch (err) {
       throw err;
     }
@@ -172,6 +171,7 @@ class Psicologia {
       await db.execute('DELETE FROM objetivoPsicologico WHERE IDSeguimiento = ? AND eliminado = 0', [id]);
     } catch (err) {
       console.error('Error al eliminar los objetivos:', err);
+      console.error('Error al eliminar los objetivos:', err);
       throw err;
     }
   }
@@ -183,9 +183,14 @@ class Psicologia {
     } catch (err) {
       console.error('Error al insertar los objetivos:', err);
       throw err;
-    
     }
   }
+
+  /**
+   * Obtiene los datos generales del expediente por ID.
+   * @param {number} idExpediente
+   * @returns {Promise<Object>}
+   */
   static async getDatosGenerales(idExpediente) {
         try {
             const [result] = await db.execute(`

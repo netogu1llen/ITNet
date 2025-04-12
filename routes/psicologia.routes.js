@@ -47,8 +47,8 @@ router.get('/documentos/ver/:id', psicologiaController.verDocumento);
 router.get('/seguimientos/editar/:id', psicologiaController.get_editar_seguimiento);
 router.post('/seguimientos/editar/:id', psicologiaController.post_editar_seguimiento);
 
-// Ruta para el callback de Google
-router.get('/seguimientos/registrar/:id', psicologiaController.get_registrar_seguimiento);
-router.post('/seguimientos/registrar/:id', psicologiaController.post_registrar_seguimiento);
+// Ruta para registrar seguimiento psicologico
+router.get('/seguimientos/registrar/:id', psicologiaController.getRegistrarSeguimiento);
+router.post('/seguimientos/registrar/:id', psicologiaController.postRegistrarSeguimiento);
 
 module.exports = router;
