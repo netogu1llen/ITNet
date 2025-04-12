@@ -2,19 +2,19 @@ const { request, response } = require("express");
 
 
 exports.getHome = (request, response) => {
-    response.render('main/home');
+    response.render('home');
   };
   
 exports.getClinicaV2 = (request, response) => {
-response.render('main/clinica');
+response.render('clinica');
 };
 
 exports.getPacientes = (request, response) => {
-response.render('main/pacientes');
+response.render('pacientes');
 };
 
 exports.getTrabajadores = (request, response) => {
-response.render('main/trabajadores');
+response.render('trabajadores');
 };
 
 exports.getHistoriaClinica = (request, response, next) => {

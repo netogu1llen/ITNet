@@ -318,7 +318,7 @@ exports.post_editar_seguimiento = async (req, res) => {
   }
 };
 
-exports.get_registrar_seguimiento = async (req, res) => {
+exports.getRegistrarSeguimiento = async (req, res) => {
   try {
     const idExpediente = req.params.id;
     const expediente = await Psicologia.getDatosGenerales(idExpediente);
@@ -329,7 +329,7 @@ exports.get_registrar_seguimiento = async (req, res) => {
   }
 };
 
-exports.post_registrar_seguimiento = async (req, res) => {
+exports.postRegistrarSeguimiento = async (req, res) => {
   try {
     const idExpediente = req.params.id;
     if (!req.body || Object.keys(req.body).length === 0) {
