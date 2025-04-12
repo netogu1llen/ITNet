@@ -69,7 +69,7 @@ exports.descargarDocumento = async (req, res) => {
                 console.error('Ni documento ni seguimiento encontrados');
                 return res.status(404).send('Documento o seguimiento no encontrado');
             }
-
+            
             const actividades = await Psicologia.obtenerObjetivosPorSeguimientoId(id);
             
             // Usar getDatosGenerales para obtener datos consistentes sin info antropométrica
