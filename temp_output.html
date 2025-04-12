@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seguimiento Psicológico</title>
     <style>
         body {
@@ -10,19 +10,21 @@
             font-size: 12px;
             margin: 40px;
         }
-        h2 {
+        h1, h2 {
             text-align: center;
             margin-bottom: 30px;
         }
-        .info, .section {
-            margin-bottom: 20px;
+        .container {
+            margin: 0 auto;
+            max-width: 800px;
         }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
-        .info-col {
-            width: 32%;
+        .grid-item {
+            margin-bottom: 10px;
         }
         .section-title {
             font-weight: bold;
@@ -48,75 +50,91 @@
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>Seguimiento Psicológico</h1>
+        </header>
 
-    <h2>1. SEGUIMIENTO PSICOLÓGICO</h2>
+        <section class="datos-generales">
+            <h2>Datos Generales</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <p><strong>Nombre Completo:</strong> José Hernández Ríos</p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Número de Expediente:</strong> EXP1000</p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Fecha de Nacimiento:</strong> 27/10/2011</p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Contacto:</strong> 497-878-0355x0147</p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Ubicación:</strong> Morelos, San Juan Bautista</p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Domicilio:</strong> Circuito Leticia 428</p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Grado:</strong> 5</p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Nivel Escolar:</strong> Primaria</p>
+                </div>
+            </div>
+        </section>
 
-    <div class="info">
-        <div class="info-row">
-            <div class="info-col"><strong>Nombre:</strong> Juan Pérez Gómez</div>
-            <div class="info-col"><strong>Fecha de nacimiento:</strong> 2000-01-01</div>
-            <div class="info-col"><strong>Edad cronológica:</strong> Sin dato</div>
+        <div class="section">
+            <div class="section-title">Objetivo de la sesión:</div>
+            <div class="textarea">PRUEBA FINAL</div>
         </div>
-        <div class="info-row">
-            <div class="info-col"><strong>Dirección:</strong> Calle Falsa 123</div>
-            <div class="info-col"><strong>Estatura:</strong> Sin dato</div>
-            <div class="info-col"><strong>Peso:</strong> Sin dato</div>
+
+        <div class="section">
+            <div class="section-title">Justificación de la sesión:</div>
+            <div class="textarea">PRUEBA FINAL</div>
         </div>
-        <div class="info-row">
-            <div class="info-col"><strong>Grado que cursa:</strong> Primero</div>
-        </div>
-    </div>
 
-    <div class="section">
-        <div class="section-title">Objetivo de la sesión:</div>
-        <div class="textarea">Texto de ejemploaaaaaaXD</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Justificación de la sesión:</div>
-        <div class="textarea">Texto de ejemplo</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Actividades:</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Actividad</th>
-                    <th>Tiempo</th>
-                    <th>Metodología</th>
-                    <th>Objetivo</th>
-                    <th>Observaciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                
+        <div class="section">
+            <div class="section-title">Actividades:</div>
+            <table>
+                <thead>
                     <tr>
-                        <td>Texto de ejemplo</td>
-                        <td>Texto de ejemplo</td>
-                        <td>Texto de ejemplo</td>
-                        <td>Texto de ejemploaaaaaaXD</td>
-                        <td>Texto de ejemplo</td>
+                        <th>Actividad</th>
+                        <th>Tiempo</th>
+                        <th>Metodología</th>
+                        <th>Objetivo</th>
+                        <th>Observaciones</th>
                     </tr>
-                
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            <td>PRUEBA FINAL</td>
+                            <td>PRUEBA FINAL</td>
+                            <td>PRUEBA FINAL</td>
+                            <td>PRUEBA FINAL</td>
+                            <td>PRUEBA FINAL</td>
+                        </tr>
+                    
+                </tbody>
+            </table>
+        </div>
 
-    <div class="section">
-        <div class="section-title">Análisis psicológico:</div>
-        <div class="textarea">Texto de ejemplo</div>
-    </div>
+        <div class="section">
+            <div class="section-title">Análisis psicológico:</div>
+            <div class="textarea">PRUEBA FINAL</div>
+        </div>
 
-    <div class="section">
-        <div class="section-title">Recomendaciones:</div>
-        <div class="textarea">Texto de ejemplo</div>
-    </div>
+        <div class="section">
+            <div class="section-title">Recomendaciones:</div>
+            <div class="textarea">PRUEBA FINAL</div>
+        </div>
 
-    <div class="section">
-        <div class="section-title">Bitácora de sesión:</div>
-        <div class="textarea">Texto de ejemplo</div>
+        <div class="section">
+            <div class="section-title">Bitácora de sesión:</div>
+            <div class="textarea">PRUEBA FINAL</div>
+        </div>
     </div>
-
 </body>
 </html>

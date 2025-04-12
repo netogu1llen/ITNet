@@ -29,11 +29,19 @@ class Psicologia {
         }
     }
     
-    // Obtener datos del expediente
+    // Obtener datos del expediente - ACTUALIZADO con nuevas agrupaciones
     static async obtenerExpedientePorId(idExpediente) {
         try {
             const [results] = await db.execute(`
-                SELECT nombres, apellidoP, apellidoM, IDExpediente, fechaNacimiento, contacto, direccion, grado, curso
+                SELECT 
+                    CONCAT(nombres, ' ', apellidoP, ' ', apellidoM) AS nombreCompleto,
+                    fechaNacimiento, 
+                    contacto, 
+                    CONCAT(estado, ', ', ciudad) AS ubicacion, 
+                    CONCAT(calle, ' ', numCasa) AS domicilio,
+                    grado, 
+                    nvEscolar AS curso,
+                    numExpediente
                 FROM expediente
                 WHERE IDExpediente = ? AND eliminado = 0
             `, [idExpediente]);
@@ -115,24 +123,30 @@ class Psicologia {
     }
   }
 
-  // Obtener objetivos por ID de seguimiento
+  // Obtener objetivos por ID de seguimiento - ACTUALIZADO
   static async obtenerObjetivosPorSeguimientoId(id) {
     try {
-      const [results] = await db.execute('SELECT * FROM objetivos WHERE IDSeguimiento = ? AND eliminado = 0', [id]);
+      const [results] = await db.execute('SELECT * FROM objetivoPsicologico WHERE IDSeguimiento = ? AND eliminado = 0', [id]);
       return results;
     } catch (err) {
       throw err;
     }
   }
 
-  // Obtener los datos del expediente
+  // Obtener los datos del expediente - ACTUALIZADO con nuevas agrupaciones
   static async obtenerExpedientePorSeguimientoId(idSeguimiento) {
     const sql = `
-      SELECT e.nombres, e.apellidoP, e.apellidoM, e.numExpediente, e.fechaNacimiento, 
-             e.direccion, e.grado, e.curso
-      FROM expediente e
-      JOIN seguimientopsicologico s ON e.idExpediente = s.idExpediente
-      WHERE s.idSeguimiento = ?
+        SELECT 
+            CONCAT(e.nombres, ' ', e.apellidoP, ' ', e.apellidoM) AS nombreCompleto,
+            e.numExpediente, 
+            e.fechaNacimiento, 
+            CONCAT(e.estado, ', ', e.ciudad) AS ubicacion, 
+            CONCAT(e.calle, ' ', e.numCasa) AS domicilio,
+            e.grado, 
+            e.nvEscolar AS curso
+        FROM expediente e
+        JOIN seguimientopsicologico s ON e.idExpediente = s.idExpediente
+        WHERE s.idSeguimiento = ?
     `;
     try {
       const [results] = await db.execute(sql, [idSeguimiento]);
@@ -152,20 +166,20 @@ class Psicologia {
     }
   }
 
-  // Eliminar objetivos por ID de seguimiento
+  // Eliminar objetivos por ID de seguimiento - ACTUALIZADO
   static async eliminarObjetivosPorSeguimientoId(id) {
     try {
-      await db.execute('DELETE FROM objetivos WHERE IDSeguimiento = ? AND eliminado = 0', [id]);
+      await db.execute('DELETE FROM objetivoPsicologico WHERE IDSeguimiento = ? AND eliminado = 0', [id]);
     } catch (err) {
-      console.error('Error al eliminaar los objetivos:', err);
+      console.error('Error al eliminar los objetivos:', err);
       throw err;
     }
   }
 
-  // Insertar objetivos
+  // Insertar objetivos - ACTUALIZADO
   static async insertarObjetivos(id, actividad, tiempo, metodologia, objetivo, observaciones) {
     try {
-      await db.execute('INSERT INTO objetivos SET IDSeguimiento = ?, actividad = ?, tiempo = ?, metodologia = ?, objetivo = ?, observaciones = ?, eliminado = 0', [id, actividad, tiempo, metodologia, objetivo, observaciones]);
+      await db.execute('INSERT INTO objetivoPsicologico SET IDSeguimiento = ?, actividad = ?, tiempo = ?, metodologia = ?, objetivo = ?, observaciones = ?, eliminado = 0', [id, actividad, tiempo, metodologia, objetivo, observaciones]);
     } catch (err) {
       console.error('Error al insertar los objetivos:', err);
       throw err;
@@ -174,7 +188,24 @@ class Psicologia {
   }
   static async getDatosGenerales(idExpediente) {
         try {
-            const [result]= await db.execute('SELECT e.nombres, e.apellidoP,  e.apellidoM, e.fechaNacimiento,e.direccion, ea.peso, ea.talla,ea.edad, b.grado FROM expediente e LEFT JOIN evaluacionantropometrica ea ON e.IDExpediente = ea.IDExpediente LEFT JOIN boleta b ON e.IDExpediente = b.IDExpediente WHERE e.IDExpediente = ?;', [idExpediente]);
+            const [result] = await db.execute(`
+                SELECT 
+                    CONCAT(e.nombres, ' ', e.apellidoP, ' ', e.apellidoM) AS nombreCompleto,
+                    e.fechaNacimiento,
+                    e.contacto,
+                    CONCAT(e.estado, ', ', e.ciudad) AS ubicacion, 
+                    CONCAT(e.calle, ' ', e.numCasa) AS domicilio,
+                    ea.peso, 
+                    ea.talla, 
+                    ea.edad, 
+                    b.grado,
+                    e.nvEscolar AS curso,
+                    e.numExpediente
+                FROM expediente e 
+                LEFT JOIN evaluacionantropometrica ea ON e.IDExpediente = ea.IDExpediente 
+                LEFT JOIN boleta b ON e.IDExpediente = b.IDExpediente 
+                WHERE e.IDExpediente = ?;
+            `, [idExpediente]);
             return result[0] || [];
         } catch (error) {
             console.error('Error al obtener seguimiento:', error);

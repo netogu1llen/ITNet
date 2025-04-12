@@ -16,8 +16,8 @@ exports.obtenerDocumentosPorExpediente = async (req, res) => {
         // Combinar los resultados
         const documentos = [...documentosAdjuntos, ...seguimientosPsicologicos];
 
-        // Obtener datos del expediente (dinámicamente)
-        const expediente = await Psicologia.obtenerExpedientePorId(idExpediente);
+        // Obtener datos del expediente usando la función unificada
+        const expediente = await Psicologia.getDatosGenerales(idExpediente);
 
         if (!expediente) {
             return res.status(404).json({ error: 'Expediente no encontrado' });
@@ -71,7 +71,10 @@ exports.descargarDocumento = async (req, res) => {
             }
 
             const actividades = await Psicologia.obtenerObjetivosPorSeguimientoId(id);
-            const expediente = await Psicologia.obtenerExpedientePorSeguimientoId(id);
+            
+            // Usar getDatosGenerales para obtener datos consistentes sin info antropométrica
+            const expedienteId = seguimiento.IDExpediente;
+            const expediente = await Psicologia.getDatosGenerales(expedienteId);
 
             const html = await ejs.renderFile(
                 path.join(__dirname, '../views/pdf/seguimiento.ejs'),
@@ -161,6 +164,7 @@ exports.eliminarDocumento = async (req, res) => {
 
 
 
+
 // Subir un documento
 exports.subirDocumento = async (req, res) => {
     try {
@@ -244,12 +248,9 @@ exports.get_editar_seguimiento = async (req, res) => {
   
       console.log('Seguimiento encontrado:', seguimiento);
   
-      // Ahora obtenemos el IDEXP de Expediente que está dentro del seguimiento
-      const IDEXPEDIENTE = seguimiento.IDExpediente;
-  
       // Realizamos las consultas correspondientes
       const objetivos = await Psicologia.obtenerObjetivosPorSeguimientoId(IDSEGUIMIENTO);
-      const expediente = await Psicologia.getDatosGenerales(IDEXPEDIENTE); // Usamos el IDEXPEDIENTE aquí
+      const expediente = await Psicologia.getDatosGenerales(seguimiento.IDExpediente); // Usando la función unificada
   
       res.render('editarSeguimiento', {
         seguimiento,

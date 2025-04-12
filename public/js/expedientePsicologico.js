@@ -84,79 +84,78 @@ $(document).ready(function () {
         $('#nombreArchivo').text(archivo ? archivo.name : 'No hay archivo seleccionado');
     });
 
-   // ENVÍO DEL FORMULARIO
-$('#subirDocumentoForm').on('submit', function (e) {
-    e.preventDefault();
+    // ENVÍO DEL FORMULARIO
+    $('#subirDocumentoForm').on('submit', function (e) {
+        e.preventDefault();
 
-    const nombreDocumento = $('input[name="nombreDocumento"]').val().trim();
-    const archivo = $('input[name="archivoDocumento"]')[0].files[0];
+        const nombreDocumento = $('input[name="nombreDocumento"]').val().trim();
+        const archivo = $('input[name="archivoDocumento"]')[0].files[0];
 
-    if (!archivo || archivo.type !== "application/pdf") {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Debe seleccionar un archivo PDF válido.'
-        });
-        return;
-    }
-
-    // Mostrar modal de carga
-    showLoadingModal('Subiendo archivo', 'Por favor espere mientras se sube el documento...');
-
-    // Obtener el ID del expediente de la URL actual
-    const urlPath = window.location.pathname;
-    const expedienteId = urlPath.split('/').pop();
-
-    const formData = new FormData();
-    formData.append('nombreDocumento', nombreDocumento);
-    formData.append('archivoDocumento', archivo);
-
-    $.ajax({
-        url: `/psicologia/documentos/subir/${expedienteId}`,
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            // Ocultar modal de carga
-            hideLoadingModal();
-            
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: 'Documento subido correctamente.'
-            }).then(() => {
-                $('#modalSubirDocumento').css('display', 'none');
-                location.reload();
-            });
-        },
-        error: function (xhr) {
-            // Ocultar modal de carga incluso en caso de error
-            hideLoadingModal();
-            
-            console.error('Error al subir documento:', xhr);
+        if (!archivo || archivo.type !== "application/pdf") {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Error al subir el documento. Por favor, intenta de nuevo.'
+                text: 'Debe seleccionar un archivo PDF válido.'
             });
+            return;
         }
-    });
-});
 
+        // Mostrar modal de carga
+        showLoadingModal('Subiendo archivo', 'Por favor espere mientras se sube el documento...');
 
-        // Acción del botón Registrar Seguimiento
-        registrarSeguimientoButton.on('click', function () {
-            // Obtener el ID del expediente de la URL actual
-            const urlPath = window.location.pathname;
-            const expedienteId = urlPath.split('/').pop(); // Suponiendo que el ID está al final de la URL
-            const redirectUrl = `http://localhost:3000/psicologia/seguimientos/registrar/${expedienteId}`;
+        // Obtener el ID del expediente de la URL actual
+        const urlPath = window.location.pathname;
+        const expedienteId = urlPath.split('/').pop();
 
-            // Redirigir sin mostrar modal de carga
-            window.location.href = redirectUrl;
+        const formData = new FormData();
+        formData.append('nombreDocumento', nombreDocumento);
+        formData.append('archivoDocumento', archivo);
+
+        $.ajax({
+            url: `/psicologia/documentos/subir/${expedienteId}`,
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                // Ocultar modal de carga
+                hideLoadingModal();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Documento subido correctamente.'
+                }).then(() => {
+                    $('#modalSubirDocumento').css('display', 'none');
+                    location.reload();
+                });
+            },
+            error: function (xhr) {
+                // Ocultar modal de carga incluso en caso de error
+                hideLoadingModal();
+                
+                console.error('Error al subir documento:', xhr);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al subir el documento. Por favor, intenta de nuevo.'
+                });
+            }
         });
+    });
 
-        // Botón Eliminar Documento
+    // Acción del botón Registrar Seguimiento
+    registrarSeguimientoButton.on('click', function () {
+        // Obtener el ID del expediente de la URL actual
+        const urlPath = window.location.pathname;
+        const expedienteId = urlPath.split('/').pop(); // Suponiendo que el ID está al final de la URL
+        const redirectUrl = `http://localhost:3000/psicologia/seguimientos/registrar/${expedienteId}`;
+
+        // Redirigir sin mostrar modal de carga
+        window.location.href = redirectUrl;
+    });
+
+    // Botón Eliminar Documento
     $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
         const id = $(this).data('id');
         
@@ -197,8 +196,6 @@ $('#subirDocumentoForm').on('submit', function (e) {
             }
         });
     });
-
-
 
     // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
     $(document).on('click', '.fila-documento', function () {

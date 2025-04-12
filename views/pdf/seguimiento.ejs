@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seguimiento Psicológico</title>
     <style>
         body {
@@ -10,19 +10,21 @@
             font-size: 12px;
             margin: 40px;
         }
-        h2 {
+        h1, h2 {
             text-align: center;
             margin-bottom: 30px;
         }
-        .info, .section {
-            margin-bottom: 20px;
+        .container {
+            margin: 0 auto;
+            max-width: 800px;
         }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
-        .info-col {
-            width: 32%;
+        .grid-item {
+            margin-bottom: 10px;
         }
         .section-title {
             font-weight: bold;
@@ -48,75 +50,91 @@
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>Seguimiento Psicológico</h1>
+        </header>
 
-    <h2>1. SEGUIMIENTO PSICOLÓGICO</h2>
+        <section class="datos-generales">
+            <h2>Datos Generales</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <p><strong>Nombre Completo:</strong> <%= expediente.nombreCompleto || 'Sin dato' %></p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Número de Expediente:</strong> <%= expediente.numExpediente || 'Sin dato' %></p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Fecha de Nacimiento:</strong> <%= expediente.fechaNacimiento ? new Date(expediente.fechaNacimiento).toLocaleDateString() : 'Sin dato' %></p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Contacto:</strong> <%= expediente.contacto || 'Sin dato' %></p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Ubicación:</strong> <%= expediente.ubicacion || 'Sin dato' %></p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Domicilio:</strong> <%= expediente.domicilio || 'Sin dato' %></p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Grado:</strong> <%= expediente.grado || 'Sin dato' %></p>
+                </div>
+                <div class="grid-item">
+                    <p><strong>Nivel Escolar:</strong> <%= expediente.curso || 'Sin dato' %></p>
+                </div>
+            </div>
+        </section>
 
-    <div class="info">
-        <div class="info-row">
-            <div class="info-col"><strong>Nombre:</strong> <%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %></div>
-            <div class="info-col"><strong>Fecha de nacimiento:</strong> <%= expediente.fechaNacimiento %></div>
-            <div class="info-col"><strong>Edad cronológica:</strong> <%= expediente.edad || 'Sin dato' %></div>
+        <div class="section">
+            <div class="section-title">Objetivo de la sesión:</div>
+            <div class="textarea"><%= seguimiento.sesionObjetivo %></div>
         </div>
-        <div class="info-row">
-            <div class="info-col"><strong>Dirección:</strong> <%= expediente.direccion || 'Sin dato' %></div>
-            <div class="info-col"><strong>Estatura:</strong> <%= expediente.estatura || 'Sin dato' %></div>
-            <div class="info-col"><strong>Peso:</strong> <%= expediente.peso || 'Sin dato' %></div>
+
+        <div class="section">
+            <div class="section-title">Justificación de la sesión:</div>
+            <div class="textarea"><%= seguimiento.sesionJustificacion %></div>
         </div>
-        <div class="info-row">
-            <div class="info-col"><strong>Grado que cursa:</strong> <%= expediente.grado || 'Sin dato' %></div>
-        </div>
-    </div>
 
-    <div class="section">
-        <div class="section-title">Objetivo de la sesión:</div>
-        <div class="textarea"><%= seguimiento.sesionObjetivo %></div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Justificación de la sesión:</div>
-        <div class="textarea"><%= seguimiento.sesionJustificacion %></div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Actividades:</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Actividad</th>
-                    <th>Tiempo</th>
-                    <th>Metodología</th>
-                    <th>Objetivo</th>
-                    <th>Observaciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% actividades.forEach(a => { %>
+        <div class="section">
+            <div class="section-title">Actividades:</div>
+            <table>
+                <thead>
                     <tr>
-                        <td><%= a.actividad %></td>
-                        <td><%= a.tiempo %></td>
-                        <td><%= a.metodologia %></td>
-                        <td><%= a.objetivo %></td>
-                        <td><%= a.observaciones %></td>
+                        <th>Actividad</th>
+                        <th>Tiempo</th>
+                        <th>Metodología</th>
+                        <th>Objetivo</th>
+                        <th>Observaciones</th>
                     </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <% actividades.forEach(a => { %>
+                        <tr>
+                            <td><%= a.actividad %></td>
+                            <td><%= a.tiempo %></td>
+                            <td><%= a.metodologia %></td>
+                            <td><%= a.objetivo %></td>
+                            <td><%= a.observaciones %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
 
-    <div class="section">
-        <div class="section-title">Análisis psicológico:</div>
-        <div class="textarea"><%= seguimiento.analisisPsicologico %></div>
-    </div>
+        <div class="section">
+            <div class="section-title">Análisis psicológico:</div>
+            <div class="textarea"><%= seguimiento.analisisPsicologico %></div>
+        </div>
 
-    <div class="section">
-        <div class="section-title">Recomendaciones:</div>
-        <div class="textarea"><%= seguimiento.recomendaciones %></div>
-    </div>
+        <div class="section">
+            <div class="section-title">Recomendaciones:</div>
+            <div class="textarea"><%= seguimiento.recomendaciones %></div>
+        </div>
 
-    <div class="section">
-        <div class="section-title">Bitácora de sesión:</div>
-        <div class="textarea"><%= seguimiento.sesionBitacora %></div>
+        <div class="section">
+            <div class="section-title">Bitácora de sesión:</div>
+            <div class="textarea"><%= seguimiento.sesionBitacora %></div>
+        </div>
     </div>
-
 </body>
 </html>
