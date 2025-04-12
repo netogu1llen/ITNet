@@ -94,7 +94,20 @@ const getRegistrarSeguimiento = async (req, res) => {
   try {
     const idExpediente = req.params.id;
     const expediente = await Seguimiento.getDatosGenerales(idExpediente);
-    res.render('registrarSeguimiento', { expediente });
+    let paciente = expediente;
+    // Desencriptar campos sensibles
+    paciente.nombres = decrypt(paciente.nombres);
+    paciente.apellidoP = decrypt(paciente.apellidoP);
+    paciente.apellidoM = decrypt(paciente.apellidoM);
+    paciente.fechaNacimiento = decrypt(paciente.fechaNacimiento);
+    paciente.estado = decrypt(paciente.estado);
+    paciente.ciudad = decrypt(paciente.ciudad);
+    paciente.calle = decrypt(paciente.calle);
+    paciente.cp = decrypt(paciente.cp);
+    paciente.localidad = decrypt(paciente.localidad);
+    paciente.numCasa = decrypt(paciente.numCasa);
+
+    res.render('registrarSeguimiento', { expediente: paciente });
   } catch (error) {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');

@@ -35,15 +35,20 @@ const postRegistrarPaciente = async (req, res) => {
       nombres,
       apellidoP,
       apellidoM,
-      numExpediente,
       fechaNacimiento,
       contacto,
-      direccion,
+      estado,
+      ciudad,
+      calle,
+      cp,
+      localidad,
+      numCasa,
+      numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
-      curso,
+      nvEscolar,
       sangre
     } = req.body;
     // Encriptar los campos sensibles
@@ -53,13 +58,18 @@ const postRegistrarPaciente = async (req, res) => {
       apellidoM: encrypt(apellidoM).encryptedData,
       fechaNacimiento: encrypt(fechaNacimiento).encryptedData,
       contacto: encrypt(contacto).encryptedData,
-      direccion: encrypt(direccion).encryptedData,
+      estado: encrypt(estado).encryptedData,
+      ciudad: encrypt(ciudad).encryptedData,
+      calle: encrypt(calle).encryptedData,
+      cp: encrypt(cp).encryptedData,
+      localidad: encrypt(localidad).encryptedData,
+      numCasa: encrypt(numCasa).encryptedData,
       numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
-      curso,
+      nvEscolar,
       sangre
     };
     await Pacientes.registrarPaciente(pacienteEncriptado);
@@ -85,14 +95,17 @@ const getEditarPaciente = async (req, res) => {
     let paciente = datosPaciente;
 
     // Desencriptar campos sensibles
-    console.log(paciente.nombres);
     paciente.nombres = decrypt(paciente.nombres);
     paciente.apellidoP = decrypt(paciente.apellidoP);
     paciente.apellidoM = decrypt(paciente.apellidoM);
     paciente.fechaNacimiento = decrypt(paciente.fechaNacimiento);
     paciente.contacto = decrypt(paciente.contacto);
-    paciente.direccion = decrypt(paciente.direccion);
-    console.log(paciente);
+    paciente.estado = decrypt(paciente.estado);
+    paciente.ciudad = decrypt(paciente.ciudad);
+    paciente.calle = decrypt(paciente.calle);
+    paciente.cp = decrypt(paciente.cp);
+    paciente.localidad = decrypt(paciente.localidad);
+    paciente.numCasa = decrypt(paciente.numCasa);
 
 
     res.render('editarPaciente', { datos: paciente});
@@ -114,34 +127,45 @@ const postEditarPaciente = async (req, res) => {
       nombres,
       apellidoP,
       apellidoM,
-      numExpediente,
       fechaNacimiento,
       contacto,
-      direccion,
+      estado,
+      ciudad,
+      calle,
+      cp,
+      localidad,
+      numCasa,
+      numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
-      curso,
+      nvEscolar,
       sangre
     } = req.body;
-
-    await Pacientes.editarPaciente({
+    const pacienteEncriptado = {
       nombres: encrypt(nombres).encryptedData,
       apellidoP: encrypt(apellidoP).encryptedData,
       apellidoM: encrypt(apellidoM).encryptedData,
       fechaNacimiento: encrypt(fechaNacimiento).encryptedData,
       contacto: encrypt(contacto).encryptedData,
-      direccion: encrypt(direccion).encryptedData,
+      estado: encrypt(estado).encryptedData,
+      ciudad: encrypt(ciudad).encryptedData,
+      calle: encrypt(calle).encryptedData,
+      cp: encrypt(cp).encryptedData,
+      localidad: encrypt(localidad).encryptedData,
+      numCasa: encrypt(numCasa).encryptedData,
       numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
-      curso,
+      nvEscolar,
       sangre,
       idExpediente
-    });
+    };
+
+    await Pacientes.editarPaciente(pacienteEncriptado);
 
     res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
   } catch (error) {

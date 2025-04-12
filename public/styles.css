@@ -47,6 +47,7 @@ body {
   
   .button.is-save:hover {
     background-color: #002133;
+    color: white;
   }
   /*Boton para cancelar el registro de un formulario*/
   .button.is-cancel {
@@ -56,6 +57,7 @@ body {
   
   .button.is-cancel:hover {
     background-color: #b91c1c;
+    color: white;
   }
     
 
@@ -484,6 +486,18 @@ font-weight: 500;
     flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
     justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
 }
+.white-container {
+  width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
+  margin: 0px 20px 0px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
+  padding: 20px;
+  text-align: left;
+  background-color: #FFFFFF; /* Fondo gris claro */
+  border-radius: 7px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
+  justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
+}
 /*Contenedor para el titulo del tipo de documento que se esta usando(es el que tiene el icono a la izquierda)*/
 .head-container {
     width: 100%; /* Ocupa todo el ancho */
@@ -562,15 +576,8 @@ font-weight: 500;
   font-size: 14px; /* Tamaño del texto */
   resize: none; /* Evita que el usuario cambie el tamaño del textarea */
 }
-.multirow-form-container input[type="text"]{
-  width: 100%; /* Ocupa todo el ancho */
-  padding: 10px; /* Espaciado interno */
-  border: 1px solid #ccc; /* Borde gris claro */
-  border-radius: 10px; /* Bordes redondeados */
-  box-sizing: border-box; /* Evita que el padding aumente el tamaño */
-  font-size: 14px; /* Tamaño del texto */
-  resize: none; /* Evita que el usuario cambie el tamaño del textarea */
-}
+.multirow-form-container input[type="text"],
+.multirow-form-container select,
 .multirow-form-container input[type="date"]{
   width: 100%; /* Ocupa todo el ancho */
   padding: 10px; /* Espaciado interno */

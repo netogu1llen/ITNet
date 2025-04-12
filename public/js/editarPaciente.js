@@ -61,29 +61,38 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
             const numExpediente = document.getElementById('numExpediente').value;
             const fechaNacimiento = document.getElementById('fechaNacimiento').value;
             const contacto = document.getElementById('contacto').value;
-            const direccion = document.getElementById('direccion').value;
+            const estado = document.getElementById('estado').value;
+            const ciudad = document.getElementById('ciudad').value;
+            const calle = document.getElementById('calle').value;
+            const cp = document.getElementById('cp').value;
+            const localidad = document.getElementById('localidad').value;
+            const numCasa = document.getElementById('numCasa').value;
             const enfermedades = document.getElementById('enfermedades').value;
             const medicamentos = document.getElementById('medicamentos').value;
             const estudioSocioeconomico = document.getElementById('estudioSocioeconomico').value;
             const grado = document.getElementById('grado').value;
-            const curso = document.getElementById('curso').value;
+            const nvEscolar = document.getElementById('nvEscolar').value;
             const sangre = document.getElementById('sangre').value;
 
             // Arreglo de campos para validaciones
             const campos = [
-                { id: 'nombres', nombre: 'Nombres' },
-                { id: 'apellidoP', nombre: 'Apellido Paterno' },
-                { id: 'apellidoM', nombre: 'Apellido Materno' },
-                { id: 'numExpediente', nombre: 'Número de Expediente' },
-                { id: 'fechaNacimiento', nombre: 'Fecha de Nacimiento' },
-                { id: 'contacto', nombre: 'Contacto' },
-                { id: 'direccion', nombre: 'Dirección' },
-                { id: 'enfermedades', nombre: 'Enfermedades' },
-                { id: 'medicamentos', nombre: 'Medicamentos' },
-                { id: 'estudioSocioeconomico', nombre: 'Estudio Socioeconómico' },
-                { id: 'grado', nombre: 'Grado' },
-                { id: 'curso', nombre: 'Curso' },
-                { id: 'sangre', nombre: 'Grupo Sanguíneo' }
+                { id: 'nombres', nombre: 'nombres' },
+                { id: 'apellidoP', nombre: 'apellidoP' },
+                { id: 'apellidoM', nombre: 'apellidoM' },
+                { id: 'numExpediente', nombre: 'numExpediente' },
+                { id: 'fechaNacimiento', nombre: 'fechaNacimiento' },
+                { id: 'estado', nombre: 'estado' },
+                { id: 'ciudad', nombre: 'ciudad' },
+                { id: 'calle', nombre: 'calle' },
+                { id: 'cp', nombre: 'cp' },
+                { id: 'localidad', nombre: 'localiadd' },
+                { id: 'numCasa', nombre: 'numcasa' },
+                { id: 'enfermedades', nombre: 'enfermedades' },
+                { id: 'medicamentos', nombre: 'medicamentos' },
+                { id: 'estudioSocioeconomico', nombre: 'estudioSocioeconomico' },
+                { id: 'grado', nombre: 'grado' },
+                { id: 'nvEscolar', nombre: 'nvEscolar' },
+                { id: 'sangre', nombre: 'sangre' }
             ];
 
             let camposVacios = [];
@@ -123,15 +132,20 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
                 nombres,
                 apellidoP,
                 apellidoM,
-                numExpediente,
                 fechaNacimiento,
                 contacto,
-                direccion,
+                estado,
+                ciudad,
+                calle,
+                cp,
+                localidad,
+                numCasa,
+                numExpediente,
                 enfermedades,
                 medicamentos,
                 estudioSocioeconomico,
                 grado,
-                curso,
+                nvEscolar,
                 sangre
             };
 
