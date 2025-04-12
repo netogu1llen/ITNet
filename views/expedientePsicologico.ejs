@@ -69,9 +69,9 @@
               <td><%= documento.tipo === 'seguimientoPsicologico' ? 'Seguimiento Psicológico' : documento.tipo %></td>
               <td><%= new Date(documento.fechaCreacion).toLocaleDateString() %></td>
               <td>
-                      <a href="/psicologia/documentos/descargar/<%= documento.idDocumento %>">
-                          <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
-                      </a>
+                <span class="btn-descargar" data-id="<%= documento.idDocumento %>" data-tipo="<%= documento.tipo %>" style="cursor: pointer;">
+                  <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
+                </span>
               </td>
               <td>
                   <button class="button is-small is-danger btn-eliminar" data-id="<%= documento.idDocumento %>">Eliminar</button>
@@ -83,6 +83,17 @@
   </div>
 
   </div>
+  <!-- Modal de carga para descargas y subidas -->
+<div id="loadingModal" class="modal" style="display:none;">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+      <div class="box has-text-centered">
+          <p class="title is-4 mb-3" id="loadingModalTitle">Procesando...</p>
+          <progress class="progress is-primary" max="100"></progress>
+          <p id="loadingModalMessage" class="mt-3">Por favor espere mientras se procesa su solicitud.</p>
+      </div>
+  </div>
+</div>
 </section>
 
 

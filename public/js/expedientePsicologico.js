@@ -30,14 +30,50 @@ $(document).ready(function () {
     dtTopBar.append(registrarSeguimientoButton);
     $('#TopBar').append(dtTopBar);
 
+    // Crear modal de carga y añadirlo al DOM
+    const loadingModal = `
+        <div id="loadingModal" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <div class="box has-text-centered">
+                    <p class="title is-4 mb-3" id="loadingModalTitle">Procesando...</p>
+                    <progress class="progress is-primary" max="100"></progress>
+                    <p id="loadingModalMessage" class="mt-3">Por favor espere mientras se procesa su solicitud.</p>
+                </div>
+            </div>
+        </div>
+    `;
+    $('body').append(loadingModal);
+
+    // Funciones para mostrar y ocultar el modal de carga
+    function showLoadingModal(title, message) {
+        $('#loadingModalTitle').text(title || 'Procesando...');
+        $('#loadingModalMessage').text(message || 'Por favor espere mientras se procesa su solicitud.');
+        $('#loadingModal').addClass('is-active');
+        $('#loadingModal').css('display', 'flex'); // Añade display:flex para garantizar que se muestre
+        console.log('Modal mostrado:', title); // Para depuración
+    }
+
+    function hideLoadingModal() {
+        setTimeout(() => { // Añade un pequeño retraso para que sea visible
+            $('#loadingModal').removeClass('is-active');
+            $('#loadingModal').css('display', 'none');
+            console.log('Modal ocultado'); // Para depuración
+        }, 500); // 500ms de retraso mínimo
+    }
+
     // ABRIR MODAL
-    $(document).on('click', '.button-upload', function () {
-        $('#modalSubirDocumento').css('display', 'flex');
+    subirDocumentoButton.on('click', function () {
+        console.log("Abriendo modal de subir documento");
+        $('#modalSubirDocumento').addClass('is-active');
+        $('#modalSubirDocumento').css('display', 'flex'); // Asegurar que se muestre
     });
 
     // CERRAR MODAL
     $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
-        $('#modalSubirDocumento').css('display', 'none');
+        console.log("Cerrando modal");
+        $('#modalSubirDocumento').removeClass('is-active');
+        $('#modalSubirDocumento').css('display', 'none'); // Asegurar que se oculte
         $('#subirDocumentoForm')[0].reset();
         $('#nombreArchivo').text('No hay archivo seleccionado');
     });
@@ -64,6 +100,9 @@ $('#subirDocumentoForm').on('submit', function (e) {
         return;
     }
 
+    // Mostrar modal de carga
+    showLoadingModal('Subiendo archivo', 'Por favor espere mientras se sube el documento...');
+
     // Obtener el ID del expediente de la URL actual
     const urlPath = window.location.pathname;
     const expedienteId = urlPath.split('/').pop();
@@ -79,6 +118,9 @@ $('#subirDocumentoForm').on('submit', function (e) {
         processData: false,
         contentType: false,
         success: function (response) {
+            // Ocultar modal de carga
+            hideLoadingModal();
+            
             Swal.fire({
                 icon: 'success',
                 title: '¡Éxito!',
@@ -89,6 +131,9 @@ $('#subirDocumentoForm').on('submit', function (e) {
             });
         },
         error: function (xhr) {
+            // Ocultar modal de carga incluso en caso de error
+            hideLoadingModal();
+            
             console.error('Error al subir documento:', xhr);
             Swal.fire({
                 icon: 'error',
@@ -107,7 +152,7 @@ $('#subirDocumentoForm').on('submit', function (e) {
             const expedienteId = urlPath.split('/').pop(); // Suponiendo que el ID está al final de la URL
             const redirectUrl = `http://localhost:3000/psicologia/seguimientos/registrar/${expedienteId}`;
 
-            // Redirigir a la URL
+            // Redirigir sin mostrar modal de carga
             window.location.href = redirectUrl;
         });
 
@@ -161,10 +206,14 @@ $('#subirDocumentoForm').on('submit', function (e) {
         const tipo = $(this).data('tipo');
     
         if (tipo === 'seguimientoPsicologico') {
+            // Navegar directamente sin mostrar modal de carga
             window.location.href = `http://localhost:3000/psicologia/seguimientos/editar/${documentoId}`;
         } else {
+            // Mostrar el documento PDF sin modal de carga
             const url = `/psicologia/documentos/ver/${documentoId}`;
-            $('#iframeVistaPreviaDocumento').attr('src', url);
+            const iframe = $('#iframeVistaPreviaDocumento');
+            
+            iframe.attr('src', url);
             $('#modalVistaPreviaDocumento').css('display', 'flex');
         }
     });    
@@ -174,6 +223,107 @@ $('#subirDocumentoForm').on('submit', function (e) {
         event.stopPropagation();  // Detener la propagación del clic hacia la fila
     });
 
+    // Función para descargar documentos (agregada)
+    window.descargarDocumento = function(documentoId, tipo) {
+        // Prevenir comportamiento por defecto para evitar la navegación a #
+        event.preventDefault();
+        event.stopPropagation(); // Detener propagación del evento
+        
+        console.log('Descargando documento:', documentoId, 'de tipo:', tipo);
+        
+        // Mostrar modal de carga
+        showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
+        
+        // Usar AJAX para descargar el documento
+        $.ajax({
+            url: `/psicologia/documentos/descargar/${documentoId}`,
+            method: 'GET',
+            xhrFields: {
+                responseType: 'blob' // Crucial para manejar archivos binarios (PDF)
+            },
+            success: function(data) {
+                hideLoadingModal();
+                
+                // Crear un objeto URL para la descarga
+                const blob = new Blob([data], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                
+                // Crear un elemento <a> temporal para la descarga
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = (tipo === 'seguimientoPsicologico') ? 'seguimiento.pdf' : `documento_${documentoId}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                
+                // Limpiar después de la descarga
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(link);
+                }, 100);
+            },
+            error: function(xhr) {
+                hideLoadingModal();
+                console.error('Error al descargar:', xhr);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo descargar el documento. Por favor intente nuevamente.'
+                });
+            }
+        });
+    };
+
+    // Manejador de eventos para botones de descarga
+    $(document).on('click', '.btn-descargar', function(event) {
+        event.preventDefault();
+        event.stopPropagation(); // Evitar que se active la vista previa
+        
+        const documentoId = $(this).data('id');
+        const tipo = $(this).data('tipo');
+        
+        console.log('Descargando documento:', documentoId, 'de tipo:', tipo);
+        
+        // Mostrar modal de carga
+        showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
+        
+        // Usar AJAX para la descarga
+        $.ajax({
+            url: `/psicologia/documentos/descargar/${documentoId}`,
+            method: 'GET',
+            xhrFields: {
+                responseType: 'blob' // Importante para manejar PDFs
+            },
+            success: function(data) {
+                hideLoadingModal();
+                
+                // Crear objeto URL para la descarga
+                const blob = new Blob([data], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                
+                // Crear elemento para la descarga
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = (tipo === 'seguimientoPsicologico') ? 'seguimiento.pdf' : `documento_${documentoId}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                
+                // Limpiar
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(link);
+                }, 100);
+            },
+            error: function(xhr) {
+                hideLoadingModal();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo descargar el documento.'
+                });
+                console.error(xhr);
+            }
+        });
+    });
 
     // CERRAR MODAL DE VISTA PREVIA
     $(document).on('click', '#modalVistaPreviaDocumento .modal-background, #modalVistaPreviaDocumento .delete', function () {

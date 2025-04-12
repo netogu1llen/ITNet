@@ -23,10 +23,6 @@ exports.obtenerDocumentosPorExpediente = async (req, res) => {
             return res.status(404).json({ error: 'Expediente no encontrado' });
         }
 
-        // Verificar los datos del expediente antes de renderizar la vista
-        console.log('Expediente:', expediente);
-        console.log('Documentos:', documentos);
-
         // Renderizar la vista con los datos dinámicos
         res.render('expedientePsicologico', {
             expediente,

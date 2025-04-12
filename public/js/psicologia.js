@@ -1,3 +1,4 @@
+// FUNCIÓN GENERAL: Envía peticiones POST al servidor y maneja las respuestas
 function enviarPost(url, data) {
   // Mostrar la alerta de "procesando solicitud"
   Swal.fire({
@@ -29,6 +30,10 @@ function enviarPost(url, data) {
         text: response.mensaje || "Operación realizada con éxito",
         icon: "success"
     }).then(() => {
+      // Obtener el ID correspondiente para redirección
+      // Si es edición, response.idExpediente vendrá del servidor
+      // Si es registro, el idExpediente viene de la URL
+      const idExpediente = response.idExpediente || window.location.pathname.split('/').pop();
       window.location.href = `/psicologia/documentos/${idExpediente}`;
     });
 })
@@ -42,7 +47,7 @@ function enviarPost(url, data) {
 });
 };
 
-// Definir la función cuando cargue la página
+// FUNCIONES DE MANEJO DE TABLA DINÁMICA
 document.addEventListener('DOMContentLoaded', function() {
   configurarBotonesEliminarFila();
 });
@@ -63,6 +68,7 @@ function eliminarFila(event) {
   }
 }
 
+// Botón para agregar filas a la tabla
 document.getElementById('btn-agregar-fila')?.addEventListener('click', function(e) {
   e.preventDefault();
   
@@ -108,6 +114,8 @@ document.getElementById('btn-agregar-fila')?.addEventListener('click', function(
   configurarBotonesEliminarFila();
 });
 
+// PARTE DE EDITAR SEGUIMIENTO
+// Botón para guardar cambios en un seguimiento existente
 const btnGuardar = document.getElementById('btn-guardar');
 // Botón Guardar Cambios con confirmación
 if (btnGuardar) {
@@ -122,7 +130,8 @@ if (btnGuardar) {
       cancelButtonText: "Cancelar"
       }).then((result) => {
         if (result.isConfirmed) {
-          const idExpediente = window.location.pathname.split('/').pop();
+          // Aquí estamos en modo edición, así que necesitamos el idSeguimiento
+          const idSeguimiento = window.location.pathname.split('/').pop();
           
           // Obtener los valores de los campos principales
           const analisisPsicologico = document.getElementById('analisisPsicologico').value;
@@ -208,13 +217,13 @@ if (btnGuardar) {
           observaciones // Datos de la tabla
         };
         console.log(datos);
-        enviarPost(`/psicologia/seguimientos/editar/${idExpediente}`, { accion: "registro", datos: datos });
+        enviarPost(`/psicologia/seguimientos/editar/${idSeguimiento}`, { accion: "edición", datos: datos });
       }
     });
   });
 }
 
-// Botón Salir con opciones
+// FUNCIÓN COMPARTIDA: Botón para cancelar la operación (aplica tanto para edición como para registro)
 document.getElementById('btn-cancelar').addEventListener('click', function() {
   Swal.fire({
       title: "Estas a punto de cancelar la operacion",
@@ -228,13 +237,27 @@ document.getElementById('btn-cancelar').addEventListener('click', function() {
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire("No se guardaron los cambios", "", "info").then(() => {
-          const idExpediente = window.location.pathname.split('/').pop();
-          window.location.href = `/psicologia/documentos/${idExpediente}`;
+          // Determinar si estamos en editar o registrar para obtener el idExpediente correcto
+          const url = window.location.pathname;
+          let idExpediente;
+          
+          if (url.includes('/editar/')) {
+            // Si estamos editando, necesitamos obtener el idExpediente desde el servidor
+            // Como no tenemos acceso directo, redirigimos hacia atrás en la historia del navegador
+            window.history.back();
+            return;
+          } else {
+            // Si estamos registrando, el idExpediente está en la URL
+            idExpediente = url.split('/').pop();
+            window.location.href = `/psicologia/documentos/${idExpediente}`;
+          }
       });
       }
   });
 });
-// Botón Registrar con confirmación
+
+// PARTE DE REGISTRAR SEGUIMIENTO
+// Botón para registrar un nuevo seguimiento
 const btnRegistrar = document.getElementById('btn-registrar');
 if (btnRegistrar) {
   btnRegistrar.addEventListener('click', function() {
@@ -248,6 +271,7 @@ if (btnRegistrar) {
     cancelButtonText: "Cancelar"
   }).then((result) => {
     if (result.isConfirmed) {
+      // Aquí estamos en modo registro, así que necesitamos el idExpediente
       const idExpediente = window.location.pathname.split('/').pop();
 
       // Obtener los valores de los campos principales
