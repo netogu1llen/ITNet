@@ -10,13 +10,18 @@ class Pacientes {
    * @param {string} datosPaciente.apellidoM
    * @param {string} datosPaciente.fechaNacimiento
    * @param {string} datosPaciente.contacto
-   * @param {string} datosPaciente.direccion
+   * @param {string} datosPaciente.estado
+   * @param {string} datosPaciente.ciudad
+   * @param {string} datosPaciente.calle
+   * @param {string} datosPaciente.cp
+   * @param {string} datosPaciente.localidad
+   * @param {string} datosPaciente.numCasa
    * @param {string} datosPaciente.numExpediente
    * @param {string} datosPaciente.enfermedades
    * @param {string} datosPaciente.medicamentos
    * @param {string} datosPaciente.estudioSocioeconomico
    * @param {string} datosPaciente.grado
-   * @param {string} datosPaciente.curso
+   * @param {string} datosPaciente.nvEscolar
    * @param {string} datosPaciente.sangre
    */
   static async registrarPaciente({
@@ -25,36 +30,47 @@ class Pacientes {
     apellidoM,
     fechaNacimiento,
     contacto,
-    direccion,
+    estado,
+    ciudad,
+    calle,
+    cp,
+    localidad,
+    numCasa,
     numExpediente,
     enfermedades,
     medicamentos,
     estudioSocioeconomico,
     grado,
-    curso,
+    nvEscolar,
     sangre
   })
   {
     try {
       await db.execute(
         `INSERT INTO expediente SET
-          nombres = ?, apellidoP = ?, apellidoM = ?, numExpediente = ?,
-          fechaNacimiento = ?, contacto = ?, direccion = ?,
+          nombres = ?, apellidoP = ?, apellidoM = ?,
+          fechaNacimiento = ?, contacto = ?, estado = ?,  ciudad = ?,
+          calle = ?,  cp = ?,  localidad = ?,  numCasa = ?, numExpediente = ?,
           enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
-          grado = ?, curso = ?, sangre = ?, eliminado = 0`,
+          grado = ?, nvEscolar = ?, sangre = ?, eliminado = 0`,
         [
           nombres,
           apellidoP,
           apellidoM,
-          numExpediente,
           fechaNacimiento,
           contacto,
-          direccion,
+          estado,
+          ciudad,
+          calle,
+          cp,
+          localidad,
+          numCasa,
+          numExpediente,
           enfermedades,
           medicamentos,
           estudioSocioeconomico,
           grado,
-          curso,
+          nvEscolar,
           sangre
         ]
       );
@@ -63,7 +79,6 @@ class Pacientes {
       throw new Error('Error al registrar paciente');
     }
   }
-
   /**
    * Obtiene los datos de un paciente por su ID de expediente.
    * @param {number} idExpediente
@@ -71,12 +86,12 @@ class Pacientes {
    */
   static async getPaciente(idExpediente) {
     try {
-      console.log(idExpediente);
       // Usamos el método de promesas para la consulta
       const [result] = await db.execute(
         `SELECT nombres, apellidoP, apellidoM, numExpediente,
-                fechaNacimiento, contacto, direccion, enfermedades,
-                medicamentos, estudioSocioeconomico, grado, curso, sangre
+          fechaNacimiento, contacto, estado,  ciudad,
+          calle,  cp,  localidad,  numCasa, enfermedades,
+          medicamentos, estudioSocioeconomico, grado, nvEscolar, sangre
          FROM expediente
          WHERE IDExpediente = ?`,
         [idExpediente]
@@ -96,13 +111,18 @@ class Pacientes {
    * @param {string} datosPaciente.apellidoM
    * @param {string} datosPaciente.fechaNacimiento
    * @param {string} datosPaciente.contacto
-   * @param {string} datosPaciente.direccion 
+   * @param {string} datosPaciente.estado
+   * @param {string} datosPaciente.ciudad
+   * @param {string} datosPaciente.calle
+   * @param {string} datosPaciente.cp
+   * @param {string} datosPaciente.localidad
+   * @param {string} datosPaciente.numCasa
    * @param {string} datosPaciente.numExpediente
    * @param {string} datosPaciente.enfermedades
    * @param {string} datosPaciente.medicamentos
    * @param {string} datosPaciente.estudioSocioeconomico
    * @param {string} datosPaciente.grado
-   * @param {string} datosPaciente.curso
+   * @param {string} datosPaciente.nvEscolar
    * @param {string} datosPaciente.sangre
    * @param {number} datosPaciente.idExpediente
    */
@@ -112,13 +132,18 @@ class Pacientes {
     apellidoM,
     fechaNacimiento,
     contacto,
-    direccion,
+    estado,
+    ciudad,
+    calle,
+    cp,
+    localidad,
+    numCasa,
     numExpediente,
     enfermedades,
     medicamentos,
     estudioSocioeconomico,
     grado,
-    curso,
+    nvEscolar,
     sangre,
     idExpediente
   }) {
@@ -126,24 +151,30 @@ class Pacientes {
       // Usamos el método de promesas para la consulta
       const [result] = await db.execute(
         `UPDATE expediente SET
-          nombres = ?, apellidoP = ?, apellidoM = ?, numExpediente = ?,
-          fechaNacimiento = ?, contacto = ?, direccion = ?,
-          enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
-          grado = ?, curso = ?, sangre = ?
+          nombres = ?, apellidoP = ?, apellidoM = ?,
+           fechaNacimiento = ?, contacto = ?, estado = ?,  ciudad = ?,
+           calle = ?,  cp = ?,  localidad = ?,  numCasa = ?, numExpediente = ?,
+           enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
+           grado = ?, nvEscolar = ?, sangre = ?
          WHERE IDExpediente = ?`,
-        [
+         [
           nombres,
           apellidoP,
           apellidoM,
-          numExpediente,
           fechaNacimiento,
           contacto,
-          direccion,
+          estado,
+          ciudad,
+          calle,
+          cp,
+          localidad,
+          numCasa,
+          numExpediente,
           enfermedades,
           medicamentos,
           estudioSocioeconomico,
           grado,
-          curso,
+          nvEscolar,
           sangre,
           idExpediente
         ]
