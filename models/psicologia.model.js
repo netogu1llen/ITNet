@@ -110,7 +110,8 @@ class Seguimiento {
   static async getDatosGenerales(idExpediente) {
     try {
       const [result] = await db.execute(
-        `SELECT e.nombres, e.apellidoP, e.apellidoM, e.fechaNacimiento, e.direccion,
+        `SELECT e.nombres, e.apellidoP, e.apellidoM, e.fechaNacimiento, e.estado,
+                e.ciudad, e.calle, e.cp, e.localidad, e.numCasa,
                 ea.peso, ea.talla, ea.edad, b.grado
          FROM expediente e
          LEFT JOIN evaluacionantropometrica ea ON e.IDExpediente = ea.IDExpediente

@@ -39,15 +39,32 @@
                 </div>
                 <div class="multirow-container">
                     <div class="element-container">
-                        <div class="basic-gray"> >Edad cronológica</div>
+                        <div class="basic-gray"> >Estado</div>
                         <br>
-                        <div class="basic-black"><%= expediente.edad  || 'Sin dato' %></div>
+                        <div class="basic-black"><%= expediente.estado  || 'Sin dato' %></div>
                     </div>
                     <div class="element-container">
-                        <div class="basic-gray"> >Dirección</div>
+                        <div class="basic-gray"> >Ciudad</div>
                         <br>
-                        <div class="basic-black"><%= expediente.direccion  || 'Sin dato' %></div>
+                        <div class="basic-black"><%= expediente.ciudad  || 'Sin dato' %></div>
                     </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Calle</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.calle  || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Codigo Postal</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.cp  || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray"> >Localidad</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.localidad  || 'Sin dato' %></div>
+                    </div>
+                </div>
+                <div class="multirow-container">
                     <div class="element-container">
                         <div class="basic-gray"> >Estatura</div>
                         <br>
