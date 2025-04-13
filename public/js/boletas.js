@@ -13,7 +13,7 @@ $(document).ready(function () {
     order: [[0, 'asc']]
   });
 
-  // Barra superior con logo y botones (estilo Mau)
+  // Barra superior con logo y botones
   const $logo = $('<img src="/images/boletas.png" alt="Logo" class="dt-logo">');
   const $btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
   const $btnVerMaterias = $('<a href="/educacion/materias" class="button is-link is-small">Ver Materias</a>');
