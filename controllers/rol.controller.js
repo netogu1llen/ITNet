@@ -1,16 +1,30 @@
-const Rol = require('../models/rol.model');
+const Rol = require('../models/rolPriv.model');
 
 /**
- * Obtiene y muestra la lista de roles disponibles, junto con sus privilegios.
+ * Controlador para obtener y mostrar la lista de roles junto con sus privilegios.
  */
 const get_roles = async (req, res) => {
-    try {
-        const roles = await Rol.fetchAll(); // Método del modelo para obtener solo los nombres de roles
-        res.render('roles', { roles }); // Renderiza la vista y pasa los nombres de roles
-    } catch (error) {
-        console.error('Error al obtener roles:', error.message);
-        res.status(500).send('Error al obtener los roles');
+  try {
+    const roles = await Rol.fetchRoles();
+    const privilegios = await Rol.fetchPrivilegios(); // ← Usamos otra variable
+
+    // Validación de contenido
+    if (!roles || roles.length === 0) {
+      return res.status(404).send('No se encontraron roles');
     }
+
+    if (!privilegios || privilegios.length === 0) {
+      return res.status(404).send('No se encontraron privilegios');
+    }
+
+    // Renderizar vista con los datos
+    res.render('roles', { roles, privilegios });
+
+  } catch (error) {
+    console.error('Error al obtener roles y privilegios:', error);
+    res.status(500).send('Error interno del servidor');
+  }
 };
 
-module.exports = { get_roles};
+module.exports = { get_roles };
+
