@@ -1,6 +1,7 @@
 const axios = require('axios');
 const userService = require('./user.service'); // Servicio separado para usuarios
 const { generateToken } = require('../util/jwt');
+const user = await userService.findByEmail(googleUser.email);
 
 class AuthService {
   constructor() {
