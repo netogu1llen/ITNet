@@ -15,7 +15,8 @@
       <table id="miEquipoTable" class="table is-striped is-hoverable is-fullwidth">
         <thead>
           <tr>
-            <th>Nombre del Usuario</th>
+            <th>Nombre Completo</th>
+            <th>Correo</th>
             <th>Fecha de Nacimiento</th>
             <th>Rol</th>
             <th>Modificar</th>
@@ -25,7 +26,8 @@
         <tbody>
           <% usuarios.forEach(usuario => { %>
             <tr>
-              <td><%= usuario.nombreUsuario %></td>
+              <td><%= `${usuario.nombres} ${usuario.apellidoP} ${usuario.apellidoM || ''}`.trim() %></td>
+              <td><%= usuario.correo %></td>
               <td><%= new Date(usuario.fechaNacimiento).toLocaleDateString() %></td>
               <td><%= usuario.rol || 'Sin rol' %></td>
               <td>
@@ -63,45 +65,57 @@
         </div>
         <h1 class="title" style="margin-bottom: 30px;">Modificar Usuario</h1>
   
-        <!-- Formulario con 2 filas (columns) para los campos -->
+        <!-- Formulario con filas para los campos -->
         <form id="modificarForm" method="post">
           <div class="columns">
-            <!-- Columna 1: Nombre de Usuario -->
+            <!-- Columna 1: Nombres -->
             <div class="column">
               <div class="field">
-                <label class="label">Nombre de Usuario:</label>
+                <label class="label">Nombres:</label>
                 <div class="control">
-                    <input class="input" type="text" name="nombreUsuarioMod" maxlength="30" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+                    <input class="input" type="text" name="nombresMod" maxlength="100" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
                 </div>
               </div>
             </div>
-            <!-- Columna 2: Número de Teléfono -->
+            <!-- Columna 2: Apellido Paterno -->
             <div class="column">
               <div class="field">
-                <label class="label">Número de Teléfono:</label>
+                <label class="label">Apellido Paterno:</label>
                 <div class="control">
-                    <input class="input" type="text" name="numTelefonoMod" maxlength="10" required pattern="\d+" title="Solo se permiten números">
+                    <input class="input" type="text" name="apellidoPMod" maxlength="60" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
                 </div>
               </div>
             </div>
           </div>
   
           <div class="columns">
-            <!-- Columna 1: Fecha de Nacimiento -->
+            <!-- Columna 1: Apellido Materno -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Apellido Materno:</label>
+                <div class="control">
+                    <input class="input" type="text" name="apellidoMMod" maxlength="60" pattern="[A-Za-z\s]*" title="Solo se permiten letras y espacios">
+                </div>
+              </div>
+            </div>
+            <!-- Columna 2: Correo -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Correo:</label>
+                <div class="control">
+                    <input class="input" type="email" name="correoMod" maxlength="50" required title="Ingrese un correo electrónico válido">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="columns">
+            <!-- Columna: Fecha de Nacimiento -->
             <div class="column">
               <div class="field">
                 <label class="label">Fecha de Nacimiento:</label>
                 <div class="control">
                   <input class="input" type="date" name="fechaNacimientoMod" required>
-                </div>
-              </div>
-            </div>
-            <!-- Columna 2: Contraseña -->
-            <div class="column">
-              <div class="field">
-                <label class="label">Contraseña:</label>
-                <div class="control">
-                    <input class="input" type="password" name="contrasenaMod" maxlength="20" required minlength="6" title="La contraseña debe tener al menos 6 caracteres">
                 </div>
               </div>
             </div>
@@ -141,42 +155,54 @@
         <!-- Formulario para registrar un nuevo usuario -->
         <form id="registrarForm" method="post">
           <div class="columns">
-            <!-- Columna 1: Nombre de Usuario -->
+            <!-- Columna 1: Nombres -->
             <div class="column">
               <div class="field">
-                <label class="label">Nombre de Usuario:</label>
+                <label class="label">Nombres:</label>
                 <div class="control">
-                    <input class="input" type="text" name="nombreUsuarioReg" maxlength="30" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+                    <input class="input" type="text" name="nombresReg" maxlength="100" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
                 </div>
               </div>
             </div>
-            <!-- Columna 2: Número de Teléfono -->
+            <!-- Columna 2: Apellido Paterno -->
             <div class="column">
               <div class="field">
-                <label class="label">Número de Teléfono:</label>
+                <label class="label">Apellido Paterno:</label>
                 <div class="control">
-                    <input class="input" type="text" name="numTelefonoReg" maxlength="10" required pattern="\d+" title="Solo se permiten números">
+                    <input class="input" type="text" name="apellidoPReg" maxlength="60" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
                 </div>
               </div>
             </div>
           </div>
   
           <div class="columns">
-            <!-- Columna 1: Fecha de Nacimiento -->
+            <!-- Columna 1: Apellido Materno -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Apellido Materno:</label>
+                <div class="control">
+                    <input class="input" type="text" name="apellidoMReg" maxlength="60" pattern="[A-Za-z\s]*" title="Solo se permiten letras y espacios">
+                </div>
+              </div>
+            </div>
+            <!-- Columna 2: Correo -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Correo:</label>
+                <div class="control">
+                    <input class="input" type="email" name="correoReg" maxlength="50" required title="Ingrese un correo electrónico válido">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="columns">
+            <!-- Columna: Fecha de Nacimiento -->
             <div class="column">
               <div class="field">
                 <label class="label">Fecha de Nacimiento:</label>
                 <div class="control">
                   <input class="input" type="date" name="fechaNacimientoReg" required>
-                </div>
-              </div>
-            </div>
-            <!-- Columna 2: Contraseña -->
-            <div class="column">
-              <div class="field">
-                <label class="label">Contraseña:</label>
-                <div class="control">
-                  <input class="input" type="password" name="contrasenaReg" maxlength="20" required minlength="6" title="La contraseña debe tener al menos 6 caracteres">
                 </div>
               </div>
             </div>
@@ -191,7 +217,6 @@
       </footer>
     </div>
 </div>
-
 
 <!-- Scripts -->
 <script src="/vendor/jquery-3.6.0.min.js"></script>

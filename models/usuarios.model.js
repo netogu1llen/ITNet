@@ -5,7 +5,7 @@ class Usuario {
     static async obtenerTodos() {
         try {
             const [results] = await db.execute(`
-                SELECT u.IDUsuario, u.nombreUsuario, u.numTelefono, u.fechaNacimiento, r.Tipo AS rol
+                SELECT u.IDUsuario, u.nombres, u.apellidoP, u.apellidoM, u.correo, u.fechaNacimiento, r.Tipo AS rol
                 FROM usuario u
                 LEFT JOIN usuarioRol ur ON u.IDUsuario = ur.IDUsuario
                 LEFT JOIN rol r ON ur.IDRol = r.IDRol
@@ -18,12 +18,12 @@ class Usuario {
     }
 
     // Registrar un nuevo usuario
-    static async registrar({ nombreUsuario, numTelefono, fechaNacimiento, contrasena }) {
+    static async registrar({ nombres, apellidoP, apellidoM, correo, fechaNacimiento }) {
         try {
             const [result] = await db.execute(`
-                INSERT INTO usuario (nombreUsuario, numTelefono, fechaNacimiento, contrasena)
-                VALUES (?, ?, ?, ?)
-            `, [nombreUsuario, numTelefono, fechaNacimiento, contrasena]);
+                INSERT INTO usuario (nombres, apellidoP, apellidoM, correo, fechaNacimiento)
+                VALUES (?, ?, ?, ?, ?)
+            `, [nombres, apellidoP, apellidoM, correo, fechaNacimiento]);
             return result;
         } catch (error) {
             throw error;
@@ -34,7 +34,7 @@ class Usuario {
     static async obtenerPorId(idUsuario) {
         try {
             const [results] = await db.execute(`
-                SELECT IDUsuario, nombreUsuario, numTelefono, fechaNacimiento, contrasena
+                SELECT IDUsuario, nombres, apellidoP, apellidoM, correo, fechaNacimiento
                 FROM usuario
                 WHERE IDUsuario = ?
             `, [idUsuario]);
@@ -44,15 +44,14 @@ class Usuario {
         }
     }
 
-
     // Modificar un usuario existente
-    static async modificar(idUsuario, { nombreUsuario, numTelefono, fechaNacimiento, contrasena }) {
+    static async modificar(idUsuario, { nombres, apellidoP, apellidoM, correo, fechaNacimiento }) {
         try {
             const [result] = await db.execute(`
                 UPDATE usuario
-                SET nombreUsuario = ?, numTelefono = ?, fechaNacimiento = ?, contrasena = ?
+                SET nombres = ?, apellidoP = ?, apellidoM = ?, correo = ?, fechaNacimiento = ?
                 WHERE IDUsuario = ?
-            `, [nombreUsuario, numTelefono, fechaNacimiento, contrasena, idUsuario]);
+            `, [nombres, apellidoP, apellidoM, correo, fechaNacimiento, idUsuario]);
             return result;
         } catch (error) {
             throw error;
