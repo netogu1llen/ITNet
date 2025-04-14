@@ -7,4 +7,6 @@ const rolController = require('../controllers/rol.controller');
 
 router.get('/', rolController.get_roles);
 
+router.post('/crearRol', rolController.post_crearRol);
+
 module.exports = router;
