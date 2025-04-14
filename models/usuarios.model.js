@@ -5,7 +5,9 @@ class Usuario {
     static async obtenerTodos() {
         try {
             const [results] = await db.execute(`
-                SELECT u.IDUsuario, u.nombres, u.apellidoP, u.apellidoM, u.correo, u.fechaNacimiento, r.Tipo AS rol
+                SELECT u.IDUsuario, u.nombres, u.apellidoP, u.apellidoM, u.correo, 
+                       DATE_FORMAT(u.fechaNacimiento, '%Y-%m-%d') AS fechaNacimiento, 
+                       r.Tipo AS rol
                 FROM usuario u
                 LEFT JOIN usuarioRol ur ON u.IDUsuario = ur.IDUsuario
                 LEFT JOIN rol r ON ur.IDRol = r.IDRol
@@ -34,7 +36,8 @@ class Usuario {
     static async obtenerPorId(idUsuario) {
         try {
             const [results] = await db.execute(`
-                SELECT IDUsuario, nombres, apellidoP, apellidoM, correo, fechaNacimiento
+                SELECT IDUsuario, nombres, apellidoP, apellidoM, correo, 
+                       DATE_FORMAT(fechaNacimiento, '%Y-%m-%d') AS fechaNacimiento
                 FROM usuario
                 WHERE IDUsuario = ?
             `, [idUsuario]);

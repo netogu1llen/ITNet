@@ -19,20 +19,28 @@
             <th>Correo</th>
             <th>Fecha de Nacimiento</th>
             <th>Rol</th>
-            <th>Modificar</th>
             <th>Eliminar</th>
           </tr>
         </thead>
         <tbody>
           <% usuarios.forEach(usuario => { %>
-            <tr>
+            <tr class="usuario-fila" data-id="<%= usuario.IDUsuario %>" style="cursor: pointer;">
               <td><%= `${usuario.nombres} ${usuario.apellidoP} ${usuario.apellidoM || ''}`.trim() %></td>
               <td><%= usuario.correo %></td>
-              <td><%= new Date(usuario.fechaNacimiento).toLocaleDateString() %></td>
-              <td><%= usuario.rol || 'Sin rol' %></td>
               <td>
-                <button class="button is-small is-info btn-modificar" data-id="<%= usuario.IDUsuario %>">Modificar</button>
+                <% 
+                try {
+                  let fecha = usuario.fechaNacimiento ? new Date(usuario.fechaNacimiento) : null;
+                  if(fecha && !isNaN(fecha.getTime())) {
+                    %><%= fecha.toLocaleDateString() %><%
+                  } else {
+                    %>Fecha no disponible<%
+                  }
+                } catch(e) { %>
+                  Fecha no disponible
+                <% } %>
               </td>
+              <td><%= usuario.rol || 'Sin rol' %></td>
               <td>
                 <button class="button is-small is-danger btn-eliminar" data-id="<%= usuario.IDUsuario %>">Eliminar</button>
               </td>

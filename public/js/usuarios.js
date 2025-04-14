@@ -37,128 +37,70 @@ $(document).ready(function () {
 
     // Evento para cerrar el modal de registrar usuario
     $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
-        $('#modalRegistrar').css('display', 'none');
+        $('#modalRegistrar, #modalModificar').css('display', 'none');
         $('#registrarForm')[0].reset();
-    });
-
-    // Evento para enviar los datos del formulario y registrar un nuevo usuario
-    $(document).on('submit', '#registrarForm', function (e) {
-        e.preventDefault();
-
-        const nombres = $('input[name="nombresReg"]').val().trim();
-        const apellidoP = $('input[name="apellidoPReg"]').val().trim();
-        const apellidoM = $('input[name="apellidoMReg"]').val().trim();
-        const correo = $('input[name="correoReg"]').val().trim();
-        const fechaNacimiento = $('input[name="fechaNacimientoReg"]').val().trim();
-
-        // Validaciones
-        if (!/^[A-Za-z\s]+$/.test(nombres)) {
-            Swal.fire('Error', 'El nombre solo puede contener letras y espacios.', 'error');
-            return;
-        }
-
-        if (!/^[A-Za-z\s]+$/.test(apellidoP)) {
-            Swal.fire('Error', 'El apellido paterno solo puede contener letras y espacios.', 'error');
-            return;
-        }
-
-        if (apellidoM && !/^[A-Za-z\s]*$/.test(apellidoM)) {
-            Swal.fire('Error', 'El apellido materno solo puede contener letras y espacios.', 'error');
-            return;
-        }
-
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
-            Swal.fire('Error', 'Por favor ingrese un correo electrónico válido.', 'error');
-            return;
-        }
-
-        if (!fechaNacimiento) {
-            Swal.fire('Error', 'La fecha de nacimiento es obligatoria.', 'error');
-            return;
-        }
-
-        const datosUsuario = {
-            nombres,
-            apellidoP,
-            apellidoM,
-            correo,
-            fechaNacimiento
-        };
-
-        // Realiza una solicitud AJAX para registrar el usuario
-        $.ajax({
-            url: '/usuarios/registrar',
-            method: 'POST',
-            data: datosUsuario,
-            success: function () {
-                Swal.fire('Éxito', 'Usuario registrado correctamente.', 'success').then(() => {
-                    location.reload();
-                });
-            },
-            error: function () {
-                Swal.fire('Error', 'Error al registrar el usuario.', 'error');
-            }
-        });
+        $('#modificarForm')[0].reset();
     });
 
     // MODIFICAR USUARIO //
-    // Evento para abrir el modal MODIFICAR y cargar los datos del usuario
-    $(document).on('click', '.btn-modificar', function () {
+    // Evento para hacer clickeable toda la fila (excepto botones)
+    $(document).on('click', '.usuario-fila', function(e) {
+        // Si se hizo clic en un botón dentro de la fila, no activar este evento
+        if ($(e.target).is('button') || $(e.target).closest('button').length) {
+            return;
+        }
+        
         const idUsuario = $(this).data('id');
+        cargarDatosUsuario(idUsuario);
+    });
 
+    // Función para cargar los datos del usuario en el modal
+    function cargarDatosUsuario(idUsuario) {
         // Realiza una solicitud AJAX para obtener los datos del usuario
         $.ajax({
             url: `/usuarios/modificar/${idUsuario}`,
             method: 'GET',
             success: function (usuario) {
-                // Validar los datos recibidos antes de cargarlos en el modal
-                if (!usuario.nombres || !/^[A-Za-z\s]+$/.test(usuario.nombres)) {
-                    Swal.fire('Error', 'El nombre recibido es inválido.', 'error');
-                    return;
-                }
-
-                if (!usuario.apellidoP || !/^[A-Za-z\s]+$/.test(usuario.apellidoP)) {
-                    Swal.fire('Error', 'El apellido paterno recibido es inválido.', 'error');
+                // Validar que recibimos datos del usuario
+                if (!usuario || typeof usuario !== 'object') {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudieron obtener los datos del usuario.',
+                        icon: 'error'
+                    });
                     return;
                 }
 
                 // Carga los datos en el modal
-                $('input[name="nombresMod"]').val(usuario.nombres);
-                $('input[name="apellidoPMod"]').val(usuario.apellidoP);
+                $('input[name="nombresMod"]').val(usuario.nombres || '');
+                $('input[name="apellidoPMod"]').val(usuario.apellidoP || '');
                 $('input[name="apellidoMMod"]').val(usuario.apellidoM || '');
-                $('input[name="correoMod"]').val(usuario.correo);
-                $('input[name="fechaNacimientoMod"]').val(usuario.fechaNacimiento.split('T')[0]);
+                $('input[name="correoMod"]').val(usuario.correo || '');
+                
+                // Formatear la fecha correctamente
+                if (usuario.fechaNacimiento) {
+                    let fecha = new Date(usuario.fechaNacimiento);
+                    if (!isNaN(fecha.getTime())) {
+                        // Formato YYYY-MM-DD para el input date
+                        const fechaFormateada = fecha.toISOString().split('T')[0];
+                        $('input[name="fechaNacimientoMod"]').val(fechaFormateada);
+                    }
+                }
 
                 // Muestra el modal
                 $('#modalModificar').css('display', 'flex');
                 $('#modificarForm').attr('action', `/usuarios/modificar/${idUsuario}`);
             },
-            error: function () {
-                Swal.fire('Error', 'Error al cargar los datos del usuario.', 'error');
+            error: function (xhr, status, error) {
+                console.error("Error al obtener datos:", error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los datos del usuario.',
+                    icon: 'error'
+                });
             }
         });
-    });
-
-    // Evento para cerrar el modal al hacer clic en el fondo oscuro
-    $(document).on('click', '.modal-background', function () {
-        cerrarModalModificar();
-    });
-
-    // Evento para cerrar el modal al hacer clic en el botón de cierre (la "X")
-    $(document).on('click', '.delete', function () {
-        cerrarModalModificar();
-    });
-
-    // Evento para cerrar el modal al hacer clic en el botón "Cancelar"
-    $(document).on('click', '.button.is-cancel', function () {
-        cerrarModalModificar();
-    });
-
-    // Define la función para cerrar el modal
-    window.cerrarModalModificar = function () {
-        $('#modalModificar').css('display', 'none');
-        $('#modificarForm')[0].reset();
-    };
+    }
 
     // Evento para enviar los datos del formulario y modificar el usuario
     $(document).on('submit', '#modificarForm', function (e) {
@@ -173,27 +115,47 @@ $(document).ready(function () {
 
         // Validaciones
         if (!/^[A-Za-z\s]+$/.test(nombres)) {
-            Swal.fire('Error', 'El nombre solo puede contener letras y espacios.', 'error');
+            Swal.fire({
+                title: 'Validación',
+                text: 'El nombre solo puede contener letras y espacios.',
+                icon: 'warning'
+            });
             return;
         }
 
         if (!/^[A-Za-z\s]+$/.test(apellidoP)) {
-            Swal.fire('Error', 'El apellido paterno solo puede contener letras y espacios.', 'error');
+            Swal.fire({
+                title: 'Validación',
+                text: 'El apellido paterno solo puede contener letras y espacios.',
+                icon: 'warning'
+            });
             return;
         }
 
         if (apellidoM && !/^[A-Za-z\s]*$/.test(apellidoM)) {
-            Swal.fire('Error', 'El apellido materno solo puede contener letras y espacios.', 'error');
+            Swal.fire({
+                title: 'Validación',
+                text: 'El apellido materno solo puede contener letras y espacios.',
+                icon: 'warning'
+            });
             return;
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
-            Swal.fire('Error', 'Por favor ingrese un correo electrónico válido.', 'error');
+            Swal.fire({
+                title: 'Validación',
+                text: 'Por favor ingrese un correo electrónico válido.',
+                icon: 'warning'
+            });
             return;
         }
 
         if (!fechaNacimiento) {
-            Swal.fire('Error', 'La fecha de nacimiento es obligatoria.', 'error');
+            Swal.fire({
+                title: 'Validación',
+                text: 'La fecha de nacimiento es obligatoria.',
+                icon: 'warning'
+            });
             return;
         }
 
@@ -211,45 +173,153 @@ $(document).ready(function () {
             method: 'POST',
             data: datosUsuario,
             success: function () {
-                Swal.fire('Éxito', 'Usuario modificado correctamente.', 'success').then(() => {
+                Swal.fire({
+                    title: 'Éxito!',
+                    text: 'Usuario modificado correctamente.',
+                    icon: 'success'
+                }).then(() => {
                     location.reload();
                 });
             },
-            error: function () {
-                Swal.fire('Error', 'Error al modificar el usuario.', 'error');
+            error: function (xhr, status, error) {
+                console.error("Error al modificar:", error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al modificar el usuario.',
+                    icon: 'error'
+                });
             }
         });
     });
 
     // ELIMINAR USUARIO //
-    // Evento para eliminar usuario con SweetAlert
-    $(document).on('click', '.btn-eliminar', function () {
+    // Evento para eliminar usuario con confirmación
+    $(document).on('click', '.btn-eliminar', function (e) {
+        e.stopPropagation(); // Evita que se propague al evento de la fila
         const idUsuario = $(this).data('id');
 
-        // Mostrar el modal de confirmación con SweetAlert
+        // Usar SweetAlert para la confirmación
         Swal.fire({
-            title: '¿Estás seguro?',
-            text: 'Esta acción no se puede deshacer',
-            icon: 'warning',
+            title: "¿Eliminar este usuario?",
+            text: "Esta acción no se puede deshacer",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-        }).then((resultado) => {
-            if (resultado.isConfirmed) {
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
                 // Realiza la solicitud AJAX para eliminar el usuario
                 $.ajax({
                     url: `/usuarios/eliminar/${idUsuario}`,
                     method: 'POST',
                     success: function () {
-                        Swal.fire('Eliminado', 'Usuario eliminado correctamente.', 'success').then(() => {
+                        Swal.fire({
+                            title: 'Eliminado!',
+                            text: 'Usuario eliminado correctamente.',
+                            icon: 'success'
+                        }).then(() => {
                             location.reload();
                         });
                     },
-                    error: function () {
-                        Swal.fire('Error', 'Error al eliminar el usuario.', 'error');
+                    error: function (xhr, status, error) {
+                        console.error("Error al eliminar:", error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Error al eliminar el usuario.',
+                            icon: 'error'
+                        });
                     }
+                });
+            }
+        });
+    });
+
+    // Evento para enviar los datos del formulario y registrar un nuevo usuario
+    $(document).on('submit', '#registrarForm', function (e) {
+        e.preventDefault();
+
+        const nombres = $('input[name="nombresReg"]').val().trim();
+        const apellidoP = $('input[name="apellidoPReg"]').val().trim();
+        const apellidoM = $('input[name="apellidoMReg"]').val().trim();
+        const correo = $('input[name="correoReg"]').val().trim();
+        const fechaNacimiento = $('input[name="fechaNacimientoReg"]').val().trim();
+
+        // Validaciones
+        if (!/^[A-Za-z\s]+$/.test(nombres)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El nombre solo puede contener letras y espacios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (!/^[A-Za-z\s]+$/.test(apellidoP)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El apellido paterno solo puede contener letras y espacios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (apellidoM && !/^[A-Za-z\s]*$/.test(apellidoM)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El apellido materno solo puede contener letras y espacios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'Por favor ingrese un correo electrónico válido.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (!fechaNacimiento) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'La fecha de nacimiento es obligatoria.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        const datosUsuario = {
+            nombres,
+            apellidoP,
+            apellidoM,
+            correo,
+            fechaNacimiento
+        };
+
+        // Realiza una solicitud AJAX para registrar el usuario
+        $.ajax({
+            url: '/usuarios/registrar',
+            method: 'POST',
+            data: datosUsuario,
+            success: function () {
+                Swal.fire({
+                    title: 'Éxito!',
+                    text: 'Usuario registrado correctamente.',
+                    icon: 'success'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al registrar:", error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al registrar el usuario.',
+                    icon: 'error'
                 });
             }
         });
