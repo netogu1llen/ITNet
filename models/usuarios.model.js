@@ -6,7 +6,7 @@ class Usuario {
         try {
             const [results] = await db.execute(`
                 SELECT u.IDUsuario, u.nombres, u.apellidoP, u.apellidoM, u.correo, 
-                       DATE_FORMAT(u.fechaNacimiento, '%Y-%m-%d') AS fechaNacimiento, 
+                       DATE_FORMAT(u.fechaNacimiento, '%d/%m/%Y') AS fechaNacimiento, 
                        r.Tipo AS rol
                 FROM usuario u
                 LEFT JOIN usuarioRol ur ON u.IDUsuario = ur.IDUsuario
@@ -22,6 +22,7 @@ class Usuario {
     // Registrar un nuevo usuario
     static async registrar({ nombres, apellidoP, apellidoM, correo, fechaNacimiento }) {
         try {
+            // Convertir formato de fecha si es necesario (del formato YYYY-MM-DD del input date al formato MySQL)
             const [result] = await db.execute(`
                 INSERT INTO usuario (nombres, apellidoP, apellidoM, correo, fechaNacimiento)
                 VALUES (?, ?, ?, ?, ?)
@@ -37,7 +38,7 @@ class Usuario {
         try {
             const [results] = await db.execute(`
                 SELECT IDUsuario, nombres, apellidoP, apellidoM, correo, 
-                       DATE_FORMAT(fechaNacimiento, '%Y-%m-%d') AS fechaNacimiento
+                       fechaNacimiento
                 FROM usuario
                 WHERE IDUsuario = ?
             `, [idUsuario]);

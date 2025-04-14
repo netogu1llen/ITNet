@@ -28,16 +28,10 @@
               <td><%= `${usuario.nombres} ${usuario.apellidoP} ${usuario.apellidoM || ''}`.trim() %></td>
               <td><%= usuario.correo %></td>
               <td>
-                <% 
-                try {
-                  let fecha = usuario.fechaNacimiento ? new Date(usuario.fechaNacimiento) : null;
-                  if(fecha && !isNaN(fecha.getTime())) {
-                    %><%= fecha.toLocaleDateString() %><%
-                  } else {
-                    %>Fecha no disponible<%
-                  }
-                } catch(e) { %>
-                  Fecha no disponible
+                <% if (usuario.fechaNacimiento) { %>
+                  <%= usuario.fechaNacimiento %>
+                <% } else { %>
+                  Sin fecha
                 <% } %>
               </td>
               <td><%= usuario.rol || 'Sin rol' %></td>
@@ -58,7 +52,7 @@
     <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
   
     <!-- Contenedor principal del modal -->
-    <div class="modal-card" style="width: 600px; max-height: 580px;">
+    <div class="modal-card" style="width: 600px; max-height: 700px;">
       
       <!-- Cabecera con botón de cierre (X) -->
       <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
@@ -81,7 +75,7 @@
               <div class="field">
                 <label class="label">Nombres:</label>
                 <div class="control">
-                    <input class="input" type="text" name="nombresMod" maxlength="100" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+                    <input class="input" type="text" name="nombresMod" maxlength="100" required pattern="[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+" title="Se permiten letras, acentos y espacios">
                 </div>
               </div>
             </div>
@@ -90,7 +84,7 @@
               <div class="field">
                 <label class="label">Apellido Paterno:</label>
                 <div class="control">
-                    <input class="input" type="text" name="apellidoPMod" maxlength="60" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+                    <input class="input" type="text" name="apellidoPMod" maxlength="60" required pattern="[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+" title="Se permiten letras, acentos y espacios">
                 </div>
               </div>
             </div>
@@ -102,28 +96,28 @@
               <div class="field">
                 <label class="label">Apellido Materno:</label>
                 <div class="control">
-                    <input class="input" type="text" name="apellidoMMod" maxlength="60" pattern="[A-Za-z\s]*" title="Solo se permiten letras y espacios">
+                    <input class="input" type="text" name="apellidoMMod" maxlength="60" pattern="[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]*" title="Se permiten letras, acentos y espacios">
                 </div>
               </div>
             </div>
-            <!-- Columna 2: Correo -->
+            <!-- Columna 2: Fecha de Nacimiento -->
             <div class="column">
               <div class="field">
-                <label class="label">Correo:</label>
+                <label class="label">Fecha de Nacimiento:</label>
                 <div class="control">
-                    <input class="input" type="email" name="correoMod" maxlength="50" required title="Ingrese un correo electrónico válido">
+                  <input class="input" type="date" name="fechaNacimientoMod" required>
                 </div>
               </div>
             </div>
           </div>
           
           <div class="columns">
-            <!-- Columna: Fecha de Nacimiento -->
+            <!-- Columna: Correo -->
             <div class="column">
               <div class="field">
-                <label class="label">Fecha de Nacimiento:</label>
+                <label class="label">Correo:</label>
                 <div class="control">
-                  <input class="input" type="date" name="fechaNacimientoMod" required>
+                    <input class="input" type="email" name="correoMod" maxlength="50" required title="Ingrese un correo electrónico válido">
                 </div>
               </div>
             </div>
@@ -145,7 +139,7 @@
     <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
   
     <!-- Contenedor principal del modal -->
-    <div class="modal-card" style="width: 600px; max-height: 580px;">
+    <div class="modal-card" style="width: 600px; max-height: 700px;">
       
       <!-- Cabecera con botón de cierre (X) -->
       <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
@@ -168,7 +162,7 @@
               <div class="field">
                 <label class="label">Nombres:</label>
                 <div class="control">
-                    <input class="input" type="text" name="nombresReg" maxlength="100" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+                    <input class="input" type="text" name="nombresReg" maxlength="100" required pattern="[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+" title="Se permiten letras, acentos y espacios">
                 </div>
               </div>
             </div>
@@ -177,7 +171,7 @@
               <div class="field">
                 <label class="label">Apellido Paterno:</label>
                 <div class="control">
-                    <input class="input" type="text" name="apellidoPReg" maxlength="60" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+                    <input class="input" type="text" name="apellidoPReg" maxlength="60" required pattern="[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+" title="Se permiten letras, acentos y espacios">
                 </div>
               </div>
             </div>
@@ -189,28 +183,28 @@
               <div class="field">
                 <label class="label">Apellido Materno:</label>
                 <div class="control">
-                    <input class="input" type="text" name="apellidoMReg" maxlength="60" pattern="[A-Za-z\s]*" title="Solo se permiten letras y espacios">
+                    <input class="input" type="text" name="apellidoMReg" maxlength="60" pattern="[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]*" title="Se permiten letras, acentos y espacios">
                 </div>
               </div>
             </div>
-            <!-- Columna 2: Correo -->
+            <!-- Columna 2: Fecha de Nacimiento -->
             <div class="column">
               <div class="field">
-                <label class="label">Correo:</label>
+                <label class="label">Fecha de Nacimiento:</label>
                 <div class="control">
-                    <input class="input" type="email" name="correoReg" maxlength="50" required title="Ingrese un correo electrónico válido">
+                  <input class="input" type="date" name="fechaNacimientoReg" required>
                 </div>
               </div>
             </div>
           </div>
           
           <div class="columns">
-            <!-- Columna: Fecha de Nacimiento -->
+            <!-- Columna: Correo -->
             <div class="column">
               <div class="field">
-                <label class="label">Fecha de Nacimiento:</label>
+                <label class="label">Correo:</label>
                 <div class="control">
-                  <input class="input" type="date" name="fechaNacimientoReg" required>
+                    <input class="input" type="email" name="correoReg" maxlength="50" required title="Ingrese un correo electrónico válido">
                 </div>
               </div>
             </div>

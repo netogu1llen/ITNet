@@ -77,13 +77,19 @@ $(document).ready(function () {
                 $('input[name="apellidoMMod"]').val(usuario.apellidoM || '');
                 $('input[name="correoMod"]').val(usuario.correo || '');
                 
-                // Formatear la fecha correctamente
+                // Formatear la fecha correctamente para el input date
                 if (usuario.fechaNacimiento) {
-                    let fecha = new Date(usuario.fechaNacimiento);
-                    if (!isNaN(fecha.getTime())) {
-                        // Formato YYYY-MM-DD para el input date
-                        const fechaFormateada = fecha.toISOString().split('T')[0];
-                        $('input[name="fechaNacimientoMod"]').val(fechaFormateada);
+                    // Si la fecha está en formato YYYY-MM-DD ya es válida para el input
+                    if (usuario.fechaNacimiento.includes('-')) {
+                        $('input[name="fechaNacimientoMod"]').val(usuario.fechaNacimiento);
+                    }
+                    // Si la fecha está en formato DD/MM/YYYY, convertirla a YYYY-MM-DD
+                    else if (usuario.fechaNacimiento.includes('/')) {
+                        const partes = usuario.fechaNacimiento.split('/');
+                        if (partes.length === 3) {
+                            const fechaFormateada = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+                            $('input[name="fechaNacimientoMod"]').val(fechaFormateada);
+                        }
                     }
                 }
 
@@ -114,28 +120,28 @@ $(document).ready(function () {
         const fechaNacimiento = $('input[name="fechaNacimientoMod"]').val().trim();
 
         // Validaciones
-        if (!/^[A-Za-z\s]+$/.test(nombres)) {
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(nombres)) {
             Swal.fire({
                 title: 'Validación',
-                text: 'El nombre solo puede contener letras y espacios.',
+                text: 'El nombre solo puede contener letras, acentos y espacios.',
                 icon: 'warning'
             });
             return;
         }
 
-        if (!/^[A-Za-z\s]+$/.test(apellidoP)) {
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(apellidoP)) {
             Swal.fire({
                 title: 'Validación',
-                text: 'El apellido paterno solo puede contener letras y espacios.',
+                text: 'El apellido paterno solo puede contener letras, acentos y espacios.',
                 icon: 'warning'
             });
             return;
         }
 
-        if (apellidoM && !/^[A-Za-z\s]*$/.test(apellidoM)) {
+        if (apellidoM && !/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]*$/.test(apellidoM)) {
             Swal.fire({
                 title: 'Validación',
-                text: 'El apellido materno solo puede contener letras y espacios.',
+                text: 'El apellido materno solo puede contener letras, acentos y espacios.',
                 icon: 'warning'
             });
             return;
@@ -247,28 +253,28 @@ $(document).ready(function () {
         const fechaNacimiento = $('input[name="fechaNacimientoReg"]').val().trim();
 
         // Validaciones
-        if (!/^[A-Za-z\s]+$/.test(nombres)) {
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(nombres)) {
             Swal.fire({
                 title: 'Validación',
-                text: 'El nombre solo puede contener letras y espacios.',
+                text: 'El nombre solo puede contener letras, acentos y espacios.',
                 icon: 'warning'
             });
             return;
         }
 
-        if (!/^[A-Za-z\s]+$/.test(apellidoP)) {
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(apellidoP)) {
             Swal.fire({
                 title: 'Validación',
-                text: 'El apellido paterno solo puede contener letras y espacios.',
+                text: 'El apellido paterno solo puede contener letras, acentos y espacios.',
                 icon: 'warning'
             });
             return;
         }
 
-        if (apellidoM && !/^[A-Za-z\s]*$/.test(apellidoM)) {
+        if (apellidoM && !/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]*$/.test(apellidoM)) {
             Swal.fire({
                 title: 'Validación',
-                text: 'El apellido materno solo puede contener letras y espacios.',
+                text: 'El apellido materno solo puede contener letras, acentos y espacios.',
                 icon: 'warning'
             });
             return;
