@@ -39,7 +39,8 @@ $(document).ready(function () {
         $('#modalRol').css('display', 'none');
         $('#rolForm')[0].reset();
     });
-
+    
+   	
     // ENVIAR FORMULARIO: Crear nuevo rol
     $(document).on('submit', '#rolForm', function (e) {
         e.preventDefault();
@@ -72,6 +73,7 @@ $(document).ready(function () {
             method: 'POST',
             data: datosRol,
             success: function () {
+		console.log('Respuesta:', respuesta);    
                 Swal.fire('Éxito', 'Rol creado correctamente.', 'success').then(() => {
                     location.reload();
                 });

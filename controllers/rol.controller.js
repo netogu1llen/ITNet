@@ -39,7 +39,7 @@ const post_crearRol = async (req, res) => {
         const rol = new Rol(Tipo);
         await rol.save(actividades);
 
-        res.status(201).json({ message: 'Rol creado exitosamente' });
+        res.status(200).json({ message: 'Rol creado exitosamente' });
     } catch (error) {
         console.error('Error al crear el rol:', error.message);
         res.status(500).json({ error: 'Error creando el rol' });
