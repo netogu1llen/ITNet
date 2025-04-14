@@ -63,18 +63,18 @@ class AuthService {
   }
 
   async handleGoogleUser(googleUser) {
-    const user = await userService.findOrCreate({
-      email: googleUser.email,
-      googleId: googleUser.sub,
-      name: googleUser.name,
-      avatar: googleUser.picture
-    });
-    
+    const user = await userService.findByEmail(googleUser.email);
+  
+    if (!user) {
+      throw new Error('Este correo no está registrado en el sistema.');
+    }
+  
     return generateToken({
       userId: user.id,
       email: user.email
     });
   }
+  
 }
 
 module.exports = new AuthService();
