@@ -30,9 +30,11 @@ const get_roles = async (req, res) => {
 // Crear un nuevo rol y asignar privilegios
 const post_crearRol = async (req, res) => {
     try {
-        console.log('crear rol');
-	console.log(' Datos recibidos en req.body:', req.body);    
+	console.log(req.body);    
         const { Tipo, actividades = [] } = req.body;
+        if (!Array.isArray(actividades)) {
+            actividades = actividades ? [actividades] : [];
+        }
 
         const rol = new Rol(Tipo);
         await rol.save(actividades);

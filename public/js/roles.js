@@ -62,7 +62,7 @@ $(document).ready(function () {
         }
 
         const datosRol = {
-		Tipo : tipo,
+	    Tipo,
             actividades
         };
 

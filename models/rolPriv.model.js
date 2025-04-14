@@ -1,6 +1,9 @@
 const db = require('../util/database');
 
 class Rol {
+    constructor(Tipo) {
+        this.Tipo = Tipo;
+    }
 
     //extraer roles
     static async fetchRoles() {
@@ -18,7 +21,7 @@ class Rol {
     static async fetchPrivilegios() {
         try {
             const [results] = await db.execute(`
-                SELECT Actividad FROM privilegios
+                SELECT * FROM privilegios
             `);
             return results;
         } catch (error) {
@@ -27,7 +30,7 @@ class Rol {
     }
 
     //insertar rol y sacar su Id
-    static async insertRol({Tipo}) {
+    static async insertRol(Tipo) {
         try {
             const [result] = await db.execute(`
                 INSERT INTO rol (Tipo) VALUES (?)
@@ -42,7 +45,7 @@ class Rol {
     async assignPrivileges(IDRol, actividades) {
         const promises = actividades.map(async (IDPrivilegio) => {
             return await db.execute(
-                'INSERT INTO rolPrivilegio (IDRol, IDPrivilegio) VALUES (?, ?)',
+                'INSERT INTO rolPrivilegios (IDRol, IDPrivilegio) VALUES (?, ?)',
                 [IDRol, IDPrivilegio]
             );
         });
@@ -51,7 +54,7 @@ class Rol {
 
     async save(actividades) {
         try {
-            const IDRol = await Rol.insertRol();
+            const IDRol = await Rol.insertRol(this.Tipo);
             await this.assignPrivileges(IDRol, actividades);
         } catch (error) {
             console.error('Error guardando rol y privilegios:', error);
