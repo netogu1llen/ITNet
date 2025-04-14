@@ -4,7 +4,6 @@ const router = express.Router();
 // Importar controladores
 const mainController = require('../controllers/main.controller');
 
-
 // Importar rutas de S3
 const s3Routes = require('./pdf.routes');
 

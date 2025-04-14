@@ -43,20 +43,23 @@ body {
 .button.is-save {
     background-color: #013E5A;
     color: white;
-  }
+}
   
-  .button.is-save:hover {
+.button.is-save:hover {
     background-color: #002133;
-  }
-  /*Boton para cancelar el registro de un formulario*/
-  .button.is-cancel {
+    color: white; /* Mantener texto blanco */
+}
+
+/*Boton para cancelar el registro de un formulario*/
+.button.is-cancel {
     background-color: #d62828;
     color: white;
-  }
+}
   
-  .button.is-cancel:hover {
+.button.is-cancel:hover {
     background-color: #b91c1c;
-  }
+    color: white; /* Mantener texto blanco */
+}
     
 
 /* Estilos para el menú desplegable */
@@ -194,6 +197,7 @@ body {
 
 .button-option:hover {
     background-color: #e05570;
+    color: #fff; /* Mantener texto blanco */
 }
 
 /* Botón "Crear" */
@@ -203,6 +207,7 @@ body {
 
 .button-create:hover {
     background-color: #006666;
+    color: #fff; /* Mantener texto blanco */
 }
 
 /* Botón naranja (si aún lo necesitas) */
@@ -212,6 +217,12 @@ body {
 
 .button-primary-orange:hover {
     background-color: #e08c25;
+    color: #fff; /* Mantener texto blanco */
+}
+
+/* Para asegurar que todos los botones mantengan texto blanco en hover */
+.button:hover {
+    color: #fff !important; /* Forzar texto blanco en todos los estados hover */
 }
 
 /* Grupo de botones para opciones (Versión 1, Versión 2, etc.) */
@@ -469,6 +480,19 @@ font-weight: 500;
   text-align: center;
   vertical-align: middle;
 }
+/*Centrar el contenido de la tabla de expediente psicologico*/
+#expedientePsicologicoTable td,
+#expedientePsicologicoTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/*Centrar el contenido de la tabla de expediente psicologico*/
+#pacientesTable td,
+#pacientesTable th {
+  text-align: center;
+  vertical-align: middle;
+}
 
 /* ==================== CONTENEDORES PARA FORMULARIOS ==================== */
 
@@ -485,6 +509,18 @@ font-weight: 500;
     display: flex;
     flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
     justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
+}
+.white-container {
+  width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
+  margin: 0px 20px 0px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
+  padding: 20px;
+  text-align: left;
+  background-color: #FFFFFF; /* Fondo gris claro */
+  border-radius: 7px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
+  justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
 }
 /*Contenedor para el titulo del tipo de documento que se esta usando(es el que tiene el icono a la izquierda)*/
 .head-container {
@@ -564,15 +600,8 @@ font-weight: 500;
   font-size: 14px; /* Tamaño del texto */
   resize: none; /* Evita que el usuario cambie el tamaño del textarea */
 }
-.multirow-form-container input[type="text"]{
-  width: 100%; /* Ocupa todo el ancho */
-  padding: 10px; /* Espaciado interno */
-  border: 1px solid #ccc; /* Borde gris claro */
-  border-radius: 10px; /* Bordes redondeados */
-  box-sizing: border-box; /* Evita que el padding aumente el tamaño */
-  font-size: 14px; /* Tamaño del texto */
-  resize: none; /* Evita que el usuario cambie el tamaño del textarea */
-}
+.multirow-form-container input[type="text"],
+.multirow-form-container select,
 .multirow-form-container input[type="date"]{
   width: 100%; /* Ocupa todo el ancho */
   padding: 10px; /* Espaciado interno */
@@ -622,68 +651,4 @@ font-weight: 500;
 .multirow-table td {
   text-align: center;
   border: 1px solid #e0e0e0;
-}
-
-/* Estilo general para contenedor tipo tarjeta */
-.panel-container {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 2rem;
-}
-
-/* Botones estilo consistente */
-.button {
-  border-radius: 6px;
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-}
-
-.button.is-primary {
-  background-color: #1995AD;
-  color: #fff;
-  border: none;
-}
-
-.button.is-primary:hover {
-  background-color: #157e90;
-}
-
-/* Estilo uniforme para DataTables */
-table.dataTable {
-  border-collapse: collapse;
-  width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-table.dataTable th,
-table.dataTable td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-}
-
-table.dataTable tbody tr:hover {
-  background-color: #f5f5f5;
-}
-
-/* Espaciado y organización */
-.dt-top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.dt-logo {
-  height: 40px;
-  margin-right: 1rem;
-}
-
-/* Aplica ancho completo */
-.exp-psicologico-wide {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
 }

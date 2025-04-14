@@ -3,7 +3,55 @@ const { encrypt, decrypt } = require('../util/encryptData');
 
 const getPacientes = async (req, res) => {
   try {
-    res.render('pacientes', {datos: {idExpediente: 1}});
+    const pacientes = await Pacientes.obtenerTodos();
+    
+    // Desencriptar datos sensibles con manejo de errores
+    const pacientesDesencriptados = pacientes.map(paciente => {
+      try {
+        // Verificar que cada campo existe antes de desencriptar
+        if (!paciente.nombres || !paciente.apellidoP || !paciente.apellidoM || !paciente.fechaNacimiento) {
+          return {
+            IDExpediente: paciente.IDExpediente,
+            nombreCompleto: '[Datos incompletos]',
+            fechaNacimiento: '[Fecha no disponible]',
+            enfermedades: paciente.enfermedades || 'Sin información'
+          };
+        }
+        
+        // Desencriptar con manejo específico para cada campo
+        let nombres, apellidoP, apellidoM, fechaNacimiento;
+        
+        try { nombres = decrypt(paciente.nombres); } 
+        catch (e) { nombres = '[Error]'; console.error(`Error al desencriptar nombre: ${e.message}`); }
+        
+        try { apellidoP = decrypt(paciente.apellidoP); } 
+        catch (e) { apellidoP = '[Error]'; console.error(`Error al desencriptar apellido paterno: ${e.message}`); }
+        
+        try { apellidoM = decrypt(paciente.apellidoM); } 
+        catch (e) { apellidoM = '[Error]'; console.error(`Error al desencriptar apellido materno: ${e.message}`); }
+        
+        try { fechaNacimiento = decrypt(paciente.fechaNacimiento); } 
+        catch (e) { fechaNacimiento = '[Error]'; console.error(`Error al desencriptar fecha: ${e.message}`); }
+        
+        return {
+          IDExpediente: paciente.IDExpediente,
+          nombreCompleto: `${nombres} ${apellidoP} ${apellidoM}`.trim(),
+          fechaNacimiento: fechaNacimiento,
+          enfermedades: paciente.enfermedades || 'Sin información'
+        };
+      } catch (error) {
+        console.error(`Error al desencriptar paciente ID ${paciente.IDExpediente}:`, error);
+        // En caso de error, devolvemos datos genéricos para ese paciente
+        return {
+          IDExpediente: paciente.IDExpediente,
+          nombreCompleto: '[Error en datos]',
+          fechaNacimiento: '[Error en fecha]',
+          enfermedades: paciente.enfermedades || 'Sin información'
+        };
+      }
+    });
+    
+    res.render('pacientes', { pacientes: pacientesDesencriptados });
   } catch (error) {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');
@@ -35,15 +83,20 @@ const postRegistrarPaciente = async (req, res) => {
       nombres,
       apellidoP,
       apellidoM,
-      numExpediente,
       fechaNacimiento,
       contacto,
-      direccion,
+      estado,
+      ciudad,
+      calle,
+      cp,
+      localidad,
+      numCasa,
+      numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
-      curso,
+      nvEscolar,
       sangre
     } = req.body;
     // Encriptar los campos sensibles
@@ -53,13 +106,18 @@ const postRegistrarPaciente = async (req, res) => {
       apellidoM: encrypt(apellidoM).encryptedData,
       fechaNacimiento: encrypt(fechaNacimiento).encryptedData,
       contacto: encrypt(contacto).encryptedData,
-      direccion: encrypt(direccion).encryptedData,
+      estado: encrypt(estado).encryptedData,
+      ciudad: encrypt(ciudad).encryptedData,
+      calle: encrypt(calle).encryptedData,
+      cp: encrypt(cp).encryptedData,
+      localidad: encrypt(localidad).encryptedData,
+      numCasa: encrypt(numCasa).encryptedData,
       numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
-      curso,
+      nvEscolar,
       sangre
     };
     await Pacientes.registrarPaciente(pacienteEncriptado);
@@ -85,14 +143,17 @@ const getEditarPaciente = async (req, res) => {
     let paciente = datosPaciente;
 
     // Desencriptar campos sensibles
-    console.log(paciente.nombres);
     paciente.nombres = decrypt(paciente.nombres);
     paciente.apellidoP = decrypt(paciente.apellidoP);
     paciente.apellidoM = decrypt(paciente.apellidoM);
     paciente.fechaNacimiento = decrypt(paciente.fechaNacimiento);
     paciente.contacto = decrypt(paciente.contacto);
-    paciente.direccion = decrypt(paciente.direccion);
-    console.log(paciente);
+    paciente.estado = decrypt(paciente.estado);
+    paciente.ciudad = decrypt(paciente.ciudad);
+    paciente.calle = decrypt(paciente.calle);
+    paciente.cp = decrypt(paciente.cp);
+    paciente.localidad = decrypt(paciente.localidad);
+    paciente.numCasa = decrypt(paciente.numCasa);
 
 
     res.render('editarPaciente', { datos: paciente});
@@ -114,34 +175,45 @@ const postEditarPaciente = async (req, res) => {
       nombres,
       apellidoP,
       apellidoM,
-      numExpediente,
       fechaNacimiento,
       contacto,
-      direccion,
+      estado,
+      ciudad,
+      calle,
+      cp,
+      localidad,
+      numCasa,
+      numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
-      curso,
+      nvEscolar,
       sangre
     } = req.body;
-
-    await Pacientes.editarPaciente({
+    const pacienteEncriptado = {
       nombres: encrypt(nombres).encryptedData,
       apellidoP: encrypt(apellidoP).encryptedData,
       apellidoM: encrypt(apellidoM).encryptedData,
       fechaNacimiento: encrypt(fechaNacimiento).encryptedData,
       contacto: encrypt(contacto).encryptedData,
-      direccion: encrypt(direccion).encryptedData,
+      estado: encrypt(estado).encryptedData,
+      ciudad: encrypt(ciudad).encryptedData,
+      calle: encrypt(calle).encryptedData,
+      cp: encrypt(cp).encryptedData,
+      localidad: encrypt(localidad).encryptedData,
+      numCasa: encrypt(numCasa).encryptedData,
       numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
       grado,
-      curso,
+      nvEscolar,
       sangre,
       idExpediente
-    });
+    };
+
+    await Pacientes.editarPaciente(pacienteEncriptado);
 
     res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
   } catch (error) {
