@@ -67,6 +67,10 @@ app.use((req, res, next) => {
     next();
 });
 
+//Rutas de auth
+const authRoutes = require('./routes/auth.routes');
+app.use('/auth', require('./routes/auth.routes'));
+
 //Rutas de rol
 const rolRoutes = require('./routes/rol.routes');
 app.use('/rol', rolRoutes);
