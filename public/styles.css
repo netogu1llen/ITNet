@@ -43,20 +43,23 @@ body {
 .button.is-save {
     background-color: #013E5A;
     color: white;
-  }
+}
   
-  .button.is-save:hover {
+.button.is-save:hover {
     background-color: #002133;
-  }
-  /*Boton para cancelar el registro de un formulario*/
-  .button.is-cancel {
+    color: white; /* Mantener texto blanco */
+}
+
+/*Boton para cancelar el registro de un formulario*/
+.button.is-cancel {
     background-color: #d62828;
     color: white;
-  }
+}
   
-  .button.is-cancel:hover {
+.button.is-cancel:hover {
     background-color: #b91c1c;
-  }
+    color: white; /* Mantener texto blanco */
+}
     
 
 /* Estilos para el menú desplegable */
@@ -194,6 +197,7 @@ body {
 
 .button-option:hover {
     background-color: #e05570;
+    color: #fff; /* Mantener texto blanco */
 }
 
 /* Botón "Crear" */
@@ -203,6 +207,7 @@ body {
 
 .button-create:hover {
     background-color: #006666;
+    color: #fff; /* Mantener texto blanco */
 }
 
 /* Botón naranja (si aún lo necesitas) */
@@ -212,6 +217,12 @@ body {
 
 .button-primary-orange:hover {
     background-color: #e08c25;
+    color: #fff; /* Mantener texto blanco */
+}
+
+/* Para asegurar que todos los botones mantengan texto blanco en hover */
+.button:hover {
+    color: #fff !important; /* Forzar texto blanco en todos los estados hover */
 }
 
 /* Grupo de botones para opciones (Versión 1, Versión 2, etc.) */
@@ -462,8 +473,23 @@ font-weight: 500;
   text-align: center;
   vertical-align: middle;
 }
+
+/*Centrar el contenido de la tabla de Mi Equipo*/
 #miEquipoTable td,
 #miEquipoTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+/*Centrar el contenido de la tabla de expediente psicologico*/
+#expedientePsicologicoTable td,
+#expedientePsicologicoTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/*Centrar el contenido de la tabla de expediente psicologico*/
+#pacientesTable td,
+#pacientesTable th {
   text-align: center;
   vertical-align: middle;
 }
@@ -483,6 +509,18 @@ font-weight: 500;
     display: flex;
     flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
     justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
+}
+.white-container {
+  width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
+  margin: 0px 20px 0px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
+  padding: 20px;
+  text-align: left;
+  background-color: #FFFFFF; /* Fondo gris claro */
+  border-radius: 7px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
+  justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
 }
 /*Contenedor para el titulo del tipo de documento que se esta usando(es el que tiene el icono a la izquierda)*/
 .head-container {
@@ -562,6 +600,17 @@ font-weight: 500;
   font-size: 14px; /* Tamaño del texto */
   resize: none; /* Evita que el usuario cambie el tamaño del textarea */
 }
+.multirow-form-container input[type="text"],
+.multirow-form-container select,
+.multirow-form-container input[type="date"]{
+  width: 100%; /* Ocupa todo el ancho */
+  padding: 10px; /* Espaciado interno */
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 10px; /* Bordes redondeados */
+  box-sizing: border-box; /* Evita que el padding aumente el tamaño */
+  font-size: 14px; /* Tamaño del texto */
+  resize: none; /* Evita que el usuario cambie el tamaño del textarea */
+}
 /*Contenedor blanco que se usa para la dupla de un formulario, ejemplo: Nombre: Jaime. Es flexible */
 .element-container{
     flex: 1;
@@ -577,7 +626,7 @@ font-weight: 500;
 .element-container-gray {
   width: 100%; /* Ocupa todo el ancho */
   flex: 1;
-  min-width: 120px;
+  min-width: 200px;
   padding: 10px;
   text-align: center;
   background-color: #F2F2F2;
@@ -602,159 +651,4 @@ font-weight: 500;
 .multirow-table td {
   text-align: center;
   border: 1px solid #e0e0e0;
-}
-
-/* === ESTILOS PERSONALIZADOS VISTA REGISTRAR BOLETA === */
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f0f2f5;
-}
-
-.contenedor-principal {
-  display: flex;
-  justify-content: center;
-  padding: 40px;
-}
-
-.formulario-boleta {
-  background-color: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  width: 100%;
-  max-width: 1000px;
-}
-
-.encabezado.centrado {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.encabezado.centrado img {
-  width: 133px;
-  margin-bottom: 10px;
-}
-
-.encabezado h1 {
-  font-size: 26px;
-  margin: 0;
-}
-
-.campo {
-  margin-bottom: 30px;
-}
-
-.campo label {
-  font-weight: 600;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.campo input {
-  padding: 10px;
-  width: 100%;
-  max-width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-.tablas {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-  margin-bottom: 30px;
-}
-
-.tabla, .checkboxes {
-  background: #fafafa;
-  padding: 20px;
-  border-radius: 10px;
-  flex: 1 1 45%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.tabla table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.tabla th, .tabla td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
-}
-
-.checkboxes ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-.checkboxes li {
-  margin-bottom: 12px;
-}
-
-.checkboxes label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-}
-
-.boton {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.boton button {
-  background-color: #3273dc;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.boton button:hover {
-  background-color: #275bb5;
-}
-
-
-/* ==================== Materias ==================== */
-
-.section.materia-page {
-  margin-left: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.materia-container {
-  max-width: 800px;
-  text-align: center;
-}
-
-.materia-icon {
-  width: 90px;
-  height: auto;
-}
-
-.materia-form .select {
-  max-width: 200px;
-  margin: 0 auto;
-}
-
-.materia-form button {
-  margin-top: 40px;
 }

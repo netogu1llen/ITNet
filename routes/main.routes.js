@@ -4,9 +4,8 @@ const router = express.Router();
 // Importar controladores
 const mainController = require('../controllers/main.controller');
 
-
 // Importar rutas de S3
-const s3Routes = require('./s3services.routes');
+const s3Routes = require('./pdf.routes');
 
 // Ruta para mostrar el login
 router.get('/login', (req, res) => {
