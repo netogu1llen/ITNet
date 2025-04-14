@@ -1,4 +1,4 @@
-const Usuario = require('../models/usuarios.model'); // Asegúrate que este path sea correcto
+const UserModel = require('../models/auth.model');
 
 /**
  * Busca un usuario por email. Si no existe, lo crea.

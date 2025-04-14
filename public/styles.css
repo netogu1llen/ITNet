@@ -233,6 +233,18 @@ body {
     margin-bottom: 30px; /* Espacio debajo del grupo de botones */
 }
 
+/* Estilo específico para el botón de Google */
+.google-login-button img {
+  width: 190px; /* Ajusta este valor según necesites */
+  height: auto; /* Mantiene la proporción */
+  transition: transform 0.2s; /* Opcional: efecto hover */
+}
+
+/* Efecto hover opcional */
+.google-login-button:hover img {
+  transform: scale(1.05);
+}
+
 /* ==================== ÍCONOS ==================== */
 .material-icons {
     font-family: 'Material Icons';
