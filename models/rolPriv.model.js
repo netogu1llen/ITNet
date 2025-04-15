@@ -74,5 +74,16 @@ class Rol {
         }
     }
 
+    static fetchRolByID(IDRol){
+        return db.execute(`
+            SELECT * FROM rol
+            WHERE IDRol = ?;
+            `,
+            [IDRol]
+        )
+    }
+
+    
+
 }
 module.exports = Rol;

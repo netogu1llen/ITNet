@@ -5,7 +5,6 @@ const Rol = require('../models/rolPriv.model');
  */
 const get_roles = async (req, res) => {
     try {
-	console.log('hola');    
         const roles = await Rol.fetchRoles();
         const privilegios = await Rol.fetchPrivilegios(); 
 
@@ -30,7 +29,6 @@ const get_roles = async (req, res) => {
 // Crear un nuevo rol y asignar privilegios
 const post_crearRol = async (req, res) => {
   try {
-    console.log(req.body);
     let { Tipo, actividades = [] } = req.body;
 
     if (!Array.isArray(actividades)) {
