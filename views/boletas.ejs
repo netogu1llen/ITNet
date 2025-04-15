@@ -3,39 +3,43 @@
 
 <section class="section">
   <div class="container">
-    <h1 class="title is-4">Boletas de <strong><%= nombreAlumno %></strong></h1>
+
+    <!-- Título principal -->
+    <h1 class="title is-4">
+      Boletas de <strong><%= nombreAlumno %></strong>
+    </h1>
 
     <!-- Tabla -->
-    <table id="boletasTable" class="table is-striped is-hoverable is-fullwidth">
-      <thead>
-        <tr>
-          <th>Periodo</th>
-          <th><i class="fas fa-download"></i></th>
-          <th>Promedio</th>
-          <th>Grado</th>
-          <th>Curso</th>
-          <th>Modificar</th>
-          <th>Eliminar</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% boletas.forEach(b => { %>
-          <tr>
-            <td><%= b.periodoEscolar %></td>
-            <td><a class="button is-small is-info"><i class="fas fa-download"></i></a></td>
-            <td><%= b.promedio %></td>
-            <td><%= b.grado %></td>
-            <td><%= b.curso %></td>
-            <td>
-              <button class="button is-small is-warning btn-modificar" data-id="<%= b.IDBoleta %>">Modificar</button>
-            </td>
-            <td>
-              <button class="button is-small is-danger btn-eliminar" data-id="<%= b.IDBoleta %>">Eliminar</button>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
+    <div class="full-white-container exp-psicologico-wide">
+      <div style="width: 100%; height: auto;">
+        <table id="boletasTable" class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Periodo</th>
+              <th>Promedio</th>
+              <th>Grado</th>
+              <th>Curso</th>
+              <th>Eliminar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% boletas.forEach(b => { %>
+              <tr data-id="<%= b.IDBoleta %>" class="clickable-row">
+                <td><%= b.periodoEscolar %></td>
+                <td><%= b.promedio %></td>
+                <td><%= b.grado %></td>
+                <td><%= b.curso %></td>
+                <td>
+                  <button class="button is-small is-danger btn-eliminar" data-id="<%= b.IDBoleta %>">
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
 

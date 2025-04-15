@@ -1,37 +1,49 @@
+/**
+ * Configuración del DataTable para la vista de alumnos del centro educativo.
+ * Se hace clicable cada fila para redirigir a las boletas del alumno.
+ */
+
 $(document).ready(function () {
-  const table = $('#alumnosTable').DataTable({
+  /** @constant {object} table - Instancia de DataTable */
+  const table = $('#alumnos-table').DataTable({
     language: {
-      info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-      infoEmpty: "No hay registros disponibles",
-      infoFiltered: "(filtrado de _MAX_ registros en total)",
+      info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+      infoEmpty: 'No hay registros disponibles',
+      infoFiltered: '(filtrado de _MAX_ registros en total)',
       paginate: {
-        previous: "Anterior",
-        next: "Siguiente"
+        previous: 'Anterior',
+        next: 'Siguiente'
       },
-      lengthMenu: "Mostrar _MENU_ registros por página",
-      search: "Buscar alumno:"
+      lengthMenu: 'Mostrar _MENU_ registros por página',
+      search: 'Buscar alumno:'
     },
     ajax: '/educacion/alumnos/data',
     columns: [
       { data: 'nombre' },
       { data: 'periodoEscolar' },
       { data: 'grado' },
-      { data: 'curso' },
-      {
-        data: 'IDExpediente',
-        render: function (data) {
-          return `<a class="button is-small is-info" href="/educacion/boletas?idExpediente=${data}">Consultar</a>`;
-        }
-      }
+      { data: 'curso' }
     ]
   });
 
+  /**
+   * Crea dinámicamente la barra superior con logo, filtros y búsqueda.
+   */
   const logo = $('<img src="/images/educacion.png" alt="Logo" class="dt-logo">');
-  const dtTopBar = $('<div class="dt-top-bar"></div>');
+  const topBar = $('<div class="dt-top-bar exp-psicologico-wide" id="top-bar"></div>');
 
-  dtTopBar.append(logo);
-  $('.dataTables_length').appendTo(dtTopBar);
-  $('.dataTables_filter').appendTo(dtTopBar);
-  $('.dataTables_wrapper').prepend(dtTopBar);
+  topBar.append(logo);
+  $('.dataTables_length').appendTo(topBar);
+  $('.dataTables_filter').appendTo(topBar);
+  $('.dataTables_wrapper').prepend(topBar);
 
+  /**
+   * Hace clicable cada fila para redirigir a la vista de boletas.
+   */
+  $('#alumnos-table tbody').on('click', 'tr', function () {
+    const rowData = table.row(this).data();
+    if (rowData && rowData.IDExpediente) {
+      window.location.href = `/educacion/boletas?idExpediente=${rowData.IDExpediente}`;
+    }
+  });
 });

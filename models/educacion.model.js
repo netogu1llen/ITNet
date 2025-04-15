@@ -1,6 +1,13 @@
 const db = require('../util/database');
 
-// ========== ALUMNOS / EXPEDIENTES ==========
+/** ============================
+ *  ALUMNOS / EXPEDIENTES
+ *  ============================
+ */
+
+/**
+ * Obtiene la lista de alumnos con su periodo, grado y curso.
+ */
 exports.getAlumnos = async () => {
   const [rows] = await db.execute(`
     SELECT 
@@ -21,16 +28,23 @@ exports.getAlumnos = async () => {
   return rows;
 };
 
+/**
+ * Obtiene el nombre completo del alumno por su IDExpediente.
+ */
 exports.obtenerNombreAlumno = async (IDExpediente) => {
-  const [rows] = await db.execute(
-    `SELECT CONCAT(nombres, ' ', apellidoP, ' ', apellidoM) AS nombreCompleto
-     FROM expediente WHERE IDExpediente = ?`,
-    [IDExpediente]
-  );
+  const [rows] = await db.execute(`
+    SELECT CONCAT(nombres, ' ', apellidoP, ' ', apellidoM) AS nombreCompleto
+    FROM expediente
+    WHERE IDExpediente = ?
+  `, [IDExpediente]);
   return rows[0]?.nombreCompleto || 'Alumno';
 };
 
-// ========== MATERIAS ==========
+/** ============================
+ *  MATERIAS
+ *  ============================
+ */
+
 exports.getMaterias = async () => {
   const [rows] = await db.execute(`
     SELECT * FROM materia 
@@ -78,42 +92,53 @@ exports.getMateriasList = async () => {
   return rows;
 };
 
-// ========== BOLETAS ==========
+/** ============================
+ *  BOLETAS
+ *  ============================
+ */
+
+/**
+ * Obtiene todas las boletas asociadas a un expediente.
+ */
 exports.obtenerBoletasPorExpediente = async (IDExpediente) => {
-  const [rows] = await db.execute(
-    `SELECT 
+  const [rows] = await db.execute(`
+    SELECT 
       b.IDBoleta,
       b.periodoEscolar,
       e.grado,
       e.curso,
       ROUND(AVG(bm.calificacion), 1) AS promedio
-     FROM boleta b
-     JOIN expediente e ON b.IDExpediente = e.IDExpediente
-     JOIN boletaMateria bm ON bm.IDBoleta = b.IDBoleta
-     WHERE b.IDExpediente = ? AND b.eliminado = 0
-     GROUP BY b.IDBoleta`,
-    [IDExpediente]
-  );
+    FROM boleta b
+    JOIN expediente e ON b.IDExpediente = e.IDExpediente
+    JOIN boletaMateria bm ON bm.IDBoleta = b.IDBoleta
+    WHERE b.IDExpediente = ? AND b.eliminado = 0
+    GROUP BY b.IDBoleta
+  `, [IDExpediente]);
   return rows;
 };
 
+/**
+ * Registra una nueva boleta con sus materias.
+ */
 exports.registrarBoleta = async ({ IDExpediente, periodoEscolar, materias, calificaciones }) => {
-  const [result] = await db.execute(
-    `INSERT INTO boleta (IDExpediente, periodoEscolar, eliminado) 
-     VALUES (?, ?, 0)`,
-    [IDExpediente, periodoEscolar]
-  );
+  const [result] = await db.execute(`
+    INSERT INTO boleta (IDExpediente, periodoEscolar, eliminado) 
+    VALUES (?, ?, 0)
+  `, [IDExpediente, periodoEscolar]);
+
   const IDBoleta = result.insertId;
 
   for (let i = 0; i < materias.length; i++) {
-    await db.execute(
-      `INSERT INTO boletaMateria (IDBoleta, IDMateria, calificacion) 
-       VALUES (?, ?, ?)`,
-      [IDBoleta, materias[i], calificaciones[i]]
-    );
+    await db.execute(`
+      INSERT INTO boletaMateria (IDBoleta, IDMateria, calificacion) 
+      VALUES (?, ?, ?)
+    `, [IDBoleta, materias[i], calificaciones[i]]);
   }
 };
 
+/**
+ * Obtiene una boleta específica por ID, incluyendo sus materias.
+ */
 exports.obtenerBoletaPorId = async (IDBoleta) => {
   const [boletaData] = await db.execute(`
     SELECT * FROM boleta WHERE IDBoleta = ?
@@ -129,6 +154,9 @@ exports.obtenerBoletaPorId = async (IDBoleta) => {
   return { boleta: boletaData[0], materias };
 };
 
+/**
+ * Modifica una boleta existente y actualiza sus materias.
+ */
 exports.modificarBoleta = async ({ idBoleta, periodoEscolar, materias, calificaciones }) => {
   await db.execute(`
     UPDATE boleta 
@@ -142,14 +170,16 @@ exports.modificarBoleta = async ({ idBoleta, periodoEscolar, materias, calificac
   `, [idBoleta]);
 
   for (let i = 0; i < materias.length; i++) {
-    await db.execute(
-      `INSERT INTO boletaMateria (IDBoleta, IDMateria, calificacion) 
-       VALUES (?, ?, ?)`,
-      [idBoleta, materias[i], calificaciones[i]]
-    );
+    await db.execute(`
+      INSERT INTO boletaMateria (IDBoleta, IDMateria, calificacion) 
+      VALUES (?, ?, ?)
+    `, [idBoleta, materias[i], calificaciones[i]]);
   }
 };
 
+/**
+ * Elimina lógicamente una boleta.
+ */
 exports.eliminarBoleta = async (IDBoleta) => {
   await db.execute(`
     UPDATE boleta 

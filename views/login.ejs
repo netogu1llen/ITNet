@@ -3,6 +3,7 @@
 <head>
     <title>Fundación Soffy</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="/styles.css">
     <!-- Inyectamos el client_id desde la variable de entorno (será reemplazado por tu valor en el backend) -->
     <meta name="google-signin-client_id" content="<%= GOOGLE_CLIENT_ID %>">
 </head>
@@ -18,13 +19,14 @@
                 <h2 class="title is-4 pb-3">Inicio de sesión</h2>
                 <div class="pt-5">
                     <!-- Botón de Google -->
-                    <div id="my-signin2"></div> <!-- Aquí se renderiza el botón de Google -->
+                    <a href="/auth/google" class="google-login-button">
+                        <img src="/images/login.png" alt="Iniciar sesión con Google">
+                    </a>
+                      <!-- Aquí se renderiza el botón de Google -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Cargar el archivo JS que contiene la lógica de autenticación de Google -->
-    <script src="/js/googleAuth.js"></script>
 </body>
 </html>

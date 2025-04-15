@@ -1,6 +1,5 @@
 const db = require('../util/database');
 
-
 class Pacientes {
   /**
    * Registra un nuevo paciente en la base de datos.
@@ -184,6 +183,7 @@ class Pacientes {
       throw new Error('Error al actualizar paciente');
     }
   }
+
   static async eliminarPaciente(idExpediente) {
     try {
         // Usamos el método de promesas para la consulta
@@ -196,8 +196,21 @@ class Pacientes {
         throw new Error('Error al actualizar seguimiento');
     }
   }
-}
 
+  // Obtener todos los pacientes (excluyendo los eliminados)
+  static async obtenerTodos() {
+    try {
+        const [results] = await db.execute(`
+            SELECT IDExpediente, nombres, apellidoP, apellidoM, fechaNacimiento, enfermedades
+            FROM expediente
+            WHERE eliminado IS NULL OR eliminado = 0
+        `);
+        return results;
+    } catch (error) {
+        throw error;
+    }
+  }
+}
 
 module.exports = Pacientes;
 

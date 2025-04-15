@@ -233,6 +233,18 @@ body {
     margin-bottom: 30px; /* Espacio debajo del grupo de botones */
 }
 
+/* Estilo específico para el botón de Google */
+.google-login-button img {
+  width: 190px; /* Ajusta este valor según necesites */
+  height: auto; /* Mantiene la proporción */
+  transition: transform 0.2s; /* Opcional: efecto hover */
+}
+
+/* Efecto hover opcional */
+.google-login-button:hover img {
+  transform: scale(1.05);
+}
+
 /* ==================== ÍCONOS ==================== */
 .material-icons {
     font-family: 'Material Icons';
@@ -473,6 +485,8 @@ font-weight: 500;
   text-align: center;
   vertical-align: middle;
 }
+
+/*Centrar el contenido de la tabla de Mi Equipo*/
 #miEquipoTable td,
 #miEquipoTable th {
   text-align: center;
@@ -481,6 +495,13 @@ font-weight: 500;
 /*Centrar el contenido de la tabla de expediente psicologico*/
 #expedientePsicologicoTable td,
 #expedientePsicologicoTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/*Centrar el contenido de la tabla de expediente psicologico*/
+#pacientesTable td,
+#pacientesTable th {
   text-align: center;
   vertical-align: middle;
 }
@@ -642,176 +663,4 @@ font-weight: 500;
 .multirow-table td {
   text-align: center;
   border: 1px solid #e0e0e0;
-}
-
-/* === ESTILOS PERSONALIZADOS VISTA REGISTRAR BOLETA === */
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f0f2f5;
-}
-
-.contenedor-principal {
-  display: flex;
-  justify-content: center;
-  padding: 40px;
-}
-
-.formulario-boleta {
-  background-color: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  width: 100%;
-  max-width: 1000px;
-}
-
-.encabezado.centrado {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.encabezado.centrado img {
-  width: 133px;
-  margin-bottom: 10px;
-}
-
-.encabezado h1 {
-  font-size: 26px;
-  margin: 0;
-}
-
-.campo {
-  margin-bottom: 30px;
-}
-
-.campo label {
-  font-weight: 600;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.campo input {
-  padding: 10px;
-  width: 100%;
-  max-width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-.tablas {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-  margin-bottom: 30px;
-}
-
-.tabla, .checkboxes {
-  background: #fafafa;
-  padding: 20px;
-  border-radius: 10px;
-  flex: 1 1 45%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.tabla table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.tabla th, .tabla td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
-}
-
-.checkboxes ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-.checkboxes li {
-  margin-bottom: 12px;
-}
-
-.checkboxes label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-}
-
-.boton {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.boton button {
-  background-color: #3273dc;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.boton button:hover {
-  background-color: #275bb5;
-}
-
-
-/* ==================== Materias ==================== */
-
-.section.materia-page {
-  margin-left: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.materia-container {
-  max-width: 800px;
-  text-align: center;
-}
-
-.materia-icon {
-  width: 90px;
-  height: auto;
-}
-
-.materia-form .select {
-  max-width: 200px;
-  margin: 0 auto;
-}
-
-.materia-form button {
-  margin-top: 40px;
-}
-
-/* =========== Expediente Psicologico =========== */
-/* Clase para alargar elementos en expedientePsicologico */
-.exp-psicologico-wide {
-  width: 100%; /* Ajusta el ancho para que coincida con la tabla */
-  margin-left: auto; /* Centra horizontalmente */
-  margin-right: auto; /* Centra horizontalmente */
-}
-#loadingModal.is-active {
-  display: flex !important;
-  z-index: 2000 !important; /* Asegura que está por encima de todo */
-}
-
-#loadingModal .modal-content {
-  width: auto;
-  max-width: 400px;
 }
