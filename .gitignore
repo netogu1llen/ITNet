@@ -180,6 +180,8 @@ build/Release
 # Carpeta para docuentos
 /uploads
 util/database.js
+database.js
+database
 
 # Ignorar archivos SQL
 *.sql
