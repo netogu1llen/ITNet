@@ -6,13 +6,13 @@
     <h1 class="title">Roles</h1>
 
     <!-- Contenedor para la barra superior -->
-    <div id="usuariosTopBar" class="dt-top-bar">
+    <div id="rolesTopBar" class="dt-top-bar">
       <!-- La imagen, el selector de registros, la barra de búsqueda y el botón de registrar se agregarán dinámicamente desde usuarios.js -->
     </div>
 
     <!-- Tabla -->
     <div style="width: 100%; height: 900px;">
-      <table id="roles" class="table is-striped is-hoverable is-fullwidth">
+      <table id="rolTable" class="table is-striped is-hoverable is-fullwidth">
         <thead>
           <tr>
             <th>Rol</th>
@@ -38,7 +38,64 @@
   </div>
 </section>
 
+<!-- Modal de Crear Rol -->
+<div id="modalRol" class="modal" style="display: none; z-index: 1050;">
+  <!-- Fondo oscuro -->
+  <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
+
+  <!-- Contenedor del modal -->
+  <div class="modal-card" style="width: 600px; max-height: 580px; overflow-y: auto;">
+    
+    <!-- Cabecera con botón de cierre -->
+    <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
+      <button class="delete" aria-label="close"></button>
+    </header>
+
+    <!-- Cuerpo del modal -->
+    <section class="modal-card-body" style="text-align: center;">
+      <!-- Ícono y título -->
+      <div style="margin-bottom: 20px;">
+        <img src="/images/rolusuario.png" alt="Icono Rol" style="width: 100px; height: 100px;">
+      </div>
+      <h1 class="title" style="margin-bottom: 30px;">Crear Rol</h1>
+
+      <!-- Formulario de rol -->
+      <form id="rolForm" method="post">
+        <!-- Nombre del rol -->
+        <div class="field">
+          <label class="label" for="Tipo">Nombre del rol</label>
+          <div class="control">
+            <input id="Tipo" name="Tipo" class="input" type="text"
+              placeholder="Empleado" required>
+          </div>
+        </div>
+
+        <!-- Actividades -->
+        <div class="field" style="text-align: left;">
+          <label class="label">Actividades</label>
+          <div class="control">
+            <% for (let privilegio of privilegios) { %>
+              <label class="checkbox">
+                <input type="checkbox" name="actividades" value="<%= privilegio.IDPrivilegio %>">
+                <%= privilegio.Actividad %>
+              </label>
+              <br>
+            <% } %>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Footer del modal -->
+    <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
+      <button type="button" class="button is-cancel">Cancelar</button>
+      <button type="submit" form="rolForm" class="button is-save">Crear Rol</button>
+    </footer>
+  </div>
+</div>
+
 <!-- Scripts -->
 <script src="/vendor/jquery-3.6.0.min.js"></script>
 <script src="/vendor/jquery.dataTables.min.js"></script>
-<script src="/js/usuarios.js"></script>
+<script src = "/js/sweetalert2.all.min.js"></script>
+<script src="/js/roles.js"></script>

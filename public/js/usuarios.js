@@ -12,240 +12,320 @@ $(document).ready(function () {
             lengthMenu: "Mostrar _MENU_ registros por página",
             search: "Buscar usuario:"
         },
-        pageLength: 10, // Número de registros por página
-        lengthMenu: [5, 10, 25, 50], // Opciones de registros por página
-        order: [[0, 'asc']] // Ordenar por la primera columna (Nombre del Usuario)
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        order: [[0, 'asc']]
     });
 
     // Crear la barra superior personalizada
     const logo = $('<img src="/images/usuarios.png" alt="Logo Usuarios" class="dt-logo">');
-    const registrarButton = $('<button class="button button-create" style="height: 30px;">Registrar Usuario</button>'); // Botón con altura ajustada
+    const registrarButton = $('<button class="button button-create" style="height: 30px;">Registrar Usuario</button>');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
 
     // Agregar elementos a la barra superior
-    dtTopBar.append(logo); // Agregar el logo
-    $('.dataTables_length').appendTo(dtTopBar); // Mover el selector de registros por página
-    $('.dataTables_filter').appendTo(dtTopBar); // Mover la barra de búsqueda al final de la barra superior
-    $('.dataTables_wrapper').prepend(dtTopBar); // Insertar la barra superior antes de la tabla
-    dtTopBar.append(registrarButton); // Mover el botón de registrar usuario a la barra superior
-
+    dtTopBar.append(logo);
+    $('.dataTables_length').appendTo(dtTopBar);
+    $('.dataTables_filter').appendTo(dtTopBar);
+    $('.dataTables_wrapper').prepend(dtTopBar);
+    dtTopBar.append(registrarButton);
 
     // REGISTRAR USUARIO //
-// Evento para abrir el modal de registrar usuario
-$(document).on('click', '.button-create', function () {
-    $('#modalRegistrar').css('display', 'flex'); // Muestra el modal
-});
-
-// Evento para cerrar el modal de registrar usuario
-$(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
-    $('#modalRegistrar').css('display', 'none'); // Oculta el modal
-    $('#registrarForm')[0].reset(); // Resetea los campos del formulario
-});
-
-// Evento para enviar los datos del formulario y registrar un nuevo usuario
-$(document).on('submit', '#registrarForm', function (e) {
-    e.preventDefault();
-
-    const nombreUsuario = $('input[name="nombreUsuarioReg"]').val().trim();
-    const numTelefono = $('input[name="numTelefonoReg"]').val().trim();
-    const fechaNacimiento = $('input[name="fechaNacimientoReg"]').val().trim();
-    const contrasena = $('input[name="contrasenaReg"]').val().trim();
-
-    // Validaciones
-    if (!/^[A-Za-z\s]+$/.test(nombreUsuario)) {
-        Swal.fire('Error', 'El nombre de usuario solo puede contener letras y espacios.', 'error');
-        return;
-    }
-
-    if (!/^\d+$/.test(numTelefono)) {
-        Swal.fire('Error', 'El número de teléfono solo puede contener números.', 'error');
-        return;
-    }
-
-    if (!fechaNacimiento) {
-        Swal.fire('Error', 'La fecha de nacimiento es obligatoria.', 'error');
-        return;
-    }
-
-    if (contrasena.length < 6) {
-        Swal.fire('Error', 'La contraseña debe tener al menos 6 caracteres.', 'error');
-        return;
-    }
-
-    const datosUsuario = {
-        nombreUsuario,
-        numTelefono,
-        fechaNacimiento,
-        contrasena
-    };
-
-    // Realiza una solicitud AJAX para registrar el usuario
-    $.ajax({
-        url: '/usuarios/registrar', // Ruta para registrar el usuario
-        method: 'POST',
-        data: datosUsuario,
-        success: function () {
-            Swal.fire('Éxito', 'Usuario registrado correctamente.', 'success').then(() => {
-                location.reload(); // Recarga la página para reflejar los cambios
-            });
-        },
-        error: function () {
-            Swal.fire('Error', 'Error al registrar el usuario.', 'error');
-        }
+    // Evento para abrir el modal de registrar usuario
+    $(document).on('click', '.button-create', function () {
+        $('#modalRegistrar').css('display', 'flex');
     });
-});
+
+    // Evento para cerrar el modal de registrar usuario
+    $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
+        $('#modalRegistrar, #modalModificar').css('display', 'none');
+        $('#registrarForm')[0].reset();
+        $('#modificarForm')[0].reset();
+    });
 
     // MODIFICAR USUARIO //
-// Evento para abrir el modal MODIFICAR y cargar los datos del usuario
-$(document).on('click', '.btn-modificar', function () {
-    const idUsuario = $(this).data('id');
-
-    // Realiza una solicitud AJAX para obtener los datos del usuario
-    $.ajax({
-        url: `/usuarios/modificar/${idUsuario}`, // Ruta para obtener los datos del usuario
-        method: 'GET',
-        success: function (usuario) {
-            // Validar los datos recibidos antes de cargarlos en el modal
-            if (!usuario.nombreUsuario || !/^[A-Za-z\s]+$/.test(usuario.nombreUsuario)) {
-                Swal.fire('Error', 'El nombre de usuario recibido es inválido.', 'error');
-                return;
-            }
-
-            if (!usuario.numTelefono || !/^\d+$/.test(usuario.numTelefono)) {
-                Swal.fire('Error', 'El número de teléfono recibido es inválido.', 'error');
-                return;
-            }
-
-            if (!usuario.fechaNacimiento) {
-                Swal.fire('Error', 'La fecha de nacimiento recibida es inválida.', 'error');
-                return;
-            }
-
-            if (!usuario.contrasena || usuario.contrasena.length < 6) {
-                Swal.fire('Error', 'La contraseña recibida es inválida.', 'error');
-                return;
-            }
-
-            // Carga los datos en el modal
-            $('input[name="nombreUsuarioMod"]').val(usuario.nombreUsuario);
-            $('input[name="numTelefonoMod"]').val(usuario.numTelefono);
-            $('input[name="fechaNacimientoMod"]').val(usuario.fechaNacimiento.split('T')[0]);
-            $('input[name="contrasenaMod"]').val(usuario.contrasena);
-
-            // Muestra el modal
-            $('#modalModificar').css('display', 'flex');
-            $('#modificarForm').attr('action', `/usuarios/modificar/${idUsuario}`);
-        },
-        error: function () {
-            Swal.fire('Error', 'Error al cargar los datos del usuario.', 'error');
+    // Evento para hacer clickeable toda la fila (excepto botones)
+    $(document).on('click', '.usuario-fila', function(e) {
+        // Si se hizo clic en un botón dentro de la fila, no activar este evento
+        if ($(e.target).is('button') || $(e.target).closest('button').length) {
+            return;
         }
+        
+        const idUsuario = $(this).data('id');
+        cargarDatosUsuario(idUsuario);
     });
-});
 
-// Evento para cerrar el modal al hacer clic en el fondo oscuro
-$(document).on('click', '.modal-background', function () {
-    cerrarModalModificar();
-});
+    // Función para cargar los datos del usuario en el modal
+    function cargarDatosUsuario(idUsuario) {
+        // Realiza una solicitud AJAX para obtener los datos del usuario
+        $.ajax({
+            url: `/usuarios/modificar/${idUsuario}`,
+            method: 'GET',
+            success: function (usuario) {
+                // Validar que recibimos datos del usuario
+                if (!usuario || typeof usuario !== 'object') {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudieron obtener los datos del usuario.',
+                        icon: 'error'
+                    });
+                    return;
+                }
 
-// Evento para cerrar el modal al hacer clic en el botón de cierre (la "X")
-$(document).on('click', '.delete', function () {
-    cerrarModalModificar();
-});
+                // Carga los datos en el modal
+                $('input[name="nombresMod"]').val(usuario.nombres || '');
+                $('input[name="apellidoPMod"]').val(usuario.apellidoP || '');
+                $('input[name="apellidoMMod"]').val(usuario.apellidoM || '');
+                $('input[name="correoMod"]').val(usuario.correo || '');
+                
+                // Formatear la fecha correctamente para el input date
+                if (usuario.fechaNacimiento) {
+                    // Si la fecha está en formato YYYY-MM-DD ya es válida para el input
+                    if (usuario.fechaNacimiento.includes('-')) {
+                        $('input[name="fechaNacimientoMod"]').val(usuario.fechaNacimiento);
+                    }
+                    // Si la fecha está en formato DD/MM/YYYY, convertirla a YYYY-MM-DD
+                    else if (usuario.fechaNacimiento.includes('/')) {
+                        const partes = usuario.fechaNacimiento.split('/');
+                        if (partes.length === 3) {
+                            const fechaFormateada = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+                            $('input[name="fechaNacimientoMod"]').val(fechaFormateada);
+                        }
+                    }
+                }
 
-// Evento para cerrar el modal al hacer clic en el botón "Cancelar"
-$(document).on('click', '.button.is-cancel', function () {
-    cerrarModalModificar();
-});
-
-// Define la función para cerrar el modal
-window.cerrarModalModificar = function () {
-    $('#modalModificar').css('display', 'none'); // Oculta el modal
-    $('#modificarForm')[0].reset(); // Resetea los campos del formulario
-};
-
-// Evento para enviar los datos del formulario y modificar el usuario
-$(document).on('submit', '#modificarForm', function (e) {
-    e.preventDefault();
-
-    const idUsuario = $('#modificarForm').attr('action').split('/').pop(); // Obtiene el ID del usuario desde la acción del formulario
-    const nombreUsuario = $('input[name="nombreUsuarioMod"]').val().trim();
-    const numTelefono = $('input[name="numTelefonoMod"]').val().trim();
-    const fechaNacimiento = $('input[name="fechaNacimientoMod"]').val().trim();
-    const contrasena = $('input[name="contrasenaMod"]').val().trim();
-
-    // Validaciones
-    if (!/^[A-Za-z\s]+$/.test(nombreUsuario)) {
-        Swal.fire('Error', 'El nombre de usuario solo puede contener letras y espacios.', 'error');
-        return;
+                // Muestra el modal
+                $('#modalModificar').css('display', 'flex');
+                $('#modificarForm').attr('action', `/usuarios/modificar/${idUsuario}`);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al obtener datos:", error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los datos del usuario.',
+                    icon: 'error'
+                });
+            }
+        });
     }
 
-    if (!/^\d+$/.test(numTelefono)) {
-        Swal.fire('Error', 'El número de teléfono solo puede contener números.', 'error');
-        return;
-    }
+    // Evento para enviar los datos del formulario y modificar el usuario
+    $(document).on('submit', '#modificarForm', function (e) {
+        e.preventDefault();
 
-    if (!fechaNacimiento) {
-        Swal.fire('Error', 'La fecha de nacimiento es obligatoria.', 'error');
-        return;
-    }
+        const idUsuario = $('#modificarForm').attr('action').split('/').pop();
+        const nombres = $('input[name="nombresMod"]').val().trim();
+        const apellidoP = $('input[name="apellidoPMod"]').val().trim();
+        const apellidoM = $('input[name="apellidoMMod"]').val().trim();
+        const correo = $('input[name="correoMod"]').val().trim();
+        const fechaNacimiento = $('input[name="fechaNacimientoMod"]').val().trim();
 
-    if (contrasena.length < 6) {
-        Swal.fire('Error', 'La contraseña debe tener al menos 6 caracteres.', 'error');
-        return;
-    }
-
-    const datosUsuario = {
-        nombreUsuario,
-        numTelefono,
-        fechaNacimiento,
-        contrasena
-    };
-
-    // Realiza una solicitud AJAX para guardar los cambios
-    $.ajax({
-        url: `/usuarios/modificar/${idUsuario}`,
-        method: 'POST',
-        data: datosUsuario,
-        success: function () {
-            Swal.fire('Éxito', 'Usuario modificado correctamente.', 'success').then(() => {
-                location.reload(); // Recarga la página para reflejar los cambios
+        // Validaciones
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(nombres)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El nombre solo puede contener letras, acentos y espacios.',
+                icon: 'warning'
             });
-        },
-        error: function () {
-            Swal.fire('Error', 'Error al modificar el usuario.', 'error');
+            return;
         }
+
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(apellidoP)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El apellido paterno solo puede contener letras, acentos y espacios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (apellidoM && !/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]*$/.test(apellidoM)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El apellido materno solo puede contener letras, acentos y espacios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'Por favor ingrese un correo electrónico válido.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (!fechaNacimiento) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'La fecha de nacimiento es obligatoria.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        const datosUsuario = {
+            nombres,
+            apellidoP,
+            apellidoM,
+            correo,
+            fechaNacimiento
+        };
+
+        // Realiza una solicitud AJAX para guardar los cambios
+        $.ajax({
+            url: `/usuarios/modificar/${idUsuario}`,
+            method: 'POST',
+            data: datosUsuario,
+            success: function () {
+                Swal.fire({
+                    title: 'Éxito!',
+                    text: 'Usuario modificado correctamente.',
+                    icon: 'success'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al modificar:", error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al modificar el usuario.',
+                    icon: 'error'
+                });
+            }
+        });
     });
-});
 
     // ELIMINAR USUARIO //
-    // Evento para eliminar usuario con SweetAlert
-    $(document).on('click', '.btn-eliminar', function () {
+    // Evento para eliminar usuario con confirmación
+    $(document).on('click', '.btn-eliminar', function (e) {
+        e.stopPropagation(); // Evita que se propague al evento de la fila
         const idUsuario = $(this).data('id');
 
-        // Mostrar el modal de confirmación con SweetAlert
+        // Usar SweetAlert para la confirmación
         Swal.fire({
-            title: '¿Estás seguro?',
-            text: 'Esta acción no se puede deshacer',
-            icon: 'warning',
+            title: "¿Eliminar este usuario?",
+            text: "Esta acción no se puede deshacer",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-        }).then((resultado) => {
-            if (resultado.isConfirmed) {
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
                 // Realiza la solicitud AJAX para eliminar el usuario
                 $.ajax({
-                    url: `/usuarios/eliminar/${idUsuario}`, // Ruta para eliminar el usuario
+                    url: `/usuarios/eliminar/${idUsuario}`,
                     method: 'POST',
                     success: function () {
-                        Swal.fire('Eliminado', 'Usuario eliminado correctamente.', 'success').then(() => {
-                            location.reload(); // Recarga la página para reflejar los cambios
+                        Swal.fire({
+                            title: 'Eliminado!',
+                            text: 'Usuario eliminado correctamente.',
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
                         });
                     },
-                    error: function () {
-                        Swal.fire('Error', 'Error al eliminar el usuario.', 'error');
+                    error: function (xhr, status, error) {
+                        console.error("Error al eliminar:", error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Error al eliminar el usuario.',
+                            icon: 'error'
+                        });
                     }
+                });
+            }
+        });
+    });
+
+    // Evento para enviar los datos del formulario y registrar un nuevo usuario
+    $(document).on('submit', '#registrarForm', function (e) {
+        e.preventDefault();
+
+        const nombres = $('input[name="nombresReg"]').val().trim();
+        const apellidoP = $('input[name="apellidoPReg"]').val().trim();
+        const apellidoM = $('input[name="apellidoMReg"]').val().trim();
+        const correo = $('input[name="correoReg"]').val().trim();
+        const fechaNacimiento = $('input[name="fechaNacimientoReg"]').val().trim();
+
+        // Validaciones
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(nombres)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El nombre solo puede contener letras, acentos y espacios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(apellidoP)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El apellido paterno solo puede contener letras, acentos y espacios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (apellidoM && !/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]*$/.test(apellidoM)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'El apellido materno solo puede contener letras, acentos y espacios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'Por favor ingrese un correo electrónico válido.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        if (!fechaNacimiento) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'La fecha de nacimiento es obligatoria.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        const datosUsuario = {
+            nombres,
+            apellidoP,
+            apellidoM,
+            correo,
+            fechaNacimiento
+        };
+
+        // Realiza una solicitud AJAX para registrar el usuario
+        $.ajax({
+            url: '/usuarios/registrar',
+            method: 'POST',
+            data: datosUsuario,
+            success: function () {
+                Swal.fire({
+                    title: 'Éxito!',
+                    text: 'Usuario registrado correctamente.',
+                    icon: 'success'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al registrar:", error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al registrar el usuario.',
+                    icon: 'error'
                 });
             }
         });
