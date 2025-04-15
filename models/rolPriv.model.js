@@ -74,16 +74,62 @@ class Rol {
         }
     }
 
-    static fetchRolByID(IDRol){
-        return db.execute(`
-            SELECT * FROM rol
-            WHERE IDRol = ?;
-            `,
-            [IDRol]
-        )
+   // Obtener rol por ID
+    static async fetchRolByID(IDRol) {
+        try {
+            const [results] = await db.execute(`
+                SELECT * FROM rol
+                WHERE IDRol = ?
+            `, [IDRol]);
+            return results;
+        } catch (error) {
+            throw error;
+        }
+    }  
+
+    // Obtener privilegios del rol
+    static async fetchPrivilegiosPorRol(IDRol) {
+        try {
+            const [results] = await db.execute(`
+                SELECT IDPrivilegio FROM rolprivilegio
+                WHERE IDRol = ?
+            `, [IDRol]);
+            return results.map(row => row.IDPrivilegio);
+        } catch (error) {
+            throw error;
+        }
     }
 
-    
+    // Actualizar nombre del rol
+    static async editarTipo(IDRol, nuevoNombre) {
+        try {
+            const [result] = await db.execute(`
+                UPDATE rol SET TipoRol = ?
+                WHERE IDRol = ?
+            `, [nuevoNombre, IDRol]);
 
+            if (result.affectedRows === 0) {
+                throw new Error('No se pudo actualizar el nombre');
+            }
+
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    // Eliminar todos los privilegios de un rol
+    static async eliminarPrivilegios(IDRol) {
+        try {
+            const [result] = await db.execute(`
+                DELETE FROM rolprivilegio
+                WHERE IDRol = ?
+            `, [IDRol]);
+            return result;
+        } catch (error) {
+            console.error('Error al eliminar privilegios del rol:', error);
+            throw error;
+        }
+    }
 }
 module.exports = Rol;

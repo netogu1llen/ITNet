@@ -10,11 +10,11 @@ const get_roles = async (req, res) => {
 
         // Validación de contenido
         if (!roles || roles.length === 0) {
-            return res.status(404).send('No se encontraron roles');
+            return res.status(404).json({ message: 'No se encontraron roles'});
         }
 
         if (!privilegios || privilegios.length === 0) {
-            return res.status(400).json({ message: "Ya existe un rol con ese nombre." });
+            return res.status(400).json({ message: 'No se encontraron privilegios' });
         }
 
         // Renderizar vista con los datos
@@ -56,8 +56,50 @@ const post_crearRol = async (req, res) => {
   }
 };
 
+const get_rolPorId = async (req, res) => {
+    try {
+        const IDRol = req.params.id
+	const Rol = await rol.fetchRolByID(IDRol);
+	if (!IDRol) {
+           return res.status(404).json({error: 'Rol no encontrado'})
+	}
+        res.json(usuario);
+    } catch (error) {
+        console.error('Error al obtener rol por ID:', error.message);
+	res.status(500).json({ error: 'Error al obtener el rol'});
+    }
+};
+
+
 //editar rol 
+//const post_editarRol = async (req, res) => {
+//    try {
+//        let { Tipo, actividades = [] } = req.body;
+//
+//        if (!Array.isArray(actividades)) {
+//            actividades = actividades ? [actividades] : [];
+//        }
+//	try {
+//	    const yaExiste = await Rol.exist(Tipo);
+//            if (yaExiste) {
+//        	return res.status(400).send('ya existe un rol con ese nombre.');
+//	    }
+//	    const rol = UPDATE Rol(Tipo);
+//	    await rol.editarTipo(Tipo);
+//	    await rol.eliminarPrivilegios(IDRol);
+//	    await rol.save(actividades);
+//	    
+//	    res.status(201).json({message: 'Rol editado correctamente.'})
+//	} catch (error) {
+//	    console.error('Error al editar el rol', error.message);
+//	    res.status(500).jason({error: 'Error '});
+//        }
+//    }catch (error) {
+//        console.error('Error procesando la petición:', error.message);
+//	res.status(500).json({error: 'Error interno del servidor'})
+//    }
+//};
 //eliminar rol
 
-module.exports = { get_roles, post_crearRol };
+module.exports = { get_roles, post_crearRol, get_rolPorId };
 
