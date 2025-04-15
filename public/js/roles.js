@@ -67,28 +67,27 @@ $(document).ready(function () {
             actividades
         };
 
-        // Enviar datos por AJAX
-        // Enviar datos por AJAX
-        $.ajax({
-            url: '/roles/crearRol',
-            method: 'POST',
-            data: datosRol,
-            success: function (response) {  
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Rol creado correctamente.',
-                    allowOutsideClick: false
-                }).then((result) => {
-                   if (result.isConfirmed) {
-                       location.reload();
-                   }
-                });
-            },
-            error: function (xhr, status, error) {
-                Swal.fire('Error', 'Error al crear el rol: ' + (xhr.responseJSON?.message || error), 'error');
-            }
-        }); 
+       // Enviar datos por AJAX
+       $.ajax({
+        url: '/roles/crearRol',
+        method: 'POST',
+        data: datosRol,
+        success: function (response) {  
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Rol creado correctamente.',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+		    $('#rolForm')[0].reset();
+                    location.reload();
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            Swal.fire('Error', 'Error al crear el rol: ' + (xhr.responseJSON?.message || error), 'error');
+        }
+    });
     });
 });
-
