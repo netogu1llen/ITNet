@@ -28,7 +28,19 @@ class Rol {
             throw error;
         }
     }
+    
+    static async exists(Tipo) {
+        try {
+            const [results] = await db.execute(`
+                SELECT COUNT(*) as count FROM rol WHERE Tipo = ?
+            `, [Tipo]);
+            return results[0].count > 0;
+        } catch (error) {
+            throw error;
+        }
+    }
 
+    	
     //insertar rol y sacar su Id
     static async insertRol(Tipo) {
         try {

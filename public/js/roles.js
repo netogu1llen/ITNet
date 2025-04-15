@@ -68,7 +68,7 @@ $(document).ready(function () {
         };
 
        // Enviar datos por AJAX
-       $.ajax({
+    $.ajax({
         url: '/roles/crearRol',
         method: 'POST',
         data: datosRol,
@@ -86,8 +86,9 @@ $(document).ready(function () {
             });
         },
         error: function (xhr, status, error) {
-            Swal.fire('Error', 'Error al crear el rol: ' + (xhr.responseJSON?.message || error), 'error');
-        }
+            const mensaje = xhr.responseJSON?.message || xhr.responseText || 'Error desconocido';
+            Swal.fire('Error', mensaje, 'error');
+        } 
     });
-    });
+});
 });

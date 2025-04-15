@@ -15,7 +15,7 @@ const get_roles = async (req, res) => {
         }
 
         if (!privilegios || privilegios.length === 0) {
-            return res.status(404).send('No se encontraron privilegios');
+            return res.status(400).json({ message: "Ya existe un rol con ese nombre." });
         }
 
         // Renderizar vista con los datos
@@ -29,21 +29,33 @@ const get_roles = async (req, res) => {
 
 // Crear un nuevo rol y asignar privilegios
 const post_crearRol = async (req, res) => {
-    try {
-	console.log(req.body);    
-        const { Tipo, actividades = [] } = req.body;
-        if (!Array.isArray(actividades)) {
-            actividades = actividades ? [actividades] : [];
-        }
+  try {
+    console.log(req.body);
+    let { Tipo, actividades = [] } = req.body;
 
-        const rol = new Rol(Tipo);
-        await rol.save(actividades);
-
-        res.status(200).json({ message: 'Rol creado exitosamente' });
-    } catch (error) {
-        console.error('Error al crear el rol:', error.message);
-        res.status(500).json({ error: 'Error creando el rol' });
+    if (!Array.isArray(actividades)) {
+      actividades = actividades ? [actividades] : [];
     }
+
+    try {
+      const yaExiste = await Rol.exists(Tipo);
+      if (yaExiste) {
+        return res.status(400).send("Ya existe un rol con ese nombre.");
+      }
+
+      const rol = new Rol(Tipo);
+      await rol.save(actividades);
+
+      res.status(201).json({ message: 'Rol creado exitosamente' });
+    } catch (error) {
+      console.error('Error al crear el rol:', error.message);
+      res.status(500).json({ error: 'Error creando el rol' });
+    }
+
+  } catch (error) {
+    console.error('Error procesando la petición:', error.message);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 };
 
 module.exports = { get_roles, post_crearRol };
