@@ -58,5 +58,8 @@ const post_crearRol = async (req, res) => {
   }
 };
 
+//editar rol 
+//eliminar rol
+
 module.exports = { get_roles, post_crearRol };
 
