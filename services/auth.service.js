@@ -10,7 +10,7 @@
  * Utiliza Axios para llamadas HTTP y un servicio de usuarios externo.
  */
 const axios = require('axios');
-const userService = require('./user.service'); // Servicio separado para usuarios
+const userService = require('../models/auth.model'); // Servicio separado para usuarios
 const { generateToken } = require('../util/jwt'); // Utilidad para JWT
 
 class AuthService {

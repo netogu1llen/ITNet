@@ -7,7 +7,7 @@ class AuthModel {
    * @returns {Promise<Object|null>} El usuario si existe, o null si no.
    */
   static async findByEmail(email) {
-    const [result] = await db.query('SELECT * FROM usuarios WHERE correo = ?', [email]);
+    const [result] = await db.query('SELECT * FROM usuario WHERE correo = ?', [email]);
     return result.length > 0 ? result[0] : null;
   }
 }
