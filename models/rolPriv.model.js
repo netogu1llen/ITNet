@@ -124,7 +124,7 @@ class Rol {
                 UPDATE rol SET eliminado = 1
 		WHERE IDRol = ?
             `, [IDRol]);
-            return results;
+            return result;
 	} catch (error) {
             throw error;
 	}
