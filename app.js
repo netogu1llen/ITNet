@@ -62,20 +62,19 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'mySecretKey', // Usa una clave secreta desde .env
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // Cambia a true si usas HTTPS
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+      }      
 }));
 
 // Middleware para manejar variables de sesión en todas las vistas
-app.use((req, res, next) => {
-    res.locals.isLoggedIn = req.session.isLoggedIn || false;
-    res.locals.permisos = req.session.permisos || [];
-    res.locals.usuario = req.session.usuario || {};
-    next();
-});
+const loadUserFromJWT = require('./middlewares/loadUserFromJWT');
+app.use(loadUserFromJWT); // Estará disponible en todas las vistas
 
 //Rutas de auth
 const authRoutes = require('./routes/auth.routes');
-app.use('/auth', require('./routes/auth.routes'));
+app.use('/auth', authRoutes);
 
 //Rutas de rol
 const rolRoutes = require('./routes/rol.routes');
@@ -109,12 +108,6 @@ app.use('/', mainRoutes);
 
 const pdf = require('./routes/pdf.routes');
 app.use('/', pdf); 
-
-app.use((req, res, next) => {
-    res.setHeader('Content-Type', 'text/css');
-    res.setHeader('Content-Type', 'application/javascript');
-    next();
-  });
 
 // Manejo de errores 404 (Página no encontrada)
 app.use((req, res, next) => {
