@@ -19,7 +19,7 @@ $(document).ready(function () {
     });
 
     // Crear top bar personalizada
-    const logo = $('<img src="/images/rolusuario.png" alt="Logo Rol" class="dt-logo">');
+    const logo = $('<img src="/images/rol.png" alt="Logo Rol" class="dt-logo">');
     const registrarButton = $('<button class="button button-create" style="height: 30px;">Crear Rol</button>');
     const dtTopBar = $('<div id="rolesTopBar" class="dt-top-bar"></div>'); 
     dtTopBar.append(logo);
