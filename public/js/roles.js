@@ -171,7 +171,8 @@ $(document).ready(function () {
     // ELIMINAR ROL
      $(document).on('click', '.btn-eliminar', function (e) {
         e.stopPropagation(); // Evita que se propague al evento de la fila
-        
+        const idRol = $(this).data('id');
+
 	// Usar SweetAlert para la confirmación
         Swal.fire({
             title: "¿Eliminar este Rol?",
@@ -186,15 +187,16 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 // Realiza la solicitud AJAX para eliminar el usuario
                 $.ajax({
-                    url: `/usuarios/eliminar/${idRol}`,
+                    url: `/roles/eliminarRol/${idRol}`,
                     method: 'POST',
                     success: function () {
-                        Swal.fire({
+		        Swal.fire({
                             title: 'Eliminado!',
                             text: 'Rol eliminado correctamente.',
                             icon: 'success'
                         }).then(() => {
-                            location.reload();
+			    location.reload();
+			    
                         });
                     },
                     error: function (xhr, status, error) {

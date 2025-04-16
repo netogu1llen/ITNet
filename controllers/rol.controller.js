@@ -119,12 +119,12 @@ const post_editarRol = async (req, res) => {
 */
 const post_eliminarRol = async (req, res) =>{
     try {
-	const IDRol = req.body.id;
+	const IDRol = req.params.id;
 	await Rol.borradoLogico(IDRol)
-        res.status(200).json({ message: 'Usuario eliminado correctamente' });
+        res.status(200).json({ message: 'Rol eliminado correctamente' });
     } catch (error) {
-        console.error('Error al eliminar usuario:', error.message);
-        res.status(500).json({ error: 'Error al eliminar el usuario' });
+        console.error('Error al eliminar el rol:', error.message);
+        res.status(500).json({ error: 'Error al eliminar el rol' });
     }
 };
 

@@ -120,7 +120,7 @@ class Rol {
     // Borrado lógico rol
     static async borradoLogico(IDRol) {
         try {
-            const [result] = await dv.execute(`
+            const [result] = await db.execute(`
                 UPDATE rol SET eliminado = 1
 		WHERE IDRol = ?
             `, [IDRol]);
