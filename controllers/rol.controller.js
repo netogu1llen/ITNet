@@ -30,11 +30,7 @@ const get_roles = async (req, res) => {
 const post_crearRol = async (req, res) => {
     try {
         let { Tipo, actividades = [] } = req.body;
-
-        if (!Tipo || typeof Tipo !== 'string') {
-            return res.status(400).json({ error: 'Tipo de rol inválido' });
-        }
-
+      
         if (!Array.isArray(actividades)) {
             actividades = actividades ? [actividades] : [];
         }
@@ -44,8 +40,10 @@ const post_crearRol = async (req, res) => {
             return res.status(400).json({ error: 'Ya existe un rol con ese nombre.' });
         }
 
-        const nuevoRol = new Rol(Tipo);
-        await nuevoRol.save(actividades);
+        const IDRol = await Rol.insertRol(Tipo);
+
+        const instanciaRol = new Rol(Tipo);
+        await instanciaRol.assignPrivileges(IDRol, actividades);
 
         res.status(201).json({ message: 'Rol creado exitosamente' });
 
@@ -96,7 +94,12 @@ const post_editarRol = async (req, res) => {
         if (!rolExistente) {
             return res.status(404).json({ error: 'El rol no existe' });
         }
-
+        
+	const yaExiste = await Rol.exists(Tipo);
+	if (yaExiste && rolExistente.Tipo !== Tipo) {
+            return res.status(400).json({ error: 'Ya existe un rol con ese nombre.' });
+        }
+	
         await Rol.editarTipo(IDRol, Tipo);
         await Rol.eliminarPrivilegios(IDRol);
 

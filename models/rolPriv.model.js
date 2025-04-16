@@ -63,16 +63,6 @@ class Rol {
         return Promise.all(promises);
     }
 
-    async save(actividades) {
-        try {
-            const IDRol = await Rol.insertRol(this.Tipo);
-            await this.assignPrivileges(IDRol, actividades);
-        } catch (error) {
-            console.error('Error guardando rol y privilegios:', error.message);
-            throw error;
-        }
-    }
-
     // Obtener rol por ID
     static async fetchRolByID(IDRol) {
         try {
