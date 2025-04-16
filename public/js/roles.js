@@ -2,6 +2,7 @@ $(document).ready(function () {
     // Inicializar DataTable
     const table = $('#rolTable').DataTable({
         language: {
+	    emptyTable: "No hay datos disponibles en la tabla",
             info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
             infoEmpty: "No hay registros disponibles",
             infoFiltered: "(filtrado de _MAX_ registros en total)",
