@@ -1,16 +1,5 @@
 <%- include('partials/head') %>
 <body>
-    <!-- Botón de inicio/cierre de sesión en la parte superior derecha -->
-    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
-      <% if (!usuario) { %>  <!-- Verifica si el usuario NO está autenticado -->
-          <a href="/login" class="button is-small is-primary">Iniciar sesión</a>
-      <% } else { %>  <!-- Si el usuario está autenticado -->
-          <form action="/logout" method="POST" style="display: inline;">
-              <button class="button is-small is-danger">Cerrar sesión</button>
-          </form>
-      <% } %>
-  </div>  
-
     <main class="home-container">
         <div class="tercios-container">
             <!-- Primer y segundo tercio (combinados) -->
