@@ -1,24 +1,35 @@
 <%- include('partials/head') %>
 <body>
+    <!-- Botón de inicio/cierre de sesión en la parte superior derecha -->
+<div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+        <% if (usuario) { %>
+          <a href="/login" class="button is-small is-primary">Iniciar sesión</a>
+          <% } else { %>
+              <form action="/logout" method="POST" style="display: inline;">
+                  <button class="button is-small is-danger">Cerrar sesión</button>
+              </form>
+          <% } %>
+      </div>
+
     <main class="home-container">
         <div class="tercios-container">
-          <!-- Primer y segundo tercio (combinados) -->
-          <div class="first-second-fragment">
-            <div class="title-container">
-              <h1 class="title-soffy">Soffy</h1>
-              <h1 class="title-app">app</h1>
-              <p class="subtitle">Gestión eficiente y segura de expedientes y seguimientos para Fundación Soffy</p>
-              <button class="download-button">DESCARGAR SOFFYAPP</button>
+            <!-- Primer y segundo tercio (combinados) -->
+            <div class="first-second-fragment">
+                <div class="title-container">
+                    <h1 class="title-soffy">Soffy</h1>
+                    <h1 class="title-app">app</h1>
+                    <p class="subtitle">Gestión eficiente y segura de expedientes y seguimientos para Fundación Soffy</p>
+                    <button class="download-button">DESCARGAR SOFFYAPP</button>
+                </div>
+                <div class="semicircle"></div>
             </div>
-            <div class="semicircle"></div>
-          </div>
-          
-          <!-- Tercer tercio -->
-          <div class="third-fragment">
-            <div class="image-container">
-              <img src="/images/PORTADA.png" alt="Soffy App" class="image">
+
+            <!-- Tercer tercio -->
+            <div class="third-fragment">
+                <div class="image-container">
+                    <img src="/images/PORTADA.png" alt="Soffy App" class="image">
+                </div>
             </div>
-          </div>
         </div>
-      </main>
-  </body>
+    </main>
+</body>
