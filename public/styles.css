@@ -310,6 +310,12 @@ body {
     margin: 3px 0 0 0;
   }
 
+  .soffy-logo {
+    width: 350px; 
+    height: auto;  
+    margin-top: 300px;
+  }
+
   .subtitle {
     font-family: 'Encode Sans', sans-serif;
     font-size: 1.2rem;
