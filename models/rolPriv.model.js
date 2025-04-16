@@ -10,6 +10,7 @@ class Rol {
         try {
             const [results] = await db.execute(`
                 SELECT * FROM rol
+		WHERE eliminado is NULL or eliminado = 0;
             `);
             return results;
         } catch (error) {
@@ -96,11 +97,6 @@ class Rol {
                 UPDATE rol SET Tipo = ?
                 WHERE IDRol = ?
             `, [nuevoNombre, IDRol]);
-
-            if (result.affectedRows === 0) {
-                throw new Error('No se pudo actualizar el nombre del rol');
-            }
-
             return true;
         } catch (error) {
             throw error;
@@ -120,7 +116,19 @@ class Rol {
             throw error;
         }
     }
-}
 
+    // Borrado lógico rol
+    static async borradoLogico(IDRol) {
+        try {
+            const [result] = await db.execute(`
+                UPDATE rol SET eliminado = 1
+		WHERE IDRol = ?
+            `, [IDRol]);
+            return result;
+	} catch (error) {
+            throw error;
+	}
+    }
+}
 module.exports = Rol;
 

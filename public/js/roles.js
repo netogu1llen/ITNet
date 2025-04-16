@@ -167,5 +167,49 @@ $(document).ready(function () {
             }
         });
     });
+
+    // ELIMINAR ROL
+     $(document).on('click', '.btn-eliminar', function (e) {
+        e.stopPropagation(); // Evita que se propague al evento de la fila
+        const idRol = $(this).data('id');
+
+	// Usar SweetAlert para la confirmación
+        Swal.fire({
+            title: "¿Eliminar este Rol?",
+            text: "Esta acción no se puede deshacer",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Realiza la solicitud AJAX para eliminar el usuario
+                $.ajax({
+                    url: `/roles/eliminarRol/${idRol}`,
+                    method: 'POST',
+                    success: function () {
+		        Swal.fire({
+                            title: 'Eliminado!',
+                            text: 'Rol eliminado correctamente.',
+                            icon: 'success'
+                        }).then(() => {
+			    location.reload();
+			    
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error al eliminar:", error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Error al eliminar el rol.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
+    });
 });
 
