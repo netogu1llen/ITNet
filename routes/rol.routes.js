@@ -11,6 +11,6 @@ router.post('/crearRol', rolController.post_crearRol);
 
 router.get('/editarRol/:id', rolController.get_rolPorId);
 
-//router.post('/editarRol', rolController,post_editarRol);
+router.post('/editarRol/:id', rolController.post_editarRol);
 
 module.exports = router;

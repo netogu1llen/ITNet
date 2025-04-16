@@ -16,17 +16,13 @@
         <thead>
           <tr>
             <th>Rol</th>
-            <th>Modificar</th>
             <th>Eliminar</th>
           </tr>
         </thead>
         <tbody>
           <% roles.forEach(rol => { %>
-            <tr>
+            <tr class="rol-fila" data-id="<%= rol.IDRol %>" style="cursor: pointer;">
               <td><%= rol.Tipo %></td>
-              <td>
-                <button class="button is-small is-info btn-modificar" data-id="<%= rol.IDRol %>">Modificar</button>
-              </td>
               <td>
                 <button class="button is-small is-danger btn-eliminar" data-id="<%= rol.IDRol %>">Eliminar</button>
               </td>
@@ -90,6 +86,57 @@
     <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
       <button type="button" class="button is-cancel">Cancelar</button>
       <button type="submit" form="rolForm" class="button is-save">Crear Rol</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal de Editar Rol -->
+<div id="modalEditarRol" class="modal" style="display: none; z-index: 1050;">
+  <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
+
+  <div class="modal-card" style="width: 600px; max-height: 580px; overflow-y: auto;">
+    <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
+      <button class="delete" aria-label="close"></button>
+    </header>
+
+    <section class="modal-card-body" style="text-align: center;">
+      <div style="margin-bottom: 20px;">
+        <img src="/images/rolusuario.png" alt="Icono Rol" style="width: 100px; height: 100px;">
+      </div>
+      <h1 class="title" style="margin-bottom: 30px;">Modificar Rol</h1>
+
+      <!-- Formulario de edición de rol -->
+      <form id="editarRolForm" method="post">
+        <!-- Campo oculto con ID del rol -->
+        <input type="hidden" id="editarIDRol" name="IDRol">
+
+        <!-- Nombre del rol -->
+        <div class="field">
+          <label class="label" for="editarNombreRol">Nombre del rol</label>
+          <div class="control">
+            <input id="editarNombreRol" name="Tipo" class="input" type="text" placeholder="Empleado" required>
+          </div>
+        </div>
+
+        <!-- Actividades -->
+        <div class="field" style="text-align: left;">
+          <label class="label">Actividades</label>
+          <div class="control">
+            <% for (let privilegio of privilegios) { %>
+              <label class="checkbox">
+                <input type="checkbox" name="actividades[]" value="<%= privilegio.IDPrivilegio %>">
+                <%= privilegio.Actividad %>
+              </label>
+              <br>
+            <% } %>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
+      <button type="button" class="button is-cancel">Cancelar</button>
+      <button type="submit" form="editarRolForm" class="button is-save">Modificar Rol</button>
     </footer>
   </div>
 </div>

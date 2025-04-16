@@ -9,7 +9,7 @@ class Rol {
     static async fetchRoles() {
         try {
             const [results] = await db.execute(`
-                SELECT Tipo FROM rol
+                SELECT * FROM rol
             `);
             return results;
         } catch (error) {
@@ -40,17 +40,16 @@ class Rol {
         }
     }
 
-    	
     //insertar rol y sacar su Id
     static async insertRol(Tipo) {
         try {
             const [result] = await db.execute(`
                 INSERT INTO rol (Tipo) VALUES (?)
-	    `, [Tipo]);
-	     return result.insertId;
-	} catch (error) {
+            `, [Tipo]);
+            return result.insertId;
+        } catch (error) {
             throw error;
-	} 
+        } 
     }
 
     //insertar privilegios asociados al rol
@@ -69,19 +68,19 @@ class Rol {
             const IDRol = await Rol.insertRol(this.Tipo);
             await this.assignPrivileges(IDRol, actividades);
         } catch (error) {
-            console.error('Error guardando rol y privilegios:', error);
+            console.error('Error guardando rol y privilegios:', error.message);
             throw error;
         }
     }
 
-   // Obtener rol por ID
+    // Obtener rol por ID
     static async fetchRolByID(IDRol) {
         try {
             const [results] = await db.execute(`
                 SELECT * FROM rol
                 WHERE IDRol = ?
             `, [IDRol]);
-            return results;
+            return results[0];
         } catch (error) {
             throw error;
         }
@@ -91,7 +90,7 @@ class Rol {
     static async fetchPrivilegiosPorRol(IDRol) {
         try {
             const [results] = await db.execute(`
-                SELECT IDPrivilegio FROM rolprivilegio
+                SELECT IDPrivilegio FROM rolPrivilegios
                 WHERE IDRol = ?
             `, [IDRol]);
             return results.map(row => row.IDPrivilegio);
@@ -104,12 +103,12 @@ class Rol {
     static async editarTipo(IDRol, nuevoNombre) {
         try {
             const [result] = await db.execute(`
-                UPDATE rol SET TipoRol = ?
+                UPDATE rol SET Tipo = ?
                 WHERE IDRol = ?
             `, [nuevoNombre, IDRol]);
 
             if (result.affectedRows === 0) {
-                throw new Error('No se pudo actualizar el nombre');
+                throw new Error('No se pudo actualizar el nombre del rol');
             }
 
             return true;
@@ -122,14 +121,16 @@ class Rol {
     static async eliminarPrivilegios(IDRol) {
         try {
             const [result] = await db.execute(`
-                DELETE FROM rolprivilegio
+                DELETE FROM rolPrivilegios
                 WHERE IDRol = ?
             `, [IDRol]);
             return result;
         } catch (error) {
-            console.error('Error al eliminar privilegios del rol:', error);
+            console.error('Error al eliminar privilegios del rol:', error.message);
             throw error;
         }
     }
 }
+
 module.exports = Rol;
+
