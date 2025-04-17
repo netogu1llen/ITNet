@@ -141,9 +141,6 @@ exports.descargarDocumento = async (req, res) => {
               { seguimiento, actividades, expediente }
           );
 
-          // Solo para debug, puede eliminarse si ya todo funciona bien
-          fs.writeFileSync(path.join(__dirname, '../temp_output.html'), html);
-
           const browser = await puppeteer.launch();
           const page = await browser.newPage();
           await page.emulateMediaType('screen');
