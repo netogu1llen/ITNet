@@ -24,6 +24,14 @@ exports.googleAuthInit = (req, res) => {
  * @param {Function} next - Función para pasar errores al middleware.
  */
 exports.googleCallback = async (req, res, next) => {
+  const { code, error: googleError } = req.query;
+
+  if (googleError) {
+    // El usuario canceló el login en la ventana de Google
+    const mensaje = 'Autenticación cancelada. Por favor intenta nuevamente.';
+    return res.redirect(`/login?error=${encodeURIComponent(mensaje)}`);
+  }
+
   try {
     const { code } = req.query;
 
@@ -46,9 +54,16 @@ exports.googleCallback = async (req, res, next) => {
     }).redirect('/');
     
   } catch (error) {
-    if (error.message.includes('no está registrado')) {
-      return res.status(403).send('Tu cuenta no tiene acceso. Contacta al administrador.');
-    }
+    console.error('Error durante autenticación:', error.message);
+    console.error(error.stack); // Opcional: para debug más detallado
+
+    // Mensaje específico si el error es por usuario no registrado
+    const mensaje = error.message.includes('no está registrado')
+      ? error.message
+      : 'Ocurrió un error durante el inicio de sesión. Intenta de nuevo.';
+
+    // Redirigir siempre al login con el mensaje de error
+    return res.redirect(`/login?error=${encodeURIComponent(mensaje)}`);
 
     next(error); // Otros errores se mandan al middleware
   }

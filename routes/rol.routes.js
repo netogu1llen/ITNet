@@ -9,4 +9,10 @@ router.get('/', rolController.get_roles);
 
 router.post('/crearRol', rolController.post_crearRol);
 
+router.get('/editarRol/:id', rolController.get_rolPorId);
+
+router.post('/editarRol/:id', rolController.post_editarRol);
+
+router.post('/eliminarRol/:id', rolController.post_eliminarRol);
+
 module.exports = router;

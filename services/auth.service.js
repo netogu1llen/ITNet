@@ -10,8 +10,8 @@
  * Utiliza Axios para llamadas HTTP y un servicio de usuarios externo.
  */
 const axios = require('axios');
-const userService = require('./user.service'); // Servicio separado para usuarios
-const { generateToken } = require('../util/jwt'); // Utilidad para JWT
+const userService = require('../models/auth.model'); // Servicio separado para usuarios
+const { generateUserToken } = require('../util/jwt'); // Utilidad para JWT
 
 class AuthService {
   constructor() {
@@ -116,7 +116,7 @@ class AuthService {
     }
   
     // Genera token JWT con datos esenciales
-    return generateToken({
+    return generateUserToken({
       userId: user.id, // ID interno de la aplicación
       email: user.email // Email verificado por Google
     });
