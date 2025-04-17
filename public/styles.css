@@ -472,8 +472,8 @@ font-weight: 500;
 
 
 /*Centrar el contenido de la tabla de alumnos*/
-#alumnosTable td,
-#alumnosTable th {
+#alumnos-table td,
+#alumnos-table th {
   text-align: center;
   vertical-align: middle;
 }
