@@ -24,6 +24,14 @@ exports.googleAuthInit = (req, res) => {
  * @param {Function} next - Función para pasar errores al middleware.
  */
 exports.googleCallback = async (req, res, next) => {
+  const { code, error: googleError } = req.query;
+
+  if (googleError) {
+    // El usuario canceló el login en la ventana de Google
+    const mensaje = 'Autenticación cancelada. Por favor intenta nuevamente.';
+    return res.redirect(`/login?error=${encodeURIComponent(mensaje)}`);
+  }
+
   try {
     const { code } = req.query;
 
