@@ -21,7 +21,7 @@ exports.getAlumnos = async () => {
         LIMIT 1
       ) AS periodoEscolar,
       e.grado,
-      e.curso
+      e.nvEscolar
     FROM expediente e
     WHERE e.eliminado = 0
   `);
