@@ -48,7 +48,7 @@ exports.googleCallback = async (req, res, next) => {
   } catch (error) {
     if (error.message.includes('no está registrado')) {
       console.error('Error durante autenticación:', error.message);
-      res.redirect(`/login?error=${encodeURIComponent(error.message)}`);
+      return res.redirect(`/login?error=${encodeURIComponent(error.message)}`);
     }
 
     next(error); // Otros errores se mandan al middleware
