@@ -1,0 +1,151 @@
+<%- include('partials/head') %>
+<!-- Campo oculto para almacenar el IDExpediente -->
+<input type="hidden" id="IDExpediente" value="<%= expediente.IDExpediente %>">
+<body>
+    <div class="gray-container">
+        <div class="head-container">
+            <div class="head-title">
+                <img src="/images/icono_psicologia.png" alt="Icono Salud">
+                SEGUIMIENTO PSICOLÓGICO
+            </div>
+              <div class="buttons-container">
+                <button class="button is-save" id="btn-registrar">
+                    Guardar
+                </button>
+                <button class="button is-cancel" id="btn-cancelar">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+            <div class="full-white-container">
+                <div class="full-white-container">
+                <div class="element-container-gray">
+                    <div class="multirow-container">
+                        <div class="basic-black" > 1. SEGUIMIENTO PSICOLÓGICO</div>
+                    </div>
+                </div>
+                <div>
+                <!-- Información General del Expediente (estructura similar a expedientePsicologico) -->
+                <!-- Primera fila: 4 elementos -->
+                <div class="multirow-container">
+                    <div class="element-container">
+                        <div class="basic-gray">Nombre Completo</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.nombreCompleto || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray">Número de Expediente</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.numExpediente || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray">Fecha de Nacimiento</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.fechaNacimiento ? new Date(expediente.fechaNacimiento).toLocaleDateString() : 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray">Contacto</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.contacto || 'Sin dato' %></div>
+                    </div>
+                </div>
+                
+                <!-- Segunda fila: 4 elementos -->
+                <div class="multirow-container">
+                    <div class="element-container">
+                        <div class="basic-gray">Ubicación</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.ubicacion || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray">Domicilio</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.domicilio || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray">Grado</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.grado || 'Sin dato' %></div>
+                    </div>
+                    <div class="element-container">
+                        <div class="basic-gray">Nivel Escolar</div>
+                        <br>
+                        <div class="basic-black"><%= expediente.curso || 'Sin dato' %></div>
+                    </div>
+                </div>
+                
+                <br>
+                <div class="basic-gray">Objetivo de la sesion:</div>
+                <div class="multirow-form-container">
+                    <textarea name="objetivoSesion" id="objetivoSesion" required rows="4" required></textarea>
+                </div>
+                <div class="basic-gray">Justificacion de la sesion:</div>
+                <div class="multirow-form-container">
+                    <textarea name="justificacionSesion" id="justificacionSesion" required rows="4" required></textarea>
+                </div>
+                <table class="multirow-table">
+                    <thead>
+                        <tr>
+                            <th>Actividad</th>
+                            <th>Tiempo</th>
+                            <th>Metodología</th>
+                            <th>Objetivo</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table">
+                        <tr>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="actividad[]" id= "actividad[]" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="tiempo[]" id= "tiempo[]" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="metodologia[]" id= "metodologia[]" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="objetivo[]" id= "objetivo[]" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="multirow-form-container">
+                                    <textarea name="observaciones[]" id= "observaciones[]" required rows="4" required></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="button is-cancel" id="btn-eliminar-fila type="button">-</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <button id="btn-agregar-fila" class="button is-save">
+                    ＋
+                </button>
+
+                <div class="basic-gray">Analisis psicológico:</div>
+                <div class="multirow-form-container">
+                    <textarea name="analisisPsicologico" id="analisisPsicologico" required rows="4" required></textarea>
+                </div>
+                <div class="basic-gray">Recomendaciones:</div>
+                <div class="multirow-form-container">
+                    <textarea name="recomendaciones" id="recomendaciones" required rows="4" required></textarea>
+                </div>
+                <div class="basic-gray">Bitácora de sesión:</div>
+                <div class="multirow-form-container">
+                    <textarea name="bitacora" id="bitacora" required rows="4" required></textarea>
+                </div>
+            </div>
+            </div>
+    </div>
+    <script src="/js/psicologia.js"></script>
+</body>
+</html>

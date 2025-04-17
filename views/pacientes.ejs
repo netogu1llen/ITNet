@@ -1,78 +1,44 @@
 <%- include('partials/head') %>
+<link rel="stylesheet" href="/styles.css">
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agregar Nuevo Paciente</title>
-  <link rel="stylesheet" href="estilos.css">
-</head>
-<body>
+<section class="section">
   <div class="container">
-    <h1>Agregar Nuevo Paciente</h1>
-    <form class="formulario">
-      <div class="fila">
-        <div class="campo">
-          <label>Nombre del Paciente</label>
-          <input type="text" placeholder="Nombre(s)">
-        </div>
-        <div class="campo">
-            <label>Sexo</label>
-            <select>
-              <option value="">Selecciona una opción</option>
-              <option value="masculino">Masculino</option>
-              <option value="femenino">Femenino</option>
-            </select>
-          </div>
-          
-      </div>
+    <h1 class="title">Pacientes</h1>
 
-      <div class="fila">
-        <div class="campo">
-          <label>Apellido Paterno</label>
-          <input type="text" placeholder="Apellido Paterno">
-        </div>
-        <div class="campo">
-          <label>Lugar de Residencia</label>
-          <input type="text" placeholder="Lugar de Residencia">
-        </div>
-      </div>
+    <!-- Contenedor para la barra superior -->
+    <div id="pacientesTopBar" class="dt-top-bar">
+      <!-- La imagen, el selector de registros, la barra de búsqueda y el botón de registrar se agregarán dinámicamente desde pacientes.js -->
+    </div>
 
-      <div class="fila">
-        <div class="campo">
-          <label>Apellido Materno</label>
-          <input type="text" placeholder="Apellido Materno">
-        </div>
-        <div class="campo">
-          <label>Escuela</label>
-          <input type="text" placeholder="Nombre de Escuela">
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Fecha de Nacimiento</label>
-          <input type="date">
-        </div>
-        <div class="campo">
-          <label>Grado</label>
-          <input type="text" placeholder="Grado Escolar">
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo subir-foto">
-          <label for="foto">Subir Fotografía</label>
-          <input type="file" id="foto">
-        </div>
-      </div>
-
-      <div class="botones">
-        <button type="submit" class="guardar">Guardar</button>
-        <button type="button" class="cancelar">Cancelar</button>
-      </div>
-    </form>
+    <!-- Tabla -->
+    <div style="width: 100%; height: 900px;">
+      <table id="pacientesTable" class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th>Nombre Completo</th>
+            <th>Fecha de Nacimiento</th>
+            <th>Padecimiento</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% pacientes.forEach(paciente => { %>
+            <tr class="fila-paciente" data-id="<%= paciente.IDExpediente %>">
+              <td><%= paciente.nombreCompleto %></td>
+              <td><%= paciente.fechaNacimiento %></td>
+              <td><%= paciente.enfermedades || 'Sin padecimientos registrados' %></td>
+              <td>
+                <button class="button is-small is-danger btn-eliminar" data-id="<%= paciente.IDExpediente %>">Eliminar</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
   </div>
-</body>
-</html>
+</section>
+
+<!-- Scripts -->
+<script src="/vendor/jquery-3.6.0.min.js"></script>
+<script src="/vendor/jquery.dataTables.min.js"></script>
+<script src="/js/pacientes.js"></script>

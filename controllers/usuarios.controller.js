@@ -1,10 +1,10 @@
-const Usuario = require('../models/usuarios.model'); // Asegúrate de tener un modelo para usuarios
+const Usuario = require('../models/usuarios.model');
 
 // Obtener los datos de los usuarios
 const obtenerUsuarios = async (req, res) => {
     try {
-        const usuarios = await Usuario.obtenerTodos(); // Método del modelo para obtener todos los usuarios
-        res.render('usuarios', { usuarios }); // Renderiza la vista y pasa los datos
+        const usuarios = await Usuario.obtenerTodos();
+        res.render('usuarios', { usuarios });
     } catch (error) {
         console.error('Error al obtener usuarios:', error.message);
         res.status(500).send('Error al obtener los usuarios');
@@ -14,24 +14,23 @@ const obtenerUsuarios = async (req, res) => {
 // Obtener un usuario por ID
 const obtenerUsuarioPorId = async (req, res) => {
     try {
-        const idUsuario = req.params.id; // Obtén el ID del usuario desde la URL
-        const usuario = await Usuario.obtenerPorId(idUsuario); // Llama al modelo para obtener los datos del usuario
+        const idUsuario = req.params.id;
+        const usuario = await Usuario.obtenerPorId(idUsuario);
         if (!usuario) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
-        res.json(usuario); // Devuelve los datos del usuario en formato JSON
+        res.json(usuario);
     } catch (error) {
         console.error('Error al obtener usuario por ID:', error.message);
         res.status(500).json({ error: 'Error al obtener el usuario' });
     }
 };
 
-
 // Registrar un nuevo usuario
 const registrarUsuario = async (req, res) => {
     try {
-        const { nombreUsuario, numTelefono, fechaNacimiento, contrasena } = req.body;
-        await Usuario.registrar({ nombreUsuario, numTelefono, fechaNacimiento, contrasena });
+        const { nombres, apellidoP, apellidoM, correo, fechaNacimiento } = req.body;
+        await Usuario.registrar({ nombres, apellidoP, apellidoM, correo, fechaNacimiento });
         res.status(201).json({ message: 'Usuario registrado correctamente' });
     } catch (error) {
         console.error('Error al registrar usuario:', error.message);
@@ -42,9 +41,9 @@ const registrarUsuario = async (req, res) => {
 // Modificar un usuario existente
 const modificarUsuario = async (req, res) => {
     try {
-        const idUsuario = req.params.id; // ID dinámico desde la URL
-        const { nombreUsuario, numTelefono, fechaNacimiento, contrasena } = req.body;
-        await Usuario.modificar(idUsuario, { nombreUsuario, numTelefono, fechaNacimiento, contrasena });
+        const idUsuario = req.params.id;
+        const { nombres, apellidoP, apellidoM, correo, fechaNacimiento } = req.body;
+        await Usuario.modificar(idUsuario, { nombres, apellidoP, apellidoM, correo, fechaNacimiento });
         res.status(200).json({ message: 'Usuario modificado correctamente' });
     } catch (error) {
         console.error('Error al modificar usuario:', error.message);
@@ -55,7 +54,7 @@ const modificarUsuario = async (req, res) => {
 // Eliminar un usuario
 const eliminarUsuario = async (req, res) => {
     try {
-        const idUsuario = req.params.id; // ID dinámico desde la URL
+        const idUsuario = req.params.id;
         await Usuario.eliminar(idUsuario);
         res.status(200).json({ message: 'Usuario eliminado correctamente' });
     } catch (error) {

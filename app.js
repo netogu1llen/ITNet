@@ -12,15 +12,18 @@ const jwtSecret = process.env.JWT_SECRET; // Para firmar y verificar JWT
 const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
 
 const app = express();
-app.use('/node_modules', express.static('node_modules'));
-
-app.use('/node_modules', express.static('node_modules'));
 
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", 'https://apis.google.com', 'https://accounts.google.com', "'unsafe-eval'"],
+            scriptSrc: [
+                "'self'", 
+                'https://apis.google.com', 
+                'https://accounts.google.com', 
+                'https://cdn.jsdelivr.net',  // Added this
+                "'unsafe-eval'"
+            ],
             styleSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com', "'unsafe-inline'"],
             imgSrc: ["'self'", 'https://www.google.com'],
             fontSrc: ["'self'", 'https://fonts.gstatic.com'],
@@ -59,35 +62,45 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'mySecretKey', // Usa una clave secreta desde .env
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // Cambia a true si usas HTTPS
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+      }      
 }));
 
 // Middleware para manejar variables de sesión en todas las vistas
-app.use((req, res, next) => {
-    res.locals.isLoggedIn = req.session.isLoggedIn || false;
-    res.locals.permisos = req.session.permisos || [];
-    res.locals.usuario = req.session.usuario || {};
-    next();
-});
+const loadUserFromJWT = require('./middlewares/loadUserFromJWT');
+app.use(loadUserFromJWT); // Estará disponible en todas las vistas
+
+//Rutas de auth
+const authRoutes = require('./routes/auth.routes');
+app.use('/auth', authRoutes);
+
+//Rutas de rol
+const rolRoutes = require('./routes/rol.routes');
+app.use('/roles', rolRoutes);
 
 // Rutas de usuario
 const usuarioRoutes = require('./routes/usuario.routes');
 app.use('/usuario', usuarioRoutes);
 
-// Rutas de usuarios (PLURAL)
-const usuariosRoutes = require('./routes/usuarios.routes');
-app.use('/usuarios', usuariosRoutes);
+// Rutas de psicologia
+const psicologiaRoutes = require('./routes/psicologia.routes');
+app.use('/psicologia', psicologiaRoutes);
 
 // Rutas de nutrición
 const nutricionRoutes = require('./routes/nutricion.routes');
 app.use('/nutricion', nutricionRoutes);
 
-// Rutas de psicologia
-const psicologiaRoutes = require('./routes/psicologia.routes');
-app.use('/psicologia', psicologiaRoutes);
-// Rutas de educación
+// Rutas de usuarios (PLURAL)
+const usuariosRoutes = require('./routes/usuarios.routes');
+app.use('/usuarios', usuariosRoutes);
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
+// Rutas de pacientes
+const pacientesRoutes = require('./routes/pacientes.routes');
+app.use('/pacientes', pacientesRoutes);
+
 
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');
@@ -95,12 +108,6 @@ app.use('/', mainRoutes);
 
 const pdf = require('./routes/pdf.routes');
 app.use('/', pdf); 
-
-app.use((req, res, next) => {
-    res.setHeader('Content-Type', 'text/css');
-    res.setHeader('Content-Type', 'application/javascript');
-    next();
-  });
 
 // Manejo de errores 404 (Página no encontrada)
 app.use((req, res, next) => {

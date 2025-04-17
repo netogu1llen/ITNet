@@ -1,5 +1,5 @@
 const authService = require('../services/auth.service');
-const { generateUserToken } = require('../../../utils/jwt');
+const { generateUserToken } = require('../util/jwt');
 
 /**
  * Inicia el flujo de autenticación con Google OAuth.
@@ -26,27 +26,31 @@ exports.googleAuthInit = (req, res) => {
 exports.googleCallback = async (req, res, next) => {
   try {
     const { code } = req.query;
-    
+
     // 1. Autenticación con Google
     const googleUser = await authService.authenticateWithGoogle(code);
-    
-    // 2. Gestionar usuario localmente
-    const localUser = await authService.findOrCreateUser(googleUser);
-    
-    // 3. Generar token JWT (sin info de autorización todavía)
+
+    // 2. Validar que el usuario esté registrado en la BD
+    const localUser = await authService.handleGoogleUser(googleUser);
+
+    // 3. Generar token JWT
     const token = generateUserToken({
       id: localUser.id,
       email: localUser.email
     });
-    
-    // 4. Establecer cookie o enviar token
+
+    // 4. Establecer cookie y redirigir
     res.cookie('jwt', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Solo en producción
-    }).redirect('/');    
+      secure: process.env.NODE_ENV === 'production',
+    }).redirect('/');
     
   } catch (error) {
-    next(error); // Pasa el error al middleware de errores
+    if (error.message.includes('no está registrado')) {
+      return res.status(403).send('Tu cuenta no tiene acceso. Contacta al administrador.');
+    }
+
+    next(error); // Otros errores se mandan al middleware
   }
 };
 
