@@ -20,4 +20,7 @@ router.get('/', nutricionController.obtenerHistoriales);
 // Eliminar un historial
 router.post('/eliminar/:id', nutricionController.eliminarHistorial);
 
+// Expediente nutricional (ahora recibe el ID como parámetro de consulta)
+router.get('/expediente', nutricionController.getExpedienteNutricion);
+
 module.exports = router;
