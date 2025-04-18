@@ -125,6 +125,38 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
                 });
                 return;
             }
+            // Validar que contacto tenga solo 10 números
+            const contactoRegex = /^[0-9]{10}$/;
+            if (!contactoRegex.test(contacto)) {
+            Swal.fire({
+            title: "Contacto inválido",
+            text: "El número de contacto debe tener exactamente 10 dígitos numéricos.",
+            icon: "error"
+            });
+            return;
+            }
+            // Validar que codigo postal tenga solo 5 números
+            const cpRegex = /^[0-9]{5}$/;
+            if (!cpRegex.test(cp)) {
+            Swal.fire({
+            title: "Contacto inválido",
+            text: "El número de codigo postal debe tener exactamente 5 dígitos numéricos.",
+            icon: "error"
+            });
+            return;
+            }
+
+            // Validar que fecha de nacimiento no sea mayor a hoy
+            const fechaHoy = new Date().toISOString().split("T")[0];
+            if (fechaNacimiento > fechaHoy) {
+            Swal.fire({
+            title: "Fecha inválida",
+            text: "La fecha de nacimiento no puede ser posterior a hoy.",
+            icon: "error"
+            });
+            return;
+            }
+
 
             // Crear objeto con los datos a enviar
             const datos = {
@@ -147,7 +179,6 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
                 nvEscolar,
                 sangre
             };
-            console.log(datos);
             // Llamar a la función para enviar los datos
             enviarPost(`/pacientes/registrar`, { accion: "registro", datos: datos });
         }
@@ -172,3 +203,63 @@ document.getElementById('btn-cancelar').addEventListener('click', function() {
         }
     });
 });
+
+const nvEscolarSelect = document.getElementById("nvEscolar");
+const gradoSelect = document.getElementById("grado");
+
+const todosLosGrados = [
+"1°", "2°", "3°", "4°", "5°", "6°"
+];
+
+function actualizarGrados() {
+const nivel = nvEscolarSelect.value;
+
+// Guardar valor previamente seleccionado, si existe
+const valorSeleccionado = gradoSelect.value;
+
+// Determinar hasta qué grado mostrar
+const maxGrado = (nivel === "Preescolar" || nivel === "Secundaria") ? 3 : 6;
+
+// Limpiar opciones anteriores
+gradoSelect.innerHTML = '<option value="">Seleccione un grado</option>';
+
+// Agregar opciones según el nivel
+for (let i = 1; i <= maxGrado; i++) {
+    const grado = `${i}°`;
+    const option = document.createElement("option");
+    option.value = grado;
+    option.textContent = grado;
+    
+    // Restaurar selección previa si aún es válida
+    if (valorSeleccionado === grado) {
+    option.selected = true;
+    }
+
+    gradoSelect.appendChild(option);
+}
+}
+
+document.getElementById("contacto").addEventListener("input", function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+document.getElementById("cp").addEventListener("input", function () {
+this.value = this.value.replace(/[^0-9]/g, '');
+});
+document.getElementById("numCasa").addEventListener("input", function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+    });
+// Escuchar cambios
+nvEscolarSelect.addEventListener("change", actualizarGrados);
+
+window.addEventListener("DOMContentLoaded", () => {
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    const fechaLocal = `${yyyy}-${mm}-${dd}`;
+    document.getElementById("fechaNacimiento").max = fechaLocal;
+
+    // Actualizar opciones de grado según nivel escolar
+    actualizarGrados();
+  });
+  

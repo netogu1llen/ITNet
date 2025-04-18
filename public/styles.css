@@ -619,7 +619,9 @@ font-weight: 500;
   resize: none; /* Evita que el usuario cambie el tamaño del textarea */
 }
 .multirow-form-container input[type="text"],
+.multirow-form-container input[type="input"],
 .multirow-form-container select,
+.multirow-form-container input[type="tel"],
 .multirow-form-container input[type="date"]{
   width: 100%; /* Ocupa todo el ancho */
   padding: 10px; /* Espaciado interno */
