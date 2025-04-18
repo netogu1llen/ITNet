@@ -19,19 +19,86 @@ $(document).ready(function () {
 
     // Crear la barra superior personalizada
     const logo = $('<img src="/images/usuarios.png" alt="Logo Usuarios" class="dt-logo">');
-    const registrarButton = $('<button class="button button-create" style="height: 30px;">Registrar Usuario</button>');
+    const rolesButton = $('<button class="button button-roles button-create" style="height: 30px;">Roles</button>');
+    const registrarButton = $('<button class="button button-registrar button-create" style="height: 30px; margin-left: 10px;">Registrar Usuario</button>');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
 
-    // Agregar elementos a la barra superior
+    // Agregar elementos a la barra superior (ahora roles va primero)
     dtTopBar.append(logo);
     $('.dataTables_length').appendTo(dtTopBar);
     $('.dataTables_filter').appendTo(dtTopBar);
     $('.dataTables_wrapper').prepend(dtTopBar);
+    dtTopBar.append(rolesButton);
     dtTopBar.append(registrarButton);
 
+    // Evento para cambiar rol desde el dropdown en la tabla
+    $(document).on('change', '.select-rol', function(e) {
+        e.stopPropagation(); // Evitar que se propague al evento de la fila
+        
+        const idUsuario = $(this).data('id');
+        const idRol = $(this).val();
+        
+        $.ajax({
+            url: `/usuarios/cambiar-rol/${idUsuario}`,
+            method: 'POST',
+            data: { idRol },
+            success: function() {
+                Swal.fire({
+                    title: 'Éxito!',
+                    text: 'Rol actualizado correctamente.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al cambiar rol:", error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar el rol del usuario.',
+                    icon: 'error'
+                });
+                // Revertir la selección en caso de error
+                location.reload();
+            }
+        });
+    });
+
+    // Evento para redirigir a la página de roles - usando button-roles
+    $(document).on('click', '.button-roles', function() {
+        window.location.href = '/roles';
+    });
+
+     // Configurar fecha máxima para el input de fecha (18 años atrás)
+     const hoy = new Date();
+     const fechaMinima = new Date(hoy.getFullYear() - 100, hoy.getMonth(), hoy.getDate()).toISOString().split('T')[0];
+     const fechaMaxima = new Date(hoy.getFullYear() - 18, hoy.getMonth(), hoy.getDate()).toISOString().split('T')[0];
+     
+     $('input[name="fechaNacimientoReg"], input[name="fechaNacimientoMod"]').attr('max', fechaMaxima);
+     $('input[name="fechaNacimientoReg"], input[name="fechaNacimientoMod"]').attr('min', fechaMinima);
+     
+     // Función para verificar si un correo ya existe en la base de datos
+     function verificarCorreoExistente(correo, idUsuario = null) {
+         return new Promise((resolve, reject) => {
+             $.ajax({
+                 url: '/usuarios/verificar-correo',
+                 method: 'POST',
+                 data: { correo, idUsuario },
+                 success: function(response) {
+                     resolve(response.existe);
+                 },
+                 error: function(error) {
+                     console.error("Error al verificar correo:", error);
+                     reject(error);
+                 }
+             });
+         });
+     }
+
+
     // REGISTRAR USUARIO //
-    // Evento para abrir el modal de registrar usuario
-    $(document).on('click', '.button-create', function () {
+    // Evento para abrir el modal de registrar usuario - usando button-registrar
+    $(document).on('click', '.button-registrar', function () {
         $('#modalRegistrar').css('display', 'flex');
     });
 
@@ -45,8 +112,8 @@ $(document).ready(function () {
     // MODIFICAR USUARIO //
     // Evento para hacer clickeable toda la fila (excepto botones)
     $(document).on('click', '.usuario-fila', function(e) {
-        // Si se hizo clic en un botón dentro de la fila, no activar este evento
-        if ($(e.target).is('button') || $(e.target).closest('button').length) {
+        // Si se hizo clic en un botón, select o cualquier elemento dentro de ellos, no activar este evento
+        if ($(e.target).is('button, select') || $(e.target).closest('button, select').length) {
             return;
         }
         
@@ -76,6 +143,13 @@ $(document).ready(function () {
                 $('input[name="apellidoPMod"]').val(usuario.apellidoP || '');
                 $('input[name="apellidoMMod"]').val(usuario.apellidoM || '');
                 $('input[name="correoMod"]').val(usuario.correo || '');
+
+                // Establecer el rol si existe
+                if (usuario.idRol) {
+                    $('select[name="idRolMod"]').val(usuario.idRol);
+                } else {
+                    $('select[name="idRolMod"]').val("0");
+                }
                 
                 // Formatear la fecha correctamente para el input date
                 if (usuario.fechaNacimiento) {
@@ -108,7 +182,7 @@ $(document).ready(function () {
         });
     }
 
-    // Evento para enviar los datos del formulario y modificar el usuario
+    // Modificar el evento de submit del formulario de modificación (similar al de registro)
     $(document).on('submit', '#modificarForm', function (e) {
         e.preventDefault();
 
@@ -118,7 +192,28 @@ $(document).ready(function () {
         const apellidoM = $('input[name="apellidoMMod"]').val().trim();
         const correo = $('input[name="correoMod"]').val().trim();
         const fechaNacimiento = $('input[name="fechaNacimientoMod"]').val().trim();
+        const idRol = $('select[name="idRolMod"]').val();
 
+        // Validar campos obligatorios
+        if (!nombres || !apellidoP || !apellidoM || !correo || !fechaNacimiento) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'Todos los campos son obligatorios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        // Validar longitud máxima
+        if (nombres.length > 100 || apellidoP.length > 60 || 
+            (apellidoM && apellidoM.length > 60) || correo.length > 50) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'Uno o más campos exceden la longitud permitida.',
+                icon: 'warning'
+            });
+            return;
+        }
         // Validaciones
         if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(nombres)) {
             Swal.fire({
@@ -165,38 +260,60 @@ $(document).ready(function () {
             return;
         }
 
-        const datosUsuario = {
-            nombres,
-            apellidoP,
-            apellidoM,
-            correo,
-            fechaNacimiento
-        };
+        // Verificar correo único (excepto si es el mismo usuario)
+        verificarCorreoExistente(correo, idUsuario)
+            .then(existe => {
+                if (existe) {
+                    Swal.fire({
+                        title: 'Validación',
+                        text: 'Este correo electrónico ya está registrado para otro usuario.',
+                        icon: 'warning'
+                    });
+                } else {
+                    // Continuar con la modificación si el correo es único
+                    const datosUsuario = {
+                        nombres,
+                        apellidoP,
+                        apellidoM,
+                        correo,
+                        fechaNacimiento,
+                        idRol
+                    };
 
-        // Realiza una solicitud AJAX para guardar los cambios
-        $.ajax({
-            url: `/usuarios/modificar/${idUsuario}`,
-            method: 'POST',
-            data: datosUsuario,
-            success: function () {
-                Swal.fire({
-                    title: 'Éxito!',
-                    text: 'Usuario modificado correctamente.',
-                    icon: 'success'
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error("Error al modificar:", error);
+                    $.ajax({
+                        url: `/usuarios/modificar/${idUsuario}`,
+                        method: 'POST',
+                        data: datosUsuario,
+                        success: function () {
+                            Swal.fire({
+                                title: 'Éxito!',
+                                text: 'Usuario modificado correctamente.',
+                                icon: 'success'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error al modificar:", error);
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Error al modificar el usuario: ' + (xhr.responseJSON?.error || error),
+                                icon: 'error'
+                            });
+                        }
+                    });
+                }
+            })
+            .catch(error => {
                 Swal.fire({
                     title: 'Error',
-                    text: 'Error al modificar el usuario.',
+                    text: 'Error al verificar el correo. Inténtelo de nuevo.',
                     icon: 'error'
                 });
-            }
-        });
+            });
     });
+    
+
 
     // ELIMINAR USUARIO //
     // Evento para eliminar usuario con confirmación
@@ -242,7 +359,7 @@ $(document).ready(function () {
         });
     });
 
-    // Evento para enviar los datos del formulario y registrar un nuevo usuario
+    // Modificar el evento de submit del formulario de registro
     $(document).on('submit', '#registrarForm', function (e) {
         e.preventDefault();
 
@@ -251,7 +368,28 @@ $(document).ready(function () {
         const apellidoM = $('input[name="apellidoMReg"]').val().trim();
         const correo = $('input[name="correoReg"]').val().trim();
         const fechaNacimiento = $('input[name="fechaNacimientoReg"]').val().trim();
+        const idRol = $('select[name="idRolReg"]').val();
 
+        // Validar campos obligatorios
+        if (!nombres || !apellidoP || !apellidoM || !correo || !fechaNacimiento) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'Todos los campos son obligatorios.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        // Validar longitud máxima
+        if (nombres.length > 100 || apellidoP.length > 60 || 
+            (apellidoM && apellidoM.length > 60) || correo.length > 50) {
+            Swal.fire({
+                title: 'Validación',
+                text: 'Uno o más campos exceden la longitud permitida.',
+                icon: 'warning'
+            });
+            return;
+        }
         // Validaciones
         if (!/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/.test(nombres)) {
             Swal.fire({
@@ -298,36 +436,57 @@ $(document).ready(function () {
             return;
         }
 
-        const datosUsuario = {
-            nombres,
-            apellidoP,
-            apellidoM,
-            correo,
-            fechaNacimiento
-        };
+        // Verificar correo único antes de enviar
+        verificarCorreoExistente(correo)
+            .then(existe => {
+                if (existe) {
+                    Swal.fire({
+                        title: 'Validación',
+                        text: 'Este correo electrónico ya está registrado. Por favor use otro.',
+                        icon: 'warning'
+                    });
+                } else {
+                    // Si el correo no existe, proceder con el registro
+                    const datosUsuario = {
+                        nombres,
+                        apellidoP,
+                        apellidoM,
+                        correo,
+                        fechaNacimiento,
+                        idRol
+                    };
 
-        // Realiza una solicitud AJAX para registrar el usuario
-        $.ajax({
-            url: '/usuarios/registrar',
-            method: 'POST',
-            data: datosUsuario,
-            success: function () {
-                Swal.fire({
-                    title: 'Éxito!',
-                    text: 'Usuario registrado correctamente.',
-                    icon: 'success'
-                }).then(() => {
-                    location.reload();
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error("Error al registrar:", error);
+                    // Enviar datos al servidor
+                    $.ajax({
+                        url: '/usuarios/registrar',
+                        method: 'POST',
+                        data: datosUsuario,
+                        success: function () {
+                            Swal.fire({
+                                title: 'Éxito!',
+                                text: 'Usuario registrado correctamente.',
+                                icon: 'success'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error al registrar:", error);
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Error al registrar el usuario: ' + (xhr.responseJSON?.error || error),
+                                icon: 'error'
+                            });
+                        }
+                    });
+                }
+            })
+            .catch(error => {
                 Swal.fire({
                     title: 'Error',
-                    text: 'Error al registrar el usuario.',
+                    text: 'Error al verificar el correo. Inténtelo de nuevo.',
                     icon: 'error'
                 });
-            }
-        });
+            });
     });
 });

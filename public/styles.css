@@ -689,3 +689,50 @@ font-weight: 500;
   width: auto;
   max-width: 400px;
 }
+
+
+
+/* ==================== Usuarios ==================== */
+/* Estilos para el selector de rol en la tabla de usuarios */
+.select-rol-container {
+  position: relative;
+  display: inline-block;
+  width: auto;
+  max-width: 120px;
+}
+
+.select-rol {
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid #dbdbdb;
+  padding: 0 25px 0 8px;
+  background-color: white;
+  font-size: 0.85rem;
+  width: 100%;
+  cursor: pointer;
+  /* Eliminamos los controles nativos */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Agregamos la flecha al contenedor en lugar del select */
+.select-rol-container::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #333;
+  pointer-events: none;
+}
+
+.select-rol:focus {
+  outline: none;
+  border-color: #3273dc;
+  box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
+}

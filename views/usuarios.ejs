@@ -34,7 +34,16 @@
                   Sin fecha
                 <% } %>
               </td>
-              <td><%= usuario.rol || 'Sin rol' %></td>
+              <td>
+                <div class="select-rol-container">
+                  <select class="select-rol" data-id="<%= usuario.IDUsuario %>">
+                    <option value="0">Sin rol</option>
+                    <% roles.forEach(rol => { %>
+                      <option value="<%= rol.IDRol %>" <%= usuario.rol === rol.Tipo ? 'selected' : '' %>><%= rol.Tipo %></option>
+                    <% }) %>
+                  </select>
+                </div>
+              </td>
               <td>
                 <button class="button is-small is-danger btn-eliminar" data-id="<%= usuario.IDUsuario %>">Eliminar</button>
               </td>
@@ -117,7 +126,22 @@
               <div class="field">
                 <label class="label">Correo:</label>
                 <div class="control">
-                    <input class="input" type="email" name="correoMod" maxlength="50" required title="Ingrese un correo electrónico válido">
+                  <input class="input" type="email" name="correoMod" maxlength="50" required title="Ingrese un correo electrónico válido">
+                </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label">Rol:</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="idRolMod">
+                      <option value="0">Sin rol</option>
+                      <% roles.forEach(rol => { %>
+                        <option value="<%= rol.IDRol %>"><%= rol.Tipo %></option>
+                      <% }) %>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -197,14 +221,30 @@
               </div>
             </div>
           </div>
-          
           <div class="columns">
             <!-- Columna: Correo -->
             <div class="column">
               <div class="field">
                 <label class="label">Correo:</label>
                 <div class="control">
-                    <input class="input" type="email" name="correoReg" maxlength="50" required title="Ingrese un correo electrónico válido">
+                  <input class="input" type="email" name="correoReg" maxlength="50" required title="Ingrese un correo electrónico válido">
+                </div>
+              </div>
+            </div>
+            
+            <!-- Columna: Rol -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Rol:</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="idRolReg">
+                      <option value="0">Sin rol</option>
+                      <% roles.forEach(rol => { %>
+                        <option value="<%= rol.IDRol %>"><%= rol.Tipo %></option>
+                      <% }) %>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
