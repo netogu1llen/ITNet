@@ -17,4 +17,9 @@ router.post('/modificar/:id', usuariosController.modificarUsuario);
 // Ruta para eliminar un usuario (requiere ID dinámico)
 router.post('/eliminar/:id', usuariosController.eliminarUsuario);
 
+router.post('/verificar-correo', usuariosController.verificarCorreoExistente);
+
+// Ruta para cambiar el rol de un usuario
+router.post('/cambiar-rol/:id', usuariosController.cambiarRolUsuario);
+
 module.exports = router;
