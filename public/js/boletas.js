@@ -3,7 +3,7 @@ $(document).ready(function () {
   const table = $('#boletasTable').DataTable({
     language: {
       info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-      infoEmpty: 'No hay registros disponibles',
+      infoEmpty: '',
       infoFiltered: '(filtrado de _MAX_ registros en total)',
       paginate: { previous: 'Anterior', next: 'Siguiente' },
       lengthMenu: 'Mostrar _MENU_ registros por página',
@@ -47,6 +47,19 @@ $(document).ready(function () {
       $('#tablaMateriasModificar tbody').empty();
     }
   });
+
+  // Filtrar materias mientras se escribe
+  // Filtrar materias mientras se escribe
+  $('#busquedaMaterias').on('keyup', function () {
+    const filtro = $(this).val().toLowerCase();
+
+  $('#tablaMateriasDisponibles tbody tr').each(function () {
+    const texto = $(this).text().toLowerCase();
+    $(this).toggle(texto.includes(filtro));
+    });
+  });
+
+
 
   // Agregar materias seleccionadas al modal de registro
   $(document).on('change', '.checkMateria', function () {

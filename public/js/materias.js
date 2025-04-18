@@ -3,7 +3,7 @@ $(document).ready(function () {
   const table = $('#materiasTable').DataTable({
     language: {
       info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-      infoEmpty: 'No hay registros disponibles',
+      infoEmpty: '',
       infoFiltered: '(filtrado de _MAX_ registros en total)',
       paginate: {
         previous: 'Anterior',
