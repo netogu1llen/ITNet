@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const usuariosController = require('../controllers/usuarios.controller');
 
+const canConsultarUsuarios = require('../util/can-consultarUsuarios');
+const canRegistrarUsuario = require('../util/can-registrarUsuario');
+const canEditarUsuario = require('../util/can-editarUsuario');
+const canEliminarUsuarios = require('../util/can-eliminarUsuario');
+
 // Ruta para obtener los datos de los usuarios (raíz del módulo)
 router.get('/', usuariosController.obtenerUsuarios);
 
