@@ -518,6 +518,12 @@ font-weight: 500;
   vertical-align: middle;
 }
 
+#documentosTable td,
+#documentosTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+
 /* ==================== CONTENEDORES PARA FORMULARIOS ==================== */
 
 
@@ -745,6 +751,57 @@ font-weight: 500;
   box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
 }
 
+
+/* ==================== EXPEDIENTE NUTRICIONAL ==================== */
+
+  /* Estilos para asegurar la misma altura en los contenedores */
+  .row-equal-height {
+    display: flex;
+    margin: 0;
+    width: 100%;
+  }
+  
+  .row-equal-height .column {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .row-equal-height .full-white-container {
+    flex-grow: 1;
+    height: 100%;
+  }
+  
+  /* Espacio entre filas */
+  .row-container {
+    margin-bottom: 16px;
+  }
+  
+  /* Evitar que el contenido se desborde */
+  .content-scroll {
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  
+  /* Estilo para la barra de desplazamiento */
+  .content-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .content-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .content-scroll::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .content-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
 /* Altura estándar para el contenedor principal en vistas */
 .exp-psicologico-wide.fixed-height {
   height: 900px;
@@ -754,3 +811,4 @@ font-weight: 500;
 section.section {
   min-height: 100vh;
 }
+
