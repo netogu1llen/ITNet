@@ -3,50 +3,47 @@
 
 <section class="section">
   <div class="container">
-
-    <!-- Título principal -->
     <h1 class="title is-4">
       Boletas de <strong><%= nombreAlumno %></strong>
     </h1>
 
-    <!-- Tabla -->
-    <div class="full-white-container exp-psicologico-wide">
-      <div style="width: 100%; height: auto;">
-        <table id="boletasTable" class="table is-striped is-hoverable is-fullwidth">
-          <thead>
-            <tr>
-              <th>Periodo</th>
-              <th>Promedio</th>
-              <th>Grado</th>
-              <th>Curso</th>
-              <th>Eliminar</th>
+    <div id="TopBar" class="dt-top-bar exp-psicologico-wide"></div>
+
+    <div class="exp-psicologico-wide fixed-height">
+      <table id="boletasTable" class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th class="has-text-centered">Periodo</th>
+            <th class="has-text-centered">Promedio</th>
+            <th class="has-text-centered">Grado</th>
+            <th class="has-text-centered">Curso</th>
+            <th class="has-text-centered">Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% boletas.forEach(b => { %>
+            <tr data-id="<%= b.IDBoleta %>" class="clickable-row">
+              <td><%= b.periodoEscolar %></td>
+              <td><%= b.promedio %></td>
+              <td><%= b.grado %></td>
+              <td><%= b.nvEscolar %></td>
+              <td>
+                <button class="button is-small is-danger btn-eliminar" data-id="<%= b.IDBoleta %>">
+                  Eliminar
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            <% boletas.forEach(b => { %>
-              <tr data-id="<%= b.IDBoleta %>" class="clickable-row">
-                <td><%= b.periodoEscolar %></td>
-                <td><%= b.promedio %></td>
-                <td><%= b.grado %></td>
-                <td><%= b.nvEscolar %></td>
-                <td>
-                  <button class="button is-small is-danger btn-eliminar" data-id="<%= b.IDBoleta %>">
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
+          <% }) %>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
 
-<!-- Modal Registrar Boleta -->
-<div id="modalRegistrarBoleta" class="modal" style="display: none;">
+<!-- MODAL REGISTRAR -->
+<div id="modalRegistrarBoleta" class="modal">
   <div class="modal-background"></div>
-  <div class="modal-card" style="width: 700px;">
+  <div class="modal-card" style="width: 800px;">
     <header class="modal-card-head">
       <p class="modal-card-title">Registrar Boleta</p>
       <button class="delete" aria-label="close"></button>
@@ -58,7 +55,7 @@
         <div class="field">
           <label class="label">Periodo Escolar</label>
           <div class="control">
-            <input class="input" type="text" name="periodoEscolar" placeholder="Ej. 2024-2025" required>
+            <input class="input" type="text" name="periodoEscolar" required>
           </div>
         </div>
 
@@ -77,11 +74,14 @@
           </div>
           <div class="column">
             <p class="has-text-weight-semibold">Materias disponibles</p>
+            <input class="input is-small" type="text" id="busquedaMaterias" placeholder="Buscar materia...">
             <table class="table is-fullwidth" id="tablaMateriasDisponibles">
               <thead>
                 <tr>
                   <th>Seleccionar</th>
                   <th>Materia</th>
+                  <th>Grado</th>
+                  <th>Nivel Escolar</th>
                 </tr>
               </thead>
               <tbody>
@@ -91,6 +91,8 @@
                       <input type="checkbox" class="checkMateria" value="<%= m.IDMateria %>" data-nombre="<%= m.materia %>">
                     </td>
                     <td><%= m.materia %></td>
+                    <td><%= m.grado %></td>
+                    <td><%= m.nvEscolar %></td>
                   </tr>
                 <% }) %>
               </tbody>
@@ -106,10 +108,10 @@
   </div>
 </div>
 
-<!-- Modal Modificar Boleta -->
-<div id="modalModificarBoleta" class="modal" style="display: none;">
+<!-- MODAL MODIFICAR -->
+<div id="modalModificarBoleta" class="modal">
   <div class="modal-background"></div>
-  <div class="modal-card" style="width: 700px;">
+  <div class="modal-card" style="width: 800px;">
     <header class="modal-card-head">
       <p class="modal-card-title">Modificar Boleta</p>
       <button class="delete" aria-label="close"></button>
@@ -123,15 +125,46 @@
             <input class="input" type="text" name="periodoEscolar" required>
           </div>
         </div>
-        <table class="table is-fullwidth" id="tablaMateriasModificar">
-          <thead>
-            <tr>
-              <th>Materia</th>
-              <th>Calificación</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <div class="columns">
+          <div class="column">
+            <p class="has-text-weight-semibold">Materias seleccionadas</p>
+            <table class="table is-fullwidth" id="tablaMateriasModificar">
+              <thead>
+                <tr>
+                  <th>Materia</th>
+                  <th>Calificación</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="column">
+            <p class="has-text-weight-semibold">Materias disponibles</p>
+            <input class="input is-small" type="text" id="busquedaMateriasModificar" placeholder="Buscar materia...">
+            <table class="table is-fullwidth" id="tablaMateriasDisponiblesModificar">
+              <thead>
+                <tr>
+                  <th>Seleccionar</th>
+                  <th>Materia</th>
+                  <th>Grado</th>
+                  <th>Nivel Escolar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% materias.forEach(m => { %>
+                  <tr>
+                    <td>
+                      <input type="checkbox" class="checkMateriaModificar" value="<%= m.IDMateria %>" data-nombre="<%= m.materia %>">
+                    </td>
+                    <td><%= m.materia %></td>
+                    <td><%= m.grado %></td>
+                    <td><%= m.nvEscolar %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </form>
     </section>
     <footer class="modal-card-foot">

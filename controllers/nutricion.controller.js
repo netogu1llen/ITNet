@@ -57,6 +57,7 @@ exports.obtenerHistoriales = async (req, res) => {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');
   }
+
 };
 
 // Eliminar un paciente
@@ -176,3 +177,4 @@ function calcularEdad(fechaNacimiento) {
     return 'No disponible';
   }
 }
+

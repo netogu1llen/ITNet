@@ -802,4 +802,13 @@ font-weight: 500;
     background: #555;
   }
 
-  
+/* Altura estándar para el contenedor principal en vistas */
+.exp-psicologico-wide.fixed-height {
+  height: 900px;
+}
+
+/* Asegura que las secciones ocupen mínimo el alto de la pantalla */
+section.section {
+  min-height: 100vh;
+}
+
