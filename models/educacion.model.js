@@ -106,7 +106,7 @@ exports.obtenerBoletasPorExpediente = async (IDExpediente) => {
       b.IDBoleta,
       b.periodoEscolar,
       e.grado,
-      e.curso,
+      e.nvEscolar,
       ROUND(AVG(bm.calificacion), 1) AS promedio
     FROM boleta b
     JOIN expediente e ON b.IDExpediente = e.IDExpediente
