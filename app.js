@@ -80,10 +80,6 @@ app.use('/auth', authRoutes);
 const rolRoutes = require('./routes/rol.routes');
 app.use('/roles', rolRoutes);
 
-// Rutas de usuario
-const usuarioRoutes = require('./routes/usuario.routes');
-app.use('/usuario', usuarioRoutes);
-
 // Rutas de psicologia
 const psicologiaRoutes = require('./routes/psicologia.routes');
 app.use('/psicologia', psicologiaRoutes);
@@ -92,22 +88,20 @@ app.use('/psicologia', psicologiaRoutes);
 const nutricionRoutes = require('./routes/nutricion.routes');
 app.use('/nutricion', nutricionRoutes);
 
-// Rutas de usuarios (PLURAL)
+// Rutas de usuarios
 const usuariosRoutes = require('./routes/usuarios.routes');
 app.use('/usuarios', usuariosRoutes);
+
 const educacionRoutes = require('./routes/educacion.routes');
 app.use('/educacion', educacionRoutes);
+
 // Rutas de pacientes
 const pacientesRoutes = require('./routes/pacientes.routes');
 app.use('/pacientes', pacientesRoutes);
 
-
 // Rutas principaless
 const mainRoutes = require('./routes/main.routes');
 app.use('/', mainRoutes);
-
-const pdf = require('./routes/pdf.routes');
-app.use('/', pdf); 
 
 // Manejo de errores 404 (Página no encontrada)
 app.use((req, res, next) => {

@@ -1,5 +1,14 @@
 const express = require('express');
 const router = express.Router();
+
+const canVerExpediente = require('../util/can-verExpediente');
+const canGenerarPdf = require('../util/can-generarPdf');
+const canDescargarPdf = require('../util/can-descargarPdf');
+const canConsultarExpedientePsicologico = require('../util/can-consultarExpedientePsicologico');
+const canRegistrarSeguimiento = require('../util/can-registrarSeguimiento');
+const canEditarSeguimiento = require('../util/can-editarSeguimiento');
+const canEliminarSeguimiento = require('../util/can-eliminarSeguimiento');
+
 const psicologiaController = require('../controllers/psicologia.controller');
 
 // Ruta para obtener todos los expedientes
