@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/nutricion.controller');
+const nutricionController = require('../controllers/nutricion.controller');
 
-router.get('/', controller.renderNutricionView);
-router.get('/data', controller.getNutricionData);
+// Ruta para obtener la vista y los historiales clínicos
+router.get('/', nutricionController.obtenerHistoriales);
 
-// Ruta para la vista de planes alimenticios
-router.get('/planes-alimenticios', controller.renderPlanesAlimenticios);
-// Ruta para obtener los datos de planes alimenticios
-router.get('/planes-alimenticios/data', controller.getPlanesAlimenticiosData);
+// Obtener un historial por ID para modificar
+router.get('/modificar/:id', nutricionController.obtenerHistorialPorId);
+
+// Modificar un historial
+router.post('/modificar/:id', nutricionController.modificarHistorial);
+
+
 
 module.exports = router;

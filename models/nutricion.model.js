@@ -1,52 +1,49 @@
-const mockData = [
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-  { id: 1, nombre: 'Jonathan Dario Guillen', fecha: '12 de Marzo de 2025' },
-  { id: 2, nombre: 'Camila Rojas', fecha: '10 de Marzo de 2025' },
-  { id: 3, nombre: 'Luis Ruiz', fecha: '08 de Marzo de 2025' },
-    
-  ];
-  
-  function getAllHistoriales() {
-    return mockData;
-  }
-    
-const planesAlimenticiosMock = [
-  { id: 1, nombre: 'Paciente Uno', fecha: '2025-03-01' },
-  { id: 2, nombre: 'Paciente Dos', fecha: '2025-03-05' },
-  { id: 3, nombre: 'Paciente Tres', fecha: '2025-03-10' }
-];
+const db = require('../util/database');
 
-function getAllPlanesAlimenticios() {
-  return planesAlimenticiosMock;
+class Nutricion {
+    // Obtener todos los historiales clínicos (relación usuario-expediente)
+    static async obtenerTodos() {
+        try {
+            const [rows] = await db.execute(`
+                SELECT ue.IDConsulta, ue.numSesion, ue.fecha,
+                       e.nombres, e.apellidoP, e.apellidoM
+                FROM usuarioExpediente ue
+                INNER JOIN expediente e ON ue.IDExpediente = e.IDExpediente
+                WHERE e.eliminado = 0
+            `);
+            return rows;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Obtener historial por ID para cargar en el modal de modificación
+    static async obtenerPorId(idConsulta) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT ue.IDConsulta, ue.IDExpediente, ue.numSesion, ue.fecha
+                FROM usuarioExpediente ue
+                WHERE ue.IDConsulta = ?
+            `, [idConsulta]);
+            return rows[0]; // Devuelve el primer resultado
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Modificar un historial clínico
+    static async modificar(idConsulta, { numSesion, fecha }) {
+        try {
+            const [result] = await db.execute(`
+                UPDATE usuarioExpediente
+                SET numSesion = ?, fecha = ?
+                WHERE IDConsulta = ?
+            `, [numSesion, fecha, idConsulta]);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
-module.exports = {
-  getAllHistoriales,
-  getAllPlanesAlimenticios
-};
+module.exports = Nutricion;

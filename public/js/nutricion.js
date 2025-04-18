@@ -1,35 +1,4 @@
 $(document).ready(function () {
-<<<<<<< HEAD
-    $('#nutricionTable2').DataTable({
-      ajax: '/nutricion/expediente/data',
-      language: {
-        url: "/js/dataTablesLang/es-ES.json"
-      },
-      columns: [
-        { data: 'noSesion', title: 'No. Sesión' }, // Asegúrate de que las claves coincidan con las del backend
-        { data: 'fecha', title: 'Fecha' },
-        {
-          data: null,
-          render: function () {
-            return '<button class="button is-small is-light"><i class="fas fa-download"></i></button>';
-          }
-        },
-        {
-          data: null,
-          render: function () {
-            return '<button class="button is-small is-info">Modificar</button>';
-          }
-        },
-        {
-          data: null,
-          render: function () {
-            return '<button class="button is-small is-danger">Eliminar</button>';
-          }
-        }
-      ]
-    });
-  });
-=======
   const table = $('#nutricionTable').DataTable({
     language: {
       info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
@@ -40,49 +9,61 @@ $(document).ready(function () {
         next: "Siguiente"
       },
       lengthMenu: "Mostrar _MENU_ registros por página",
-      search: "Buscar usuario:"
+      search: "Buscar paciente:"
     },
     ajax: '/nutricion/data',
     columns: [
-      { data: 'nombre' },
+      { data: 'nombrePaciente' },
+      { data: 'numSesion' },
       { data: 'fecha' },
       {
-        data: null,
-        render: function () {
-          return '<button class="button is-small is-light">⬇️</button>';
+        data: 'id',
+        render: function (data) {
+          return `<a class="button is-small is-light" href="/descargar/${data}">⬇️</a>`;
         }
       },
       {
-        data: null,
-        render: function () {
-          return '<button class="button is-small is-info">Modificar</button>';
+        data: 'id',
+        render: function (data) {
+          return `<button class="button is-small is-info btn-modificar" data-id="${data}">Modificar</button>`;
         }
       },
       {
-        data: null,
-        render: function () {
-          return '<button class="button is-small is-danger">Eliminar</button>';
+        data: 'id',
+        render: function (data) {
+          return `<button class="button is-small is-danger btn-eliminar" data-id="${data}">Eliminar</button>`;
         }
       }
     ]
   });
-  //ADICIONALES A LA TABLA//
 
+  // TopBar
   const logo = $('<img src="/images/manzana.png" alt="Logo" class="dt-logo">');
   const dtTopBar = $('<div class="dt-top-bar"></div>');
-
-  // Agregar logo y mover controles
   dtTopBar.append(logo);
   $('.dataTables_length').appendTo(dtTopBar);
   $('.dataTables_filter').appendTo(dtTopBar);
+  $('#nutricionTopBar').append(dtTopBar);
 
-  // Insertar la barra justo dentro del wrapper, antes de la tabla
-  $('.dataTables_wrapper').prepend(dtTopBar);
-  
-  //Botones
-  const btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar paciente</button>');
+  // Botón registrar que redirige a otra ruta
+  const btnRegistrar = $('<a href="/historiaClinica" class="button is-success is-small">Registrar paciente</a>');
   dtTopBar.append(btnRegistrar);
 
+  // Abrir modal de modificar y rellenar
+  $(document).on('click', '.btn-modificar', function () {
+    const rowData = table.row($(this).closest('tr')).data();
 
+    $('#idConsulta').val(rowData.id);
+    $('#numSesionMod').val(rowData.numSesion);
+    $('#fechaMod').val(rowData.fecha);
+
+    $('#modalModificar').addClass('is-active').show();
+  });
+
+  // Cerrar modal al hacer clic en X, fondo o botón cancelar
+  $(document).on('click', '.modal .delete, .modal .is-cancel, .modal-background', function () {
+    $(this).closest('.modal').removeClass('is-active').hide();
+  });
+
+  // Puedes agregar aquí las funciones AJAX para enviar los formularios si quieres
 });
->>>>>>> develop
