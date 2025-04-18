@@ -1,6 +1,8 @@
 const Pacientes = require('../models/pacientes.model');
 const { encrypt, decrypt } = require('../util/encryptData');
 
+// Modificar el método getPacientes para usar nvEscolar en lugar de enfermedades
+
 const getPacientes = async (req, res) => {
   try {
     const pacientes = await Pacientes.obtenerTodos();
@@ -14,7 +16,7 @@ const getPacientes = async (req, res) => {
             IDExpediente: paciente.IDExpediente,
             nombreCompleto: '[Datos incompletos]',
             fechaNacimiento: '[Fecha no disponible]',
-            enfermedades: paciente.enfermedades || 'Sin información'
+            nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
           };
         }
         
@@ -37,7 +39,7 @@ const getPacientes = async (req, res) => {
           IDExpediente: paciente.IDExpediente,
           nombreCompleto: `${nombres} ${apellidoP} ${apellidoM}`.trim(),
           fechaNacimiento: fechaNacimiento,
-          enfermedades: paciente.enfermedades || 'Sin información'
+          nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
         };
       } catch (error) {
         console.error(`Error al desencriptar paciente ID ${paciente.IDExpediente}:`, error);
@@ -46,7 +48,7 @@ const getPacientes = async (req, res) => {
           IDExpediente: paciente.IDExpediente,
           nombreCompleto: '[Error en datos]',
           fechaNacimiento: '[Error en fecha]',
-          enfermedades: paciente.enfermedades || 'Sin información'
+          nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
         };
       }
     });

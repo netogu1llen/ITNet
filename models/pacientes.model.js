@@ -197,19 +197,19 @@ class Pacientes {
     }
   }
 
-  // Obtener todos los pacientes (excluyendo los eliminados)
-  static async obtenerTodos() {
-    try {
-        const [results] = await db.execute(`
-            SELECT IDExpediente, nombres, apellidoP, apellidoM, fechaNacimiento, enfermedades
-            FROM expediente
-            WHERE eliminado IS NULL OR eliminado = 0
-        `);
-        return results;
-    } catch (error) {
-        throw error;
-    }
+// Obtener todos los pacientes (excluyendo los eliminados)
+static async obtenerTodos() {
+  try {
+      const [results] = await db.execute(`
+          SELECT IDExpediente, nombres, apellidoP, apellidoM, fechaNacimiento, nvEscolar
+          FROM expediente
+          WHERE eliminado IS NULL OR eliminado = 0
+      `);
+      return results;
+  } catch (error) {
+      throw error;
   }
+}
 }
 
 module.exports = Pacientes;

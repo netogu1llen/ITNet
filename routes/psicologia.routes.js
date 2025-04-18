@@ -11,6 +11,9 @@ const canEliminarSeguimiento = require('../util/can-eliminarSeguimiento');
 
 const psicologiaController = require('../controllers/psicologia.controller');
 
+// Ruta para obtener todos los expedientes
+router.get('/', psicologiaController.getPacientesPsicologia);
+
 // Ruta para obtener documentos por expediente
 router.get('/documentos/:idExpediente', psicologiaController.obtenerDocumentosPorExpediente);
 
