@@ -744,3 +744,13 @@ font-weight: 500;
   border-color: #3273dc;
   box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
 }
+
+/* Altura estándar para el contenedor principal en vistas */
+.exp-psicologico-wide.fixed-height {
+  height: 900px;
+}
+
+/* Asegura que las secciones ocupen mínimo el alto de la pantalla */
+section.section {
+  min-height: 100vh;
+}

@@ -16,15 +16,12 @@ $(document).ready(function () {
   // Barra superior con logo y botones
   const $logo = $('<img src="/images/boletas.png" alt="Logo" class="dt-logo">');
   const $btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
-  const $btnVerMaterias = $('<a href="/educacion/materias" class="button is-link is-small">Ver Materias</a>');
-  const $topBar = $('<div class="dt-top-bar"></div>');
+  const $topBar = $('#TopBar'); // usar contenedor del HTML
 
   $topBar.append($logo);
   $('.dataTables_length').appendTo($topBar);
   $('.dataTables_filter').appendTo($topBar);
   $topBar.append($btnRegistrar);
-  $topBar.append($btnVerMaterias);
-  $('.dataTables_wrapper').prepend($topBar);
 
   // Mostrar modal de registro
   $(document).on('click', '.registrar-btn', function () {
@@ -49,17 +46,14 @@ $(document).ready(function () {
   });
 
   // Filtrar materias mientras se escribe
-  // Filtrar materias mientras se escribe
   $('#busquedaMaterias').on('keyup', function () {
     const filtro = $(this).val().toLowerCase();
 
-  $('#tablaMateriasDisponibles tbody tr').each(function () {
-    const texto = $(this).text().toLowerCase();
-    $(this).toggle(texto.includes(filtro));
+    $('#tablaMateriasDisponibles tbody tr').each(function () {
+      const texto = $(this).text().toLowerCase();
+      $(this).toggle(texto.includes(filtro));
     });
   });
-
-
 
   // Agregar materias seleccionadas al modal de registro
   $(document).on('change', '.checkMateria', function () {
