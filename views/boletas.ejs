@@ -77,20 +77,33 @@
           </div>
           <div class="column">
             <p class="has-text-weight-semibold">Materias disponibles</p>
+            <div class="field" style="margin-bottom: 10px;">
+              <div class="control">
+                <input class="input" type="text" id="busquedaMaterias" placeholder="Buscar materia...">
+              </div>
+            </div>
             <table class="table is-fullwidth" id="tablaMateriasDisponibles">
               <thead>
                 <tr>
                   <th>Seleccionar</th>
                   <th>Materia</th>
+                  <th>Grado</th>
+                  <th>Nivel</th>
                 </tr>
               </thead>
               <tbody>
                 <% materias.forEach(m => { %>
                   <tr>
                     <td>
-                      <input type="checkbox" class="checkMateria" value="<%= m.IDMateria %>" data-nombre="<%= m.materia %>">
+                      <input type="checkbox" class="checkMateria" 
+                        value="<%= m.IDMateria %>" 
+                        data-nombre="<%= m.materia %>" 
+                        data-grado="<%= m.grado %>" 
+                        data-nv="<%= m.nvEscolar %>">
                     </td>
                     <td><%= m.materia %></td>
+                    <td><%= m.grado %></td>
+                    <td><%= m.nvEscolar %></td>
                   </tr>
                 <% }) %>
               </tbody>
