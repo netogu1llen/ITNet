@@ -51,15 +51,15 @@
         <label for="fechaNacimiento">Fecha de Nacimiento:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="date" id="fechaNacimiento" name="fechaNacimiento"><br>
+          <input type="date" id="fechaNacimiento" name="fechaNacimiento" max=""><br>
         </div>
       </div>
 
       <div class="element-container">
-        <label for="contacto">Contacto:</label>
+        <label for="contacto">Contacto(numero de telefono):</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="contacto" name="contacto" maxlength="15"><br>
+          <input type="tel" id="contacto" name="contacto" maxlength="10" pattern="[0-9]{10}" title="Ingrese un número de teléfono válido de 10 dígitos">
         </div>
       </div>
     </div>
@@ -77,21 +77,21 @@
         <label for="direccion">Ciudad:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="ciudad" name="ciudad" maxlength="100"><br>
+          <input type="text" id="ciudad" name="ciudad" maxlength="50"><br>
         </div>
       </div>
       <div class="element-container">
         <label for="direccion">Calle:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="calle" name="calle" maxlength="100"><br>
+          <input type="text" id="calle" name="calle" maxlength="10"><br>
         </div>
       </div>
       <div class="element-container">
         <label for="direccion">Codigo Postal:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="cp" name="cp" maxlength="100"><br>
+          <input type="input" id="cp" name="cp" maxlength="5"><br>
         </div>
       </div>
       <div class="element-container">
@@ -105,7 +105,7 @@
         <label for="direccion">Numero de casa:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="numCasa" name="numCasa" maxlength="100"><br>
+          <input type="input" id="numCasa" name="numCasa" maxlength="10"><br>
         </div>
       </div>
     </div>
@@ -191,9 +191,6 @@
             <option value="Preescolar">Preescolar</option>
             <option value="Primaria">Primaria</option>
             <option value="Secundaria">Secundaria</option>
-            <option value="Preparatoria">Preparatoria</option>
-            <option value="Universidad">Universidad</option>
-            
           </select>
           <br>
         </div>

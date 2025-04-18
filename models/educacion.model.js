@@ -1,4 +1,5 @@
 const db = require('../util/database');
+const { decrypt } = require('../util/encryptData');
 
 /** ============================
  *  ALUMNOS / EXPEDIENTES
@@ -12,7 +13,9 @@ exports.getAlumnos = async () => {
   const [rows] = await db.execute(`
     SELECT 
       e.IDExpediente,
-      CONCAT(e.nombres, ' ', e.apellidoP, ' ', e.apellidoM) AS nombre,
+      e.nombres,
+      e.apellidoP,
+      e.apellidoM,
       (
         SELECT b.periodoEscolar 
         FROM boleta b 
@@ -21,11 +24,48 @@ exports.getAlumnos = async () => {
         LIMIT 1
       ) AS periodoEscolar,
       e.grado,
-      e.curso
+      e.nvEscolar
     FROM expediente e
     WHERE e.eliminado = 0
   `);
-  return rows;
+
+  // Desencriptar campos necesarios
+  const alumnos = rows.map(alumno => {
+    let nombres = '';
+    let apellidoP = '';
+    let apellidoM = '';
+
+    try {
+      nombres = decrypt(alumno.nombres);
+    } catch (e) {
+      console.error('Error al desencriptar nombre:', e.message);
+      nombres = '[Error]';
+    }
+
+    try {
+      apellidoP = decrypt(alumno.apellidoP);
+    } catch (e) {
+      console.error('Error al desencriptar apellido paterno:', e.message);
+      apellidoP = '[Error]';
+    }
+
+    try {
+      apellidoM = decrypt(alumno.apellidoM);
+    } catch (e) {
+      console.error('Error al desencriptar apellido materno:', e.message);
+      apellidoM = '[Error]';
+    }
+
+    return {
+      IDExpediente: alumno.IDExpediente,
+      nombre: `${nombres} ${apellidoP} ${apellidoM}`,
+      periodoEscolar: alumno.periodoEscolar,
+      grado: alumno.grado,
+      nvEscolar: alumno.nvEscolar
+    };
+  });
+
+  return alumnos;
 };
 
 /**
@@ -33,11 +73,26 @@ exports.getAlumnos = async () => {
  */
 exports.obtenerNombreAlumno = async (IDExpediente) => {
   const [rows] = await db.execute(`
-    SELECT CONCAT(nombres, ' ', apellidoP, ' ', apellidoM) AS nombreCompleto
+    SELECT nombres, apellidoP, apellidoM
     FROM expediente
     WHERE IDExpediente = ?
   `, [IDExpediente]);
-  return rows[0]?.nombreCompleto || 'Alumno';
+
+  if (rows.length === 0) return 'Alumno';
+
+  let nombreCompleto = '';
+
+  try {
+    const nombres = decrypt(rows[0].nombres);
+    const apellidoP = decrypt(rows[0].apellidoP);
+    const apellidoM = decrypt(rows[0].apellidoM);
+    nombreCompleto = `${nombres} ${apellidoP} ${apellidoM}`;
+  } catch (e) {
+    console.error('Error al desencriptar nombre:', e.message);
+    nombreCompleto = '[Error de nombre]';
+  }
+
+  return nombreCompleto;
 };
 
 /** ============================
@@ -85,7 +140,7 @@ exports.deleteMateria = async (id) => {
 
 exports.getMateriasList = async () => {
   const [rows] = await db.execute(`
-    SELECT IDMateria, materia 
+    SELECT IDMateria, materia, grado, nvEscolar 
     FROM materia 
     WHERE eliminado = 0 OR eliminado IS NULL
   `);
@@ -106,7 +161,7 @@ exports.obtenerBoletasPorExpediente = async (IDExpediente) => {
       b.IDBoleta,
       b.periodoEscolar,
       e.grado,
-      e.curso,
+      e.nvEscolar,
       ROUND(AVG(bm.calificacion), 1) AS promedio
     FROM boleta b
     JOIN expediente e ON b.IDExpediente = e.IDExpediente

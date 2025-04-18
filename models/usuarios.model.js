@@ -6,15 +6,17 @@ class Usuario {
         try {
             const [results] = await db.execute(`
                 SELECT u.IDUsuario, u.nombres, u.apellidoP, u.apellidoM, u.correo, 
-                       DATE_FORMAT(u.fechaNacimiento, '%d/%m/%Y') AS fechaNacimiento, 
-                       r.Tipo AS rol
+                       u.fechaNacimiento, 
+                       r.Tipo AS rol, r.IDRol as idRol
                 FROM usuario u
                 LEFT JOIN usuarioRol ur ON u.IDUsuario = ur.IDUsuario
                 LEFT JOIN rol r ON ur.IDRol = r.IDRol
                 WHERE u.eliminado IS NULL OR u.eliminado = 0
             `);
+        
             return results;
         } catch (error) {
+            console.error("Error en obtenerTodos:", error);
             throw error;
         }
     }
@@ -37,10 +39,12 @@ class Usuario {
     static async obtenerPorId(idUsuario) {
         try {
             const [results] = await db.execute(`
-                SELECT IDUsuario, nombres, apellidoP, apellidoM, correo, 
-                       fechaNacimiento
-                FROM usuario
-                WHERE IDUsuario = ?
+                SELECT u.IDUsuario, u.nombres, u.apellidoP, u.apellidoM, u.correo, 
+                      u.fechaNacimiento, r.IDRol as idRol
+                FROM usuario u
+                LEFT JOIN usuarioRol ur ON u.IDUsuario = ur.IDUsuario
+                LEFT JOIN rol r ON ur.IDRol = r.IDRol
+                WHERE u.IDUsuario = ?
             `, [idUsuario]);
             return results[0]; // Devuelve el primer resultado
         } catch (error) {
@@ -75,6 +79,72 @@ class Usuario {
             throw error;
         }
     }
-}
 
+    // Verificar si un correo ya existe en la base de datos
+    static async verificarCorreoExistente(correo, idUsuario = null) {
+        try {
+            let query = 'SELECT COUNT(*) as count FROM usuario WHERE correo = ?';
+            let params = [correo];
+            
+            // Si se proporciona un ID de usuario, excluirlo de la verificación (para modificaciones)
+            if (idUsuario) {
+                query += ' AND IDUsuario != ?';
+                params.push(idUsuario);
+            }
+            
+            const [results] = await db.execute(query, params);
+            return results[0].count > 0;
+        } catch (error) {
+            console.error("Error al verificar correo existente:", error);
+            throw error;
+        }
+    }
+
+
+    // Obtener todos los roles disponibles (no eliminados)
+    static async obtenerRoles() {
+        try {
+            const [results] = await db.execute(`
+                SELECT IDRol, Tipo 
+                FROM rol
+                WHERE eliminado IS NULL OR eliminado = 0
+                ORDER BY Tipo ASC
+            `);
+            return results;
+        } catch (error) {
+            console.error("Error al obtener roles:", error);
+            throw error;
+        }
+    }
+
+    // Asignar rol a un usuario
+    static async asignarRol(idUsuario, idRol) {
+        try {
+            // Primero verificamos si ya tiene un rol asignado
+            const [existingRole] = await db.execute(`
+                SELECT IDUsuarioRol FROM usuarioRol 
+                WHERE IDUsuario = ?
+            `, [idUsuario]);
+            
+            if (existingRole.length > 0) {
+                // Actualizar rol existente
+                await db.execute(`
+                    UPDATE usuarioRol 
+                    SET IDRol = ? 
+                    WHERE IDUsuario = ?
+                `, [idRol, idUsuario]);
+            } else {
+                // Insertar nuevo rol
+                await db.execute(`
+                    INSERT INTO usuarioRol (IDUsuario, IDRol)
+                    VALUES (?, ?)
+                `, [idUsuario, idRol]);
+            }
+            return true;
+        } catch (error) {
+            console.error("Error al asignar rol:", error);
+            throw error;
+        }
+    }
+}
 module.exports = Usuario;

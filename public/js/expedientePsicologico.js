@@ -155,47 +155,49 @@ $(document).ready(function () {
         window.location.href = redirectUrl;
     });
 
-    // Botón Eliminar Documento
-    $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
-        const id = $(this).data('id');
-        
-        // Mostrar un SweetAlert2 de confirmación
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción no se puede deshacer.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: `/psicologia/documentos/eliminar/${id}`,
-                    type: 'DELETE',
-                    success: function () {
-                        // SweetAlert2 para indicar éxito
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Eliminado!',
-                            text: 'El documento ha sido eliminado.',
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function (err) {
-                        // SweetAlert2 para error
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'No se pudo eliminar el documento.',
-                        });
-                        console.error(err);
-                    }
-                });
-            }
-        });
+    // Botón Eliminar Documento - ACTUALIZADO
+$('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
+    const id = $(this).data('id');
+    const tipo = $(this).data('tipo');
+    const tipoParam = tipo === 'seguimientoPsicologico' ? 'seguimiento' : 'documento';
+    
+    // Mostrar un SweetAlert2 de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/psicologia/documentos/eliminar/${id}?tipo=${tipoParam}`, // AÑADIDO el parámetro tipo
+                type: 'DELETE',
+                success: function () {
+                    // SweetAlert2 para indicar éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: `El ${tipoParam === 'seguimiento' ? 'seguimiento' : 'documento'} ha sido eliminado.`,
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (err) {
+                    // SweetAlert2 para error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `No se pudo eliminar el ${tipoParam === 'seguimiento' ? 'seguimiento' : 'documento'}.`,
+                    });
+                    console.error(err);
+                }
+            });
+        }
     });
+});
 
     // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
     $(document).on('click', '.fila-documento', function () {

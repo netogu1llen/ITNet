@@ -11,7 +11,7 @@
  */
 const axios = require('axios');
 const userService = require('../models/auth.model'); // Servicio separado para usuarios
-const { generateToken } = require('../util/jwt'); // Utilidad para JWT
+const { generateUserToken } = require('../util/jwt'); // Utilidad para JWT
 
 class AuthService {
   constructor() {
@@ -116,7 +116,7 @@ class AuthService {
     }
   
     // Genera token JWT con datos esenciales
-    return generateToken({
+    return generateUserToken({
       userId: user.id, // ID interno de la aplicación
       email: user.email // Email verificado por Google
     });

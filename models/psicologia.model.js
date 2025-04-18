@@ -132,28 +132,6 @@ class Psicologia {
     }
   }
 
-  // Obtener los datos del expediente - ACTUALIZADO con nuevas agrupaciones
-  static async obtenerExpedientePorSeguimientoId(idSeguimiento) {
-    const sql = `
-        SELECT 
-            CONCAT(e.nombres, ' ', e.apellidoP, ' ', e.apellidoM) AS nombreCompleto,
-            e.numExpediente, 
-            e.fechaNacimiento, 
-            CONCAT(e.estado, ', ', e.ciudad) AS ubicacion, 
-            CONCAT(e.calle, ' ', e.numCasa) AS domicilio,
-            e.grado, 
-            e.nvEscolar AS curso
-        FROM expediente e
-        JOIN seguimientopsicologico s ON e.idExpediente = s.idExpediente
-        WHERE s.idSeguimiento = ?
-    `;
-    try {
-      const [results] = await db.execute(sql, [idSeguimiento]);
-      return results[0];
-    } catch (err) {
-      throw err;
-    }
-  }
 
   // Actualizar seguimiento
   static async actualizarSeguimiento(id, objetivoSesion,justificacionSesion,analisisPsicologico,recomendaciones,bitacora) {
@@ -165,16 +143,19 @@ class Psicologia {
     }
   }
 
-  // Eliminar objetivos por ID de seguimiento - ACTUALIZADO
-  static async eliminarObjetivosPorSeguimientoId(id) {
-    try {
-      await db.execute('DELETE FROM objetivoPsicologico WHERE IDSeguimiento = ? AND eliminado = 0', [id]);
-    } catch (err) {
-      console.error('Error al eliminar los objetivos:', err);
-      console.error('Error al eliminar los objetivos:', err);
-      throw err;
+    /// Actualizar objetivo psicológico
+    static async actualizarObjetivo(id, actividad, tiempo, metodologia, objetivo, observaciones) {
+        try {
+        await db.execute(
+            'UPDATE objetivoPsicologico SET actividad = ?, tiempo = ?, metodologia = ?, objetivo = ?, observaciones = ? WHERE IDObjetivo = ?',
+            [actividad, tiempo, metodologia, objetivo, observaciones, id]
+        );
+        } catch (err) {
+        console.error('Error al actualizar objetivo:', err);
+        throw err;
+        }
     }
-  }
+  
 
   // Insertar objetivos - ACTUALIZADO
   static async insertarObjetivos(id, actividad, tiempo, metodologia, objetivo, observaciones) {
@@ -185,38 +166,6 @@ class Psicologia {
       throw err;
     }
   }
-
-  /**
-   * Obtiene los datos generales del expediente por ID.
-   * @param {number} idExpediente
-   * @returns {Promise<Object>}
-   */
-  static async getDatosGenerales(idExpediente) {
-        try {
-            const [result] = await db.execute(`
-                SELECT 
-                    CONCAT(e.nombres, ' ', e.apellidoP, ' ', e.apellidoM) AS nombreCompleto,
-                    e.fechaNacimiento,
-                    e.contacto,
-                    CONCAT(e.estado, ', ', e.ciudad) AS ubicacion, 
-                    CONCAT(e.calle, ' ', e.numCasa) AS domicilio,
-                    ea.peso, 
-                    ea.talla, 
-                    ea.edad, 
-                    b.grado,
-                    e.nvEscolar AS curso,
-                    e.numExpediente
-                FROM expediente e 
-                LEFT JOIN evaluacionantropometrica ea ON e.IDExpediente = ea.IDExpediente 
-                LEFT JOIN boleta b ON e.IDExpediente = b.IDExpediente 
-                WHERE e.IDExpediente = ?;
-            `, [idExpediente]);
-            return result[0] || [];
-        } catch (error) {
-            console.error('Error al obtener seguimiento:', error);
-            throw new Error('Error al obtener seguimiento');
-        }
-    }
     static async registrarSeguimiento(idExpediente, objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora) {
         try {
             const fecha = new Date();  // Fecha de creación
@@ -231,13 +180,43 @@ class Psicologia {
             throw new Error('Error al registrar seguimiento');
         }
     }
-    static async eliminarSeguimiento(id) {
-        try {
-            await db.execute('UPDATE seguimientopsicologico SET eliminado = 1 WHERE IDSeguimiento = ?', [id]);
-        } catch (error) {
-            console.error('Error al eliminar seguimiento:', error);
-            throw new Error('Error al eliminar seguimiento');
-        }
-    }   
+    // Eliminar seguimiento (borrado lógico) - Simplificado sin transacciones
+static async eliminarSeguimiento(id) {
+    try {
+      // Primero actualizamos el seguimiento
+      await db.execute(
+        'UPDATE seguimientopsicologico SET eliminado = 1 WHERE IDSeguimiento = ?', 
+        [id]
+      );
+      
+      // Luego actualizamos los objetivos asociados
+      await db.execute(
+        'UPDATE objetivoPsicologico SET eliminado = 1 WHERE IDSeguimiento = ?', 
+        [id]
+      );
+      
+      console.log(`Seguimiento ${id} y sus objetivos marcados como eliminados`);
+      return true;
+    } catch (error) {
+      console.error('Error al eliminar seguimiento:', error);
+      throw new Error('Error al eliminar seguimiento');
+    }
+  }
+
+
+/*----------------------------PACIENTES PSICOLGOIA---------------------- */
+// Obtener todos los pacientes (excluyendo los eliminados)
+static async obtenerTodos() {
+  try {
+    const [results] = await db.execute(`
+      SELECT IDExpediente, nombres, apellidoP, apellidoM, fechaNacimiento, nvEscolar
+      FROM expediente
+      WHERE eliminado IS NULL OR eliminado = 0
+    `);
+    return results;
+  } catch (error) {
+    throw error;
+  }
+}
 }
 module.exports = Psicologia;

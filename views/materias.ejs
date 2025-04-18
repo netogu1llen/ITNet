@@ -5,39 +5,37 @@
   <div class="container">
     <h1 class="title is-4">Materias Registradas</h1>
 
-    <!-- Barra superior (se inyecta desde JS con logo y botón) -->
-    <div id="TopBar" class="exp-psicologico-wide"></div>
+    <!-- Barra superior como en educación y boletas -->
+    <div id="TopBar" class="dt-top-bar exp-psicologico-wide"></div>
 
     <!-- Contenedor blanco que contiene la tabla -->
-    <div class="full-white-container exp-psicologico-wide">
-      <div style="width: 100%; height: 900px;">
-        <table id="materiasTable" class="table is-striped is-hoverable is-fullwidth">
-          <thead>
-            <tr>
-              <th>Materia</th>
-              <th>Grado</th>
-              <th>Nivel Escolar</th>
-              <th>Eliminar</th>
+    <div class="exp-psicologico-wide fixed-height">
+      <table id="materiasTable" class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th class="has-text-centered">Materia</th>
+            <th class="has-text-centered">Grado</th>
+            <th class="has-text-centered">Nivel Escolar</th>
+            <th class="has-text-centered">Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% materias.forEach(m => { %>
+            <tr data-id="<%= m.IDMateria %>">
+              <td><%= m.materia %></td>
+              <td><%= m.grado %></td>
+              <td><%= m.nvEscolar %></td>
+              <td>
+                <button
+                  class="button is-danger is-small btn-eliminar"
+                  data-id="<%= m.IDMateria %>">
+                  Eliminar
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            <% materias.forEach(m => { %>
-              <tr data-id="<%= m.IDMateria %>">
-                <td><%= m.materia %></td>
-                <td><%= m.grado %></td>
-                <td><%= m.nvEscolar %></td>
-                <td>
-                  <button
-                    class="button is-danger is-small btn-eliminar"
-                    data-id="<%= m.IDMateria %>">
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
+          <% }) %>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>

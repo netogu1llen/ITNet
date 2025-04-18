@@ -79,7 +79,10 @@ document.getElementById('btn-agregar-fila')?.addEventListener('click', function(
   const index = tabla.rows.length;
 
   nuevaFila.innerHTML = `
-    <td>
+      <td style="display:none;">
+                <input type="hidden" name="objetivoId[]" value="">
+            </td>
+        <td>
         <div class="multirow-form-container">
             <textarea name="actividad[]" id="actividad[${index}]" required rows="3" id=""></textarea>
         </div>

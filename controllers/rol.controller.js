@@ -7,15 +7,7 @@ const get_roles = async (req, res) => {
     try {
         const roles = await Rol.fetchRoles();
         const privilegios = await Rol.fetchPrivilegios(); 
-
-        if (!roles || roles.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron roles' });
-        }
-
-        if (!privilegios || privilegios.length === 0) {
-            return res.status(400).json({ message: 'No se encontraron privilegios' });
-        }
-
+      
         res.render('roles', { roles, privilegios });
 
     } catch (error) {

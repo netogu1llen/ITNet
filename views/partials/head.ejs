@@ -38,7 +38,7 @@
                 <li>
                     <a href="<%= process.env.PATH_SERVER %>usuarios" class="menu-link">
                         <i class="material-icons">person</i> <!-- Icono de usuario -->
-                        <span class="menu-text">Usuario</span>
+                        <span class="menu-text">Usuarios</span>
                     </a>
                 </li>
 
@@ -50,21 +50,29 @@
                     </a>
                 </li>
 
-                <!-- Categoría: Centro de Aprendizaje -->
+                 <!-- Categoría: Expedientes psicologicos -->
                 <li>
-                    <a href="<%= process.env.PATH_SERVER %>centro-aprendizaje" class="menu-link">
-                        <i class="material-icons">school</i> <!-- Icono de centro de aprendizaje -->
-                        <span class="menu-text">Centro de Conocimientos</span>
+                    <a href="<%= process.env.PATH_SERVER %>psicologia" class="menu-link">
+		        <img src="/images/psychologywhite.png" alt="Psicología" style="width: 28px; height: 28px; margin-right: 10px;">
+		        <span class="menu-text">Psicología</span>
                     </a>
                 </li>
 
-                <!-- Categoría: Administración -->
+                 <!-- Categoría: Expedientes nutricionales -->
                 <li>
-                    <a href="<%= process.env.PATH_SERVER %>roles" class="menu-link">
-                        <i class="material-icons">settings</i> <!-- Icono de administración -->
-                        <span class="menu-text">Administración</span>
+                    <a href="<%= process.env.PATH_SERVER %>nutricion" class="menu-link">
+                        <i class="material-icons">dining</i> <!-- Icono de nutrición -->
+                        <span class="menu-text">Nutrición</span>
                     </a>
                 </li>
+
+                <!-- Categoría: Centro de Aprendizaje -->
+                <li>
+                    <a href="<%= process.env.PATH_SERVER %>educacion" class="menu-link">
+                        <i class="material-icons">school</i> <!-- Icono de centro de aprendizaje -->
+                        <span class="menu-text">Centro de Conocimientos</span>
+                    </a>
+                </li>                
             </ul>
         </div>
     </div>
