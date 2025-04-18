@@ -42,9 +42,19 @@ $(document).ready(function () {
     }
   });
 
+  // Búsqueda en materias disponibles - Registrar
   $('#busquedaMaterias').on('keyup', function () {
     const filtro = $(this).val().toLowerCase();
     $('#tablaMateriasDisponibles tbody tr').each(function () {
+      const texto = $(this).text().toLowerCase();
+      $(this).toggle(texto.includes(filtro));
+    });
+  });
+
+  // Búsqueda en materias disponibles - Modificar
+  $('#busquedaMateriasModificar').on('keyup', function () {
+    const filtro = $(this).val().toLowerCase();
+    $('#tablaMateriasDisponiblesModificar tbody tr').each(function () {
       const texto = $(this).text().toLowerCase();
       $(this).toggle(texto.includes(filtro));
     });
@@ -118,7 +128,7 @@ $(document).ready(function () {
     });
   });
 
-  // Agregar nuevas materias desde checkboxes en editar
+  // Agregar nuevas materias desde checkboxes en modificar
   $(document).on('change', '.checkMateriaModificar', function () {
     const id = $(this).val();
     const nombre = $(this).data('nombre');
