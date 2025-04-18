@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  // Inicialización de la tabla con idioma y configuración personalizada
   const table = $('#boletasTable').DataTable({
     language: {
       info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
@@ -13,22 +12,19 @@ $(document).ready(function () {
     order: [[0, 'asc']]
   });
 
-  // Barra superior con logo y botones
   const $logo = $('<img src="/images/boletas.png" alt="Logo" class="dt-logo">');
   const $btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
-  const $topBar = $('#TopBar'); // usar contenedor del HTML
+  const $topBar = $('#TopBar');
 
   $topBar.append($logo);
   $('.dataTables_length').appendTo($topBar);
   $('.dataTables_filter').appendTo($topBar);
   $topBar.append($btnRegistrar);
 
-  // Mostrar modal de registro
   $(document).on('click', '.registrar-btn', function () {
     $('#modalRegistrarBoleta').css('display', 'flex');
   });
 
-  // Cerrar modales al hacer clic en fondo oscuro, botón de cancelar o botón de cerrar
   $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
     const $modal = $(this).closest('.modal');
     $modal.hide();
@@ -42,20 +38,18 @@ $(document).ready(function () {
     if ($modal.attr('id') === 'modalModificarBoleta') {
       $('#modificarForm').trigger('reset');
       $('#tablaMateriasModificar tbody').empty();
+      $('.checkMateriaModificar').prop('checked', false);
     }
   });
 
-  // Filtrar materias mientras se escribe
   $('#busquedaMaterias').on('keyup', function () {
     const filtro = $(this).val().toLowerCase();
-
     $('#tablaMateriasDisponibles tbody tr').each(function () {
       const texto = $(this).text().toLowerCase();
       $(this).toggle(texto.includes(filtro));
     });
   });
 
-  // Agregar materias seleccionadas al modal de registro
   $(document).on('change', '.checkMateria', function () {
     const id = $(this).val();
     const nombre = $(this).data('nombre');
@@ -75,7 +69,6 @@ $(document).ready(function () {
     }
   });
 
-  // Enviar formulario para registrar boleta
   $('#formRegistrarBoleta').submit(function (e) {
     e.preventDefault();
     const periodoEscolar = $('#formRegistrarBoleta input[name="periodoEscolar"]').val();
@@ -101,11 +94,11 @@ $(document).ready(function () {
     });
   });
 
-  // Abrir modal de modificación al dar clic en una fila
   $(document).on('click', 'tr.clickable-row', function () {
     const id = $(this).data('id');
     $('#modalModificarBoleta').css('display', 'flex');
     $('#tablaMateriasModificar tbody').empty();
+    $('.checkMateriaModificar').prop('checked', false);
 
     $.get(`/educacion/boletas/obtener/${id}`, function (data) {
       $('#modificarForm input[name="idBoleta"]').val(data.boleta.IDBoleta);
@@ -120,11 +113,33 @@ $(document).ready(function () {
             </td>
           </tr>
         `);
+        $(`#tablaMateriasDisponiblesModificar input[value="${m.IDMateria}"]`).prop('checked', true);
       });
     });
   });
 
-  // Enviar formulario para modificar boleta
+  // Agregar nuevas materias desde checkboxes en editar
+  $(document).on('change', '.checkMateriaModificar', function () {
+    const id = $(this).val();
+    const nombre = $(this).data('nombre');
+    const $tbody = $('#tablaMateriasModificar tbody');
+
+    if ($(this).is(':checked')) {
+      if ($tbody.find(`tr[data-id="${id}"]`).length === 0) {
+        $tbody.append(`
+          <tr data-id="${id}">
+            <td>${nombre}</td>
+            <td>
+              <input type="number" name="calificaciones[]" class="input" min="0" max="100" required>
+            </td>
+          </tr>
+        `);
+      }
+    } else {
+      $tbody.find(`tr[data-id="${id}"]`).remove();
+    }
+  });
+
   $('#modificarForm').submit(function (e) {
     e.preventDefault();
     const idBoleta = $('#modificarForm input[name="idBoleta"]').val();
@@ -150,9 +165,8 @@ $(document).ready(function () {
     });
   });
 
-  // Eliminar boleta (confirmación y eliminación lógica)
   $(document).on('click', '.btn-eliminar', function (e) {
-    e.stopPropagation(); // Evita abrir el modal al dar clic en eliminar
+    e.stopPropagation();
     const id = $(this).data('id');
     Swal.fire({
       title: '¿Estás seguro?',
