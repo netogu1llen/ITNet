@@ -1,5 +1,16 @@
 const express = require('express');
 const router = express.Router();
+
+const canVerExpediente = requiere('../util/can-verExpediente');
+const canRegistrarBoleta = require('../util/can-registrarBoleta');
+const canEditarBoleta = require('../util/can-editarBoleta');
+const canEliminarBoleta = require('../util/can-eliminarBoleta');
+const canConsultarBoleta = require('../util/can-consultarBoleta');
+const canRegistrarMateria = require('../util/can-registrarMateria');
+const canEditarMateria = require('../util/can-editarMateria');
+const canEliminarBoleta = require('../util/can-eliminarBoleta');
+const canEditarCalificacion = require('../util/can-editarCalificacion');
+
 const controller = require('../controllers/educacion.controller');
 
 // ========== VISTA PRINCIPAL ==========
