@@ -2,6 +2,15 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path'); // Añadido path que estaba faltando
 const router = express.Router();
+
+const canVerExpediente = require('../util/can-verExpediente');
+const canGenerarPdf = require('../util/can-generarPdf');
+const canDescargarPdf = require('../util/can-descargarPdf');
+const canVerExpedientePsicologico = require('../util/can-verExpedientePsicologico');
+const canRegistrarSeguimiento = require('../util/can-registrarSeguimiento');
+const canEditarSeguimiento = require('../util/can-editarSeguimiento');
+const canEliminarSeguimiento = require('../util/can-eliminarSeguimiento');
+
 const psicologiaController = require('../controllers/psicologia.controller');
 
 // Ruta para obtener documentos por expediente
