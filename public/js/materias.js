@@ -16,18 +16,17 @@ $(document).ready(function () {
     order: [[0, 'asc']]
   });
 
-  /** Construcción de barra superior como en otras vistas **/
+  /** Barra superior al estilo educación/boletas **/
   const logo = $('<img src="/images/materias.png" alt="Logo" class="dt-logo">');
   const btnRegistrar = $(
     '<button class="button is-success is-small registrar-btn">Registrar Materia</button>'
   );
-  const dtTopBar = $('<div class="dt-top-bar exp-psicologico-wide"></div>');
+  const dtTopBar = $('#TopBar'); // Usamos el contenedor del HTML
 
   dtTopBar.append(logo);
   $('.dataTables_length').appendTo(dtTopBar);
   $('.dataTables_filter').appendTo(dtTopBar);
   dtTopBar.append(btnRegistrar);
-  $('.dataTables_wrapper').prepend(dtTopBar);
 
   /** Mostrar el modal de registro **/
   $(document).on('click', '.registrar-btn', function () {
