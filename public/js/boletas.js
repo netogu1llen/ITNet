@@ -49,7 +49,6 @@ $(document).ready(function () {
   });
 
   // Filtrar materias mientras se escribe
-  // Filtrar materias mientras se escribe
   $('#busquedaMaterias').on('keyup', function () {
     const filtro = $(this).val().toLowerCase();
 
