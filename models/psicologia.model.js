@@ -202,5 +202,21 @@ static async eliminarSeguimiento(id) {
       throw new Error('Error al eliminar seguimiento');
     }
   }
+
+
+/*----------------------------PACIENTES PSICOLGOIA---------------------- */
+// Obtener todos los pacientes (excluyendo los eliminados)
+static async obtenerTodos() {
+  try {
+    const [results] = await db.execute(`
+      SELECT IDExpediente, nombres, apellidoP, apellidoM, fechaNacimiento, nvEscolar
+      FROM expediente
+      WHERE eliminado IS NULL OR eliminado = 0
+    `);
+    return results;
+  } catch (error) {
+    throw error;
+  }
+}
 }
 module.exports = Psicologia;
