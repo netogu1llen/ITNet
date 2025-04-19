@@ -4,6 +4,8 @@
     <title>Fundación Soffy</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="/styles.css">
+      <!-- Favicon -->
+    <link rel="icon" href="<%= process.env.PATH_SERVER %>Images/logo.png" type="image/png">
     <!-- Inyectamos el client_id desde la variable de entorno (será reemplazado por tu valor en el backend) -->
     <meta name="google-signin-client_id" content="<%= GOOGLE_CLIENT_ID %>">
 </head>
@@ -19,7 +21,7 @@
                 <h2 class="title is-4 pb-3">Inicio de sesión</h2>
                 <div class="pt-5">
                     <!-- Botón de Google -->
-                    <a href="/auth/google" class="google-login-button">
+                    <a href="/google" class="google-login-button">
                         <img src="/images/login.png" alt="Iniciar sesión con Google">
                     </a>
                       <!-- Aquí se renderiza el botón de Google -->

@@ -51,7 +51,7 @@ exports.googleCallback = async (req, res, next) => {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-    }).redirect('/');
+    }).redirect('/home');
     
   } catch (error) {
     console.error('Error durante autenticación:', error.message);
@@ -76,5 +76,9 @@ exports.googleCallback = async (req, res, next) => {
  */
 exports.logout = (req, res) => {
   res.clearCookie('jwt');
-  res.redirect('/login');
+  res.redirect('/');
+};
+
+exports.getHome = (request, response) => {
+  response.render('home');
 };
