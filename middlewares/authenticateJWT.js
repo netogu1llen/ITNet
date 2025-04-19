@@ -10,7 +10,7 @@
  * @param {Function} next - Función para pasar el control al siguiente middleware.
  * @return {void|Object} Si hay error, devuelve respuesta JSON con código de estado.
  */
-const { verifyToken } = require('../utils/jwt');
+const { verifyToken } = require('../util/jwt');
 
 const authenticateJWT = (req, res, next) => {
   // Obtiene el token JWT de las cookies de la solicitud
