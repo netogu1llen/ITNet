@@ -9,64 +9,76 @@
       
       <div class="box" style="background-color: #f2f2f2;">
         <h1 class="has-text-black pl-6"><img src="/images/salud.png" alt="Salud Icon" style="height: 30px;">  Historia Clínica
-          <button type="submit" class="button is-primary" style="margin-left: 75%;">Guardar</button>
+          <button id=btnGuardar type="submit" class="button is-primary" style="margin-left: 75%; margin-bottom: 10px;">Guardar</button>
         </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff; ">
             <div class="columns">
-              <div class="column has-text-black has-text-weight-semibold">Larisa Jiménez</div>
-              <div class="column has-text-black has-text-weight-semibold">No. Expediente: 34</div>
-              <div class="column has-text-black has-text-weight-semibold">16:45</div>
-              <div class="column has-text-black has-text-weight-semibold">Fecha: 01 de marzo de 2025</div>
+              <div class="column has-text-black has-text-weight-semibold">
+                No. Expediente: <%= expediente.IDExpediente %>
+              </div>
+              <div class="column has-text-black has-text-weight-semibold"></div>
             </div>
             <hr class="has-background-grey-lighter">
-            
             
             <!-- PARTE UNO -->
             <div class="columns">
               <!-- COLUMNA IZQUIERDA -->
               <div class="column pr-6">
                 <div class="columns">
-                  <div class="column" style="border:2px">Nombre Completo<input class="input" type="text"/></div>
-                </div>
-                <div class="columns">
-                  <div class="column">Escuela<input class="input" type="text"/></div>
-                  <div class="column"> Sexo
-                    <select class="input">
-                      <option value="" disabled selected>Sexo</option>
-                      <option value="value1">Masculino</option>
-                      <option value="value2">Femenino</option>
-                      <option value="value3">Otro</option>
-                    </select>
+                  <div class="column" style="border:2px">
+                    <label class="label">Nombre Completo</label>
+                    <input class="input" type="text" 
+                          name="expediente[nombreCompleto]" 
+                          value="<%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %>" 
+                          readonly/>
                   </div>
                 </div>
+
                 <div class="columns">
-                  <div class="column">Fecha de nacimiento<input class="input" type="date"/></div>
-                  <div class="column">Edad<input class="input" type="number"/></div>
-                  <div class="column">Grado<input class="input" type="number"/></div>
+                  <div class="column">
+                    <label class="label">Grado</label>
+                    <input class="input" type="text" 
+                          name="expediente[grado]" 
+                          value="<%= expediente.grado %>" 
+                          readonly/>
+                  </div>
+
+                  <div class="column">
+                    <label class="label">Nivel Escolar</label>
+                    <input class="input" type="text" 
+                          name="expediente[nvEscolar]" 
+                          value="<%= expediente.nvEscolar %>" 
+                          readonly/>
+                  </div>
                 </div>
-              </div>
-              
-              <!-- COLUMNA DERECHA -->
-              <div class="column is-half pl-6 is-align-items-end">
+
                 <div class="columns">
-                  <div class="column is-half">Nombre del responsable<input class="input" type="text"/></div>
-                  <div class="column is-one-quarter">Edad<input class="input" type="int"/></div>
-                </div>
-                <div class="columns">
-                  <div class="column">Dirección<input class="input" type="text"/></div>
-                  <div class="column">Teléfono<input class="input" type="text"/></div>
-                  <div class="column">Estado Civil<input class="input" type="text"/></div>
-                </div>
-                <div class="columns">
-                  <div class="column">Correo electróico<input class="input" type="text"/></div>
-                  <div class="column">Parentesco<input class="input" type="text"/></div>
-                  <div class="column">Ocupación<input class="input" type="text"/></div>
+                  <div class="column">
+                    <label class="label">Fecha de nacimiento</label>
+                    <input class="input" type="date" 
+                    name="expediente[fechaNacimiento]" 
+                    value="<%= expediente.fechaNacimiento.replace(/\//g, '-') %>" 
+                    readonly/>
+                  
+                  </div>
+
+                  <div class="column">
+                    <label class="label">Edad (años)</label>
+                    <%function calcularEdad(fechaNacimiento) {if (!fechaNacimiento) return '';const hoy = new Date();const nacimiento = new Date(fechaNacimiento);let edad = hoy.getFullYear() - nacimiento.getFullYear();const m = hoy.getMonth() - nacimiento.getMonth();if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {edad--;
+                          }
+                          return edad;
+                        }
+                      %>
+                    <input class="input" type="number" 
+                          name="expediente[edad]" 
+                          value="<%= calcularEdad(expediente.fechaNacimiento) %>" 
+                          readonly/>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <!-- PARTE DOS -->
             <div class="container">
               <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
@@ -78,37 +90,37 @@
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Diabetes</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="diabetes" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Cáncer</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id=cancer class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Dislipidemia</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="dislipidemia" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Obesidad</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="obesidad" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Anemia</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="anemia" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Hipertensión arterial</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="hipertensionArterial" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                 </tbody>
@@ -130,37 +142,41 @@
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Peso al nacer</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="pesoNacer" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Talla al nacer</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="tallaNacer" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de alimentación recibida</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="alimentacionRecibida" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">SDG</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="sdg" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de parto</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <select class="input" id="tipoParto">
+                            <option value="" disabled selected>Seleccione</option>
+                            <option value="Natural">Natural</option>
+                            <option value="Cesarea">Cesarea</option>
+                          </select>
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Complicaciones durante el embarazo ¿Cuáles?</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="complicaciones" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
                       </tr>
                     </tbody>
@@ -179,39 +195,32 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">tipo</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de lactancia</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <select id="lactancia" class="input">
+                            <option value="" disabled selected>Seleccione</option>
+                            <option value="value1">Lactancia exclusiva</option>
+                            <option value="value2">Fórmula</option>
+                            <option value="value3">Mixta</option>
+                          </select>
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tiempo</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="tiempo" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Edad de alimentación complementaria</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="edadAlimentacionComplementaria" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Alimentos introducidos el 1er año</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Anemia</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Hipertensión arterial</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="alimentosPrimerAnio" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
                         </td>
                       </tr>
                     </tbody>
@@ -232,12 +241,6 @@
           <h1 class="has-text-black pl-6"><img src="/images/salud.png" alt="Salud Icon" style="height: 30px;">  Historia Clínica</h1>
         <div class="pl-6" >
           <div class="box" style="background-color: #ffffff; ">
-            <div class="columns">
-              <div class="column has-text-black has-text-weight-semibold">Larisa Jiménez</div>
-              <div class="column has-text-black has-text-weight-semibold">No. Expediente: 34</div>
-              <div class="column has-text-black has-text-weight-semibold">16:45</div>
-              <div class="column has-text-black has-text-weight-semibold">Fecha: 01 de marzo de 2025</div>
-            </div>
             <hr class="has-background-grey-lighter">
             <!--Datos compemetarios -->
             <!--PARTE UNO-->
@@ -309,6 +312,10 @@
                       </thead>
                       <tbody>
                           <tr>
+                              <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Síntomas</td>
+                              <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Frecuencia</td>
+                          </tr>
+                          <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Vomito</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
                                   <input class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
@@ -360,6 +367,10 @@
                           </tr>
                       </thead>
                       <tbody>
+                          <tr>
+                              <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Síntomas</td>
+                              <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Frecuencia</td>
+                          </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Reflujo</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
@@ -448,30 +459,28 @@
                             <div class="columns">
                               <div class="column">Freuencia<input class="input" type="text"/></div>
                            </div>
-                           <div class="column is-half">
-                              <label class="label" style="margin-left: 70%;">Intencidad</label>                              
+                            <div class="column is-half">
+                              <label class="label">Intensidad</label>                              
                                 <div class="column">                          
-                              <div class="field is-grouped">
-                                <div class="columns">
+                                  <div class="columns">
                                     <div class="control" style="margin-right: 50px;">
                                       <label class="radio" style="margin-left: 80px;">
                                         <input type="radio" name="ejercicio" value="Lijera"> Lijera
                                       </label>
                                     </div>
                                     <div class="control" style="margin-right: 50px;">    
-                                  <label class="radio">
-                                    <input type="radio" name="ejercicio" value="Moderada"> Moderada
-                                  </label>
+                                    <label class="radio">
+                                      <input type="radio" name="ejercicio" value="Moderada"> Moderada
+                                    </label>
+                                    </div>
+                                    <div class="control">    
+                                    <label class="radio">
+                                      <input type="radio" name="ejercicio" value="Moderada"> Intensa
+                                    </label>
+                                    </div> 
+                                  </div>
                                 </div>
-                                <div class="control">    
-                                  <label class="radio">
-                                    <input type="radio" name="ejercicio" value="Moderada"> Moderada
-                                  </label>
-                                </div> 
-                               </div>
-                              </div>
-                            </div>
-                          </div>   
+                            </div>   
                           </div>
                           <!--COLUMNA DERECHA-->
                           <div class="column is-half pl-6 is-align-items-end">
@@ -498,60 +507,39 @@
         </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff;">
-            <!-- Datos generales -->
-            <div class="columns">
-              <div class="column has-text-black has-text-weight-semibold">Larissa Jiménez Aldemar</div>
-              <div class="column has-text-black has-text-weight-semibold">No. Expediente: 34</div>
-              <div class="column has-text-black has-text-weight-semibold">16:45</div>
-              <div class="column has-text-black has-text-weight-semibold">Fecha: 01 de marzo de 2025</div>
-            </div>
             <hr class="has-background-grey-lighter">
-    
+
             <!-- VII. INDICADORES BIOQUÍMICOS -->
-            <div class="tabla">
-              <table>
+            <div class="container">
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
                   <tr>
-                    <th colspan="8" style="text-align: left;">VII. INDICADORES BIOQUÍMICOS</th>
+                    <th colspan="3" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">VII. INDICADORES BIOQUÍMICOS</th>
                   </tr>
                   <tr>
                     <th>Parámetro Bioquímico</th>
                     <th>Valor de referencia</th>
                     <th>Fecha</th>
-
                   </tr>
                 </thead>
                 <tbody>
+                  <% for (let i = 0; i < 4; i++) { %>
                   <tr>
-                    <td><input class="input" type="text" placeholder="Parámetro..." /></td>
-                    <td><input class="input" type="text" placeholder="Valor de referencia..." /></td>
-                    <td><input class="input" type="date" /></td>
+                    <td><input class="input" type="text" placeholder="Parámetro..."/></td>
+                    <td><input class="input" type="text" placeholder="Valor de referencia..."/></td>
+                    <td><input class="input" type="date"/></td>
                   </tr>
-                  <tr>
-                    <td><input class="input" type="text" placeholder="Parámetro..." /></td>
-                    <td><input class="input" type="text" placeholder="Valor de referencia..." /></td>
-                    <td><input class="input" type="date" /></td>
-                  </tr>
-                  <tr>
-                    <td><input class="input" type="text" placeholder="Parámetro..." /></td>
-                    <td><input class="input" type="text" placeholder="Valor de referencia..." /></td>
-                    <td><input class="input" type="date" /></td>
-                  </tr>
-                  <tr>
-                    <td><input class="input" type="text" placeholder="Parámetro..." /></td>
-                    <td><input class="input" type="text" placeholder="Valor de referencia..." /></td>
-                    <td><input class="input" type="date" /></td>
-                  </tr>
+                  <% } %>
                 </tbody>
               </table>
             </div>
 
             <!-- VIII. EVALUACIÓN ANTROPOMÉTRICA -->
-            <div class="tabla">
-              <table>
+            <div class="container">
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
                   <tr>
-                    <th colspan="3">VIII. EVALUACIÓN ANTROPOMÉTRICA</th>
+                    <th colspan="3" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">VIII. EVALUACIÓN ANTROPOMÉTRICA</th>
                   </tr>
                   <tr>
                     <th>Aspectos por evaluar</th>
@@ -560,80 +548,45 @@
                   </tr>
                 </thead>
                 <tbody>
+                  <% const aspectos = [
+                    'Talla (m)',
+                    'Edad (a)',
+                    'Peso (kg)',
+                    'Peso ideal o ajustado (kg)',
+                    'IMC (kg/m2)',
+                    'Percentil de IMC',
+                    'Circunferencia cintura (cm)',
+                    'Circunferencia cadera (cm)',
+                    'Índice cintura/cadera',
+                    'ICT'
+                  ]; %>
+                  <% aspectos.forEach(aspecto => { %>
                   <tr>
-                    <td>Talla (m)</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
+                    <td><%= aspecto %></td>
+                    <td><input class="input" type="text" name="medida[<%= aspecto %>]" placeholder="Medida..." /></td>
+                    <td><input class="input" type="text" name="observacion[<%= aspecto %>]" placeholder="Observaciones..." /></td>
                   </tr>
-                  <tr>
-                    <td>Edad (a)</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
-                  </tr>
-                  <tr>
-                    <td>Peso (kg)</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
-                  </tr>
-                  <tr>
-                    <td>Peso ideal o ajustado (kg)</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
-                  </tr>
-                  <tr>
-                    <td>IMC (kg/m2)</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
-                  </tr>
-                  <tr>
-                    <td>Circunferencia cintura</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
-                  </tr>
-                  <tr>
-                    <td>Circunferencia cadera</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
-                  </tr>
-                  <tr>
-                    <td>Índice cintura/cadera</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
-                  </tr>
-                  <tr>
-                    <td>ICT</td>
-                    <td><input class="input" type="text" placeholder="Medida..." /></td>
-                    <td><input class="input" type="text" placeholder="Observaciones..." /></td>
-                  </tr>
+                  <% }); %>
                 </tbody>
+                
               </table>
             </div>
-    
+
             <!-- IX. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE -->
-            <div class="tabla">
-              <table>
+            <div class="container">
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
                   <tr>
-                    <th colspan="2" style="text-align: left;">IX. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE</th>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">IX. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE</th>
                   </tr>
                 </thead>
                 <tbody>
+
                   <tr>
-                    <td style="width: 30%; font-weight: bold;">Diagnóstico principal:</td>
-                    <td><input class="input" type="text" placeholder="Escribe el diagnóstico principal..." style="width: 100%; border: none;" /></td>
+                    <td class="has-text-weight-semibold">Diagnóstico y evolución:</td>
+                    <td><textarea class="textarea" placeholder="Diagnósticos secundarios..."></textarea></td>
                   </tr>
-                  <tr>
-                    <td style="width: 30%; font-weight: bold;">Diagnósticos secundarios:</td>
-                    <td><textarea class="textarea" rows="3" placeholder="Escribe los diagnósticos secundarios..." style="width: 100%; border: none;"></textarea></td>
-                  </tr>
-                  <tr>
-                    <td style="width: 30%; font-weight: bold;">Evolución del paciente:</td>
-                    <td><textarea class="textarea" rows="5" placeholder="Describe la evolución del paciente..." style="width: 100%; border: none;"></textarea></td>
-                  </tr>
-                  <tr>
-                    <td style="width: 30%; font-weight: bold;">Recomendaciones:</td>
-                    <td><textarea class="textarea" rows="3" placeholder="Escribe las recomendaciones..." style="width: 100%; border: none;"></textarea></td>
-                  </tr>
+
                 </tbody>
               </table>
             </div>
@@ -641,56 +594,53 @@
         </div>
       </div>
     </div>
+
     
 
     <!-- Página 4 -->
     <div class="entrevista-pagina" style="display: none;">
       <div class="box" style="background-color: #f2f2f2;">
         <h1 class="has-text-black pl-6">
-          <img src="/images/manzana.png" style="height: 30px; margin-right: 10px;">
-          Historia Clínica - Página 4
+          <img src="/images/manzana.png" style="height: 30px;">
+          Historia Clínica
         </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff;">
-    
-            <!-- X. OBJETIVOS NUTRICIONALES -->
-            <div class="tabla">
-              <table>
+            <div class="container">
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
                   <tr>
-                    <th style="text-align: left;">X. OBJETIVOS NUTRICIONALES</th>
+                    <th class="has-text-black" style="text-align: center; background-color:#f2f2f2;">X. OBJETIVOS NUTRICIONALES</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;" ></td></tr>
-                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td><input class="input" type="text" placeholder="Objetivos..." style="width: 100%; border: none;"></td></tr>
+                  <% for (let i = 0; i < 6; i++) { %>
+                  <tr>
+                    <td><input class="input" type="text" placeholder="Objetivos..."/></td>
+                  </tr>
+                  <% } %>
                 </tbody>
               </table>
             </div>
-    
-            <!-- XI. MANEJO NUTRICIONAL -->
-            <div class="tabla">
-              <table>
+
+            <div class="container">
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
                   <tr>
-                    <th colspan="2" style="text-align: center;">XI. MANEJO NUTRICIONAL</th>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">XI. MANEJO NUTRICIONAL</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td>Energía (kcal)</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Hidratos de carbono</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Lípidos</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Proteínas</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Fibra</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
-                  <tr><td>Agua</td><td><input class="input" type="text" placeholder="..." style="width: 100%; border: none;"></td></tr>
+                  <% const manejo = ['Energía (kcal)', 'Hidratos de carbono', 'Lípidos', 'Proteínas', 'Fibra', 'Agua']; %>
+                  <% manejo.forEach(m => { %>
+                  <tr>
+                    <td><%= m %></td>
+                    <td><input class="input" type="text" placeholder="..."/></td>
+                  </tr>
+                  <% }); %>
                 </tbody>
               </table>
             </div>
-    
           </div>
         </div>
       </div>
@@ -704,3 +654,4 @@
   </main>
 </body>
 </html>
+

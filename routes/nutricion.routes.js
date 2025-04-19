@@ -20,4 +20,11 @@ router.get('/', nutricionController.obtenerHistoriales);
 // Eliminar un historial
 router.post('/eliminar/:id', nutricionController.eliminarHistorial);
 
+router.get('/historiaClinica/:id', nutricionController.renderHistoriaClinica);
+router.post('/historiaClinica/:id', nutricionController.guardarHistoriaClinica);
+
+router.post('/historiaClinica/guardarHistoriaClinicaV1', nutricionController.guardarHistoriaClinicaV1);
+
+
+
 module.exports = router;
