@@ -44,19 +44,51 @@ class Nutricion {
     }
     
     static async insertarHistoriaClinicaV1(data) {
-        const [result] = await db.execute(`
-          INSERT INTO historiaclinicav1 (
-            IDExpediente, diabetes, cancer, dislipidemia, obesidad, anemia, hipertensionArterial,
-            pesoNacer, tallaNacer, alimentacionRecibida, sdg, tipoParto, complicaciones,
-            lactancia, tiempo, edadAlimentacionComplementaria, alimentosPrimerAnio
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
-          data.IDExpediente, data.diabetes, data.cancer, data.dislipidemia, data.obesidad, data.anemia, data.hipertensionArterial,
-          data.pesoNacer, data.tallaNacer, data.alimentacionRecibida, data.sdg, data.tipoParto, data.complicaciones,
-          data.lactancia, data.tiempo, data.edadAlimentacionComplementaria, data.alimentosPrimerAnio
-        ]);
+        try {
+          const [result] = await db.execute(`
+            INSERT INTO nutricional1 (
+              IDExpediente,
+              diabetes,
+              cancer,
+              dislipidemia,
+              obesidad,
+              anemia,
+              hipertensionArterial,
+              pesoNacer,
+              tallaNacer,
+              alimentacionRecibida,
+              sdg,
+              tipoParto,
+              complicaciones,
+              lactancia,
+              tiempo,
+              edadAlimentacionComplementaria,
+              alimentosPrimerAnio
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
+            data.IDExpediente,
+            data.diabetes,
+            data.cancer,
+            data.dislipidemia,
+            data.obesidad,
+            data.anemia,
+            data.hipertensionArterial,
+            data.pesoNacer,
+            data.tallaNacer,
+            data.alimentacionRecibida,
+            data.sdg,
+            data.tipoParto,
+            data.complicaciones,
+            data.lactancia,
+            data.tiempo,
+            data.edadAlimentacionComplementaria,
+            data.alimentosPrimerAnio
+          ]);
       
-        return result;
+          return result;
+        } catch (error) {
+          throw error;
+        }
       }
       
       

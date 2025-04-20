@@ -90,7 +90,7 @@ exports.renderHistoriaClinica = async (req, res) => {
 exports.guardarHistoriaClinicaV1 = async (req, res) => {
   try {
     const datos = req.body;
-    console.log('Datos recibidos para guardar en historiaclinicav1:', datos);
+    //console.log('Datos recibidos para guardar en historiaclinicav1:', datos);
 
     await Nutricion.insertarHistoriaClinicaV1(datos);
 

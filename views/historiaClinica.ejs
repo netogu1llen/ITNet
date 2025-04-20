@@ -1,7 +1,7 @@
 <%- include('partials/head') %>
 
+<input type="hidden" id="idExpediente" value="<%= expediente.IDExpediente %>">
 <body>
-  
   <main clas="container"> 
     
     <!-- Página 1 - Todo tu contenido actual -->
@@ -9,7 +9,7 @@
       
       <div class="box" style="background-color: #f2f2f2;">
         <h1 class="has-text-black pl-6"><img src="/images/salud.png" alt="Salud Icon" style="height: 30px;">  Historia Clínica
-          <button id=btnGuardar type="submit" class="button is-primary" style="margin-left: 75%; margin-bottom: 10px;">Guardar</button>
+          <button id="btnGuardar" type="submit" class="button is-primary" style="margin-left: 75%; margin-bottom: 10px;">Guardar</button>
         </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff; ">
@@ -652,6 +652,8 @@
       <%- include('partials/pagination', { totalPaginas: 4, paginaActual: 1 }) %>
     </div>
   </main>
+  <script src="/js/historiaClinica.js"></script>
+
 </body>
 </html>
 

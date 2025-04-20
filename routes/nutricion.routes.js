@@ -21,7 +21,7 @@ router.get('/', nutricionController.obtenerHistoriales);
 router.post('/eliminar/:id', nutricionController.eliminarHistorial);
 
 router.get('/historiaClinica/:id', nutricionController.renderHistoriaClinica);
-router.post('/historiaClinica/:id', nutricionController.guardarHistoriaClinica);
+// router.post('/historiaClinica/:id', nutricionController.guardarHistoriaClinica);
 
 router.post('/historiaClinica/guardarHistoriaClinicaV1', nutricionController.guardarHistoriaClinicaV1);
 
