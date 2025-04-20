@@ -43,6 +43,221 @@ class Nutricion {
         }
     }
     
+    // Obtener datos generales del paciente (sin información del responsable)
+static async obtenerDatosGenerales(idExpediente) {
+    try {
+        // Datos del paciente - solo usamos la tabla expediente
+        const [pacienteRows] = await db.execute(`
+            SELECT nombres, apellidoP, apellidoM, fechaNacimiento, contacto, nvEscolar, sexo
+            FROM expediente
+            WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+        `, [idExpediente]);
+        
+        if (pacienteRows.length === 0) {
+            throw new Error('Paciente no encontrado');
+        }
+        
+        // Devolvemos solo los datos del paciente
+        // Se eliminaron todas las referencias a datos de responsable
+        return pacienteRows[0];
+    } catch (error) {
+        throw error;
+    }
+}
+    
+    // Obtener antecedentes del paciente
+    static async obtenerAntecedentes(idExpediente) {
+        try {
+            // Obtener la última sesión de nutricional1
+            const [ultimaSesionRows] = await db.execute(`
+                SELECT MAX(numSesion) as ultimaSesion
+                FROM nutricional1
+                WHERE IDExpediente = ?
+            `, [idExpediente]);
+            
+            const ultimaSesion = ultimaSesionRows[0]?.ultimaSesion;
+            
+            if (!ultimaSesion) {
+                return {
+                    heredofamiliares: {
+                        diabetes: 'No registrado',
+                        cancer: 'No registrado',
+                        dislipidemia: 'No registrado',
+                        obesidad: 'No registrado',
+                        anemia: 'No registrado',
+                        hipertensionArterial: 'No registrado'
+                    },
+                    personales: {
+                        pesoNacer: 'No registrado',
+                        tallaNacer: 'No registrado',
+                        sdg: 'No registrado',
+                        tipoParto: 'No registrado'
+                    },
+                    alimentacion: {
+                        lactanciaExclusiva: 'No registrado',
+                        tiempo: 'No registrado',
+                        edadAlimentacionComplementaria: 'No registrado'
+                    }
+                };
+            }
+            
+            // Obtener datos de nutricional1 con la última sesión
+            const [antecedentesRows] = await db.execute(`
+                SELECT diabetes, cancer, dislipidemia, obesidad, anemia, hipertensionArterial,
+                       pesoNacer, tallaNacer, sdg, tipoParto,
+                       lactancia as lactanciaExclusiva, tiempo, edadAlimentacionComplementaria
+                FROM nutricional1
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [idExpediente, ultimaSesion]);
+            
+            if (antecedentesRows.length === 0) {
+                throw new Error('Antecedentes no encontrados');
+            }
+            
+            // Organizar los datos en diferentes categorías
+            const antecedentes = {
+                heredofamiliares: {
+                    diabetes: antecedentesRows[0].diabetes || 'No registrado',
+                    cancer: antecedentesRows[0].cancer || 'No registrado',
+                    dislipidemia: antecedentesRows[0].dislipidemia || 'No registrado',
+                    obesidad: antecedentesRows[0].obesidad || 'No registrado',
+                    anemia: antecedentesRows[0].anemia || 'No registrado',
+                    hipertensionArterial: antecedentesRows[0].hipertensionArterial || 'No registrado'
+                },
+                personales: {
+                    pesoNacer: antecedentesRows[0].pesoNacer || 'No registrado',
+                    tallaNacer: antecedentesRows[0].tallaNacer || 'No registrado',
+                    sdg: antecedentesRows[0].sdg || 'No registrado',
+                    tipoParto: antecedentesRows[0].tipoParto || 'No registrado'
+                },
+                alimentacion: {
+                    lactanciaExclusiva: antecedentesRows[0].lactanciaExclusiva || 'No registrado',
+                    tiempo: antecedentesRows[0].tiempo || 'No registrado',
+                    edadAlimentacionComplementaria: antecedentesRows[0].edadAlimentacionComplementaria || 'No registrado'
+                }
+            };
+            
+            return antecedentes;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    // Obtener manejo nutricional
+    static async obtenerManejoNutricional(idExpediente) {
+        try {
+            // Obtener la última sesión de manejoNutricional
+            const [ultimaSesionRows] = await db.execute(`
+                SELECT MAX(numSesion) as ultimaSesion
+                FROM manejoNutricional
+                WHERE IDExpediente = ?
+            `, [idExpediente]);
+            
+            const ultimaSesion = ultimaSesionRows[0]?.ultimaSesion;
+            
+            if (!ultimaSesion) {
+                return {
+                    manejoNutricional: null,
+                    distribucionCalorica: '50-20-30 (CHO-P-L)',
+                    numeroComidas: '5 comidas/día',
+                    imcObjetivo: '18.5-24.9 kg/m²'
+                };
+            }
+            
+            // Obtener datos de manejoNutricional
+            const [manejoRows] = await db.execute(`
+                SELECT energia, proteinas, hidratosDeCarbono, lipidos, fibra, agua
+                FROM manejoNutricional
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [idExpediente, ultimaSesion]);
+            
+            // Obtener distribución calórica (de diagnosticoEvolucion)
+            const [distCaloricaRows] = await db.execute(`
+                SELECT diagnosticoEvolucion
+                FROM diagnosticoEvolucion
+                WHERE IDExpediente = ?
+                ORDER BY numSesion DESC
+                LIMIT 1
+            `, [idExpediente]);
+            
+            // Obtener número de comidas (de actividadDiaria)
+            const [numComidasRows] = await db.execute(`
+                SELECT frecuencia
+                FROM actividadDiaria
+                WHERE IDExpediente = ?
+                ORDER BY numSesion DESC
+                LIMIT 1
+            `, [idExpediente]);
+            
+            // Obtener IMC objetivo (de objetivoNutricional)
+            const [imcObjetivoRows] = await db.execute(`
+                SELECT objetivo
+                FROM objetivoNutricional
+                WHERE IDExpediente = ?
+                ORDER BY numSesion DESC
+                LIMIT 1
+            `, [idExpediente]);
+            
+            // Preparar la respuesta
+            return {
+                manejoNutricional: manejoRows.length > 0 ? manejoRows[0] : null,
+                distribucionCalorica: distCaloricaRows.length > 0 ? distCaloricaRows[0].diagnosticoEvolucion : '50-20-30 (CHO-P-L)',
+                numeroComidas: numComidasRows.length > 0 ? numComidasRows[0].frecuencia : '5 comidas/día',
+                imcObjetivo: imcObjetivoRows.length > 0 ? imcObjetivoRows[0].objetivo : '18.5-24.9 kg/m²'
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+    // Obtener documentos adjuntos y historial nutricional del paciente
+    static async obtenerDocumentosHistorial(idExpediente) {
+        try {
+            // Obtener documentos adjuntos (PDFs)
+            const [documentosRows] = await db.execute(`
+                SELECT IDDocumento, nombre, fecha, ubicacion, 'PDF' as tipo
+                FROM documentosAdjuntos
+                WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+                ORDER BY fecha DESC
+            `, [idExpediente]);
+            
+            // Obtener historial nutricional V1
+            const [nutricionalRows] = await db.execute(`
+                SELECT IDNutricional1 as ID, 'Historial Nutricional V1' as nombre, 
+                    fecha, 'NUTRICIONAL_V1' as tipo, numSesion
+                FROM nutricional1
+                WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+                ORDER BY fecha DESC
+            `, [idExpediente]);
+            
+            // Combinar ambos resultados
+            const documentosHistorial = [
+                ...documentosRows.map(doc => ({
+                    id: doc.IDDocumento,
+                    nombre: doc.nombre,
+                    fecha: doc.fecha,
+                    tipo: doc.tipo,
+                    ruta: doc.ubicacion,
+                    numSesion: null
+                })),
+                ...nutricionalRows.map(hist => ({
+                    id: hist.ID,
+                    nombre: hist.nombre,
+                    fecha: hist.fecha,
+                    tipo: hist.tipo,
+                    ruta: null,
+                    numSesion: hist.numSesion
+                }))
+            ];
+            
+            // Ordenar por fecha (más reciente primero)
+            documentosHistorial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            
+            return documentosHistorial;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
     static async insertarHistoriaClinicaV1(data) {
         try {
           const [result] = await db.execute(`
