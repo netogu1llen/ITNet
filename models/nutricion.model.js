@@ -302,6 +302,50 @@ static async obtenerHistorialNutricionalV2PorId(id) {
             throw error;
         }
     }
+
+
+
+        // Eliminar un documento PDF
+    static async eliminarDocumento(id) {
+        try {
+            const [result] = await db.execute(`
+                UPDATE documentosAdjuntos
+                SET eliminado = 1
+                WHERE IDDocumento = ?
+            `, [id]);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Eliminar un historial nutricional V1
+    static async eliminarHistorialV1(id) {
+        try {
+            const [result] = await db.execute(`
+                UPDATE nutricional1
+                SET eliminado = 1
+                WHERE IDNutricional1 = ?
+            `, [id]);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Eliminar un historial nutricional V2
+    static async eliminarHistorialV2(id) {
+        try {
+            const [result] = await db.execute(`
+                UPDATE objetivonutricional
+                SET eliminado = 1
+                WHERE IDObjetivoNutricional = ?
+            `, [id]);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = Nutricion;

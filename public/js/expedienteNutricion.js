@@ -217,40 +217,67 @@ $(document).on('click', '.btn-descargar', function(event) {
 });
 
     // Botón Eliminar Documento
-    $(document).on('click', '.btn-eliminar', function(event) {
-        event.preventDefault();
-        event.stopPropagation(); // Evitar que se active la vista previa
-        
-        const id = $(this).data('id');
-        const tipo = $(this).data('tipo');
-        
-        // Mostrar confirmación
-        if (confirm('¿Está seguro de que desea eliminar este documento? Esta acción no se puede deshacer.')) {
-            console.log('Eliminando documento:', id, 'de tipo:', tipo);
+$(document).on('click', '.btn-eliminar', function(event) {
+    event.preventDefault();
+    event.stopPropagation(); // Evitar que se active la vista previa
+    
+    const id = $(this).data('id');
+    const tipo = $(this).data('tipo');
+    
+    // Personalizar mensaje según el tipo
+    let mensaje = '';
+    if (tipo === 'NUTRICIONAL_V1') {
+        mensaje = '¿Está seguro de eliminar este Historial Nutricional V1?';
+    } else if (tipo === 'NUTRICIONAL_V2') {
+        mensaje = '¿Está seguro de eliminar este Historial Nutricional V2?';
+    } else {
+        mensaje = '¿Está seguro de eliminar este documento PDF?';
+    }
+    
+    // Mostrar un SweetAlert2 de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: mensaje + " Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar modal de carga
+            showLoadingModal('Eliminando', 'Por favor espere...');
             
-            // Por ahora, solo simular la eliminación
-            setTimeout(() => {
-                alert('La funcionalidad de eliminación está en desarrollo');
-            }, 500);
-            
-            // Cuando implementen la eliminación real, usa este código:
-            /*
             $.ajax({
                 url: `/nutricion/documentos/eliminar/${id}?tipo=${tipo}`,
                 type: 'DELETE',
                 success: function() {
-                    alert('Documento eliminado correctamente');
-                    // Eliminar la fila de la tabla
-                    table.row($(this).closest('tr')).remove().draw();
+                    hideLoadingModal();
+                    
+                    // SweetAlert2 para indicar éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: `El documento ha sido eliminado.`,
+                    }).then(() => {
+                        location.reload();
+                    });
                 },
                 error: function(err) {
-                    alert('Error al eliminar el documento.');
+                    hideLoadingModal();
+                    
+                    // SweetAlert2 para error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `No se pudo eliminar el documento.`,
+                    });
                     console.error(err);
                 }
             });
-            */
         }
     });
+});
 
     // CERRAR MODAL DE VISTA PREVIA
     $(document).on('click', '#modalVistaPreviaDocumento .modal-background, #modalVistaPreviaDocumento .delete', function () {

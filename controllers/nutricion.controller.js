@@ -278,3 +278,48 @@ exports.getHistorialNutricionalV2 = async (req, res) => {
     res.status(500).send('Error al cargar el historial nutricional V2');
   }
 };
+
+// Eliminar documento o historial
+exports.eliminarDocumento = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const tipo = req.query.tipo; // Obtener el tipo desde query parameters
+      console.log(`Intentando eliminar ${tipo || 'elemento'} con ID:`, id);
+
+      // Determinar qué eliminar según el tipo
+      if (tipo === 'NUTRICIONAL_V1') {
+          // Eliminar historial nutricional V1
+          await Nutricion.eliminarHistorialV1(id);
+          return res.json({ message: 'Historial Nutricional V1 eliminado correctamente' });
+      } 
+      else if (tipo === 'NUTRICIONAL_V2') {
+          // Eliminar historial nutricional V2
+          await Nutricion.eliminarHistorialV2(id);
+          return res.json({ message: 'Historial Nutricional V2 eliminado correctamente' });
+      } 
+      else if (tipo === 'PDF') {
+          // Eliminar documento PDF
+          const documento = await Nutricion.obtenerDocumentoPorId(id);
+          if (documento) {
+              // Verificar si existe el archivo físico (opcional, solo log)
+              if (documento.nombreArchivo) {
+                  const filePath = path.join(__dirname, '..', documento.nombreArchivo);
+                  if (fs.existsSync(filePath)) {
+                      console.log('Archivo encontrado pero no eliminado físicamente:', filePath);
+                  }
+              }
+              await Nutricion.eliminarDocumento(id);
+              return res.json({ message: 'Documento PDF eliminado correctamente' });
+          } else {
+              return res.status(404).json({ error: 'Documento no encontrado' });
+          }
+      } 
+      else {
+          // Si no se especificó un tipo válido
+          return res.status(400).json({ error: 'Tipo de documento no especificado o inválido' });
+      }
+  } catch (error) {
+      console.error('Error al eliminar:', error);
+      res.status(500).json({ error: 'Error al eliminar el documento o historial' });
+  }
+};

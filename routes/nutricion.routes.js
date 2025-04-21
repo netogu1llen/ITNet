@@ -32,4 +32,7 @@ router.get('/documentos/ver/:id', nutricionController.verDocumento);
 // Ruta para mostrar un historial nutricional V2
 router.get('/historial-nutricional-v2', nutricionController.getHistorialNutricionalV2);
 
+// Ruta para eliminar documento
+router.delete('/documentos/eliminar/:id', nutricionController.eliminarDocumento);
+
 module.exports = router;
