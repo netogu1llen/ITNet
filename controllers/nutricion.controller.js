@@ -1,5 +1,31 @@
 const Nutricion = require('../models/nutricion.model');
 const { decrypt } = require('../util/encryptData');
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+
+// Configuración de Multer para guardar archivos localmente
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'uploads/'); // Carpeta donde se guardarán los archivos
+  },
+  filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, uniqueSuffix + path.extname(file.originalname)); // Nombre único para evitar conflictos
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'application/pdf') {
+      cb(null, true); // Aceptar solo archivos PDF
+  } else {
+      cb(new Error('Solo se permiten archivos PDF.'));
+  }
+};
+
+const upload = multer({ storage, fileFilter });
+
+
 const { request, response } = require("express");
 
 // Obtener todos los pacientes para nutrición
@@ -77,7 +103,7 @@ exports.eliminarHistorial = async (req, res) => {
 exports.getExpedienteNutricion = async (req, res) => {
   try {
     // Obtener el ID del expediente de la consulta
-    const idExpediente = req.params.id;
+    const idExpediente = req.params.id; 
     
     if (!idExpediente) {
       return res.status(400).json({ mensaje: 'Es necesario proporcionar el ID del expediente' });
@@ -147,9 +173,6 @@ exports.getExpedienteNutricion = async (req, res) => {
       antecedentesPersonales: antecedentes.personales,
       antecedentesAlimentacion: antecedentes.alimentacion,
       manejoNutricional: manejoNutricionalData.manejoNutricional,
-      distribucionCalorica: manejoNutricionalData.distribucionCalorica,
-      numeroComidas: manejoNutricionalData.numeroComidas,
-      imcObjetivo: manejoNutricionalData.imcObjetivo,
       evolucionAntropometrica,
       documentosHistorial: documentosHistorialFormateados
     });
@@ -179,7 +202,193 @@ function calcularEdad(fechaNacimiento) {
   }
 }
 
+// Descargar documento
+exports.descargarDocumento = async (req, res) => {
+  try {
+      const id = req.params.id;
 
+      // Buscar el documento en la base de datos usando el modelo de Nutrición
+      let documento = await Nutricion.obtenerDocumentoPorId(id);
+
+      if (!documento) {
+          console.error('Documento no encontrado en la base de datos');
+          return res.status(404).send('Documento no encontrado');
+      }
+
+      // Si se encontró un documento, intentar descargarlo desde el sistema de archivos
+      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${id}.pdf`);
+
+      if (fs.existsSync(rutaDocumento)) {
+          return res.download(rutaDocumento);
+      } else {
+          console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
+          return res.status(404).send('Archivo no encontrado');
+      }
+
+  } catch (error) {
+      console.error('Error al procesar la solicitud de descarga:', error);
+      return res.status(500).send('Error interno del servidor');
+  }
+};
+
+// Ver documento
+exports.verDocumento = async (req, res) => {
+  try {
+      const id = req.params.id;
+      
+      // Obtener información del documento
+      const documento = await Nutricion.obtenerDocumentoPorId(id);
+      
+      if (!documento) {
+          return res.status(404).send('Documento no encontrado');
+      }
+      
+      // Construir la ruta del archivo
+      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo);
+      
+      // Verificar si el archivo existe
+      if (!fs.existsSync(rutaDocumento)) {
+          return res.status(404).send('Archivo no encontrado');
+      }
+      
+      // Establecer el tipo MIME correcto para PDF
+      res.setHeader('Content-Type', 'application/pdf');
+      
+      // Enviar el archivo como respuesta
+      res.sendFile(rutaDocumento);
+  } catch (error) {
+      console.error('Error al mostrar documento:', error);
+      res.status(500).send('Error al mostrar el documento');
+  }
+};
+
+
+// Obtener y mostrar un Historial Nutricional V2
+exports.getHistorialNutricionalV2 = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const idExpediente = req.query.expediente;
+    
+    if (!id || !idExpediente) {
+      return res.status(400).send('Se requieren los IDs');
+    }
+    
+    // Obtener datos del historial nutricional V2 (antes objetivo nutricional)
+    const historial = await Nutricion.obtenerHistorialNutricionalV2PorId(id);
+    
+    if (!historial) {
+      return res.status(404).send('Historial nutricional V2 no encontrado');
+    }
+    
+    // Obtener datos del paciente
+    const pacienteEncriptado = await Nutricion.obtenerPorId(idExpediente);
+    
+    // Desencriptar datos sensibles del paciente
+    const paciente = {
+      nombres: decrypt(pacienteEncriptado.nombres || ''),
+      apellidoP: decrypt(pacienteEncriptado.apellidoP || ''),
+      apellidoM: decrypt(pacienteEncriptado.apellidoM || ''),
+      fechaNacimiento: decrypt(pacienteEncriptado.fechaNacimiento || '')
+    };
+    
+    // Renderizar la vista con los datos
+    res.render('historial_nutricional_v2', { 
+      historial, 
+      paciente
+    });
+  } catch (error) {
+    console.error('Error al obtener historial nutricional V2:', error);
+    res.status(500).send('Error al cargar el historial nutricional V2');
+  }
+};
+
+// Eliminar documento o historial
+exports.eliminarDocumento = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const tipo = req.query.tipo; // Obtener el tipo desde query parameters
+      console.log(`Intentando eliminar ${tipo || 'elemento'} con ID:`, id);
+
+      // Determinar qué eliminar según el tipo
+      if (tipo === 'NUTRICIONAL_V1') {
+          // Eliminar historial nutricional V1
+          await Nutricion.eliminarHistorialV1(id);
+          return res.json({ message: 'Historial Nutricional V1 eliminado correctamente' });
+      } 
+      else if (tipo === 'NUTRICIONAL_V2') {
+          // Eliminar historial nutricional V2
+          await Nutricion.eliminarHistorialV2(id);
+          return res.json({ message: 'Historial Nutricional V2 eliminado correctamente' });
+      } 
+      else if (tipo === 'PDF') {
+          // Eliminar documento PDF
+          const documento = await Nutricion.obtenerDocumentoPorId(id);
+          if (documento) {
+              // Verificar si existe el archivo físico (opcional, solo log)
+              if (documento.nombreArchivo) {
+                  const filePath = path.join(__dirname, '..', documento.nombreArchivo);
+                  if (fs.existsSync(filePath)) {
+                      console.log('Archivo encontrado pero no eliminado físicamente:', filePath);
+                  }
+              }
+              await Nutricion.eliminarDocumento(id);
+              return res.json({ message: 'Documento PDF eliminado correctamente' });
+          } else {
+              return res.status(404).json({ error: 'Documento no encontrado' });
+          }
+      } 
+      else {
+          // Si no se especificó un tipo válido
+          return res.status(400).json({ error: 'Tipo de documento no especificado o inválido' });
+      }
+  } catch (error) {
+      console.error('Error al eliminar:', error);
+      res.status(500).json({ error: 'Error al eliminar el documento o historial' });
+  }
+};
+
+
+
+// Middleware de subida con controlador integrado
+exports.subirDocumentoMiddleware = [
+  upload.single('archivoDocumento'),
+  async (req, res) => {
+      try {
+          const { nombreDocumento } = req.body;
+          const { IDExpediente } = req.params; // Obtener ID del expediente desde la URL
+
+          if (!req.file) {
+              return res.status(400).json({ error: 'Debe subir un archivo válido.' });
+          }
+
+          // Creamos la ruta completa al archivo
+          const ubicacion = req.file.path;
+          const fecha = new Date(); // Fecha actual
+          const eliminado = 0; // Por defecto, no eliminado
+
+          console.log('Subiendo documento:', {
+              IDExpediente,
+              nombre: nombreDocumento,
+              ubicacion,
+              fecha
+          });
+
+          // Guardar en la base de datos
+          const nuevoDocumento = await Nutricion.subirDocumento({
+              IDExpediente,
+              nombre: nombreDocumento,
+              ubicacion,
+              fecha,
+              eliminado
+          });
+
+          res.status(201).json({ message: 'Documento subido correctamente', documento: nuevoDocumento });
+      } catch (error) {
+          console.error('Error al subir el documento:', error);
+          res.status(500).json({ error: 'Error al subir el documento' });
+      }
+  }
+];
 
 // Mostrar el formulario de historia clínica con datos del expediente
 exports.renderHistoriaClinica = async (req, res) => {

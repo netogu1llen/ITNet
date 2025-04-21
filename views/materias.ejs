@@ -5,10 +5,8 @@
   <div class="container">
     <h1 class="title is-4">Materias Registradas</h1>
 
-    <!-- Barra superior como en educación y boletas -->
     <div id="TopBar" class="dt-top-bar exp-psicologico-wide"></div>
 
-    <!-- Contenedor blanco que contiene la tabla -->
     <div class="exp-psicologico-wide fixed-height">
       <table id="materiasTable" class="table is-striped is-hoverable is-fullwidth">
         <thead>
@@ -23,7 +21,7 @@
           <% materias.forEach(m => { %>
             <tr data-id="<%= m.IDMateria %>">
               <td><%= m.materia %></td>
-              <td><%= m.grado %></td>
+              <td><%= m.grado %>°</td>
               <td><%= m.nvEscolar %></td>
               <td>
                 <button
@@ -59,15 +57,29 @@
 
         <div class="field">
           <label class="label">Grado</label>
-          <div class="control">
-            <input class="input" type="text" name="grado" required>
+          <div class="select is-fullwidth">
+            <select name="grado" required>
+              <option value="">Selecciona un grado</option>
+              <option value="1">1°</option>
+              <option value="2">2°</option>
+              <option value="3">3°</option>
+              <option value="4">4°</option>
+              <option value="5">5°</option>
+              <option value="6">6°</option>
+            </select>
           </div>
         </div>
 
         <div class="field">
           <label class="label">Nivel Escolar</label>
-          <div class="control">
-            <input class="input" type="text" name="nvEscolar" required>
+          <div class="select is-fullwidth">
+            <select name="nvEscolar" required>
+              <option value="">Selecciona nivel escolar</option>
+              <option value="Preescolar">Preescolar</option>
+              <option value="Primaria">Primaria</option>
+              <option value="Secundaria">Secundaria</option>
+              <option value="Preparatoria">Preparatoria</option>
+            </select>
           </div>
         </div>
       </form>
@@ -102,15 +114,29 @@
 
         <div class="field">
           <label class="label">Grado</label>
-          <div class="control">
-            <input class="input" type="text" name="grado" required>
+          <div class="select is-fullwidth">
+            <select name="grado" required>
+              <option value="">Selecciona un grado</option>
+              <option value="1">1°</option>
+              <option value="2">2°</option>
+              <option value="3">3°</option>
+              <option value="4">4°</option>
+              <option value="5">5°</option>
+              <option value="6">6°</option>
+            </select>
           </div>
         </div>
 
         <div class="field">
           <label class="label">Nivel Escolar</label>
-          <div class="control">
-            <input class="input" type="text" name="nvEscolar" required>
+          <div class="select is-fullwidth">
+            <select name="nvEscolar" required>
+              <option value="">Selecciona nivel escolar</option>
+              <option value="Preescolar">Preescolar</option>
+              <option value="Primaria">Primaria</option>
+              <option value="Secundaria">Secundaria</option>
+              <option value="Preparatoria">Preparatoria</option>
+            </select>
           </div>
         </div>
       </form>
