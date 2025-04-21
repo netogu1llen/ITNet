@@ -157,10 +157,7 @@ static async obtenerDatosGenerales(idExpediente) {
             
             if (!ultimaSesion) {
                 return {
-                    manejoNutricional: null,
-                    distribucionCalorica: '50-20-30 (CHO-P-L)',
-                    numeroComidas: '5 comidas/día',
-                    imcObjetivo: '18.5-24.9 kg/m²'
+                    manejoNutricional: null
                 };
             }
             
@@ -171,39 +168,9 @@ static async obtenerDatosGenerales(idExpediente) {
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [idExpediente, ultimaSesion]);
             
-            // Obtener distribución calórica (de diagnosticoEvolucion)
-            const [distCaloricaRows] = await db.execute(`
-                SELECT diagnosticoEvolucion
-                FROM diagnosticoEvolucion
-                WHERE IDExpediente = ?
-                ORDER BY numSesion DESC
-                LIMIT 1
-            `, [idExpediente]);
-            
-            // Obtener número de comidas (de actividadDiaria)
-            const [numComidasRows] = await db.execute(`
-                SELECT frecuencia
-                FROM actividadDiaria
-                WHERE IDExpediente = ?
-                ORDER BY numSesion DESC
-                LIMIT 1
-            `, [idExpediente]);
-            
-            // Obtener IMC objetivo (de objetivoNutricional)
-            const [imcObjetivoRows] = await db.execute(`
-                SELECT objetivo
-                FROM objetivoNutricional
-                WHERE IDExpediente = ?
-                ORDER BY numSesion DESC
-                LIMIT 1
-            `, [idExpediente]);
-            
             // Preparar la respuesta
             return {
-                manejoNutricional: manejoRows.length > 0 ? manejoRows[0] : null,
-                distribucionCalorica: distCaloricaRows.length > 0 ? distCaloricaRows[0].diagnosticoEvolucion : '50-20-30 (CHO-P-L)',
-                numeroComidas: numComidasRows.length > 0 ? numComidasRows[0].frecuencia : '5 comidas/día',
-                imcObjetivo: imcObjetivoRows.length > 0 ? imcObjetivoRows[0].objetivo : '18.5-24.9 kg/m²'
+                manejoNutricional: manejoRows.length > 0 ? manejoRows[0] : null
             };
         } catch (error) {
             throw error;
@@ -341,6 +308,22 @@ static async obtenerHistorialNutricionalV2PorId(id) {
                 SET eliminado = 1
                 WHERE IDObjetivoNutricional = ?
             `, [id]);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Método para subir documentos
+    static async subirDocumento({ IDExpediente, nombre, ubicacion, fecha, eliminado }) {
+        try {
+            console.log('Insertando en BD:', { IDExpediente, nombre, ubicacion, fecha, eliminado });
+            
+            const [result] = await db.execute(
+                `INSERT INTO documentosAdjuntos (IDExpediente, nombre, ubicacion, fecha, eliminado)
+                VALUES (?, ?, ?, ?, ?)`,
+                [IDExpediente, nombre, ubicacion, fecha, eliminado]
+            );
             return result;
         } catch (error) {
             throw error;

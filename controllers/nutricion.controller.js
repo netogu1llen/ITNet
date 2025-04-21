@@ -2,6 +2,30 @@ const Nutricion = require('../models/nutricion.model');
 const { decrypt } = require('../util/encryptData');
 const path = require('path');
 const fs = require('fs');
+const multer = require('multer');
+
+// Configuración de Multer para guardar archivos localmente
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'uploads/'); // Carpeta donde se guardarán los archivos
+  },
+  filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, uniqueSuffix + path.extname(file.originalname)); // Nombre único para evitar conflictos
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'application/pdf') {
+      cb(null, true); // Aceptar solo archivos PDF
+  } else {
+      cb(new Error('Solo se permiten archivos PDF.'));
+  }
+};
+
+const upload = multer({ storage, fileFilter });
+
+
 
 // Obtener todos los pacientes para nutrición
 exports.obtenerHistoriales = async (req, res) => {
@@ -148,9 +172,6 @@ exports.getExpedienteNutricion = async (req, res) => {
       antecedentesPersonales: antecedentes.personales,
       antecedentesAlimentacion: antecedentes.alimentacion,
       manejoNutricional: manejoNutricionalData.manejoNutricional,
-      distribucionCalorica: manejoNutricionalData.distribucionCalorica,
-      numeroComidas: manejoNutricionalData.numeroComidas,
-      imcObjetivo: manejoNutricionalData.imcObjetivo,
       evolucionAntropometrica,
       documentosHistorial: documentosHistorialFormateados
     });
@@ -324,3 +345,46 @@ exports.eliminarDocumento = async (req, res) => {
       res.status(500).json({ error: 'Error al eliminar el documento o historial' });
   }
 };
+
+
+
+// Middleware de subida con controlador integrado
+exports.subirDocumentoMiddleware = [
+  upload.single('archivoDocumento'),
+  async (req, res) => {
+      try {
+          const { nombreDocumento } = req.body;
+          const { IDExpediente } = req.params; // Obtener ID del expediente desde la URL
+
+          if (!req.file) {
+              return res.status(400).json({ error: 'Debe subir un archivo válido.' });
+          }
+
+          // Creamos la ruta completa al archivo
+          const ubicacion = req.file.path;
+          const fecha = new Date(); // Fecha actual
+          const eliminado = 0; // Por defecto, no eliminado
+
+          console.log('Subiendo documento:', {
+              IDExpediente,
+              nombre: nombreDocumento,
+              ubicacion,
+              fecha
+          });
+
+          // Guardar en la base de datos
+          const nuevoDocumento = await Nutricion.subirDocumento({
+              IDExpediente,
+              nombre: nombreDocumento,
+              ubicacion,
+              fecha,
+              eliminado
+          });
+
+          res.status(201).json({ message: 'Documento subido correctamente', documento: nuevoDocumento });
+      } catch (error) {
+          console.error('Error al subir el documento:', error);
+          res.status(500).json({ error: 'Error al subir el documento' });
+      }
+  }
+];

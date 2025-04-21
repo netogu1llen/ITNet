@@ -83,7 +83,7 @@ table.on('search.dt', function() {
 
     // Crear barra superior personalizada
     const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
-    const nuevaSesionButton = $('<button class="button button-create" style="height: 30px;">Nueva Sesión</button>');
+    const nuevaSesionButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Archivo</button>');
     const generarHistoriaButton = $('<button class="button button-create" style="height: 30px;">Generar Historia Clínica</button>');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
 
@@ -122,6 +122,119 @@ table.on('search.dt', function() {
         console.log('Generar historia clínica para ID', idExpediente);
     });
     
+// ABRIR MODAL
+nuevaSesionButton.on('click', function () {
+    console.log("Abriendo modal de subir documento");
+    $('#modalSubirDocumento').addClass('is-active');
+    $('#modalSubirDocumento').css('display', 'flex'); // Asegurar que se muestre
+});
+
+// CERRAR MODAL
+$(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
+    console.log("Cerrando modal");
+    $('#modalSubirDocumento').removeClass('is-active');
+    $('#modalSubirDocumento').css('display', 'none'); // Asegurar que se oculte
+    $('#subirDocumentoForm')[0].reset();
+    $('#nombreArchivo').text('No hay archivo seleccionado');
+});
+
+// MOSTRAR NOMBRE DEL ARCHIVO
+$('input[name="archivoDocumento"]').on('change', function () {
+    const archivo = $(this)[0].files[0];
+    $('#nombreArchivo').text(archivo ? archivo.name : 'No hay archivo seleccionado');
+});
+
+// Función de envío del formulario
+$('#subirDocumentoForm').on('submit', function (e) {
+    e.preventDefault();
+
+    const nombreDocumento = $('input[name="nombreDocumento"]').val().trim();
+    const archivo = $('input[name="archivoDocumento"]')[0].files[0];
+
+    if (!archivo || archivo.type !== "application/pdf") {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Debe seleccionar un archivo PDF válido.'
+        });
+        return;
+    }
+
+    // Obtener el ID del expediente
+    // Intentar obtener primero de la URL como parámetro de consulta (como está ahora)
+    let idExpediente = urlParams.get('id');
+    
+    // Si no existe en los parámetros, intentar obtenerlo de la ruta (como en psicología)
+    if (!idExpediente || idExpediente === 'null') {
+        const urlPath = window.location.pathname;
+        const segments = urlPath.split('/');
+        idExpediente = segments[segments.length - 1];
+        
+        // Si aún no es válido, verificar si está en el penúltimo segmento
+        if (isNaN(parseInt(idExpediente)) && segments.length > 2) {
+            idExpediente = segments[segments.length - 2];
+        }
+    }
+    
+    // Si aún no tenemos un ID válido, extraer del DOM (como último recurso)
+    if (!idExpediente || idExpediente === 'null' || isNaN(parseInt(idExpediente))) {
+        // Intentar extraer del título o de algún elemento que contenga el ID
+        const tituloPaciente = $('.basic-black').first().text();
+        // Si hay un ID en algún lugar visible en la página, podrías intentar extraerlo
+        
+        // Mostrar error si no se puede determinar el ID
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo determinar el ID del expediente. Intente nuevamente o contacte a soporte.'
+        });
+        return;
+    }
+    
+    console.log('ID de expediente para subir:', idExpediente);
+    
+    // Ahora que tenemos un ID, continuar con la subida
+    showLoadingModal('Subiendo archivo', 'Por favor espere mientras se sube el documento...');
+
+    const formData = new FormData();
+    formData.append('nombreDocumento', nombreDocumento);
+    formData.append('archivoDocumento', archivo);
+
+    $.ajax({
+        url: `/nutricion/documentos/subir/${idExpediente}`,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            hideLoadingModal();
+            
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Documento subido correctamente.'
+            }).then(() => {
+                $('#modalSubirDocumento').removeClass('is-active');
+                $('#modalSubirDocumento').css('display', 'none');
+                location.reload();
+            });
+        },
+        error: function (xhr) {
+            hideLoadingModal();
+            
+            console.error('Error al subir documento:', xhr);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: xhr.responseJSON?.error || 'Error al subir el documento. Por favor, intenta de nuevo.'
+            });
+        }
+    });
+});
+
+
+
+
 // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
 $(document).on('click', '.fila-documento', function(e) {
     // No hacer nada si el clic fue en un botón

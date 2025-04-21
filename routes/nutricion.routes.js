@@ -35,4 +35,7 @@ router.get('/historial-nutricional-v2', nutricionController.getHistorialNutricio
 // Ruta para eliminar documento
 router.delete('/documentos/eliminar/:id', nutricionController.eliminarDocumento);
 
+// Ruta para subir un documento
+router.post('/documentos/subir/:IDExpediente', nutricionController.subirDocumentoMiddleware);
+
 module.exports = router;

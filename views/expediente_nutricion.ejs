@@ -1,6 +1,5 @@
 <%- include('partials/head') %>
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/nutricionStyles.css">
 
 <section class="section">
     <div class="container">
@@ -233,22 +232,6 @@
         <p><%= manejoNutricional && manejoNutricional.agua ? manejoNutricional.agua + " ml/día" : "Sin registro" %></p>
         </div>
     </div>
-        
-        <!-- Tercera fila - 3 elementos -->
-        <div class="multirow-container" style="text-align: center;">
-          <div class="element-container" style="margin: 0 20px;">
-            <h3 class="basic-gray">Dist. Calórica</h3>
-            <p><%= typeof distribucionCalorica !== 'undefined' ? distribucionCalorica : '50-20-30 (CHO-P-L)' %></p>
-          </div>
-          <div class="element-container" style="margin: 0 20px;">
-            <h3 class="basic-gray">N° Comidas</h3>
-            <p><%= typeof numeroComidas !== 'undefined' ? numeroComidas : '5 comidas/día' %></p>
-          </div>
-          <div class="element-container" style="margin: 0 20px;">
-            <h3 class="basic-gray">IMC Objetivo</h3>
-            <p><%= typeof imcObjetivo !== 'undefined' ? imcObjetivo : '18.5-24.9 kg/m²' %></p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -330,6 +313,60 @@
         <button class="modal-close is-large delete" aria-label="close"></button>
     </div>
   </section>
+
+  <!-- Agregar antes del cierre de la etiqueta </section> -->
+
+<!-- Modal Subir Documento -->
+<div id="modalSubirDocumento" class="modal" style="display: none; z-index: 1050;">
+  <!-- Fondo oscuro -->
+  <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
+
+  <!-- Contenedor del modal -->
+  <div class="modal-card" style="width: 450px;">
+    <!-- Cabecera con botón de cierre -->
+    <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
+      <button class="delete" aria-label="close"></button>
+    </header>
+
+    <!-- Cuerpo del modal -->
+    <section class="modal-card-body" style="text-align: center;">
+      <h1 class="title is-4">Subir Documento</h1>
+      <p class="subtitle is-6" style="margin-bottom: 25px;">
+        Para asegurarse de que la importación sea correcta, <br>
+        debe escoger un archivo con formato ".pdf".
+      </p>
+
+      <!-- Formulario -->
+      <form id="subirDocumentoForm" enctype="multipart/form-data" method="POST">
+        <!-- Nombre del documento -->
+        <div class="field">
+          <div class="control">
+            <input class="input" type="text" name="nombreDocumento" placeholder="Nombre del documento" required>
+          </div>
+        </div>
+
+        <!-- Archivo -->
+        <div class="field">
+          <div class="file has-name is-fullwidth">
+            <label class="file-label">
+              <input class="file-input" type="file" name="archivoDocumento" accept=".pdf" required>
+              <span class="file-cta">
+                <span class="file-label">Elegir archivo</span>
+              </span>
+              <span class="file-name" id="nombreArchivo">No hay archivo seleccionado</span>
+            </label>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
+      <button type="button" class="button is-cancel">Cancelar</button>
+      <button type="submit" form="subirDocumentoForm" class="button is-save">Subir</button>
+    </footer>
+  </div>
+</div>
   
   <!-- Modal de carga -->
   <div id="loadingModal" class="modal" style="display:none;">
