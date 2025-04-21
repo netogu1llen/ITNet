@@ -3,7 +3,7 @@ $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     if (!urlParams.has('id')) {
         // Si no hay ID en la URL, redireccionar a la misma página con ID=1
-        const newUrl = window.location.pathname + '?id=1';
+        const newUrl = window.location.pathname;
         window.history.replaceState({}, '', newUrl);
     }
     

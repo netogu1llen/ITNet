@@ -77,7 +77,7 @@ exports.eliminarHistorial = async (req, res) => {
 exports.getExpedienteNutricion = async (req, res) => {
   try {
     // Obtener el ID del expediente de la consulta
-    const idExpediente = req.query.id || '1'; // ID estático = 1 cuando no se proporciona
+    const idExpediente = req.params.id;
     
     if (!idExpediente) {
       return res.status(400).json({ mensaje: 'Es necesario proporcionar el ID del expediente' });
@@ -199,7 +199,7 @@ exports.renderHistoriaClinica = async (req, res) => {
 exports.guardarHistoriaClinicaV1 = async (req, res) => {
   try {
     const datos = req.body;
-    //console.log('Datos recibidos para guardar en historiaclinicav1:', datos);
+    console.log('Datos recibidos para guardar en historiaclinicav1:', datos);
 
     await Nutricion.insertarHistoriaClinicaV1(datos);
 
