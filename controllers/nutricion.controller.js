@@ -1,5 +1,7 @@
 const Nutricion = require('../models/nutricion.model');
 const { decrypt } = require('../util/encryptData');
+const path = require('path');
+const fs = require('fs');
 
 // Obtener todos los pacientes para nutrición
 exports.obtenerHistoriales = async (req, res) => {
@@ -75,7 +77,7 @@ exports.eliminarHistorial = async (req, res) => {
 exports.getExpedienteNutricion = async (req, res) => {
   try {
     // Obtener el ID del expediente de la consulta
-    const idExpediente = req.query.id || '1'; // ID estático = 1 cuando no se proporciona
+    const idExpediente = req.params.id; 
     
     if (!idExpediente) {
       return res.status(400).json({ mensaje: 'Es necesario proporcionar el ID del expediente' });
@@ -176,3 +178,63 @@ function calcularEdad(fechaNacimiento) {
     return 'No disponible';
   }
 }
+
+// Descargar documento
+exports.descargarDocumento = async (req, res) => {
+  try {
+      const id = req.params.id;
+
+      // Buscar el documento en la base de datos usando el modelo de Nutrición
+      let documento = await Nutricion.obtenerDocumentoPorId(id);
+
+      if (!documento) {
+          console.error('Documento no encontrado en la base de datos');
+          return res.status(404).send('Documento no encontrado');
+      }
+
+      // Si se encontró un documento, intentar descargarlo desde el sistema de archivos
+      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${id}.pdf`);
+
+      if (fs.existsSync(rutaDocumento)) {
+          return res.download(rutaDocumento);
+      } else {
+          console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
+          return res.status(404).send('Archivo no encontrado');
+      }
+
+  } catch (error) {
+      console.error('Error al procesar la solicitud de descarga:', error);
+      return res.status(500).send('Error interno del servidor');
+  }
+};
+
+// Ver documento
+exports.verDocumento = async (req, res) => {
+  try {
+      const id = req.params.id;
+      
+      // Obtener información del documento
+      const documento = await Nutricion.obtenerDocumentoPorId(id);
+      
+      if (!documento) {
+          return res.status(404).send('Documento no encontrado');
+      }
+      
+      // Construir la ruta del archivo
+      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo);
+      
+      // Verificar si el archivo existe
+      if (!fs.existsSync(rutaDocumento)) {
+          return res.status(404).send('Archivo no encontrado');
+      }
+      
+      // Establecer el tipo MIME correcto para PDF
+      res.setHeader('Content-Type', 'application/pdf');
+      
+      // Enviar el archivo como respuesta
+      res.sendFile(rutaDocumento);
+  } catch (error) {
+      console.error('Error al mostrar documento:', error);
+      res.status(500).send('Error al mostrar el documento');
+  }
+};

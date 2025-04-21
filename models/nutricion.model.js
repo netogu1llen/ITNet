@@ -257,6 +257,20 @@ static async obtenerDatosGenerales(idExpediente) {
             throw error;
         }
     }
+
+    // Obtener un documento por ID
+    static async obtenerDocumentoPorId(id) {
+        try {
+            const [results] = await db.execute(`
+                SELECT IDDocumento AS idDocumento, IDExpediente, nombre AS tipo, fecha AS fechaCreacion, ubicacion AS nombreArchivo
+                FROM documentosAdjuntos
+                WHERE IDDocumento = ?
+            `, [id]);
+            return results[0];
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = Nutricion;

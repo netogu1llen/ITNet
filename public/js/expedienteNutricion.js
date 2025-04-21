@@ -3,11 +3,11 @@ $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     if (!urlParams.has('id')) {
         // Si no hay ID en la URL, redireccionar a la misma página con ID=1
-        const newUrl = window.location.pathname + '?id=1';
+        const newUrl = window.location.pathname;
         window.history.replaceState({}, '', newUrl);
     }
     
-    const idExpediente = urlParams.get('id') || '1';
+    const idExpediente = urlParams.get('id');
 
     // Inicializar DataTable para la tabla de documentos
     const table = $('#documentosTable').DataTable({
@@ -69,85 +69,92 @@ $(document).ready(function () {
     });
     
     // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
-    $(document).on('click', '.fila-documento', function(e) {
-        // No hacer nada si el clic fue en un botón
-        if ($(e.target).closest('button, .btn-descargar').length) {
-            return;
-        }
+$(document).on('click', '.fila-documento', function(e) {
+    // No hacer nada si el clic fue en un botón
+    if ($(e.target).closest('button, .btn-descargar').length) {
+        return;
+    }
+    
+    const documentoId = $(this).data('id');
+    const tipo = $(this).data('tipo');
+    
+    if (tipo === 'NUTRICIONAL_V1') {
+        console.log('Ver historial nutricional:', documentoId);
+        // Redirigir al historial nutricional
+        const idExpediente = new URLSearchParams(window.location.search).get('id');
+        window.location.href = `/nutricion/historial-nutricional?id=${documentoId}&expediente=${idExpediente}`;
+    } else if (tipo === 'PDF') {
+        console.log('Ver documento PDF:', documentoId);
         
-        const documentoId = $(this).data('id');
-        const tipo = $(this).data('tipo');
+        // Usar URL absoluta con el origen completo
+        const url = `${window.location.origin}/nutricion/documentos/ver/${documentoId}`;
+        console.log('URL del documento:', url);
         
-        if (tipo === 'NUTRICIONAL_V1') {
-            console.log('Ver historial nutricional:', documentoId);
-            // En el futuro, implementar la navegación al historial
-            alert(`Visualizando historial nutricional.\nID: ${documentoId}`);
-            // window.location.href = `/nutricion/historial-nutricional?id=${documentoId}&expediente=${idExpediente}`;
-        } else if (tipo === 'PDF') {
-            console.log('Ver documento PDF:', documentoId);
-            // En el futuro, implementar la visualización de PDF
-            alert('La visualización de documentos PDF está en desarrollo');
-            // const url = `/nutricion/documentos/ver/${documentoId}`;
-            // window.open(url, '_blank');
-        }
-    });
-
-    // Manejador de eventos para botones de descarga
-    $(document).on('click', '.btn-descargar', function(event) {
-        event.preventDefault();
-        event.stopPropagation(); // Evitar que se active la vista previa
+        // Limpiar el iframe antes de cargar el nuevo contenido
+        const iframe = $('#iframeVistaPreviaDocumento');
+        iframe.attr('src', 'about:blank');
         
-        const documentoId = $(this).data('id');
-        const tipo = $(this).data('tipo');
+        // Mostrar el modal primero
+        $('#modalVistaPreviaDocumento').css('display', 'flex');
         
-        console.log('Descargando documento:', documentoId, 'de tipo:', tipo);
-        
-        // Mostrar modal de carga
-        showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
-        
-        // Por ahora, solo simular la descarga
+        // Pequeño timeout para asegurar que el modal esté visible
         setTimeout(() => {
+            iframe.attr('src', url);
+        }, 100);
+    }
+});
+
+// Manejador de eventos para botones de descarga
+$(document).on('click', '.btn-descargar', function(event) {
+    event.preventDefault();
+    event.stopPropagation(); // Evitar que se active la vista previa
+    
+    const documentoId = $(this).data('id');
+    const tipo = $(this).data('tipo');
+    
+    console.log('Descargando documento:', documentoId, 'de tipo:', tipo);
+    
+    // Mostrar modal de carga
+    showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
+    
+    // Usar AJAX para la descarga
+    $.ajax({
+        url: `/nutricion/documentos/descargar/${documentoId}`,
+        method: 'GET',
+        xhrFields: {
+            responseType: 'blob' // Importante para manejar PDFs
+        },
+        success: function(data) {
             hideLoadingModal();
-            alert('La funcionalidad de descarga está en desarrollo');
-        }, 1000);
-        
-        // Cuando implementen la descarga real, usa este código:
-        /*
-        // Usar AJAX para la descarga
-        $.ajax({
-            url: `/nutricion/documentos/descargar/${documentoId}`,
-            method: 'GET',
-            xhrFields: {
-                responseType: 'blob' // Importante para manejar PDFs
-            },
-            success: function(data) {
-                hideLoadingModal();
-                
-                // Crear objeto URL para la descarga
-                const blob = new Blob([data], { type: 'application/pdf' });
-                const url = window.URL.createObjectURL(blob);
-                
-                // Crear elemento para la descarga
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = (tipo === 'NUTRICIONAL_V1') ? 'historial_nutricional.pdf' : `documento_${documentoId}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                
-                // Limpiar
-                setTimeout(() => {
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(link);
-                }, 100);
-            },
-            error: function(xhr) {
-                hideLoadingModal();
-                alert('No se pudo descargar el documento.');
-                console.error(xhr);
-            }
-        });
-        */
+            
+            // Crear objeto URL para la descarga
+            const blob = new Blob([data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            
+            // Crear elemento para la descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = (tipo === 'NUTRICIONAL_V1') ? 'historial_nutricional.pdf' : `documento_${documentoId}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            
+            // Limpiar
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(link);
+            }, 100);
+        },
+        error: function(xhr) {
+            hideLoadingModal();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo descargar el documento.'
+            });
+            console.error(xhr);
+        }
     });
+});
 
     // Botón Eliminar Documento
     $(document).on('click', '.btn-eliminar', function(event) {

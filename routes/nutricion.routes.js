@@ -21,6 +21,12 @@ router.get('/', nutricionController.obtenerHistoriales);
 router.post('/eliminar/:id', nutricionController.eliminarHistorial);
 
 // Expediente nutricional (ahora recibe el ID como parámetro de consulta)
-router.get('/expediente', nutricionController.getExpedienteNutricion);
+router.get('/documentos/:id', nutricionController.getExpedienteNutricion);
+
+// Descargar un documento
+router.get('/documentos/descargar/:id', nutricionController.descargarDocumento);
+
+// Ruta para mostrar un documento en el iframe (vista previa)
+router.get('/documentos/ver/:id', nutricionController.verDocumento);
 
 module.exports = router;
