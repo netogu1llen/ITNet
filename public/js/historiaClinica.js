@@ -83,8 +83,26 @@ document.addEventListener('DOMContentLoaded', function () {
         const idExpediente = document.getElementById('idExpediente')?.value;
 
         if (!idExpediente) {
-          console.error('No se encontró IDExpediente.');
+          Swal.fire({
+            title: "Error!",
+            text: "No se encontró IDExpediente.",
+            icon: "error"
+          });
           return;
+        }
+
+        // Validar que todos los campos requeridos estén llenos
+        const inputsRequeridos = document.querySelectorAll('input[required], textarea[required]');
+        for (const input of inputsRequeridos) {
+          if (!input.value.trim()) {
+            Swal.fire({
+              title: "Campos incompletos",
+              text: "Por favor, rellena todos los campos obligatorios antes de guardar.",
+              icon: "warning"
+            });
+            input.focus();
+            return;
+          }
         }
         
         const fechaInicio = document.getElementById('fechaInicio')?.value || '';
@@ -180,15 +198,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         const resultado = await respuesta.json();
-        console.log('Respuesta del servidor:', resultado);
 
         if (resultado.success) {
-          alert('Datos guardados correctamente');
+          Swal.fire({
+            title: "Éxito!",
+            text: "Datos guardados correctamente.",
+            icon: "success"
+          }).then(() => {
+            location.reload(); // Recargar la página después de guardar
+          });
         } else {
-          alert('Error al guardar datos');
+          Swal.fire({
+            title: "Error!",
+            text: "Error al guardar datos.",
+            icon: "error"
+          });
         }
       } catch (error) {
         console.error('Error al enviar datos:', error);
+        Swal.fire({
+          title: "Error!",
+          text: "Hubo un problema al procesar la solicitud.",
+          icon: "error"
+        });
       }});
     });
   } else {

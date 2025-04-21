@@ -1,4 +1,5 @@
 const db = require('../util/database');
+const { decrypt } = require('../util/encryptData');
 
 class Nutricion {
     // Obtener todos los pacientes (excluyendo los eliminados)
@@ -15,7 +16,7 @@ class Nutricion {
         }
     }
 
-    // Obtener un paciente por su ID
+    // Obtener un paciente por su ID con desencriptación
     static async obtenerPorId(idExpediente) {
         try {
             const [rows] = await db.execute(`
@@ -23,8 +24,26 @@ class Nutricion {
                 FROM expediente
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
             `, [idExpediente]);
-            return rows[0]; // Devuelve el primer resultado
+
+            if (rows.length === 0) {
+                throw new Error('Paciente no encontrado');
+            }
+
+            const paciente = rows[0];
+
+            // Desencriptar campos sensibles
+            return {
+                IDExpediente: paciente.IDExpediente,
+                nombres: decrypt(paciente.nombres || ''),
+                apellidoP: decrypt(paciente.apellidoP || ''),
+                apellidoM: decrypt(paciente.apellidoM || ''),
+                fechaNacimiento: decrypt(paciente.fechaNacimiento || ''),
+                contacto: decrypt(paciente.contacto || ''),
+                nvEscolar: paciente.nvEscolar || 'Sin nivel registrado',
+                sexo: paciente.sexo || 'No especificado'
+            };
         } catch (error) {
+            console.error('Error al obtener y desencriptar paciente:', error.message);
             throw error;
         }
     }
