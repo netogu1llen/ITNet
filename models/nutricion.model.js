@@ -1,4 +1,5 @@
 const db = require('../util/database');
+const { decrypt } = require('../util/encryptData');
 
 class Nutricion {
     // Obtener todos los pacientes (excluyendo los eliminados)
@@ -15,7 +16,7 @@ class Nutricion {
         }
     }
 
-    // Obtener un paciente por su ID
+    // Obtener un paciente por su ID con desencriptación
     static async obtenerPorId(idExpediente) {
         try {
             const [rows] = await db.execute(`
@@ -23,8 +24,26 @@ class Nutricion {
                 FROM expediente
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
             `, [idExpediente]);
-            return rows[0]; // Devuelve el primer resultado
+
+            if (rows.length === 0) {
+                throw new Error('Paciente no encontrado');
+            }
+
+            const paciente = rows[0];
+
+            // Desencriptar campos sensibles
+            return {
+                IDExpediente: paciente.IDExpediente,
+                nombres: decrypt(paciente.nombres || ''),
+                apellidoP: decrypt(paciente.apellidoP || ''),
+                apellidoM: decrypt(paciente.apellidoM || ''),
+                fechaNacimiento: decrypt(paciente.fechaNacimiento || ''),
+                contacto: decrypt(paciente.contacto || ''),
+                nvEscolar: paciente.nvEscolar || 'Sin nivel registrado',
+                sexo: paciente.sexo || 'No especificado'
+            };
         } catch (error) {
+            console.error('Error al obtener y desencriptar paciente:', error.message);
             throw error;
         }
     }
@@ -44,26 +63,26 @@ class Nutricion {
     }
     
     // Obtener datos generales del paciente (sin información del responsable)
-static async obtenerDatosGenerales(idExpediente) {
-    try {
-        // Datos del paciente - solo usamos la tabla expediente
-        const [pacienteRows] = await db.execute(`
-            SELECT nombres, apellidoP, apellidoM, fechaNacimiento, contacto, nvEscolar, sexo
-            FROM expediente
-            WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
-        `, [idExpediente]);
-        
-        if (pacienteRows.length === 0) {
-            throw new Error('Paciente no encontrado');
+    static async obtenerDatosGenerales(idExpediente) {
+        try {
+            // Datos del paciente - solo usamos la tabla expediente
+            const [pacienteRows] = await db.execute(`
+                SELECT nombres, apellidoP, apellidoM, fechaNacimiento, contacto, nvEscolar, sexo
+                FROM expediente
+                WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+            `, [idExpediente]);
+            
+            if (pacienteRows.length === 0) {
+                throw new Error('Paciente no encontrado');
+            }
+            
+            // Devolvemos solo los datos del paciente
+            // Se eliminaron todas las referencias a datos de responsable
+            return pacienteRows[0];
+        } catch (error) {
+            throw error;
         }
-        
-        // Devolvemos solo los datos del paciente
-        // Se eliminaron todas las referencias a datos de responsable
-        return pacienteRows[0];
-    } catch (error) {
-        throw error;
     }
-}
     
     // Obtener antecedentes del paciente
     static async obtenerAntecedentes(idExpediente) {
@@ -326,6 +345,176 @@ static async obtenerHistorialNutricionalV2PorId(id) {
             );
             return result;
         } catch (error) {
+            throw error;
+        }
+    }
+    
+    static async insertarHistoriaClinicaV1(data) {
+        const connection = await db.getConnection(); // Aseguramos una sola conexión
+        try {
+            await connection.beginTransaction(); // Iniciar transacción
+
+            // Insertar en nutricional1
+            await connection.execute(`
+                INSERT INTO nutricional1 (
+                    IDExpediente, numSesion, diabetes, cancer, dislipidemia, obesidad, anemia, hipertensionArterial, 
+                    pesoNacer, tallaNacer, alimentacionRecibida, sdg, tipoParto, complicaciones, lactancia, tiempo, 
+                    edadAlimentacionComplementaria, alimentosPrimerAnio
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.diabetes || null,
+                data.cancer || null,
+                data.dislipidemia || null,
+                data.obesidad || null,
+                data.anemia || null,
+                data.hipertensionArterial || null,
+                data.pesoNacer || null,
+                data.tallaNacer || null,
+                data.alimentacionRecibida || null,
+                data.sdg || null,
+                data.tipoParto || null,
+                data.complicaciones || null,
+                data.lactancia || null,
+                data.tiempo || null,
+                data.edadAlimentacionComplementaria || null,
+                data.alimentosPrimerAnio || null
+            ]);
+
+            // Insertar en indicadoresClinicos
+            await connection.execute(`
+                INSERT INTO indicadoresclinicos (
+                    IDExpediente, numSesion, cabello, conjunto, unias, boca, dientes, piel, edema
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.cabello || null,
+                data.conjunto || null,
+                data.unias || null,
+                data.boca || null,
+                data.dientes || null,
+                data.piel || null,
+                data.edema || null
+            ]);
+
+            // Insertar en transtornos
+            await connection.execute(`
+                INSERT INTO transtornos (
+                    IDExpediente, numSesion, vomito, reflujo, disfagia, diarrea, flatulencias, estrenimiento, distencion, colitis, pirosis, gastritis, otro
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.vomito || null,
+                data.reflujo || null,
+                data.disfagia || null,
+                data.diarrea || null,
+                data.flatulencias || null,
+                data.estrenimiento || null,
+                data.distencion || null,
+                data.colitis || null,
+                data.pirosis || null,
+                data.gastritis || null,
+                data.otro || null
+            ]);
+
+            // Insertar en actividadDiaria
+            await connection.execute(`
+                INSERT INTO actividaddiaria (
+                    IDExpediente, numSesion, ejercicioFisico, fechaInicio, frecuencia
+                ) VALUES (?, ?, ?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.ejercicioFisico || null,
+                data.fechaInicio || null,
+                data.frecuencia || null
+            ]);
+
+            // Insertar en diagnosticoEvolucion
+            await connection.execute(`
+                INSERT INTO diagnosticoevolucion (
+                    IDExpediente, numSesion, diagnosticoEvolucion
+                ) VALUES (?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.diagnosticoEvolucion || null
+            ]);
+
+            // Insertar en evaluacionAntropometrica
+            await connection.execute(`
+                INSERT INTO evaluacionantropometrica (
+                    IDExpediente, numSesion, talla, peso, circunferenciaCintura, circunferenciaCadera
+                ) VALUES (?, ?, ?, ?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.talla || null,
+                data.peso || null,
+                data.circunferenciaCintura || null,
+                data.circunferenciaCadera || null
+            ]);
+
+            // Insertar en indicadoresBioquimicos (recorrer arrays)
+            if (data.parametro && data.valorReferencia && data.parametroFecha) {
+                for (let i = 0; i < data.parametro.length; i++) {
+                    if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
+                        await connection.execute(`
+                            INSERT INTO indicadoresbioquim (
+                                IDExpediente, numSesion, parametro, valorReferencia, parametroFecha
+                            ) VALUES (?, ?, ?, ?, ?)
+                        `, [
+                            data.IDExpediente,
+                            data.numSesion,
+                            data.parametro[i] || null,
+                            data.valorReferencia[i] || null,
+                            data.parametroFecha[i] || null
+                        ]);
+                    }
+                }
+            }
+
+            // Insertar en objetivoNutricional (recorrer array)
+            if (data.objetivo) {
+                for (let i = 0; i < data.objetivo.length; i++) {
+                    if (data.objetivo[i]) {
+                        await connection.execute(`
+                            INSERT INTO objetivonutricional (
+                                IDExpediente, numSesion, objetivo
+                            ) VALUES (?, ?, ?)
+                        `, [
+                            data.IDExpediente,
+                            data.numSesion,
+                            data.objetivo[i] || null
+                        ]);
+                    }
+                }
+            }
+
+            // Insertar en manejoNutricional
+            await connection.execute(`
+                INSERT INTO manejonutricional (
+                    IDExpediente, numSesion, energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.energia || null,
+                data.hidratosDeCarbono || null,
+                data.lipidos || null,
+                data.proteinas || null,
+                data.fibra || null,
+                data.agua || null
+            ]);
+
+            await connection.commit(); // Confirmar si todo sale bien
+            connection.release();
+        } catch (error) {
+            await connection.rollback(); // Revertir si hay error
+            connection.release();
             throw error;
         }
     }

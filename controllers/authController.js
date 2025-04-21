@@ -29,7 +29,7 @@ exports.googleCallback = async (req, res, next) => {
   if (googleError) {
     // El usuario canceló el login en la ventana de Google
     const mensaje = 'Autenticación cancelada. Por favor intenta nuevamente.';
-    return res.redirect(`/login?error=${encodeURIComponent(mensaje)}`);
+    return res.redirect(`/?error=${encodeURIComponent(mensaje)}`);
   }
 
   try {
@@ -63,7 +63,7 @@ exports.googleCallback = async (req, res, next) => {
       : 'Ocurrió un error durante el inicio de sesión. Intenta de nuevo.';
 
     // Redirigir siempre al login con el mensaje de error
-    return res.redirect(`/login?error=${encodeURIComponent(mensaje)}`);
+    return res.redirect(`/?error=${encodeURIComponent(mensaje)}`);
 
     next(error); // Otros errores se mandan al middleware
   }

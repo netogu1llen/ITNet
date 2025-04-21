@@ -26,6 +26,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter });
 
 
+const { request, response } = require("express");
 
 // Obtener todos los pacientes para nutrición
 exports.obtenerHistoriales = async (req, res) => {
@@ -388,3 +389,32 @@ exports.subirDocumentoMiddleware = [
       }
   }
 ];
+
+// Mostrar el formulario de historia clínica con datos del expediente
+exports.renderHistoriaClinica = async (req, res) => {
+  try {
+    const IDExpediente = req.params.id;
+
+    const expediente = await Nutricion.obtenerPorId(IDExpediente);
+    
+    
+    res.render('historiaClinica', { expediente });
+  } catch (error) {
+    console.error('Error al renderizar historia clínica:', error);
+    res.status(500).send('Error interno al mostrar la historia clínica');
+  }
+};
+
+exports.guardarHistoriaClinicaV1 = async (req, res) => {
+  try {
+    const datos = req.body;
+    console.log('Datos recibidos para guardar en historiaclinicav1:', datos);
+
+    await Nutricion.insertarHistoriaClinicaV1(datos);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error guardando datos de historiaclinicav1:', error);
+    res.status(500).json({ success: false, message: 'Error en el servidor' });
+  }
+};
