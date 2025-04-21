@@ -29,4 +29,7 @@ router.get('/documentos/descargar/:id', nutricionController.descargarDocumento);
 // Ruta para mostrar un documento en el iframe (vista previa)
 router.get('/documentos/ver/:id', nutricionController.verDocumento);
 
+// Ruta para mostrar un historial nutricional V2
+router.get('/historial-nutricional-v2', nutricionController.getHistorialNutricionalV2);
+
 module.exports = router;

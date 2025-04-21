@@ -209,54 +209,85 @@ static async obtenerDatosGenerales(idExpediente) {
             throw error;
         }
     }
-    // Obtener documentos adjuntos y historial nutricional del paciente
-    static async obtenerDocumentosHistorial(idExpediente) {
-        try {
-            // Obtener documentos adjuntos (PDFs)
-            const [documentosRows] = await db.execute(`
-                SELECT IDDocumento, nombre, fecha, ubicacion, 'PDF' as tipo
-                FROM documentosAdjuntos
-                WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
-                ORDER BY fecha DESC
-            `, [idExpediente]);
-            
-            // Obtener historial nutricional V1
-            const [nutricionalRows] = await db.execute(`
-                SELECT IDNutricional1 as ID, 'Historial Nutricional V1' as nombre, 
-                    fecha, 'NUTRICIONAL_V1' as tipo, numSesion
-                FROM nutricional1
-                WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
-                ORDER BY fecha DESC
-            `, [idExpediente]);
-            
-            // Combinar ambos resultados
-            const documentosHistorial = [
-                ...documentosRows.map(doc => ({
-                    id: doc.IDDocumento,
-                    nombre: doc.nombre,
-                    fecha: doc.fecha,
-                    tipo: doc.tipo,
-                    ruta: doc.ubicacion,
-                    numSesion: null
-                })),
-                ...nutricionalRows.map(hist => ({
-                    id: hist.ID,
-                    nombre: hist.nombre,
-                    fecha: hist.fecha,
-                    tipo: hist.tipo,
-                    ruta: null,
-                    numSesion: hist.numSesion
-                }))
-            ];
-            
-            // Ordenar por fecha (más reciente primero)
-            documentosHistorial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-            
-            return documentosHistorial;
-        } catch (error) {
-            throw error;
-        }
+ // Obtener documentos adjuntos y historial nutricional del paciente
+static async obtenerDocumentosHistorial(idExpediente) {
+    try {
+        // Obtener documentos adjuntos (PDFs)
+        const [documentosRows] = await db.execute(`
+            SELECT IDDocumento, nombre, fecha, ubicacion, 'PDF' as tipo
+            FROM documentosAdjuntos
+            WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+            ORDER BY fecha DESC
+        `, [idExpediente]);
+        
+        // Obtener historial nutricional V1
+        const [nutricionalRows] = await db.execute(`
+            SELECT IDNutricional1 as ID, 'Historial Nutricional V1' as nombre, 
+                fecha, 'NUTRICIONAL_V1' as tipo, numSesion
+            FROM nutricional1
+            WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+            ORDER BY fecha DESC
+        `, [idExpediente]);
+        
+        // Obtener historial nutricional V2 (antes objetivos nutricionales)
+        const [objetivosRows] = await db.execute(`
+            SELECT IDObjetivoNutricional as ID, 'Historial Nutricional V2' as nombre, 
+                fecha, 'NUTRICIONAL_V2' as tipo, numSesion
+            FROM objetivonutricional
+            WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+            ORDER BY fecha DESC
+        `, [idExpediente]);
+        
+        // Combinar todos los resultados - Sin ordenar aquí
+        const documentosHistorial = [
+            ...nutricionalRows.map(hist => ({  // Colocamos los V1 primero en el array
+                id: hist.ID,
+                nombre: hist.nombre,
+                fecha: hist.fecha,
+                tipo: hist.tipo,
+                ruta: null,
+                numSesion: hist.numSesion,
+                orden: 1  // Valor para ordenar en el frontend (prioridad alta)
+            })),
+            ...documentosRows.map(doc => ({
+                id: doc.IDDocumento,
+                nombre: doc.nombre,
+                fecha: doc.fecha,
+                tipo: doc.tipo,
+                ruta: doc.ubicacion,
+                numSesion: null,
+                orden: 2  // Valor para ordenar (prioridad media)
+            })),
+            ...objetivosRows.map(obj => ({
+                id: obj.ID,
+                nombre: obj.nombre,
+                fecha: obj.fecha,
+                tipo: obj.tipo,
+                ruta: null,
+                numSesion: obj.numSesion,
+                orden: 3  // Valor para ordenar (prioridad baja)
+            }))
+        ];
+        
+        return documentosHistorial;
+    } catch (error) {
+        throw error;
     }
+}
+
+// Cambiar de obtenerObjetivoNutricionalPorId a obtenerHistorialNutricionalV2PorId
+static async obtenerHistorialNutricionalV2PorId(id) {
+    try {
+        const [results] = await db.execute(`
+            SELECT IDObjetivoNutricional AS idHistorialV2, IDExpediente, numSesion, fecha, objetivo
+            FROM objetivonutricional
+            WHERE IDObjetivoNutricional = ? AND (eliminado IS NULL OR eliminado = 0)
+        `, [id]);
+        return results[0];
+    } catch (error) {
+        throw error;
+    }
+}
 
     // Obtener un documento por ID
     static async obtenerDocumentoPorId(id) {

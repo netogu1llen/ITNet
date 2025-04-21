@@ -275,23 +275,30 @@
                   data-tipo="<%= item.tipo %>" 
                   data-ruta="<%= item.ruta %>" 
                   data-sesion="<%= item.numSesion %>">
-                <td>
-                  <% if (item.tipo === 'PDF') { %>
-                    <span class="icon-text">
-                      <span class="icon">
-                        <i class="fas fa-file-pdf" style="color: #e2423b;"></i>
-                      </span>
-                      <span><%= item.nombre %></span>
+              <td>
+                <% if (item.tipo === 'PDF') { %>
+                  <span class="icon-text">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf" style="color: #e2423b;"></i>
                     </span>
-                  <% } else if (item.tipo === 'NUTRICIONAL_V1') { %>
-                    <span class="icon-text">
-                      <span class="icon">
-                        <i class="fas fa-clipboard-list" style="color: #23a094;"></i>
-                      </span>
-                      <span><%= item.nombre %></span>
+                    <span><%= item.nombre %></span>
+                  </span>
+                <% } else if (item.tipo === 'NUTRICIONAL_V1') { %>
+                  <span class="icon-text">
+                    <span class="icon">
+                      <i class="fas fa-clipboard-list" style="color: #23a094;"></i>
                     </span>
-                  <% } %>
-                </td>
+                    <span><%= item.nombre %></span>
+                  </span>
+                <% } else if (item.tipo === 'NUTRICIONAL_V2') { %>
+                  <span class="icon-text">
+                    <span class="icon">
+                      <i class="fas fa-bullseye" style="color: #3273dc;"></i>
+                    </span>
+                    <span><%= item.nombre %></span>
+                  </span>
+                <% } %>
+              </td>
                 <td><%= item.fechaFormateada %></td>
                 <td>
                   <span class="btn-descargar" data-id="<%= item.id %>" data-tipo="<%= item.tipo %>" style="cursor: pointer;">

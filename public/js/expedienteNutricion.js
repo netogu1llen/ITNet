@@ -10,22 +10,76 @@ $(document).ready(function () {
     const idExpediente = urlParams.get('id');
 
     // Inicializar DataTable para la tabla de documentos
-    const table = $('#documentosTable').DataTable({
-        language: {
-            info: "Mostrando _START_ a _END_ de _TOTAL_ documentos",
-            infoEmpty: "No hay documentos disponibles",
-            infoFiltered: "(filtrado de _MAX_ documentos en total)",
-            paginate: {
-                previous: "Anterior",
-                next: "Siguiente"
-            },
-            lengthMenu: "Mostrar _MENU_ documentos por página",
-            search: "Buscar documento:"
+const table = $('#documentosTable').DataTable({
+    language: {
+        info: "Mostrando _START_ a _END_ de _TOTAL_ documentos",
+        infoEmpty: "No hay documentos disponibles",
+        infoFiltered: "(filtrado de _MAX_ documentos en total)",
+        paginate: {
+            previous: "Anterior",
+            next: "Siguiente"
         },
-        pageLength: 10,
-        lengthMenu: [5, 10, 25, 50],
-        order: [[1, 'desc']] // Ordenar por la columna de Fecha de Creación (descendente)
-    });
+        lengthMenu: "Mostrar _MENU_ documentos por página",
+        search: "Buscar documento:"
+    },
+    pageLength: 10,
+    lengthMenu: [5, 10, 25, 50],
+    order: [], // No aplicar ordenamiento inicial - usar el orden del backend
+    columnDefs: [
+        {
+            // Asegúrate de que la primera columna (tipo de documento) no se pueda ordenar
+            targets: 0,
+            orderable: false
+        }
+    ],
+    createdRow: function(row, data, dataIndex) {
+        // Destacar visualmente los documentos Nutricional V1
+        if($(row).find('td:first').text().trim().includes('Historial Nutricional V1')) {
+            $(row).addClass('highlight-nutricional-v1');
+        }
+    }
+});
+
+// Añadir CSS personalizado para destacar los V1
+$('head').append(`
+<style>
+.highlight-nutricional-v1 {
+    background-color: rgba(35, 160, 148, 0.1) !important;
+    font-weight: bold;
+}
+</style>
+`);
+
+// Mover manualmente todos los Historiales V1 al inicio de la tabla al cargar
+function moverHistorialV1AlInicio() {
+    // Obtener todas las filas
+    const rows = table.rows().nodes();
+    
+    // Recorrer las filas en orden inverso para no afectar los índices
+    for (let i = rows.length - 1; i >= 0; i--) {
+        const tipo = $(rows[i]).find('td:first').text().trim();
+        
+        // Si es un Historial Nutricional V1, moverlo al principio
+        if (tipo.includes('Historial Nutricional V1')) {
+            // Desacoplar la fila actual
+            const row = table.row(i).node();
+            $(row).detach();
+            
+            // Insertar al principio de la tabla
+            $(table.table().body()).prepend(row);
+        }
+    }
+}
+
+// Llamar a la función después de que se inicialice la tabla
+table.on('draw', function() {
+    moverHistorialV1AlInicio();
+});
+
+// También ejecutar después de cualquier búsqueda o filtrado
+table.on('search.dt', function() {
+    setTimeout(moverHistorialV1AlInicio, 100);
+});
 
     // Crear barra superior personalizada
     const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
@@ -68,7 +122,7 @@ $(document).ready(function () {
         console.log('Generar historia clínica para ID', idExpediente);
     });
     
-    // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
+// VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
 $(document).on('click', '.fila-documento', function(e) {
     // No hacer nada si el clic fue en un botón
     if ($(e.target).closest('button, .btn-descargar').length) {
@@ -79,11 +133,17 @@ $(document).on('click', '.fila-documento', function(e) {
     const tipo = $(this).data('tipo');
     
     if (tipo === 'NUTRICIONAL_V1') {
-        console.log('Ver historial nutricional:', documentoId);
+        console.log('Ver historial nutricional V1:', documentoId);
         // Redirigir al historial nutricional
         const idExpediente = new URLSearchParams(window.location.search).get('id');
         window.location.href = `/nutricion/historial-nutricional?id=${documentoId}&expediente=${idExpediente}`;
+    } else if (tipo === 'NUTRICIONAL_V2') {
+        console.log('Ver historial nutricional V2:', documentoId);
+        // Redirigir a la página de historial nutricional V2
+        const idExpediente = new URLSearchParams(window.location.search).get('id');
+        window.location.href = `/nutricion/historial-nutricional-v2?id=${documentoId}&expediente=${idExpediente}`;
     } else if (tipo === 'PDF') {
+        // Código existente para PDF...
         console.log('Ver documento PDF:', documentoId);
         
         // Usar URL absoluta con el origen completo

@@ -238,3 +238,43 @@ exports.verDocumento = async (req, res) => {
       res.status(500).send('Error al mostrar el documento');
   }
 };
+
+
+// Obtener y mostrar un Historial Nutricional V2
+exports.getHistorialNutricionalV2 = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const idExpediente = req.query.expediente;
+    
+    if (!id || !idExpediente) {
+      return res.status(400).send('Se requieren los IDs');
+    }
+    
+    // Obtener datos del historial nutricional V2 (antes objetivo nutricional)
+    const historial = await Nutricion.obtenerHistorialNutricionalV2PorId(id);
+    
+    if (!historial) {
+      return res.status(404).send('Historial nutricional V2 no encontrado');
+    }
+    
+    // Obtener datos del paciente
+    const pacienteEncriptado = await Nutricion.obtenerPorId(idExpediente);
+    
+    // Desencriptar datos sensibles del paciente
+    const paciente = {
+      nombres: decrypt(pacienteEncriptado.nombres || ''),
+      apellidoP: decrypt(pacienteEncriptado.apellidoP || ''),
+      apellidoM: decrypt(pacienteEncriptado.apellidoM || ''),
+      fechaNacimiento: decrypt(pacienteEncriptado.fechaNacimiento || '')
+    };
+    
+    // Renderizar la vista con los datos
+    res.render('historial_nutricional_v2', { 
+      historial, 
+      paciente
+    });
+  } catch (error) {
+    console.error('Error al obtener historial nutricional V2:', error);
+    res.status(500).send('Error al cargar el historial nutricional V2');
+  }
+};
