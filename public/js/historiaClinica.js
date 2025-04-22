@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
             text: "Datos guardados correctamente.",
             icon: "success"
           }).then(() => {
-            location.reload(); // Recargar la página después de guardar
+            window.location.href = `/nutricion/documentos/${idExpediente}`; // Redirigir a expedienteNutricion
           });
         } else {
           Swal.fire({

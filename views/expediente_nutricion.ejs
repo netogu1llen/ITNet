@@ -302,6 +302,35 @@
       </table>
     </div>
   </div>
+
+  <!-- Tabla de sesiones -->
+  <div class="full-white-container exp-psicologico-wide" style="margin-top: 20px;">
+    <h2 class="title-letters">Sesiones</h2>
+    <div style="width: 100%; height: auto; padding: 10px 0;">
+      <table id="sesionesTable" class="table is-fullwidth">
+        <thead>
+          <tr>
+            <th>No. Sesión</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (nutricional1 && nutricional1.length > 0) { %>
+            <% nutricional1.forEach(sesion => { %>
+              <tr class="fila-sesion" data-num-sesion="<%= sesion.numSesion %>" data-id-expediente="<%= datosGeneralesPaciente.IDExpediente %>">
+                <td><%= sesion.numSesion %></td>
+                <td><%= sesion.fecha %></td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="2" class="has-text-centered">No hay sesiones registradas</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
     </div>
 
     <!-- MODAL DE VISTA PREVIA DEL DOCUMENTO -->

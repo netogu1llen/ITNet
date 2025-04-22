@@ -40,10 +40,7 @@ router.post('/documentos/subir/:IDExpediente', nutricionController.subirDocument
 router.get('/documentos/:id', nutricionController.getExpedienteNutricion);
 
 router.get('/historiaClinica/:id', nutricionController.renderHistoriaClinica);
-// router.post('/historiaClinica/:id', nutricionController.guardarHistoriaClinica);
 
 router.post('/historiaClinica/guardarHistoriaClinicaV1', nutricionController.guardarHistoriaClinicaV1);
-
-
 
 module.exports = router;
