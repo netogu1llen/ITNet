@@ -26,8 +26,8 @@ class Usuario {
         try {
             // Convertir formato de fecha si es necesario (del formato YYYY-MM-DD del input date al formato MySQL)
             const [result] = await db.execute(`
-                INSERT INTO usuario (nombres, apellidoP, apellidoM, correo, fechaNacimiento)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO usuario (nombres, apellidoP, apellidoM, correo, fechaNacimiento, eliminado)
+                VALUES (?, ?, ?, ?, ?, 0)
             `, [nombres, apellidoP, apellidoM, correo, fechaNacimiento]);
             return result;
         } catch (error) {
@@ -57,7 +57,8 @@ class Usuario {
         try {
             const [result] = await db.execute(`
                 UPDATE usuario
-                SET nombres = ?, apellidoP = ?, apellidoM = ?, correo = ?, fechaNacimiento = ?
+                SET nombres = ?, apellidoP = ?, apellidoM = ?, correo = ?, fechaNacimiento = ?, eliminado = 0
+
                 WHERE IDUsuario = ?
             `, [nombres, apellidoP, apellidoM, correo, fechaNacimiento, idUsuario]);
             return result;
