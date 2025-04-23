@@ -55,4 +55,6 @@ router.get('/google', authController.googleAuthInit);
  */
 router.get('/google/callback', authController.googleCallback);
 
+router.post('/google/mobile', authController.googleMobileLogin);
+
 module.exports = router;
