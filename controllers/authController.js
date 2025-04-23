@@ -106,7 +106,6 @@ exports.googleMobileLogin = async (req, res) => {
       email,
       googleId,
       name,
-      picture,
     });
 
     // Genera el JWT propio
