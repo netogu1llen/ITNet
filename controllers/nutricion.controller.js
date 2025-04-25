@@ -447,3 +447,130 @@ exports.actualizarHistoriaClinicaV1 = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error al actualizar' });
     }
 };
+
+exports.checkAndRedirectHistoriaClinica = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
+        const forceV1 = req.query.forceV1 === 'true';
+        const editMode = req.query.edit === 'true';
+
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        // Si se está intentando editar un V1 existente, ir directamente a edición
+        if (editMode) {
+            return res.redirect(`/nutricion/historiaClinica/edit/${IDExpediente}?numSesion=${numSesion || ''}`);
+        }
+
+        // Si se fuerza V1, ir a creación
+        if (forceV1) {
+            return res.redirect(`/nutricion/historiaClinica/create/${IDExpediente}`);
+        }
+
+        // Verificar si existe una Historia Clínica V1
+        const existeV1 = await Nutricion.verificarExistenciaHistoriaV1(IDExpediente);
+        
+        if (!existeV1) {
+            return res.redirect(`/nutricion/historiaClinica/create/${IDExpediente}?forceV1=true`);
+        }
+
+        // Si existe V1, redirigir a V2
+        res.redirect(`/nutricion/historiaClinicaV2/${IDExpediente}?numSesion=${numSesion || ''}`);
+        
+    } catch (error) {
+        console.error('Error al verificar historia clínica:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+};
+
+// Nuevo controlador específico para crear V1
+exports.createHistoriaClinicaV1 = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        if (!expediente) {
+            return res.status(404).send('Expediente no encontrado.');
+        }
+
+        // Renderizar el formulario V1 directamente
+        res.render('historiaClinica', { 
+            expediente, 
+            datosSesion: null,
+            modoEdicion: false
+        });
+
+    } catch (error) {
+        console.error('Error al renderizar formulario de historia clínica:', error);
+        res.status(500).send('Error interno al mostrar el formulario');
+    }
+};
+
+exports.renderHistoriaClinicaV2 = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
+
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        // Verificar si existe una Historia Clínica V1
+        const existeV1 = await Nutricion.verificarExistenciaHistoriaV1(IDExpediente);
+        
+        if (!existeV1) {
+            return res.redirect(`/nutricion/historiaClinica/${IDExpediente}`);
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        const datosSesionV1 = await Nutricion.obtenerUltimaSesionV1(IDExpediente);
+
+        res.render('historiaClinicaV2', {
+            expediente,
+            datosSesionV1,
+            datosSesion: null, // Para futuras sesiones V2
+            modoEdicion: !!numSesion
+        });
+    } catch (error) {
+        console.error('Error al renderizar historia clínica V2:', error);
+        res.status(500).send('Error interno al mostrar la historia clínica V2');
+    }
+};
+
+// Nuevo controlador para editar V1
+exports.editHistoriaClinicaV1 = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
+
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        if (!expediente) {
+            return res.status(404).send('Expediente no encontrado.');
+        }
+
+        let datosSesion = null;
+        if (numSesion) {
+            datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
+        }
+
+        res.render('historiaClinica', { 
+            expediente, 
+            datosSesion,
+            modoEdicion: true
+        });
+
+    } catch (error) {
+        console.error('Error al renderizar formulario de edición:', error);
+        res.status(500).send('Error interno al mostrar el formulario');
+    }
+};

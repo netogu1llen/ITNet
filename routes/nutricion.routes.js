@@ -36,8 +36,12 @@ router.delete('/documentos/eliminar/:id', nutricionController.eliminarDocumento)
 router.post('/documentos/subir/:IDExpediente', nutricionController.subirDocumentoMiddleware);
 router.get('/documentos/:id', nutricionController.getExpedienteNutricion);
 
-// Update historia clínica routes
-router.get('/historiaClinica/:id', nutricionController.renderHistoriaClinica);
+// Reorganizar las rutas de historia clínica (el orden es importante)
+router.get('/historiaClinica/create/:id', nutricionController.createHistoriaClinicaV1);
+router.get('/historiaClinica/edit/:id', nutricionController.editHistoriaClinicaV1);
+router.get('/historiaClinica/:id', nutricionController.checkAndRedirectHistoriaClinica);
+router.get('/historiaClinicaV2/:id', nutricionController.renderHistoriaClinicaV2);
+
 router.post('/historiaClinica/guardarHistoriaClinicaV1', nutricionController.guardarHistoriaClinicaV1);
 router.post('/historiaClinica/actualizarHistoriaClinicaV1', nutricionController.actualizarHistoriaClinicaV1);
 

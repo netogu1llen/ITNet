@@ -40,7 +40,8 @@ class Nutricion {
                 fechaNacimiento: decrypt(paciente.fechaNacimiento || ''),
                 contacto: decrypt(paciente.contacto || ''),
                 nvEscolar: paciente.nvEscolar || 'Sin nivel registrado',
-                sexo: paciente.sexo || 'No especificado'
+                sexo: paciente.sexo || 'No especificado',
+                grado: paciente.grado || 'Sin grado' // Añadir esta línea
             };
         } catch (error) {
             console.error('Error al obtener y desencriptar paciente:', error.message);
@@ -661,6 +662,39 @@ class Nutricion {
             throw error;
         } finally {
             connection.release();
+        }
+    }
+
+    static async verificarExistenciaHistoriaV1(idExpediente) {
+        try {
+            const [rows] = await db.execute(
+                'SELECT COUNT(*) as count FROM nutricional1 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)',
+                [idExpediente]
+            );
+            return rows[0].count > 0;
+        } catch (error) {
+            console.error('Error al verificar existencia de Historia V1:', error);
+            throw error;
+        }
+    }
+
+    static async obtenerUltimaSesionV1(idExpediente) {
+        try {
+            const [rows] = await db.execute(
+                `SELECT n.*, ea.* 
+                 FROM nutricional1 n 
+                 LEFT JOIN evaluacionantropometrica ea 
+                 ON n.IDExpediente = ea.IDExpediente AND n.numSesion = ea.numSesion 
+                 WHERE n.IDExpediente = ? 
+                 AND (n.eliminado IS NULL OR n.eliminado = 0) 
+                 ORDER BY n.numSesion DESC 
+                 LIMIT 1`,
+                [idExpediente]
+            );
+            return rows[0] || null;
+        } catch (error) {
+            console.error('Error al obtener última sesión V1:', error);
+            throw error;
         }
     }
 }

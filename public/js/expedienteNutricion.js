@@ -269,10 +269,11 @@ $(document).on('click', '.fila-documento', function(e) {
     const tipo = $(this).data('tipo');
     const idExpediente = new URLSearchParams(window.location.search).get('id') || 
                         window.location.pathname.split('/').pop();
+    const numSesion = $(this).data('sesion');
     
     if (tipo === 'NUTRICIONAL_V1') {
-        // Actualizar la ruta para ir a historia clínica
-        window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${$(this).data('sesion')}`;
+        // Redirigir a edición de V1 con el parámetro edit=true
+        window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${numSesion}&edit=true`;
     } else if (tipo === 'PDF') {
         // Código existente para PDF...
         console.log('Ver documento PDF:', documentoId);

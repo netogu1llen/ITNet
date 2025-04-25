@@ -303,41 +303,7 @@
     </div>
   </div>
 
-  <!-- Tabla de sesiones -->
-  <div class="full-white-container exp-psicologico-wide" style="margin-top: 20px;">
-    <h2 class="title-letters">Sesiones</h2>
-    <div style="width: 100%; height: auto; padding: 10px 0;">
-      <table id="sesionesTable" class="table is-fullwidth">
-        <thead>
-          <tr>
-            <th style="text-align: center;">No. Sesión</th>
-            <th style="text-align: center;">Fecha</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (nutricional1 && nutricional1.length > 0) { %>
-            <% nutricional1.forEach(nutricion => { %>
-              <tr class="fila-sesion" data-num-sesion="<%= nutricion.numSesion %>" data-id-expediente="<%= datosGeneralesPaciente.IDExpediente %>">
-                <td style="text-align: center;"><%= nutricion.numSesion %></td>
-                <td style="text-align: center;">
-                  <% if (nutricion.fecha) { %>
-                    <%= new Date(nutricion.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) %>
-                  <% } else { %>
-                    Sin fecha
-                  <% } %>
-                </td>
-              </tr>
-            <% }); %>
-          <% } else { %>
-            <tr>
-              <td colspan="2" class="has-text-centered">No hay sesiones registradas</td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-    </div>
+
 
     <!-- MODAL DE VISTA PREVIA DEL DOCUMENTO -->
     <div id="modalVistaPreviaDocumento" class="modal" style="display: none; z-index: 1050;">
