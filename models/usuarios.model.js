@@ -84,7 +84,7 @@ class Usuario {
     // Verificar si un correo ya existe en la base de datos
     static async verificarCorreoExistente(correo, idUsuario = null) {
         try {
-            let query = 'SELECT COUNT(*) as count FROM usuario WHERE correo = ?';
+            let query = 'SELECT COUNT(*) as count FROM usuario WHERE correo = ? AND eliminado = 0';
             let params = [correo];
             
             // Si se proporciona un ID de usuario, excluirlo de la verificación (para modificaciones)
