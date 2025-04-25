@@ -44,5 +44,6 @@ router.get('/historiaClinicaV2/:id', nutricionController.renderHistoriaClinicaV2
 
 router.post('/historiaClinica/guardarHistoriaClinicaV1', nutricionController.guardarHistoriaClinicaV1);
 router.post('/historiaClinica/actualizarHistoriaClinicaV1', nutricionController.actualizarHistoriaClinicaV1);
+router.post('/historiaClinica/guardarHistoriaClinicaV2', nutricionController.guardarHistoriaClinicaV2);
 
 module.exports = router;

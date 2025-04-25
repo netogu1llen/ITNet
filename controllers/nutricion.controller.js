@@ -574,3 +574,14 @@ exports.editHistoriaClinicaV1 = async (req, res) => {
         res.status(500).send('Error interno al mostrar el formulario');
     }
 };
+
+exports.guardarHistoriaClinicaV2 = async (req, res) => {
+    try {
+        const datos = req.body;
+        await Nutricion.insertarHistoriaClinicaV2(datos);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error guardando datos de historiaClinicaV2:', error);
+        res.status(500).json({ success: false, message: 'Error en el servidor' });
+    }
+};

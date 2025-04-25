@@ -517,6 +517,92 @@ class Nutricion {
         }
     }
 
+    static async insertarHistoriaClinicaV2(data) {
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            // Insertar indicadores bioquímicos
+            if (data.parametrosBioquimicos) {
+                for (let i = 0; i < data.parametrosBioquimicos.length; i++) {
+                    await connection.execute(`
+                        INSERT INTO indicadoresbioquim 
+                        (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha)
+                        VALUES (?, ?, ?, ?, ?)
+                    `, [
+                        data.IDExpediente,
+                        data.numSesion,
+                        data.parametrosBioquimicos[i],
+                        data.valoresReferencia[i],
+                        data.fechasParametro[i]
+                    ]);
+                }
+            }
+
+            // Insertar evaluación antropométrica
+            await connection.execute(`
+                INSERT INTO evaluacionantropometrica 
+                (IDExpediente, numSesion, peso, talla, imc)
+                VALUES (?, ?, ?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.peso,
+                data.talla,
+                data.imc
+            ]);
+
+            // Insertar diagnósticos
+            await connection.execute(`
+                INSERT INTO diagnosticoevolucion 
+                (IDExpediente, numSesion, diagnosticoEvolucion)
+                VALUES (?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.diagnosticos
+            ]);
+
+            // Insertar objetivos nutricionales
+            if (data.objetivos) {
+                for (const objetivo of data.objetivos) {
+                    await connection.execute(`
+                        INSERT INTO objetivonutricional 
+                        (IDExpediente, numSesion, objetivo)
+                        VALUES (?, ?, ?)
+                    `, [
+                        data.IDExpediente,
+                        data.numSesion,
+                        objetivo
+                    ]);
+                }
+            }
+
+            // Insertar manejo nutricional
+            await connection.execute(`
+                INSERT INTO manejonutricional 
+                (IDExpediente, numSesion, energia, proteinas, lipidos, hidratosDeCarbono, fibra, agua)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `, [
+                data.IDExpediente,
+                data.numSesion,
+                data.energia,
+                data.proteinas,
+                data.lipidos,
+                data.hidratosCarbono,
+                data.fibra,
+                data.agua
+            ]);
+
+            await connection.commit();
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
+
     // Obtener sesiones de nutricional1
     static async obtenerSesionesNutricional1(idExpediente) {
         try {

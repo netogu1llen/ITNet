@@ -1,112 +1,218 @@
 <%- include('partials/head') %>
 
+<input type="hidden" id="idExpediente" data-modo-edicion="<%= datosSesion ? 'true' : 'false' %>" value="<%= expediente.IDExpediente %>">
 <body>
-  <div class="container">
-    <main class="content">
-      <!-- Encabezado con información del expediente -->
-      <div class="box">
-        <div class="logo-title">
-          <img src="/images/manzana.png" alt="Logo Nutrición" class="logo-img">
-          <h1>Historia Clínica - Seguimiento
-            <button class="btn-guardar button is-success" type="submit" style="float: right;">
-              <%= datosSesion ? 'Actualizar' : 'Guardar' %>
-            </button>
-          </h1>
-        </div>
-        
-        <div class="info-top">
-          <div class="columns">
-            <div class="column">
-              <strong>No. Expediente:</strong> <%= expediente.IDExpediente %>
+  <main class="container">
+    <!-- Página 1 -->
+    <div class="entrevista-pagina">
+      <div class="box" style="background-color: #f2f2f2;">
+        <h1 class="has-text-black pl-6">
+          <img src="/images/salud.png" alt="Salud Icon" style="height: 30px;"> Historia Clínica - Seguimiento
+          <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">
+            <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+          </button>
+        </h1>
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff;">
+            <!-- Información básica -->
+            <div class="columns">
+              <div class="column has-text-black has-text-weight-semibold">
+                No. Expediente: <%= expediente.IDExpediente %>
+              </div>
+              <div class="column has-text-black has-text-weight-semibold">
+                <label>Número de Sesión:</label>
+                <input id="numSesion" class="input" type="text" 
+                  value="<%= datosSesion?.numSesion || '' %>"
+                  <%= datosSesion ? 'readonly' : '' %>
+                  style="width: 60px; display: inline-block;">
+              </div>
             </div>
-            <div class="column">
-              <strong>Sesión:</strong>
-              <input id="numSesion" type="text" class="input" 
-                value="<%= datosSesion?.numSesion || '' %>"
-                <%= datosSesion ? 'readonly' : '' %>
-                style="width: 60px; display: inline-block;">
+
+            <!-- Información del paciente -->
+            <div class="columns">
+              <div class="column">
+                <label class="label">Nombre Completo</label>
+                <input class="input" type="text" 
+                  value="<%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %>" 
+                  readonly>
+              </div>
             </div>
-            <div class="column">
-              <strong>Fecha:</strong> <%= new Date().toLocaleDateString('es-ES') %>
+
+            <!-- Última evaluación V1 -->
+            <div class="box" style="background-color: #f8f9fa;">
+              <h4 class="title is-6">Última Evaluación (V1)</h4>
+              <div class="columns">
+                <div class="column">
+                  <p><strong>Peso anterior:</strong> <%= datosSesionV1?.evaluacionAntropometrica?.peso || 'No registrado' %> kg</p>
+                </div>
+                <div class="column">
+                  <p><strong>Talla anterior:</strong> <%= datosSesionV1?.evaluacionAntropometrica?.talla || 'No registrado' %> m</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Indicadores Bioquímicos -->
+            <div class="container">
+              <div class="box">
+                <h3 class="title is-5 has-text-centered">INDICADORES BIOQUÍMICOS</h3>
+                <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                  <thead>
+                    <tr>
+                      <th colspan="4" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                        INDICADORES BIOQUÍMICOS
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-indicadores">
+                    <tr>
+                      <th>Parámetro Bioquímico</th>
+                      <th>Valor de referencia</th>
+                      <th>Fecha</th>
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <td><input class="input" type="text" name="parametroBioquimico[]" required></td>
+                      <td><input class="input" type="text" name="valorReferencia[]" required></td>
+                      <td><input class="input" type="date" name="fechaParametro[]" required></td>
+                      <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="has-text-centered mt-3">
+                  <button id="btn-agregar-indicador" class="button is-success is-small">
+                    ＋ Agregar indicador
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Datos del paciente -->
-      <section class="box">
-        <h2 class="subtitle">Datos del Paciente</h2>
-        <div class="columns is-multiline">
-          <div class="column is-half">
-            <strong>Nombre Completo:</strong> 
-            <%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %>
-          </div>
-          <div class="column is-half">
-            <strong>Fecha de Nacimiento:</strong> 
-            <%= expediente.fechaNacimiento %>
-          </div>
-          <!-- Add more patient data as needed -->
-        </div>
-      </section>
+    <!-- Página 2 -->
+    <div class="entrevista-pagina" style="display: none;">
+      <div class="box" style="background-color: #f2f2f2;">
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff;">
+            <!-- Evaluación Antropométrica -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">EVALUACIÓN ANTROPOMÉTRICA</h3>
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                <thead>
+                  <tr>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      EVALUACIÓN ANTROPOMÉTRICA
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Peso actual (kg)</td>
+                    <td><input class="input" type="number" step="0.1" id="peso" required></td>
+                  </tr>
+                  <tr>
+                    <td>Talla actual (m)</td>
+                    <td><input class="input" type="number" step="0.01" id="talla" required></td>
+                  </tr>
+                  <tr>
+                    <td>IMC (kg/m²)</td>
+                    <td><input class="input" type="text" id="imc" readonly></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-      <!-- Datos de la última sesión V1 -->
-      <section class="box">
-        <h2 class="subtitle">Última Evaluación (V1)</h2>
-        <div class="columns is-multiline">
-          <div class="column is-half">
-            <strong>Peso anterior:</strong> 
-            <%= datosSesionV1?.evaluacionAntropometrica?.peso || 'No registrado' %> kg
-          </div>
-          <div class="column is-half">
-            <strong>Talla anterior:</strong> 
-            <%= datosSesionV1?.evaluacionAntropometrica?.talla || 'No registrado' %> m
-          </div>
-        </div>
-      </section>
-
-      <!-- Nueva evaluación -->
-      <section class="box">
-        <h2 class="subtitle">Evaluación Actual</h2>
-        
-        <!-- Medidas antropométricas -->
-        <div class="field">
-          <label class="label">Peso actual (kg)</label>
-          <div class="control">
-            <input class="input" type="number" step="0.1" id="pesoActual" required>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label">Talla actual (m)</label>
-          <div class="control">
-            <input class="input" type="number" step="0.01" id="tallaActual" required>
+            <!-- Diagnósticos Secundarios -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">DIAGNÓSTICOS SECUNDARIOS</h3>
+              <textarea id="diagnosticos" class="textarea" rows="4" 
+                placeholder="Ingrese los diagnósticos secundarios..."></textarea>
+            </div>
           </div>
         </div>
-
-        <!-- IMC se calculará automáticamente -->
-        <div class="field">
-          <label class="label">IMC</label>
-          <div class="control">
-            <input class="input" type="text" id="imc" readonly>
-          </div>
-        </div>
-
-        <!-- Observaciones -->
-        <div class="field">
-          <label class="label">Observaciones</label>
-          <div class="control">
-            <textarea class="textarea" id="observaciones" placeholder="Ingrese sus observaciones aquí..."></textarea>
-          </div>
-        </div>
-      </section>
-
-      <!-- Botones de navegación -->
-      <div class="buttons is-centered">
-        <button class="button is-light" onclick="history.back()">Cancelar</button>
-        <button class="button is-success btn-guardar">Guardar</button>
       </div>
-    </main>
-  </div>
+    </div>
+
+    <!-- Página 3 -->
+    <div class="entrevista-pagina" style="display: none;">
+      <div class="box" style="background-color: #f2f2f2;">
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff;">
+            <!-- Objetivos Nutricionales -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">OBJETIVOS NUTRICIONALES</h3>
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                <thead>
+                  <tr>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      OBJETIVOS NUTRICIONALES
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-objetivos">
+                  <tr>
+                    <td><input class="input" type="text" name="objetivos[]" placeholder="Objetivo..." required></td>
+                    <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="has-text-centered mt-3">
+                <button id="btn-agregar-objetivo" class="button is-success is-small">
+                  ＋ Agregar objetivo
+                </button>
+              </div>
+            </div>
+
+            <!-- Manejo Nutricional -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">MANEJO NUTRICIONAL</h3>
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                <thead>
+                  <tr>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      MANEJO NUTRICIONAL
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Energía (kcal/día)</td>
+                    <td><input class="input" type="text" id="energia" required></td>
+                  </tr>
+                  <tr>
+                    <td>Proteínas (g/día)</td>
+                    <td><input class="input" type="text" id="proteinas" required></td>
+                  </tr>
+                  <tr>
+                    <td>Lípidos (g/día)</td>
+                    <td><input class="input" type="text" id="lipidos" required></td>
+                  </tr>
+                  <tr>
+                    <td>Hidratos de carbono (g/día)</td>
+                    <td><input class="input" type="text" id="hidratosCarbono" required></td>
+                  </tr>
+                  <tr>
+                    <td>Fibra (g/día)</td>
+                    <td><input class="input" type="text" id="fibra" required></td>
+                  </tr>
+                  <tr>
+                    <td>Agua (ml/día)</td>
+                    <td><input class="input" type="text" id="agua" required></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="entrevista-pagination">
+      <%- include('partials/pagination', { totalPaginas: 3, paginaActual: 1 }) %>
+    </div>
+  </main>
 
   <script src="/js/historiaClinicaV2.js"></script>
 </body>
