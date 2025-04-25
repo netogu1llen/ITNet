@@ -11,6 +11,29 @@ const desencriptarExpediente = (expediente) => {
   if (!expediente) return expediente;
   
   try {
+      // Desencriptar datos individuales
+      let nombres = '';
+      let apellidoP = '';
+      let apellidoM = '';
+      
+      // Desencriptar nombres
+      if (expediente.nombres) {
+          nombres = decrypt(expediente.nombres);
+      }
+      
+      // Desencriptar apellido paterno
+      if (expediente.apellidoP) {
+          apellidoP = decrypt(expediente.apellidoP);
+      }
+      
+      // Desencriptar apellido materno
+      if (expediente.apellidoM) {
+          apellidoM = decrypt(expediente.apellidoM);
+      }
+      
+      // Crear nombre completo con los valores desencriptados
+      expediente.nombreCompleto = `${nombres} ${apellidoP} ${apellidoM}`.trim();
+      
       // Desencriptar fecha de nacimiento
       if (expediente.fechaNacimiento) {
           expediente.fechaNacimiento = decrypt(expediente.fechaNacimiento);
@@ -29,30 +52,6 @@ const desencriptarExpediente = (expediente) => {
       // Desencriptar domicilio
       if (expediente.domicilio) {
           expediente.domicilio = decrypt(expediente.domicilio);
-      }
-      
-      // Desencriptar nombreCompleto (que viene concatenado desde la base de datos)
-      if (expediente.nombreCompleto) {
-          // Dado que nombreCompleto es una concatenación de campos ya encriptados
-          // no podemos desencriptarlo directamente. 
-          // En su lugar, vamos a verificar si tenemos los campos individuales
-          if (expediente.nombres && expediente.apellidoP && expediente.apellidoM) {
-              const nombres = decrypt(expediente.nombres);
-              const apellidoP = decrypt(expediente.apellidoP);
-              const apellidoM = decrypt(expediente.apellidoM);
-              expediente.nombreCompleto = `${nombres} ${apellidoP} ${apellidoM}`.trim();
-          } else {
-              // Si no tenemos los campos individuales, intentamos dividir el nombre completo
-              // Esto es una aproximación que podría no funcionar en todos los casos
-              const partes = expediente.nombreCompleto.split(' ');
-              try {
-                  // Intentar desencriptar la cadena completa como una sola entidad
-                  expediente.nombreCompleto = decrypt(expediente.nombreCompleto);
-              } catch (e) {
-                  console.error('No se pudo desencriptar el nombre completo como una sola entidad:', e);
-                  // Si falla, dejamos el valor original
-              }
-          }
       }
       
       return expediente;
