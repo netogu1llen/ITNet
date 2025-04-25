@@ -29,9 +29,6 @@ router.get('/documentos/descargar/:id', nutricionController.descargarDocumento);
 // Ruta para mostrar un documento en el iframe (vista previa)
 router.get('/documentos/ver/:id', nutricionController.verDocumento);
 
-// Ruta para mostrar un historial nutricional V2
-router.get('/historial-nutricional-v2', nutricionController.getHistorialNutricionalV2);
-
 // Ruta para eliminar documento
 router.delete('/documentos/eliminar/:id', nutricionController.eliminarDocumento);
 
@@ -39,8 +36,9 @@ router.delete('/documentos/eliminar/:id', nutricionController.eliminarDocumento)
 router.post('/documentos/subir/:IDExpediente', nutricionController.subirDocumentoMiddleware);
 router.get('/documentos/:id', nutricionController.getExpedienteNutricion);
 
+// Update historia clínica routes
 router.get('/historiaClinica/:id', nutricionController.renderHistoriaClinica);
-
 router.post('/historiaClinica/guardarHistoriaClinicaV1', nutricionController.guardarHistoriaClinicaV1);
+router.post('/historiaClinica/actualizarHistoriaClinicaV1', nutricionController.actualizarHistoriaClinicaV1);
 
 module.exports = router;

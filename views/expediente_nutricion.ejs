@@ -178,7 +178,7 @@
                   <div class="multirow-container">
                     <div class="element-container">
                       <h3 class="basic-gray">Lactancia Exclusiva</h3>
-                      <p><%= antecedentesAlimentacion.lactanciaExclusiva %></p>
+                      <p><%= antecedentesAlimentacion.lactanciaExclusiva === 'value1' ? 'Lactancia exclusiva' : antecedentesAlimentacion.lactanciaExclusiva === 'value2' ? 'Fórmula' : antecedentesAlimentacion.lactanciaExclusiva === 'value3' ? 'Mixta' : 'No registrado' %></p>
                     </div>
                     <div class="element-container">
                       <h3 class="basic-gray">Tiempo</h3>
@@ -310,16 +310,22 @@
       <table id="sesionesTable" class="table is-fullwidth">
         <thead>
           <tr>
-            <th>No. Sesión</th>
-            <th>Fecha</th>
+            <th style="text-align: center;">No. Sesión</th>
+            <th style="text-align: center;">Fecha</th>
           </tr>
         </thead>
         <tbody>
           <% if (nutricional1 && nutricional1.length > 0) { %>
-            <% nutricional1.forEach(sesion => { %>
-              <tr class="fila-sesion" data-num-sesion="<%= sesion.numSesion %>" data-id-expediente="<%= datosGeneralesPaciente.IDExpediente %>">
-                <td><%= sesion.numSesion %></td>
-                <td><%= sesion.fecha %></td>
+            <% nutricional1.forEach(nutricion => { %>
+              <tr class="fila-sesion" data-num-sesion="<%= nutricion.numSesion %>" data-id-expediente="<%= datosGeneralesPaciente.IDExpediente %>">
+                <td style="text-align: center;"><%= nutricion.numSesion %></td>
+                <td style="text-align: center;">
+                  <% if (nutricion.fecha) { %>
+                    <%= new Date(nutricion.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) %>
+                  <% } else { %>
+                    Sin fecha
+                  <% } %>
+                </td>
               </tr>
             <% }); %>
           <% } else { %>

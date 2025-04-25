@@ -387,20 +387,36 @@ exports.renderHistoriaClinica = async (req, res) => {
         }
 
         const expediente = await Nutricion.obtenerPorId(IDExpediente);
-
         if (!expediente) {
             return res.status(404).send('Expediente no encontrado.');
         }
 
-        let sesionData = null;
+        let datosSesion = null;
         if (numSesion) {
-            sesionData = await Nutricion.obtenerSesionPorNumero(IDExpediente, numSesion);
-            if (!sesionData) {
+            datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
+            if (!datosSesion) {
                 return res.status(404).send('Sesión no encontrada.');
             }
+
+            // Asegurarnos que todos los objetos dentro de datosSesion existan
+            datosSesion = {
+                ...datosSesion,
+                nutricional1: datosSesion.nutricional1 || {},
+                indicadoresClinicos: datosSesion.indicadoresClinicos || {},
+                transtornos: datosSesion.transtornos || {},
+                actividadDiaria: datosSesion.actividadDiaria || {},
+                diagnosticoEvolucion: datosSesion.diagnosticoEvolucion || {},
+                evaluacionAntropometrica: datosSesion.evaluacionAntropometrica || {},
+                manejoNutricional: datosSesion.manejoNutricional || {},
+                indicadoresBioquim: datosSesion.indicadoresBioquim || [] // Array vacío si no hay indicadores
+            };
         }
 
-        res.render('historiaClinica', { expediente, sesionData });
+        res.render('historiaClinica', { 
+            expediente, 
+            datosSesion,
+            modoEdicion: !!numSesion 
+        });
     } catch (error) {
         console.error('Error al renderizar historia clínica:', error);
         res.status(500).send('Error interno al mostrar la historia clínica');
@@ -419,4 +435,15 @@ exports.guardarHistoriaClinicaV1 = async (req, res) => {
     console.error('Error guardando datos de historiaclinicav1:', error);
     res.status(500).json({ success: false, message: 'Error en el servidor' });
   }
+};
+
+exports.actualizarHistoriaClinicaV1 = async (req, res) => {
+    try {
+        const datos = req.body;
+        await Nutricion.actualizarHistoriaClinicaV1(datos);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error actualizando historia clínica:', error);
+        res.status(500).json({ success: false, message: 'Error al actualizar' });
+    }
 };

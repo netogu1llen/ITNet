@@ -455,7 +455,7 @@ class Nutricion {
                 data.circunferenciaCadera || null
             ]);
 
-            // Insertar en indicadoresBioquimicos (recorrer arrays)
+            // Insertar en indicadoresBioquim (recorrer arrays)
             if (data.parametro && data.valorReferencia && data.parametroFecha) {
                 for (let i = 0; i < data.parametro.length; i++) {
                     if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
@@ -520,15 +520,147 @@ class Nutricion {
     static async obtenerSesionesNutricional1(idExpediente) {
         try {
             const [rows] = await db.execute(`
-                SELECT numSesion, fecha
+                SELECT numSesion, DATE_FORMAT(fecha, '%Y-%m-%d') AS fecha
                 FROM nutricional1
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
-                ORDER BY fecha DESC
             `, [idExpediente]);
             return rows;
         } catch (error) {
             console.error('Error al obtener sesiones de nutricional1:', error.message);
             throw error;
+        }
+    }
+
+    // Obtener datos completos de una sesión
+    static async obtenerDatosSesionCompletos(idExpediente, numSesion) {
+        try {
+            const [nutricional1] = await db.execute(
+                'SELECT * FROM nutricional1 WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            const [indicadoresClinicos] = await db.execute(
+                'SELECT * FROM indicadoresclinicos WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            const [transtornos] = await db.execute(
+                'SELECT * FROM transtornos WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            const [actividadDiaria] = await db.execute(
+                'SELECT * FROM actividaddiaria WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            const [diagnosticoEvolucion] = await db.execute(
+                'SELECT * FROM diagnosticoevolucion WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            const [evaluacionAntropometrica] = await db.execute(
+                'SELECT * FROM evaluacionantropometrica WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            const [manejoNutricional] = await db.execute(
+                'SELECT * FROM manejonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            const [indicadoresBioquim] = await db.execute(
+                'SELECT parametro, valorReferencia, parametroFecha FROM indicadoresBioquim WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            const [objetivoNutricional] = await db.execute(
+                'SELECT objetivo FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                [idExpediente, numSesion]
+            );
+
+            return {
+                nutricional1: nutricional1[0] || null,
+                indicadoresClinicos: indicadoresClinicos[0] || null,
+                transtornos: transtornos[0] || null,
+                actividadDiaria: actividadDiaria[0] || null,
+                diagnosticoEvolucion: diagnosticoEvolucion[0] || null,
+                evaluacionAntropometrica: evaluacionAntropometrica[0] || null,
+                manejoNutricional: manejoNutricional[0] || null,
+                indicadoresBioquim, // Aquí devolvemos el array completo de indicadores
+                objetivoNutricional // Añadir el array de objetivos
+            };
+        } catch (error) {
+            console.error('Error al obtener datos de la sesión:', error);
+            throw error;
+        }
+    }
+
+    // Actualizar historia clínica V1
+    static async actualizarHistoriaClinicaV1(data) {
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            // Actualizar cada tabla
+            const tablas = [
+                { nombre: 'nutricional1', campos: ['diabetes', 'cancer', 'dislipidemia', 'obesidad', 'anemia', 'hipertensionArterial', 'pesoNacer', 'tallaNacer', 'alimentacionRecibida', 'sdg', 'tipoParto', 'complicaciones', 'lactancia', 'tiempo', 'edadAlimentacionComplementaria', 'alimentosPrimerAnio'] },
+                { nombre: 'indicadoresclinicos', campos: ['cabello', 'conjunto', 'unias', 'boca', 'dientes', 'piel', 'edema'] },
+                { nombre: 'transtornos', campos: ['vomito', 'reflujo', 'disfagia', 'diarrea', 'flatulencias', 'estrenimiento', 'distencion', 'colitis', 'pirosis', 'gastritis', 'otro'] },
+                { nombre: 'actividaddiaria', campos: ['ejercicioFisico', 'fechaInicio', 'frecuencia'] },
+                { nombre: 'diagnosticoevolucion', campos: ['diagnosticoEvolucion'] },
+                { nombre: 'evaluacionantropometrica', campos: ['talla', 'peso', 'circunferenciaCintura', 'circunferenciaCadera'] },
+                { nombre: 'manejonutricional', campos: ['energia', 'hidratosDeCarbono', 'lipidos', 'proteinas', 'fibra', 'agua'] }
+            ];
+
+            for (const tabla of tablas) {
+                const setCampos = tabla.campos.map(campo => `${campo} = ?`).join(', ');
+                const valores = [...tabla.campos.map(campo => data[campo]), data.IDExpediente, data.numSesion];
+                
+                await connection.execute(
+                    `UPDATE ${tabla.nombre} SET ${setCampos} WHERE IDExpediente = ? AND numSesion = ?`,
+                    valores
+                );
+            }
+
+            // Actualizar indicadoresBioquim
+            // Primero eliminar los registros existentes
+            await connection.execute(
+                'DELETE FROM indicadoresBioquim WHERE IDExpediente = ? AND numSesion = ?',
+                [data.IDExpediente, data.numSesion]
+            );
+
+            // Luego insertar los nuevos registros
+            if (data.parametro && data.valorReferencia && data.parametroFecha) {
+                for (let i = 0; i < data.parametro.length; i++) {
+                    await connection.execute(
+                        'INSERT INTO indicadoresBioquim (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha) VALUES (?, ?, ?, ?, ?)',
+                        [data.IDExpediente, data.numSesion, data.parametro[i], data.valorReferencia[i], data.parametroFecha[i]]
+                    );
+                }
+            }
+
+            // Actualizar objetivoNutricional
+            await connection.execute(
+                'DELETE FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                [data.IDExpediente, data.numSesion]
+            );
+
+            if (data.objetivo && Array.isArray(data.objetivo)) {
+                for (const objetivo of data.objetivo) {
+                    await connection.execute(
+                        'INSERT INTO objetivonutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
+                        [data.IDExpediente, data.numSesion, objetivo]
+                    );
+                }
+            }
+
+            await connection.commit();
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
         }
     }
 }

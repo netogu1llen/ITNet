@@ -267,17 +267,12 @@ $(document).on('click', '.fila-documento', function(e) {
     
     const documentoId = $(this).data('id');
     const tipo = $(this).data('tipo');
+    const idExpediente = new URLSearchParams(window.location.search).get('id') || 
+                        window.location.pathname.split('/').pop();
     
     if (tipo === 'NUTRICIONAL_V1') {
-        console.log('Ver historial nutricional V1:', documentoId);
-        // Redirigir al historial nutricional
-        const idExpediente = new URLSearchParams(window.location.search).get('id');
-        window.location.href = `/nutricion/historial-nutricional?id=${documentoId}&expediente=${idExpediente}`;
-    } else if (tipo === 'NUTRICIONAL_V2') {
-        console.log('Ver historial nutricional V2:', documentoId);
-        // Redirigir a la página de historial nutricional V2
-        const idExpediente = new URLSearchParams(window.location.search).get('id');
-        window.location.href = `/nutricion/historial-nutricional-v2?id=${documentoId}&expediente=${idExpediente}`;
+        // Actualizar la ruta para ir a historia clínica
+        window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${$(this).data('sesion')}`;
     } else if (tipo === 'PDF') {
         // Código existente para PDF...
         console.log('Ver documento PDF:', documentoId);
@@ -433,6 +428,23 @@ $(document).on('click', '.fila-sesion', function () {
             title: 'Error',
             text: 'No se pudo determinar la sesión o el expediente.'
         });
+    }
+});
+
+// Centrar datos de la tabla de sesiones
+$('#sesionesTable').find('td, th').css('text-align', 'center');
+
+// Formatear fechas de la tabla de sesiones
+$('#sesionesTable tbody tr').each(function () {
+    const fechaCell = $(this).find('td:nth-child(2)');
+    const fechaOriginal = fechaCell.text().trim();
+    if (fechaOriginal) {
+        const fechaFormateada = new Date(fechaOriginal).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+        fechaCell.text(fechaFormateada);
     }
 });
 });
