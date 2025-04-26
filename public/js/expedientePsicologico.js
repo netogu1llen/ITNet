@@ -149,7 +149,7 @@ $(document).ready(function () {
         // Obtener el ID del expediente de la URL actual
         const urlPath = window.location.pathname;
         const expedienteId = urlPath.split('/').pop(); // Suponiendo que el ID está al final de la URL
-        const redirectUrl = `http://localhost:3000/psicologia/seguimientos/registrar/${expedienteId}`;
+        const redirectUrl = `/psicologia/seguimientos/registrar/${expedienteId}`;
 
         // Redirigir sin mostrar modal de carga
         window.location.href = redirectUrl;
@@ -206,7 +206,7 @@ $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
     
         if (tipo === 'seguimientoPsicologico') {
             // Navegar directamente sin mostrar modal de carga
-            window.location.href = `http://localhost:3000/psicologia/seguimientos/editar/${documentoId}`;
+            window.location.href = `/psicologia/seguimientos/editar/${documentoId}`;
         } else {
             // Mostrar el documento PDF sin modal de carga
             const url = `/psicologia/documentos/ver/${documentoId}`;
