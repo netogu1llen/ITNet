@@ -267,6 +267,7 @@ transform: scale(1.05);
   overflow: hidden;
   display: flex;
   justify-content: center;
+  position: relative;
 }
 
 .tercios-container {
@@ -280,14 +281,16 @@ transform: scale(1.05);
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-end; /* Cambia la propiedad align-items a flex-end */
+  align-items: center;
+  overflow-y: hidden;   
+  overflow-x: visible; 
 }
 
 .title-container {
   text-align: center;
   z-index: 10;
   width: 100%;
-  margin-bottom: 110px; /* Ajusta la posición vertical del título */
+  margin-bottom: 0px; /* Ajusta la posición vertical del título */
 }
 
 @font-face {
@@ -313,19 +316,18 @@ transform: scale(1.05);
 .soffy-logo {
   width: 350px; 
   height: auto;  
-  margin-top: 300px;
 }
 
 .subtitle {
   font-family: 'Encode Sans', sans-serif;
   font-size: 1.2rem;
   color: #666;
-  margin: 50px 0 0 0;
+  margin: -20px 0 0 0;
 }
 
 .third-fragment {
   width: 33.33%;
-  height: 100vh;
+  height: 140vh;
   background: #f5f5f5;
   display: flex;
   justify-content: center;
@@ -343,9 +345,11 @@ transform: scale(1.05);
 }
 
 .image {
-  max-width: 210%;
-  max-height: 210%;
+  max-width: 256%;
+  max-height: 256%;
   object-fit: cover;
+  object-position: top center;  /* ← ancla la imagen al top */
+  transform: translateY(-20vh); /* Ajusta la posición vertical de la imagen */
 }
 
 .semicircle {
@@ -353,7 +357,7 @@ transform: scale(1.05);
   top: 50%;
   right: 500px; /* Ajusta la posición horizontal para que esté en el lado derecho */
   width: 66.66vw; /* Ajusta el ancho del semicírculo para que sea más pequeño */
-  height: 150vh; /* Ajusta la altura del semicírculo para que coincida con el tamaño de los tercios */
+  height: 120vh; /* Ajusta la altura del semicírculo para que coincida con el tamaño de los tercios */
   background-color: #f5f5f5;
   border-top-left-radius: 0; /* Ajusta el radio del semicírculo para que esté en el lado derecho */
   border-bottom-left-radius: 0;
@@ -361,6 +365,7 @@ transform: scale(1.05);
   border-bottom-right-radius: 33.33vw;
   transform: translateY(-50%);
   z-index: 1;
+  clip-path: inset(0 /*top*/ 0 /*right*/ 10vh /*bottom*/ 0 /*left*/);
 }
 
 .download-button {
@@ -377,6 +382,28 @@ transform: scale(1.05);
 
 .download-button:hover {
   background-color: #5185c0;
+}
+
+/* Nuevo subtítulo pequeño para el botón */
+.button-subtitle {
+  font-family: 'Encode Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #888;
+  margin: 10px 0 5px 0; /* 35px arriba, 5px abajo para estar cerca del botón */
+}
+
+
+/* Media Query para pantallas menores a 1280px */
+@media (max-width: 1279px) {
+  .subtitle {
+    /* Ajusta el ancho máximo para forzar el salto de línea */
+    max-width: 380px; /* Puedes ajustar este valor según sea necesario */
+    /* Centra el bloque de texto si es necesario */
+    margin-left: auto;
+    margin-right: auto;
+    /* Ajusta el margen superior si se ve muy pegado al logo */
+    margin-top: -10px; 
+  }
 }
 
 
