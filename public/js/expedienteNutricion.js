@@ -128,8 +128,9 @@ table.on('search.dt', function() {
 
     // Evento para el botón Nueva Sesión
     nuevaSesionButton.on('click', function() {
-        // Aquí puedes agregar la lógica para crear una nueva sesión
-        console.log('Nueva sesión para ID', idExpediente);
+        console.log("Abriendo modal de subir documento");
+        $('#modalSubirDocumento').addClass('is-active');
+        $('#modalSubirDocumento').css('display', 'flex'); // Asegurar que se muestre
     });
 
     // Evento para el botón Generar Historia Clínica
@@ -145,13 +146,6 @@ table.on('search.dt', function() {
         }
     });
     
-// ABRIR MODAL
-nuevaSesionButton.on('click', function () {
-    console.log("Abriendo modal de subir documento");
-    $('#modalSubirDocumento').addClass('is-active');
-    $('#modalSubirDocumento').css('display', 'flex'); // Asegurar que se muestre
-});
-
 // CERRAR MODAL
 $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
     console.log("Cerrando modal");

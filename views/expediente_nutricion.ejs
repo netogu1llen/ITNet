@@ -11,11 +11,11 @@
         <!-- Aquí se inyectará dinámicamente la barra superior desde JS -->
       </div>
       
-      <!-- Primera fila: Información general + Evolución antropométrica -->
+      <!-- Primera fila: Información general + Manejo Nutricional -->
       <div class="columns row-equal-height row-container is-marginless" style="width: 100%;">
-        <!-- Información general del paciente - centrado vertical -->
+        <!-- Información general del paciente -->
         <div class="column is-half" style="padding-right: 15px;">
-          <div class="full-white-container exp-psicologico-wide">
+          <div class="full-white-container exp-psicologico-wide" style="height: 250px;"> <!-- Altura reducida -->
             <h2 class="title-letters">Información General del Paciente</h2>
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 50px);">
               <div class="content-scroll" style="text-align: center;">
@@ -55,57 +55,59 @@
           </div>
         </div>
         
-        <!-- Evolución Antropométrica -->
-        <div class="column is-half" style="padding-left: 15px;">
-          <div class="full-white-container exp-psicologico-wide">
-            <h2 class="title-letters">Evolución Antropométrica - Comparativa Mensual</h2>
-            <canvas id="grafico" 
-                    data-labels='<%= JSON.stringify(evolucionAntropometrica.labels) %>' 
-                    data-values='<%= JSON.stringify(evolucionAntropometrica.datasets) %>' 
-                    width="600" 
-                    height="300">
-            </canvas>
-            <div class="month-filter-container" style="margin-top: 15px;">
-              <select id="mes-inicio">
-                <option value="Enero">Enero</option>
-                <option value="Febrero">Febrero</option>
-                <option value="Marzo">Marzo</option>
-                <option value="Abril">Abril</option>
-                <option value="Mayo">Mayo</option>
-                <option value="Junio">Junio</option>
-                <option value="Julio">Julio</option>
-                <option value="Agosto">Agosto</option>
-                <option value="Septiembre">Septiembre</option>
-                <option value="Octubre">Octubre</option>
-                <option value="Noviembre">Noviembre</option>
-                <option value="Diciembre">Diciembre</option>
-              </select>
-              
-              <select id="mes-final" style="margin: 0 15px;">
-                <option value="Enero">Enero</option>
-                <option value="Febrero">Febrero</option>
-                <option value="Marzo">Marzo</option>
-                <option value="Abril">Abril</option>
-                <option value="Mayo">Mayo</option>
-                <option value="Junio">Junio</option>
-                <option value="Julio">Julio</option>
-                <option value="Agosto">Agosto</option>
-                <option value="Septiembre">Septiembre</option>
-                <option value="Octubre">Octubre</option>
-                <option value="Noviembre">Noviembre</option>
-                <option value="Diciembre">Diciembre</option>
-              </select>
-              
-              <button id="filtrar-meses" class="button button-create">Filtrar</button>
+                <!-- Manejo Nutricional -->
+    <div class="column is-half" style="padding-left: 15px;">
+      <div class="full-white-container exp-psicologico-wide" style="min-height: 250px;"> <!-- Cambiado height por min-height -->
+        <h2 class="title-letters">Manejo Nutricional</h2>
+        <!-- Reducido padding inferior y altura calculada para ajustar espacio -->
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 60px); padding: 15px 0 5px 0;"> 
+          <!-- Primera fila - 3 elementos -->
+          <div class="multirow-container" style="text-align: center; margin-bottom: 15px;"> <!-- Reducido margen inferior -->
+              <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Energía</h3>
+                <!-- Muestra directamente el valor (asumiendo que ya incluye la unidad) -->
+                <p><%= manejoNutricional && manejoNutricional.energia ? manejoNutricional.energia : "Sin registro" %></p> 
+                </div>
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Proteínas</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.proteinas ? manejoNutricional.proteinas : "Sin registro" %></p> 
+                </div>
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Hidratos de C.</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.hidratosDeCarbono ? manejoNutricional.hidratosDeCarbono : "Sin registro" %></p> 
+                </div>
+            </div>
+            
+            <!-- Segunda fila - 3 elementos -->
+            <!-- Reducido margen inferior -->
+            <div class="multirow-container" style="text-align: center; margin-bottom: 10px;"> 
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Lípidos</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.lipidos ? manejoNutricional.lipidos : "Sin registro" %></p> 
+                </div>
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Fibra</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.fibra ? manejoNutricional.fibra : "Sin registro" %></p> 
+                </div>
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Agua</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.agua ? manejoNutricional.agua : "Sin registro" %></p> 
+                </div>
             </div>
           </div>
         </div>
       </div>
+  </div>
   
-      <!-- Segunda fila: Antecedentes + Manejo nutricional -->
-      <div class="columns row-equal-height row-container is-marginless" style="width: 100%; margin-top: 0px;">
+      <!-- Segunda fila: Antecedentes (ancho completo) -->
+      <div class="columns row-container is-marginless" style="width: 100%; margin-top: 20px;"> <!-- Añadido margen superior -->
         <!-- Antecedentes del paciente -->
-        <div class="column is-half" style="padding-right: 15px;">
+        <div class="column is-full" style="padding: 0;"> <!-- Ocupa todo el ancho y sin padding -->
           <div class="full-white-container exp-psicologico-wide">
             <h2 class="title-letters">Antecedentes del Paciente</h2>
             <div class="content-scroll">
@@ -170,71 +172,9 @@
                   </div>
                 </div>
               </div>
-              
-              <!-- Antecedentes de alimentación -->
-              <div class="multirow-container">
-                <div class="element-container">
-                  <h2 class="basic-gray">Antecedentes de Alimentación</h2>
-                  <div class="multirow-container">
-                    <div class="element-container">
-                      <h3 class="basic-gray">Lactancia Exclusiva</h3>
-                      <p><%= antecedentesAlimentacion.lactanciaExclusiva === 'value1' ? 'Lactancia exclusiva' : antecedentesAlimentacion.lactanciaExclusiva === 'value2' ? 'Fórmula' : antecedentesAlimentacion.lactanciaExclusiva === 'value3' ? 'Mixta' : 'No registrado' %></p>
-                    </div>
-                    <div class="element-container">
-                      <h3 class="basic-gray">Tiempo</h3>
-                      <p><%= antecedentesAlimentacion.tiempo %></p>
-                    </div>
-                    <div class="element-container">
-                      <h3 class="basic-gray">Edad de Alimentación Complementaria</h3>
-                      <p><%= antecedentesAlimentacion.edadAlimentacionComplementaria %></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
-        
-        <!-- Manejo Nutricional - con espaciado mejorado -->
-<div class="column is-half" style="padding-left: 15px;">
-    <div class="full-white-container exp-psicologico-wide">
-      <h2 class="title-letters">Manejo Nutricional</h2>
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 50px); padding: 15px 0;">
-        <!-- Primera fila - 3 elementos -->
-        <!-- Ajuste en la sección de Manejo Nutricional para manejar posibles valores undefined -->
-    <div class="multirow-container" style="text-align: center; margin-bottom: 22px;">
-        <div class="element-container" style="margin: 0 20px;">
-        <h3 class="basic-gray">Energía</h3>
-        <p><%= manejoNutricional && manejoNutricional.energia ? manejoNutricional.energia + " kcal/día" : "Sin registro" %></p>
-        </div>
-        <div class="element-container" style="margin: 0 20px;">
-        <h3 class="basic-gray">Proteínas</h3>
-        <p><%= manejoNutricional && manejoNutricional.proteinas ? manejoNutricional.proteinas + " g/día" : "Sin registro" %></p>
-        </div>
-        <div class="element-container" style="margin: 0 20px;">
-        <h3 class="basic-gray">Hidratos de C.</h3>
-        <p><%= manejoNutricional && manejoNutricional.hidratosDeCarbono ? manejoNutricional.hidratosDeCarbono + " g/día" : "Sin registro" %></p>
-        </div>
-    </div>
-    
-    <!-- Segunda fila - 3 elementos -->
-    <div class="multirow-container" style="text-align: center; margin-bottom: 22px;">
-        <div class="element-container" style="margin: 0 20px;">
-        <h3 class="basic-gray">Lípidos</h3>
-        <p><%= manejoNutricional && manejoNutricional.lipidos ? manejoNutricional.lipidos + " g/día" : "Sin registro" %></p>
-        </div>
-        <div class="element-container" style="margin: 0 20px;">
-        <h3 class="basic-gray">Fibra</h3>
-        <p><%= manejoNutricional && manejoNutricional.fibra ? manejoNutricional.fibra + " g/día" : "Sin registro" %></p>
-        </div>
-        <div class="element-container" style="margin: 0 20px;">
-        <h3 class="basic-gray">Agua</h3>
-        <p><%= manejoNutricional && manejoNutricional.agua ? manejoNutricional.agua + " ml/día" : "Sin registro" %></p>
-        </div>
-    </div>
-      </div>
-    </div>
-  </div>
       </div>
       
      <!-- Documentos/Historiales del paciente (fila completa) -->
@@ -381,7 +321,6 @@
     </div>
   </div>
   
-  <script src="/js/chartConfig.js" type="module" defer></script>
   <script src="/vendor/jquery-3.6.0.min.js"></script>
   <script src="/vendor/jquery.dataTables.min.js"></script>
   <script src="/js/expedienteNutricion.js"></script>
