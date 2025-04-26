@@ -138,28 +138,12 @@ exports.getExpedienteNutricion = async (req, res) => {
             return formattedItem;
         });
 
-        // Datos para la evolución antropométrica (datos de muestra por ahora)
-        const evolucionAntropometrica = {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-            datasets: [
-                {
-                    label: 'Peso (kg)',
-                    data: [60, 59, 58, 57, 56]
-                },
-                {
-                    label: 'IMC (kg/m²)',
-                    data: [24.5, 24.1, 23.7, 23.3, 22.9]
-                }
-            ]
-        };
-
         res.render('expediente_nutricion', {
             datosGeneralesPaciente,
             antecedentesHeredofamiliares: antecedentes.heredofamiliares,
             antecedentesPersonales: antecedentes.personales,
             antecedentesAlimentacion: antecedentes.alimentacion,
             manejoNutricional: manejoNutricionalData.manejoNutricional,
-            evolucionAntropometrica,
             documentosHistorial: documentosHistorialFormateados,
             nutricional1 // Pasar las sesiones al frontend
         });
