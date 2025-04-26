@@ -1,13 +1,29 @@
 $(document).ready(function () {
     // Asegurarse de que estamos trabajando con el ID 1
     const urlParams = new URLSearchParams(window.location.search);
-    if (!urlParams.has('id')) {
-        // Si no hay ID en la URL, redireccionar a la misma página con ID=1
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
+    let idExpediente = urlParams.get('id');
+
+    // Si no existe en los parámetros, intentar obtenerlo de la ruta
+    if (!idExpediente || idExpediente === 'null') {
+        const urlPath = window.location.pathname;
+        const segments = urlPath.split('/');
+        idExpediente = segments[segments.length - 1];
+
+        // Si aún no es válido, verificar si está en el penúltimo segmento
+        if (isNaN(parseInt(idExpediente)) && segments.length > 2) {
+            idExpediente = segments[segments.length - 2];
+        }
     }
-    
-    const idExpediente = urlParams.get('id');
+
+    // Validar si el ID es válido
+    if (!idExpediente || idExpediente === 'null' || isNaN(parseInt(idExpediente))) {
+        console.error('No se pudo determinar el ID del expediente.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo determinar el ID del expediente. Intente nuevamente o contacte a soporte.'
+        });
+    }
 
     // Inicializar DataTable para la tabla de documentos
 const table = $('#documentosTable').DataTable({
@@ -118,8 +134,15 @@ table.on('search.dt', function() {
 
     // Evento para el botón Generar Historia Clínica
     generarHistoriaButton.on('click', function() {
-        // Aquí puedes agregar la lógica para generar la historia clínica
-        console.log('Generar historia clínica para ID', idExpediente);
+        if (idExpediente) {
+            window.location.href = `/nutricion/historiaClinica/${idExpediente}`;
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo determinar el ID del expediente.'
+            });
+        }
     });
     
 // ABRIR MODAL
@@ -244,17 +267,13 @@ $(document).on('click', '.fila-documento', function(e) {
     
     const documentoId = $(this).data('id');
     const tipo = $(this).data('tipo');
+    const idExpediente = new URLSearchParams(window.location.search).get('id') || 
+                        window.location.pathname.split('/').pop();
+    const numSesion = $(this).data('sesion');
     
     if (tipo === 'NUTRICIONAL_V1') {
-        console.log('Ver historial nutricional V1:', documentoId);
-        // Redirigir al historial nutricional
-        const idExpediente = new URLSearchParams(window.location.search).get('id');
-        window.location.href = `/nutricion/historial-nutricional?id=${documentoId}&expediente=${idExpediente}`;
-    } else if (tipo === 'NUTRICIONAL_V2') {
-        console.log('Ver historial nutricional V2:', documentoId);
-        // Redirigir a la página de historial nutricional V2
-        const idExpediente = new URLSearchParams(window.location.search).get('id');
-        window.location.href = `/nutricion/historial-nutricional-v2?id=${documentoId}&expediente=${idExpediente}`;
+        // Redirigir a edición de V1 con el parámetro edit=true
+        window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${numSesion}&edit=true`;
     } else if (tipo === 'PDF') {
         // Código existente para PDF...
         console.log('Ver documento PDF:', documentoId);
@@ -397,4 +416,36 @@ $(document).on('click', '.btn-eliminar', function(event) {
         $('#modalVistaPreviaDocumento').css('display', 'none');
         $('#iframeVistaPreviaDocumento').attr('src', '');  // Limpiar el iframe cuando se cierra
     });
+
+// Hacer que las filas de la tabla de sesiones sean clicables
+$(document).on('click', '.fila-sesion', function () {
+    const numSesion = $(this).data('num-sesion');
+    const idExpediente = $(this).data('id-expediente');
+    if (numSesion && idExpediente) {
+        window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${numSesion}`;
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo determinar la sesión o el expediente.'
+        });
+    }
+});
+
+// Centrar datos de la tabla de sesiones
+$('#sesionesTable').find('td, th').css('text-align', 'center');
+
+// Formatear fechas de la tabla de sesiones
+$('#sesionesTable tbody tr').each(function () {
+    const fechaCell = $(this).find('td:nth-child(2)');
+    const fechaOriginal = fechaCell.text().trim();
+    if (fechaOriginal) {
+        const fechaFormateada = new Date(fechaOriginal).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+        fechaCell.text(fechaFormateada);
+    }
+});
 });

@@ -223,7 +223,7 @@ const nivel = nvEscolarSelect.value;
 const valorSeleccionado = gradoSelect.value;
 
 // Determinar hasta qué grado mostrar
-const maxGrado = (nivel === "Preescolar" || nivel === "Secundaria") ? 3 : 6;
+const maxGrado = (nivel === "Preescolar" || nivel === "Secundaria" || nivel === "Preparatoria") ? 3 : 6;
 
 // Limpiar opciones anteriores
 gradoSelect.innerHTML = '<option value="">Seleccione un grado</option>';

@@ -178,7 +178,7 @@
                   <div class="multirow-container">
                     <div class="element-container">
                       <h3 class="basic-gray">Lactancia Exclusiva</h3>
-                      <p><%= antecedentesAlimentacion.lactanciaExclusiva %></p>
+                      <p><%= antecedentesAlimentacion.lactanciaExclusiva === 'value1' ? 'Lactancia exclusiva' : antecedentesAlimentacion.lactanciaExclusiva === 'value2' ? 'Fórmula' : antecedentesAlimentacion.lactanciaExclusiva === 'value3' ? 'Mixta' : 'No registrado' %></p>
                     </div>
                     <div class="element-container">
                       <h3 class="basic-gray">Tiempo</h3>
@@ -302,7 +302,8 @@
       </table>
     </div>
   </div>
-    </div>
+
+
 
     <!-- MODAL DE VISTA PREVIA DEL DOCUMENTO -->
     <div id="modalVistaPreviaDocumento" class="modal" style="display: none; z-index: 1050;">

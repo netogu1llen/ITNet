@@ -1,6 +1,6 @@
 <%- include('partials/head') %>
 
-<input type="hidden" id="idExpediente" value="<%= expediente.IDExpediente %>">
+<input type="hidden" id="idExpediente" data-modo-edicion="<%= datosSesion ? 'true' : 'false' %>" value="<%= expediente.IDExpediente %>">
 <body>
   <main clas="container"> 
     
@@ -9,7 +9,9 @@
       
       <div class="box" style="background-color: #f2f2f2;">
         <h1 class="has-text-black pl-6"><img src="/images/salud.png" alt="Salud Icon" style="height: 30px;">  Historia Clínica
-          <button class="btn-guardar button is-success" type="submit"  style="margin-left: 75%; margin-bottom: 10px;">Guardar</button>
+          <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">
+            <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+          </button>
         </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff; ">
@@ -20,7 +22,10 @@
               <div class="column has-text-black has-text-weight-semibold">
                 <label> Numero de sesión:</label>
 
-                <input id="numSesion" class="input" type="text" placeholder="1" style="width: 20%; border: 0;" />
+                <input id="numSesion" class="input" type="text" 
+                    value="<%= datosSesion?.nutricional1?.numSesion || '' %>" 
+                    <%= datosSesion ? 'readonly' : '' %> 
+                    style="width: 20%; border: 0;" />
 
               </div>
 
@@ -96,37 +101,43 @@
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Diabetes</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="diabetes" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="diabetes" class="input" type="text" placeholder="Descripción..." 
+                        value="<%= datosSesion?.nutricional1?.diabetes || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Cáncer</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id=cancer class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="cancer" class="input" type="text" placeholder="Descripción..." 
+                        value="<%= datosSesion?.nutricional1?.cancer || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Dislipidemia</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="dislipidemia" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="dislipidemia" class="input" type="text" placeholder="Descripción..." 
+                        value="<%= datosSesion?.nutricional1?.dislipidemia || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Obesidad</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="obesidad" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="obesidad" class="input" type="text" placeholder="Descripción..." 
+                        value="<%= datosSesion?.nutricional1?.obesidad || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Anemia</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="anemia" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="anemia" class="input" type="text" placeholder="Descripción..." 
+                        value="<%= datosSesion?.nutricional1?.anemia || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Hipertensión arterial</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="hipertensionArterial" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                      <input id="hipertensionArterial" class="input" type="text" placeholder="Descripción..." 
+                        value="<%= datosSesion?.nutricional1?.hipertensionArterial || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                 </tbody>
@@ -148,41 +159,46 @@
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Peso al nacer</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="pesoNacer" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="pesoNacer" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" 
+                          value="<%= datosSesion?.nutricional1?.pesoNacer|| '' %>" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Talla al nacer</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="tallaNacer" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="tallaNacer" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" 
+                          value="<%= datosSesion?.nutricional1?.tallaNacer|| '' %>"/>
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de alimentación recibida</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="alimentacionRecibida" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="alimentacionRecibida" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          value="<%= datosSesion?.nutricional1?.alimentacionRecibida|| '' %>" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">SDG</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="sdg" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="sdg" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" 
+                          value="<%= datosSesion?.nutricional1?.sdg|| '' %>"/>
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de parto</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
                           <select class="input" id="tipoParto">
-                            <option value="" disabled selected>Seleccione</option>
-                            <option value="Natural">Natural</option>
-                            <option value="Cesarea">Cesarea</option>
+                            <option value="" disabled>Seleccione</option>
+                            <option value="Natural" <%= datosSesion?.nutricional1?.tipoParto === 'Natural' ? 'selected' : '' %>>Natural</option>
+                            <option value="Cesarea" <%= datosSesion?.nutricional1?.tipoParto === 'Cesarea' ? 'selected' : '' %>>Cesarea</option>
                           </select>
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Complicaciones durante el embarazo ¿Cuáles?</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="complicaciones" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="complicaciones" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          value="<%= datosSesion?.nutricional1?.complicaciones|| '' %>" />
                         </td>
                       </tr>
                     </tbody>
@@ -204,29 +220,32 @@
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de lactancia</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
                           <select id="lactancia" class="input">
-                            <option value="" disabled selected>Seleccione</option>
-                            <option value="value1">Lactancia exclusiva</option>
-                            <option value="value2">Fórmula</option>
-                            <option value="value3">Mixta</option>
+                            <option value="" disabled>Seleccione</option>
+                            <option value="value1" <%= datosSesion?.nutricional1?.lactancia === 'value1' ? 'selected' : '' %>>Lactancia exclusiva</option>
+                            <option value="value2" <%= datosSesion?.nutricional1?.lactancia === 'value2' ? 'selected' : '' %>>Fórmula</option>
+                            <option value="value3" <%= datosSesion?.nutricional1?.lactancia === 'value3' ? 'selected' : '' %>>Mixta</option>
                           </select>
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tiempo</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="tiempo" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="tiempo" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          value="<%= datosSesion?.nutricional1?.tiempo|| '' %>" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Edad de alimentación complementaria</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="edadAlimentacionComplementaria" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="edadAlimentacionComplementaria" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          value="<%= datosSesion?.nutricional1?.edadAlimentacionComplementaria|| '' %>" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Alimentos introducidos el 1er año</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="alimentosPrimerAnio" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                          <input id="alimentosPrimerAnio" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          value="<%= datosSesion?.nutricional1?.alimentosPrimerAnio|| '' %>" />
                         </td>
                       </tr>
                     </tbody>
@@ -245,7 +264,9 @@
 
         <div class="box" style="background-color: #f2f2f2;">
           <h1 class="has-text-black pl-6"><img src="/images/salud.png" alt="Salud Icon" style="height: 30px;">  Historia Clínica
-            <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">Guardar</button>
+            <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">
+              <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+            </button>
           </h1>
         <div class="pl-6" >
           <div class="box" style="background-color: #ffffff; ">
@@ -265,43 +286,50 @@
                       <tr>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Cabello</td>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                              <input id="cabello" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                              <input id="cabello" class="input" type="text" 
+                                  value="<%= datosSesion?.indicadoresClinicos?.cabello || '' %>" />
                           </td>
                       </tr>
                       <tr>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Conjunto</td>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                              <input id="conjunto" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                              <input id="conjunto" class="input" type="text" 
+                                  value="<%= datosSesion?.indicadoresClinicos?.conjunto || '' %>" />
                           </td>
                       </tr>
                       <tr>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Uñas</td>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                              <input id="unias" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                              <input id="unias" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                              value="<%= datosSesion?.indicadoresClinicos?.unias|| '' %>" />
                           </td>
                       </tr>
                       <tr>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Boca (labio/lengua)</td>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                              <input id="boca" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                              <input id="boca" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                              value="<%= datosSesion?.indicadoresClinicos?.boca|| '' %>" />
                           </td>
                       </tr>
                       <tr>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Dientes</td>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                              <input id="dientes" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                              <input id="dientes" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                              value="<%= datosSesion?.indicadoresClinicos?.dientes|| '' %>" />
                           </td>
                       </tr>
                       <tr>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Piel</td>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                              <input id="piel" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                              <input id="piel" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" 
+                              value="<%= datosSesion?.indicadoresClinicos?.piel|| '' %>"/>
                           </td>
                       </tr>
                       <tr>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Edema</td>
                           <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                              <input id="edema" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                              <input id="edema" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                              value="<%= datosSesion?.indicadoresClinicos?.edema|| '' %>" />
                           </td>
                       </tr>
                   </tbody>
@@ -326,31 +354,36 @@
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Vomito</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="vomito" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="vomito" class="input" type="text" 
+                                      value="<%= datosSesion?.transtornos?.vomito || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Diarrea</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="diarrea" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="diarrea" class="input" type="text" 
+                                      value="<%= datosSesion?.transtornos?.diarrea || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Estreñimiento</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="estrenimiento" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="estrenimiento" class="input" type="text" 
+                                      value="<%= datosSesion?.transtornos?.estrenimiento || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Colitis</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="colitis" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="colitis" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                                  value="<%= datosSesion?.transtornos?.colitis || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Gastritis</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="gastritis" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="gastritis" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                                  value="<%= datosSesion?.transtornos?.gastritis|| '' %>" />
                               </td>
                           </tr>
                       </tbody>
@@ -376,37 +409,43 @@
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Reflujo</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="reflujo" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="reflujo" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                                  value="<%= datosSesion?.transtornos?.reflujo || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Disfagia</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="disfagia"class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="disfagia"class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                                  value="<%= datosSesion?.transtornos?.disfagia || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Flatulencias</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="flatulencias" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="flatulencias" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                                  value="<%= datosSesion?.transtornos?.flatulencias || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Distención</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="distencion" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="distencion" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                                  value="<%= datosSesion?.transtornos?.distencion || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Pirosis</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="pirosis" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="pirosis" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                                  value="<%= datosSesion?.transtornos?.pirosis || '' %>" />
                               </td>
                           </tr>
                           <tr>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Otro</td>
                               <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                                  <input id="otro" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" />
+                                  <input id="otro" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                                  value="<%= datosSesion?.transtornos?.otro || '' %>" />
                               </td>
                           </tr>
                       </tbody>
@@ -434,21 +473,32 @@
                                   <div class="column is-half">
                                     <label class="label" style="margin-left: 10%;">¿Realiza ejercicio físico? Sí/No</label>
                                     <div class="control">
-                                      <input id="ejercicioFisico" class="input" type="text" placeholder="Si / No">
+                                      <input id="ejercicioFisico" class="input" type="text" 
+                                          value="<%= datosSesion?.actividadDiaria?.ejercicioFisico || '' %>" />
                                     </div>
                                   </div>
                                 
-                                  
+                                  <% 
+                                    const fechaInicioFormateada = datosSesion?.actividadDiaria?.fechaInicio 
+                                      ? new Date(datosSesion.actividadDiaria.fechaInicio).toISOString().split('T')[0] 
+                                      : '';
+                                  %>
                                   <div class="column is-half">
                                     <label class="label">Fecha de Inicio</label>
                                     <div class="control">
-                                      <input id="fechaInicio" class="input" type="date" name="fechaInicio">
+                                      <input 
+                                        id="fechaInicio" 
+                                        class="input" 
+                                        type="date" 
+                                        value="<%= fechaInicioFormateada %>" 
+                                      />
                                     </div>
                                   </div>
                                 </div>
   
                             <div class="columns">
-                              <div class="column">Frecuencia<input id="frecuencia" class="input" type="text" placeholder="Dos veces por semana 1 hora..."/></div>
+                              <div class="column">Frecuencia<input id="frecuencia" class="input" type="text" 
+                                  value="<%= datosSesion?.actividadDiaria?.frecuencia || '' %>" /></div>
                            </div>
                           </div>
                         </div>
@@ -464,7 +514,9 @@
         <h1 class="has-text-black pl-6">
           <img src="/images/manzana.png" alt="Salud Icon" style="height: 30px;">
           Historia Clínica
-          <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">Guardar</button>
+          <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">
+            <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+          </button>
         </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff;">
@@ -483,18 +535,55 @@
                     <th>Parámetro Bioquímico</th>
                     <th>Valor de referencia</th>
                     <th>Fecha</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody id="tabla-indicadores">
-                  <tr>
-                    <td><input class="input" type="text" name="parametroBioquimico[]" placeholder="Parámetro..." required></td>
-                    <td><input class="input" type="text" name="valorReferencia[]" placeholder="Valor de referencia..." required></td>
-                    <td><input class="input" type="date" name="fechaParametro[]" required></td>
-                    <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
-                  </tr>
+                  <% if (datosSesion?.indicadoresBioquim?.length > 0) { %>
+                    <% datosSesion.indicadoresBioquim.forEach(indicador => { %>
+                      <% 
+                        const fechaIndicador = indicador.parametroFecha 
+                          ? new Date(indicador.parametroFecha).toISOString().split('T')[0] 
+                          : '';
+                      %>
+                      <tr>
+                        <td>
+                          <input class="input" type="text" name="parametroBioquimico[]" 
+                            value="<%= indicador.parametro %>" placeholder="Parámetro..." required>
+                        </td>
+                        <td>
+                          <input class="input" type="text" name="valorReferencia[]" 
+                            value="<%= indicador.valorReferencia %>" placeholder="Valor de referencia..." required>
+                        </td>
+                        <td>
+                          <input class="input" type="date" name="fechaParametro[]" 
+                            value="<%= fechaIndicador %>" required>
+                        </td>
+                        <td>
+                          <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <!-- Fila por defecto cuando no hay datos -->
+                    <tr>
+                      <td>
+                        <input class="input" type="text" name="parametroBioquimico[]" placeholder="Parámetro..." required>
+                      </td>
+                      <td>
+                        <input class="input" type="text" name="valorReferencia[]" placeholder="Valor de referencia..." required>
+                      </td>
+                      <td>
+                        <input class="input" type="date" name="fechaParametro[]" required>
+                      </td>
+                      <td>
+                        <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                      </td>
+                    </tr>
+                  <% } %>
                 </tbody>
               </table>
-            
+
               <div class="has-text-centered">
                 <button id="btn-agregar-fila" class="button is-success" type="button">
                   ＋ Agregar parámetro
@@ -517,19 +606,23 @@
                 <tbody>
                   <tr>
                     <td>Altura (m)</td>
-                    <td><input id="talla" class="input" type="text" name="medida[Talla (m)]" placeholder="Medida..." /></td>
+                    <td><input id="talla" class="input" type="text" 
+                        value="<%= datosSesion?.evaluacionAntropometrica?.talla || '' %>" /></td>
                   </tr>
                   <tr>
                     <td>Peso (kg)</td>
-                    <td><input id="peso" class="input" type="text" name="medida[Peso (kg)]" placeholder="Medida..." /></td>
+                    <td><input id="peso" class="input" type="text" 
+                        value="<%= datosSesion?.evaluacionAntropometrica?.peso || '' %>" /></td>
                   </tr>
                   <tr>
                     <td>Circunferencia cintura (cm)</td>
-                    <td><input id="circunferenciaCintura" class="input" type="text" name="medida[Circunferencia cintura (cm)]" placeholder="Medida..." /></td>
+                    <td><input id="circunferenciaCintura" class="input" type="text" name="medida[Circunferencia cintura (cm)]" placeholder="Medida..."
+                      value="<%= datosSesion?.evaluacionAntropometrica?.circunferenciaCintura || '' %>" /></td>
                   </tr>
                   <tr>
                     <td>Circunferencia cadera (cm)</td>
-                    <td><input id="circunferenciaCadera" class="input" type="text" name="medida[Circunferencia cadera (cm)]" placeholder="Medida..." /></td>
+                    <td><input id="circunferenciaCadera" class="input" type="text" name="medida[Circunferencia cadera (cm)]" placeholder="Medida..."
+                      value="<%= datosSesion?.evaluacionAntropometrica?.circunferenciaCadera || '' %>" /></td>
                   </tr>
                 </tbody>
               </table>
@@ -547,7 +640,9 @@
 
                   <tr>
                     <td class="has-text-weight-semibold">Diagnósticos secundarios:</td>
-                    <td><textarea id="diagnosticoEvolucion"class="textarea" placeholder="Diagnósticos secundarios..."></textarea></td>
+                    <td><input id="diagnosticoEvolucion"class="input" placeholder="Diagnósticos secundarios..."
+                      value="<%= datosSesion?.diagnosticoEvolucion?.diagnosticoEvolucion || '' %>" /></td>
+                  
                   </tr>
 
                 </tbody>
@@ -566,7 +661,9 @@
         <h1 class="has-text-black pl-6">
           <img src="/images/manzana.png" style="height: 30px;">
           Historia Clínica
-          <button class="btn-guardar button is-success" type="submit"  style="margin-left: 75%; margin-bottom: 10px;">Guardar</button>
+          <button class="btn-guardar button is-success" type="submit"  style="margin-left: 75%; margin-bottom: 10px;">
+            <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+          </button>
         </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff;">
@@ -580,17 +677,33 @@
                   </tr>
                   <tr>
                     <th>Objetivo</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody id="tabla-objetivos">
-                  <tr>
-                    <td>
-                      <input id="objetivo " name="objetivosNutricionales[]" class="input" type="text" placeholder="Objetivo..." required>
-                    </td>
-                    <td>
-                      <button type="button" class="button is-danger btn-eliminar-fila">-</button>
-                    </td>
-                  </tr>
+                  <% if (datosSesion?.objetivoNutricional?.length > 0) { %>
+                    <% datosSesion.objetivoNutricional.forEach(objetivo => { %>
+                      <tr>
+                        <td>
+                          <input class="input" type="text" name="objetivosNutricionales[]" 
+                            value="<%= objetivo.objetivo %>" placeholder="Objetivo..." required>
+                        </td>
+                        <td>
+                          <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <!-- Fila por defecto cuando no hay datos -->
+                    <tr>
+                      <td>
+                        <input class="input" type="text" name="objetivosNutricionales[]" placeholder="Objetivo..." required>
+                      </td>
+                      <td>
+                        <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                      </td>
+                    </tr>
+                  <% } %>
                 </tbody>
               </table>
             
@@ -612,27 +725,33 @@
                 <tbody>
                   <tr>
                     <td>Energía (kcal)</td>
-                    <td><input id="energia" class="input" type="text" name="manejo[Energía (kcal)]" placeholder="..." /></td>
+                    <td><input id="energia" class="input" type="text" 
+                        value="<%= datosSesion?.manejoNutricional?.energia || '' %>" /></td>
                   </tr>
                   <tr>
                     <td>Hidratos de carbono</td>
-                    <td><input id="hidratosDeCarbono" class="input" type="text" name="manejo[Hidratos de carbono]" placeholder="..." /></td>
+                    <td><input id="hidratosDeCarbono" class="input" type="text" 
+                        value="<%= datosSesion?.manejoNutricional?.hidratosDeCarbono || '' %>" /></td>
                   </tr>
                   <tr>
                     <td>Lípidos</td>
-                    <td><input id="lipidos" class="input" type="text" name="manejo[Lípidos]" placeholder="..." /></td>
+                    <td><input id="lipidos" class="input" type="text" name="manejo[Lípidos]" placeholder="..." 
+                      value="<%= datosSesion?.manejoNutricional?.lipidos || '' %>"/></td>
                   </tr>
                   <tr>
                     <td>Proteínas</td>
-                    <td><input id="proteinas" class="input" type="text" name="manejo[Proteínas]" placeholder="..." /></td>
+                    <td><input id="proteinas" class="input" type="text" name="manejo[Proteínas]" placeholder="..." 
+                      value="<%= datosSesion?.manejoNutricional?.proteinas || '' %>"/></td>
                   </tr>
                   <tr>
                     <td>Fibra</td>
-                    <td><input id="fibra" class="input" type="text" name="manejo[Fibra]" placeholder="..." /></td>
+                    <td><input id="fibra" class="input" type="text" name="manejo[Fibra]" placeholder="..."
+                      value="<%= datosSesion?.manejoNutricional?.fibra || '' %>" /></td>
                   </tr>
                   <tr>
                     <td>Agua</td>
-                    <td><input id="agua" class="input" type="text" name="manejo[Agua]" placeholder="..." /></td>
+                    <td><input id="agua" class="input" type="text" name="manejo[Agua]" placeholder="..." 
+                      value="<%= datosSesion?.manejoNutricional?.agua || '' %>"/></td>
                   </tr>
                 </tbody>
               </table>
