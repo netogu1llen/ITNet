@@ -1,31 +1,5 @@
 $(document).ready(function () {
-    // Asegurarse de que estamos trabajando con el ID 1
-    const urlParams = new URLSearchParams(window.location.search);
-    let idExpediente = urlParams.get('id');
-
-    // Si no existe en los parámetros, intentar obtenerlo de la ruta
-    if (!idExpediente || idExpediente === 'null') {
-        const urlPath = window.location.pathname;
-        const segments = urlPath.split('/');
-        idExpediente = segments[segments.length - 1];
-
-        // Si aún no es válido, verificar si está en el penúltimo segmento
-        if (isNaN(parseInt(idExpediente)) && segments.length > 2) {
-            idExpediente = segments[segments.length - 2];
-        }
-    }
-
-    // Validar si el ID es válido
-    if (!idExpediente || idExpediente === 'null' || isNaN(parseInt(idExpediente))) {
-        console.error('No se pudo determinar el ID del expediente.');
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo determinar el ID del expediente. Intente nuevamente o contacte a soporte.'
-        });
-    }
-
-    // Inicializar DataTable para la tabla de documentos
+// Inicializar DataTable para la tabla de documentos
 const table = $('#documentosTable').DataTable({
     language: {
         info: "Mostrando _START_ a _END_ de _TOTAL_ documentos",
@@ -55,7 +29,54 @@ const table = $('#documentosTable').DataTable({
         }
     }
 });
+// Llamar a la función después de que se inicialice la tabla
+table.on('draw', function() {
+    moverHistorialV1AlInicio();
+});
 
+// También ejecutar después de cualquier búsqueda o filtrado
+table.on('search.dt', function() {
+    setTimeout(moverHistorialV1AlInicio, 100);
+});
+    // Crear barra superior personalizada
+    const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
+    const nuevaSesionButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Archivo</button>');
+    const generarHistoriaButton = $('<button class="button button-create" style="height: 30px;">Generar Historia Clínica</button>');
+    const dtTopBar = $('<div class="dt-top-bar"></div>');
+
+    // Agregar elementos a la barra
+    dtTopBar.append(logo);
+    $('.dataTables_length').appendTo(dtTopBar);
+    $('.dataTables_filter').appendTo(dtTopBar);
+    dtTopBar.append(nuevaSesionButton);
+    dtTopBar.append(generarHistoriaButton);
+    $('#TopBar').append(dtTopBar);
+
+    // Asegurarse de que estamos trabajando con el ID 1
+    const urlParams = new URLSearchParams(window.location.search);
+    let idExpediente = urlParams.get('id');
+
+    // Si no existe en los parámetros, intentar obtenerlo de la ruta
+    if (!idExpediente || idExpediente === 'null') {
+        const urlPath = window.location.pathname;
+        const segments = urlPath.split('/');
+        idExpediente = segments[segments.length - 1];
+
+        // Si aún no es válido, verificar si está en el penúltimo segmento
+        if (isNaN(parseInt(idExpediente)) && segments.length > 2) {
+            idExpediente = segments[segments.length - 2];
+        }
+    }
+
+    // Validar si el ID es válido
+    if (!idExpediente || idExpediente === 'null' || isNaN(parseInt(idExpediente))) {
+        console.error('No se pudo determinar el ID del expediente.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo determinar el ID del expediente. Intente nuevamente o contacte a soporte.'
+        });
+    }
 // Añadir CSS personalizado para destacar los V1
 $('head').append(`
 <style>
@@ -87,7 +108,7 @@ function moverHistorialV1AlInicio() {
     }
 }
 
-// Llamar a la función después de que se inicialice la tabla
+/*// Llamar a la función después de que se inicialice la tabla
 table.on('draw', function() {
     moverHistorialV1AlInicio();
 });
@@ -96,9 +117,10 @@ table.on('draw', function() {
 table.on('search.dt', function() {
     setTimeout(moverHistorialV1AlInicio, 100);
 });
+*/
 
     // Crear barra superior personalizada
-    const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
+    /*const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
     const nuevaSesionButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Archivo</button>');
     const generarHistoriaButton = $('<button class="button button-create" style="height: 30px;">Generar Historia Clínica</button>');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
@@ -109,7 +131,7 @@ table.on('search.dt', function() {
     $('.dataTables_filter').appendTo(dtTopBar);
     dtTopBar.append(nuevaSesionButton);
     dtTopBar.append(generarHistoriaButton);
-    $('#TopBar').append(dtTopBar);
+    $('#TopBar').append(dtTopBar);*/
 
     // Funciones para mostrar y ocultar el modal de carga
     function showLoadingModal(title, message) {
