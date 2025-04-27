@@ -193,7 +193,7 @@
         <tbody>
           <% if (documentosHistorial && documentosHistorial.length > 0) { %>
             <% documentosHistorial.forEach(item => { %>
-              <tr class="fila-documento" 
+            <tr class="fila-documento" 
                   data-id="<%= item.id %>" 
                   data-tipo="<%= item.tipo %>" 
                   data-ruta="<%= item.ruta %>" 
@@ -222,21 +222,17 @@
                   </span>
                 <% } %>
               </td>
-                <td><%= item.fechaFormateada %></td>
-                <td>
-                  <span class="btn-descargar" data-id="<%= item.id %>" data-tipo="<%= item.tipo %>" style="cursor: pointer;">
-                    <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
-                  </span>
-                </td>
-                <td>
-                  <button class="button is-small is-danger btn-eliminar" data-id="<%= item.id %>" data-tipo="<%= item.tipo %>">Eliminar</button>
-                </td>
-              </tr>
-            <% }); %>
-          <% } else { %>
-            <tr>
-              <td colspan="4" class="has-text-centered">No hay documentos o historiales disponibles</td>
+              <td><%= item.fechaFormateada %></td>
+              <td>
+                <span class="btn-descargar" data-id="<%= item.id %>" data-tipo="<%= item.tipo %>" style="cursor: pointer;">
+                  <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
+                </span>
+              </td>
+              <td>
+                <button class="button is-small is-danger btn-eliminar" data-id="<%= item.id %>" data-tipo="<%= item.tipo %>">Eliminar</button>
+              </td>
             </tr>
+            <% }); %>
           <% } %>
         </tbody>
       </table>
