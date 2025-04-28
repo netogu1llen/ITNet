@@ -14,7 +14,17 @@
 
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/auth.controller');
+const authController = require('../controllers/authController');
+
+// Ruta para mostrar el login
+router.get('/', (req, res) => {
+    res.render('login', {
+        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID  // Pasar la variable GOOGLE_CLIENT_ID desde .env
+    });
+});
+
+// Rutas principales
+router.get('/home', authController.getHome);
 
 /**
  * Ruta que inicia el proceso de autenticación con Google OAuth 2.0

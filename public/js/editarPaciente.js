@@ -29,7 +29,9 @@ function enviarPost(url, data) {
             text: response.mensaje || "Operación realizada con éxito",
             icon: "success"
         }).then(() => {
-            window.location.href = "/pacientes"});
+            const idExpediente = window.location.pathname.split('/').pop();
+            window.location.href = `/pacientes/expediente/${idExpediente}`;
+        });
     })
     .catch(error => {
         console.error("Error:", error);
@@ -200,7 +202,9 @@ document.getElementById('btn-cancelar').addEventListener('click', function() {
     }).then((result) => {
         if (result.isConfirmed) {
             Swal.fire("No se guardaron los cambios", "", "info").then(() => {
-                window.location.href = "/pacientes"});
+                const idExpediente = window.location.pathname.split('/').pop();
+                window.location.href = `/pacientes/expediente/${idExpediente}`;
+            });
         }
     });
 });
@@ -219,7 +223,7 @@ const nivel = nvEscolarSelect.value;
 const valorSeleccionado = gradoSelect.value;
 
 // Determinar hasta qué grado mostrar
-const maxGrado = (nivel === "Preescolar" || nivel === "Secundaria") ? 3 : 6;
+const maxGrado = (nivel === "Preescolar" || nivel === "Secundaria" || nivel === "Preparatoria") ? 3 : 6;
 
 // Limpiar opciones anteriores
 gradoSelect.innerHTML = '<option value="">Seleccione un grado</option>';

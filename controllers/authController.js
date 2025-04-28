@@ -29,7 +29,7 @@ exports.googleCallback = async (req, res, next) => {
   if (googleError) {
     // El usuario canceló el login en la ventana de Google
     const mensaje = 'Autenticación cancelada. Por favor intenta nuevamente.';
-    return res.redirect(`/login?error=${encodeURIComponent(mensaje)}`);
+    return res.redirect(`/?error=${encodeURIComponent(mensaje)}`);
   }
 
   try {
@@ -51,7 +51,7 @@ exports.googleCallback = async (req, res, next) => {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-    }).redirect('/');
+    }).redirect('/home');
     
   } catch (error) {
     console.error('Error durante autenticación:', error.message);
@@ -63,7 +63,7 @@ exports.googleCallback = async (req, res, next) => {
       : 'Ocurrió un error durante el inicio de sesión. Intenta de nuevo.';
 
     // Redirigir siempre al login con el mensaje de error
-    return res.redirect(`/login?error=${encodeURIComponent(mensaje)}`);
+    return res.redirect(`/?error=${encodeURIComponent(mensaje)}`);
 
     next(error); // Otros errores se mandan al middleware
   }
@@ -76,5 +76,9 @@ exports.googleCallback = async (req, res, next) => {
  */
 exports.logout = (req, res) => {
   res.clearCookie('jwt');
-  res.redirect('/login');
+  res.redirect('/');
+};
+
+exports.getHome = (request, response) => {
+  response.render('home');
 };

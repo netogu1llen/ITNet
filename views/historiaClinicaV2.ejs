@@ -1,91 +1,219 @@
 <%- include('partials/head') %>
 
+<input type="hidden" id="idExpediente" data-modo-edicion="<%= datosSesion ? 'true' : 'false' %>" value="<%= expediente.IDExpediente %>">
 <body>
-  <div class="container">
-    <main class="content">
-      <div class="box">
-        <div class="logo-title">
-            <img src="/images/manzana.png" alt="Logo Nutrición" class="logo-img">
-            <h1>Historia Clínica Seguimiento</h1>
-        </div>         
-        <div class="info-top">
-          <span><strong>Larissa Jiménez Aldemar</strong></span>
-          <span>No. Expediente: 34</span>
-          <span>16:45</span>
-          <span>Fecha: 01 de marzo de 2025</span>
-        </div>
-        </div>
+  <main class="container">
+    <!-- Página 1 -->
+    <div class="entrevista-pagina">
+      <div class="box" style="background-color: #f2f2f2;">
+        <h1 class="has-text-black pl-6">
+          <img src="/images/salud.png" alt="Salud Icon" style="height: 30px;"> Historia Clínica - Seguimiento
+          <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">
+            <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+          </button>
+        </h1>
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff;">
+            <!-- Información básica -->
+            <div class="columns">
+              <div class="column has-text-black has-text-weight-semibold">
+                No. Expediente: <%= expediente.IDExpediente %>
+              </div>
+              <div class="column has-text-black has-text-weight-semibold">
+                <label>Número de Sesión:</label>
+                <input id="numSesion" class="input" type="text" 
+                  value="<%= datosSesion?.numSesion || '' %>"
+                  <%= datosSesion ? 'readonly' : '' %>
+                  style="width: 60px; display: inline-block;">
+              </div>
+            </div>
 
-      <section class="datos-personales">
-        <div><strong>Nombre ACompleto:</strong> Oscar Javier Villegas Arteaga</div>
-        <div><strong>Fecha de Nacimiento:</strong> 01 de marzo de 2015</div>
-        <div><strong>Responsable:</strong> Raymundo Edmundo</div>
-        <div><strong>Parentesco:</strong> Primo</div>
-        <div><strong>Edad:</strong> 10 años</div>
-        <div><strong>Sexo:</strong> Masculino</div>
-        <div><strong>Escuela:</strong> Instituto Benito Juárez</div>
-        <div><strong>Estado Civil:</strong> Casado</div>
-        <div><strong>Dirección:</strong> Montes del prado 246</div>
-        <div><strong>Teléfono:</strong> 4446350877</div>
-        <div><strong>Correo Electrónico:</strong> imanolpelotudx@gmail.com</div>
-        <div><strong>Ocupación:</strong> Agricultor</div>
-      </section>
+            <!-- Información del paciente -->
+            <div class="columns">
+              <div class="column">
+                <label class="label">Nombre Completo</label>
+                <input class="input" type="text" 
+                  value="<%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %>" 
+                  readonly>
+              </div>
+            </div>
 
-      <section class="tabla-doble">
-        <div class="tabla">
-          <h3>I. TRASTORNOS GASTROINTESTINALES</h3>
-          <table>
-            <thead><tr><th>Síntomas</th><th>Frecuencia</th></tr></thead>
-            <tbody>
-              <tr><td>Vómito</td><td></td></tr>
-              <tr><td>Diarrea</td><td></td></tr>
-              <tr><td>Estreñimiento</td><td></td></tr>
-              <tr><td>Colitis</td><td></td></tr>
-              <tr><td>Gastritis</td><td></td></tr>
-              <tr><td>Náuseas</td><td></td></tr>
-            </tbody>
-          </table>
+            <!-- Última evaluación V1 -->
+            <div class="box" style="background-color: #f8f9fa;">
+              <h4 class="title is-6">Última Evaluación (V1)</h4>
+              <div class="columns">
+                <div class="column">
+                  <p><strong>Peso anterior:</strong> <%= datosSesionV1?.evaluacionAntropometrica?.peso || 'No registrado' %> kg</p>
+                </div>
+                <div class="column">
+                  <p><strong>Talla anterior:</strong> <%= datosSesionV1?.evaluacionAntropometrica?.talla || 'No registrado' %> m</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Indicadores Bioquímicos -->
+            <div class="container">
+              <div class="box">
+                <h3 class="title is-5 has-text-centered">INDICADORES BIOQUÍMICOS</h3>
+                <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                  <thead>
+                    <tr>
+                      <th colspan="4" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                        INDICADORES BIOQUÍMICOS
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-indicadores">
+                    <tr>
+                      <th>Parámetro Bioquímico</th>
+                      <th>Valor de referencia</th>
+                      <th>Fecha</th>
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <td><input class="input" type="text" name="parametroBioquimico[]" required></td>
+                      <td><input class="input" type="text" name="valorReferencia[]" required></td>
+                      <td><input class="input" type="date" name="fechaParametro[]" required></td>
+                      <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="has-text-centered mt-3">
+                  <button id="btn-agregar-indicador" class="button is-success is-small">
+                    ＋ Agregar indicador
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="tabla">
-          <h3>I. TRASTORNOS GASTROINTESTINALES</h3>
-          <table>
-            <thead><tr><th>Síntomas</th><th>Frecuencia</th></tr></thead>
-            <tbody>
-              <tr><td>Reflujo</td><td></td></tr>
-              <tr><td>Disfagia</td><td></td></tr>
-              <tr><td>Flatulencias</td><td></td></tr>
-              <tr><td>Distensión</td><td></td></tr>
-              <tr><td>Pirosis</td><td></td></tr>
-              <tr><td>Otro</td><td></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="tabla-indicadores">
-        <h3>II. INDICADORES CLÍNICOS</h3>
-        <table>
-          <thead><tr><th>Exploración física</th><th>Observaciones</th></tr></thead>
-          <tbody>
-            <tr><td>Cabello</td><td></td></tr>
-            <tr><td>Conjuntivas</td><td></td></tr>
-            <tr><td>Uñas</td><td></td></tr>
-            <tr><td>Boca (labios/lengua)</td><td></td></tr>
-            <tr><td>Dientes</td><td></td></tr>
-            <tr><td>Piel</td><td></td></tr>
-            <tr><td>Edema</td><td></td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <div class="paginacion">
-        <button disabled>&larr;</button>
-        <button>1</button>
-        <button class="activo">2</button>
-        <button>3</button>
-        <button>&rarr;</button>
       </div>
-    </main>
-  </div>
+    </div>
+
+    <!-- Página 2 -->
+    <div class="entrevista-pagina" style="display: none;">
+      <div class="box" style="background-color: #f2f2f2;">
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff;">
+            <!-- Evaluación Antropométrica -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">EVALUACIÓN ANTROPOMÉTRICA</h3>
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                <thead>
+                  <tr>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      EVALUACIÓN ANTROPOMÉTRICA
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Peso actual (kg)</td>
+                    <td><input class="input" type="number" step="0.1" id="peso" required></td>
+                  </tr>
+                  <tr>
+                    <td>Talla actual (m)</td>
+                    <td><input class="input" type="number" step="0.01" id="talla" required></td>
+                  </tr>
+                  <tr>
+                    <td>IMC (kg/m²)</td>
+                    <td><input class="input" type="text" id="imc" readonly></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Diagnósticos Secundarios -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">DIAGNÓSTICOS SECUNDARIOS</h3>
+              <textarea id="diagnosticos" class="textarea" rows="4" 
+                placeholder="Ingrese los diagnósticos secundarios..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Página 3 -->
+    <div class="entrevista-pagina" style="display: none;">
+      <div class="box" style="background-color: #f2f2f2;">
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff;">
+            <!-- Objetivos Nutricionales -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">OBJETIVOS NUTRICIONALES</h3>
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                <thead>
+                  <tr>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      OBJETIVOS NUTRICIONALES
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-objetivos">
+                  <tr>
+                    <td><input class="input" type="text" name="objetivos[]" placeholder="Objetivo..." required></td>
+                    <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="has-text-centered mt-3">
+                <button id="btn-agregar-objetivo" class="button is-success is-small">
+                  ＋ Agregar objetivo
+                </button>
+              </div>
+            </div>
+
+            <!-- Manejo Nutricional -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">MANEJO NUTRICIONAL</h3>
+              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                <thead>
+                  <tr>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      MANEJO NUTRICIONAL
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Energía (kcal/día)</td>
+                    <td><input class="input" type="text" id="energia" required></td>
+                  </tr>
+                  <tr>
+                    <td>Proteínas (g/día)</td>
+                    <td><input class="input" type="text" id="proteinas" required></td>
+                  </tr>
+                  <tr>
+                    <td>Lípidos (g/día)</td>
+                    <td><input class="input" type="text" id="lipidos" required></td>
+                  </tr>
+                  <tr>
+                    <td>Hidratos de carbono (g/día)</td>
+                    <td><input class="input" type="text" id="hidratosCarbono" required></td>
+                  </tr>
+                  <tr>
+                    <td>Fibra (g/día)</td>
+                    <td><input class="input" type="text" id="fibra" required></td>
+                  </tr>
+                  <tr>
+                    <td>Agua (ml/día)</td>
+                    <td><input class="input" type="text" id="agua" required></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="entrevista-pagination">
+      <%- include('partials/pagination', { totalPaginas: 3, paginaActual: 1 }) %>
+    </div>
+  </main>
+
+  <script src="/js/historiaClinicaV2.js"></script>
 </body>
 </html>
