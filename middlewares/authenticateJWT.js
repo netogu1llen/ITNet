@@ -38,7 +38,7 @@ const authenticateJWT = (req, res, next) => {
     // Adjunta la información del usuario decodificada al objeto de solicitud
     // El token debería contener información básica del usuario (id, email, etc.)
     req.user = decoded;
-    
+
     // Pasa el control al siguiente middleware
     next();
   } catch (err) {

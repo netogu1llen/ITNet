@@ -44,8 +44,18 @@ exports.googleCallback = async (req, res, next) => {
 
     // 3. Generar token JWT
     const token = generateUserToken({
-      id: localUser.id,
-      email: localUser.email
+      userData: {
+        id: localUser.IDUsuario,
+        email: localUser.correo
+      },
+      authorization: {
+        roles: localUser.IDRoles,          // Array de tipos de rol (ej: ['admin', 'user'])
+        privileges: localUser.IDPrivilegios // Array de actividades (ej: ['create', 'read', 'update'])
+      },
+      metadata: {
+        authMethod: 'google',
+        authTime: new Date().toISOString()
+      }
     });
 
     // 4. Establecer cookie y redirigir
