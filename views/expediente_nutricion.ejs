@@ -46,8 +46,8 @@
                     <h2 class="basic-black"><%= datosGeneralesPaciente.telefono %></h2>
                   </div>
                   <div class="element-container">
-                    <h2 class="basic-gray">Escuela</h2>
-                    <h2 class="basic-black"><%= datosGeneralesPaciente.escuela %></h2>
+                    <h2 class="basic-gray">Tipo de Sangre</h2>
+                    <h2 class="basic-black"><%= datosGeneralesPaciente.tipoSangre %></h2>
                   </div>
                 </div>
               </div>
@@ -147,27 +147,37 @@
                   </div>
                 </div>
                 
-                <!-- Antecedentes personales -->
+                <!-- Datos Antropométricos -->
                 <div class="element-container">
-                  <h2 class="basic-gray">Antecedentes Personales</h2>
+                  <h2 class="basic-gray">Datos Antropométricos</h2>
                   <div class="multirow-container">
                     <div class="element-container">
-                      <h3 class="basic-gray">Peso al Nacer</h3>
-                      <p><%= antecedentesPersonales.pesoNacer + " kg" %></p>
+                      <h3 class="basic-gray">Peso</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.peso !== 'No registrado' ? datosAntropometricos.peso + " kg" : "No registrado" %></p>
                     </div>
                     <div class="element-container">
-                      <h3 class="basic-gray">Talla al Nacer</h3>
-                      <p><%= antecedentesPersonales.tallaNacer + " cm" %></p>
+                      <h3 class="basic-gray">Talla</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.talla !== 'No registrado' ? datosAntropometricos.talla + " cm" : "No registrado" %></p>
                     </div>
                   </div>
                   <div class="multirow-container">
                     <div class="element-container">
-                      <h3 class="basic-gray">SDG</h3>
-                      <p><%= antecedentesPersonales.sdg %></p>
+                      <h3 class="basic-gray">IMC</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.imc !== 'No registrado' ? datosAntropometricos.imc + " kg/m²" : "No registrado" %></p>
                     </div>
                     <div class="element-container">
-                      <h3 class="basic-gray">Tipo de Parto</h3>
-                      <p><%= antecedentesPersonales.tipoParto %></p>
+                      <h3 class="basic-gray">Circunferencia Cintura</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.circunferenciaCintura !== 'No registrado' ? datosAntropometricos.circunferenciaCintura + " cm" : "No registrado" %></p>
+                    </div>
+                  </div>
+                  <div class="multirow-container">
+                    <div class="element-container">
+                      <h3 class="basic-gray">Circunferencia Cadera</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.circunferenciaCadera !== 'No registrado' ? datosAntropometricos.circunferenciaCadera + " cm" : "No registrado" %></p>
+                    </div>
+                    <div class="element-container">
+                      <h3 class="basic-gray">Índice Cintura-Cadera</h3>
+                      <p>No registrado</p>
                     </div>
                   </div>
                 </div>
@@ -245,14 +255,6 @@
     <div id="modalVistaPreviaDocumento" class="modal" style="display: none; z-index: 1050;">
         <div class="modal-background"></div>
         <div class="modal-content" style="width: 80%; height: 80%;">
-        <iframe id="iframeVistaPreviaDocumento" style="width: 100%; height: 100%;" frameborder="0"></iframe>
-        </div>
-        <button class="modal-close is-large delete" aria-label="close"></button>
-    </div>
-  </section>
-
-  <!-- Agregar antes del cierre de la etiqueta </section> -->
-
 <!-- Modal Subir Documento -->
 <div id="modalSubirDocumento" class="modal" style="display: none; z-index: 1050;">
   <!-- Fondo oscuro -->
