@@ -3,7 +3,7 @@ const { encrypt, decrypt } = require('../util/encryptData');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-const { generatePdfAndUploadToS3, uploadExistingPdfToS3 } = require('../util/generatePdfAndUpload');
+const s3 = require('../util/s3Client');
 
 // Modificar el método getPacientes para usar nvEscolar en lugar de enfermedades
 
@@ -345,7 +345,7 @@ const obtenerDocumentosPorExpediente = async (req, res) => {
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-const subirDocumento = async (req,res) =>[
+const subirDocumento = [
   upload.single('archivoDocumento'),
   async (req, res) => {
     try {
@@ -356,17 +356,38 @@ const subirDocumento = async (req,res) =>[
         return res.status(400).json({ error: 'Debe subir un archivo PDF válido' });
       }
 
-      const fileName = `${IDExpediente}_${Date.now()}`;
-      const s3Url = await uploadExistingPdfToS3(
-        req.file.buffer,
-        process.env.AWS_BUCKET_NAME,
-        fileName
-      );
+      // Primero obtener los datos del paciente para crear la carpeta
+      const paciente = await Pacientes.getPaciente(IDExpediente);
+      
+      // Desencriptar nombres para crear el nombre de la carpeta
+      const nombres = decrypt(paciente.nombres);
+      const apellidoP = decrypt(paciente.apellidoP);
+      const apellidoM = decrypt(paciente.apellidoM);
+      
+      // Crear nombre de carpeta normalizado (sin espacios ni caracteres especiales)
+      const nombreCarpeta = `${apellidoP}_${apellidoM}_${nombres}`
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
+        .replace(/[^a-z0-9]/g, '_'); // Reemplazar caracteres especiales con _
+
+      // Crear la ruta completa del archivo
+      const fileName = `general/${nombreCarpeta}/${Date.now()}_${nombreDocumento.replace(/[^a-z0-9]/gi, '_')}`;
+      
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${fileName}.pdf`,
+        Body: req.file.buffer, // Usar el buffer directamente sin convertir a base64
+        ContentType: 'application/pdf',
+      };
+
+      // Subir archivo a S3
+      const data = await s3.upload(params).promise();
 
       const nuevoDocumento = await Pacientes.subirDocumento({
         IDExpediente,
         nombre: nombreDocumento,
-        ubicacion: s3Url,
+        ubicacion: data.Location,
         fecha: new Date(),
         eliminado: 0
       });
