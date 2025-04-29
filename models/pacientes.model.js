@@ -45,7 +45,7 @@ class Pacientes {
   })
   {
     try {
-      await db.execute(
+      const [result] = await db.execute(
         `INSERT INTO expediente SET
           nombres = ?, apellidoP = ?, apellidoM = ?,
           fechaNacimiento = ?, contacto = ?, estado = ?,  ciudad = ?,
@@ -73,6 +73,7 @@ class Pacientes {
           sangre
         ]
       );
+      return result;
     } catch (error) {
       console.error('Error al registrar paciente:', error);
       throw new Error('Error al registrar paciente');
@@ -95,7 +96,7 @@ class Pacientes {
          WHERE IDExpediente = ?`,
         [idExpediente]
       );
-      return result[0] || [];
+      return result; 
     } catch (error) {
       console.error('Error al obtener paciente:', error);
       throw new Error('Error al obtener paciente');
@@ -303,7 +304,33 @@ class Pacientes {
         throw error;
     }
   }
+    // Obtener historial de expedientes con creador y modificador
+  static async obtenerHistorialExpedientes() {
+    try {
+      const [results] = await db.execute(`
+        SELECT 
+          e.IDExpediente,
+          e.nombres AS nombrePaciente,
+          uCreador.nombres AS creadoPor,
+          ue.fecha AS fechaCreacion,
+          uMod.nombres AS modificadoPor,
+          e.fechaModificacion
+        FROM expediente e
+        LEFT JOIN usuarioExpediente ue ON e.IDExpediente = ue.IDExpediente AND ue.numSesion = 1
+        LEFT JOIN usuario uCreador ON ue.IDUsuario = uCreador.IDUsuario
+        LEFT JOIN usuario uMod ON e.modificadoPor = uMod.IDUsuario
+        WHERE e.eliminado IS NULL OR e.eliminado = 0;
+      `);
+      return results;
+    } catch (error) {
+      console.error('Error al obtener historial de expedientes:', error);
+      throw new Error('Error al obtener historial de expedientes');
+    }
+  }
+    
 }
+
+
 
 module.exports = Pacientes;
 
