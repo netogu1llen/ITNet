@@ -187,6 +187,7 @@
             <th>Tipo de Documento</th>
             <th>Fecha de Creación</th>
             <th>Descargar</th>
+            <th>Eliminar</th>
           </tr>
         </thead>
         <tbody>
@@ -229,6 +230,13 @@
                 <span class="btn-descargar" data-id="<%= doc.id %>" data-tipo="<%= doc.tipo %>" style="cursor: pointer;">
                   <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
                 </span>
+              </td>
+              <td>
+                <% if (doc.tipo !== 'NUTRICIONAL_V1') { %>
+                  <button class="button is-small is-danger btn-eliminar" data-id="<%= doc.id %>" data-tipo="<%= doc.tipo %>">Eliminar</button>
+                <% } else { %>
+                  <span></span>
+                <% } %>
               </td>
             </tr>
             <% }); %>

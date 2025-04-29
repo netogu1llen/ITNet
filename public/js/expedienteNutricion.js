@@ -273,11 +273,10 @@ $('#subirDocumentoForm').on('submit', function (e) {
 
 
 
-
 // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
 $(document).on('click', '.fila-documento', function(e) {
     // No hacer nada si el clic fue en un botón
-    if ($(e.target).closest('button, .btn-descargar').length) {
+    if ($(e.target).closest('button, .btn-descargar, .btn-eliminar').length) {
         return;
     }
     
@@ -290,6 +289,9 @@ $(document).on('click', '.fila-documento', function(e) {
     if (tipo === 'NUTRICIONAL_V1') {
         // Redirigir a edición de V1 con el parámetro edit=true
         window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${numSesion}&edit=true`;
+    } else if (tipo === 'NUTRICIONAL_V2') {
+        // Redirigir a la vista de edición de V2
+        window.location.href = `/nutricion/historiaClinicaV2/${idExpediente}?numSesion=${numSesion}`;
     } else if (tipo === 'PDF') {
         // Código existente para PDF...
         console.log('Ver documento PDF:', documentoId);
@@ -364,7 +366,7 @@ $(document).on('click', '.btn-descargar', function(event) {
     });
 });
 
-    // Botón Eliminar Documento
+// Botón Eliminar Documento
 $(document).on('click', '.btn-eliminar', function(event) {
     event.preventDefault();
     event.stopPropagation(); // Evitar que se active la vista previa
@@ -372,11 +374,19 @@ $(document).on('click', '.btn-eliminar', function(event) {
     const id = $(this).data('id');
     const tipo = $(this).data('tipo');
     
+    // No permitir eliminar historiales V1 (verificación adicional por seguridad)
+    if (tipo === 'NUTRICIONAL_V1') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Operación no permitida',
+            text: 'No es posible eliminar un Historial Clínico V1.'
+        });
+        return;
+    }
+    
     // Personalizar mensaje según el tipo
     let mensaje = '';
-    if (tipo === 'NUTRICIONAL_V1') {
-        mensaje = '¿Está seguro de eliminar este Historial Clínico V1?';
-    } else if (tipo === 'NUTRICIONAL_V2') {
+    if (tipo === 'NUTRICIONAL_V2') {
         mensaje = '¿Está seguro de eliminar este Historial Clínico V2?';
     } else {
         mensaje = '¿Está seguro de eliminar este documento PDF?';

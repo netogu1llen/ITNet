@@ -283,13 +283,13 @@ exports.eliminarDocumento = async (req, res) => {
       const tipo = req.query.tipo; // Obtener el tipo desde query parameters
       console.log(`Intentando eliminar ${tipo || 'elemento'} con ID:`, id);
 
-      // Determinar qué eliminar según el tipo
+      // Verificación de seguridad: no permitir eliminar historiales V1
       if (tipo === 'NUTRICIONAL_V1') {
-          // Eliminar historial nutricional V1
-          await Nutricion.eliminarHistorialV1(id);
-          return res.json({ message: 'Historial Nutricional V1 eliminado correctamente' });
-      } 
-      else if (tipo === 'NUTRICIONAL_V2') {
+          return res.status(403).json({ error: 'No está permitido eliminar Historiales Nutricionales V1' });
+      }
+
+      // Determinar qué eliminar según el tipo
+      if (tipo === 'NUTRICIONAL_V2') {
           // Eliminar historial nutricional V2
           await Nutricion.eliminarHistorialV2(id);
           return res.json({ message: 'Historial Nutricional V2 eliminado correctamente' });

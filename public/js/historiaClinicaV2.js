@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td><input class="input" type="text" name="parametroBioquimico[]" placeholder="Parámetro..." required></td>
                 <td><input class="input" type="text" name="valorReferencia[]" placeholder="Valor de referencia..." required></td>
                 <td><input class="input" type="date" name="fechaParametro[]" required></td>
-                <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
+                <td><button type="button" class="button is-cancel btn-eliminar-fila">-</button></td>
             `;
 
             tablaIndicadores.appendChild(nuevaFila);
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <input class="input" type="text" name="objetivosNutricionales[]" placeholder="Objetivo..." required>
                 </td>
                 <td>
-                    <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                    <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
                 </td>
             `;
 
@@ -207,8 +207,9 @@ document.addEventListener('DOMContentLoaded', function() {
     botonesGuardar.forEach(boton => {
         // Actualizar el texto del botón según el modo
         boton.textContent = modoEdicion ? 'Actualizar' : 'Guardar';
-        boton.classList.toggle('is-info', modoEdicion);
-        boton.classList.toggle('is-success', !modoEdicion);
+        // Cambiando la clase para que use is-save en lugar de is-success o is-info
+        boton.classList.remove('is-info', 'is-success');
+        boton.classList.add('is-save');
 
         boton.addEventListener('click', async function(e) {
             e.preventDefault();
@@ -258,6 +259,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     icon: "error"
                 });
             }
+        });
+    });
+
+    // Agregar el manejador para los botones de cancelar
+    const botonesCancelar = document.querySelectorAll('.btn-cancelar');
+    
+    botonesCancelar.forEach(boton => {
+        boton.addEventListener('click', function() {
+            Swal.fire({
+                title: "Estás a punto de cancelar la operación",
+                text: "¿Estás seguro?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí",
+                cancelButtonText: "No"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire("No se guardaron los cambios", "", "info").then(() => {
+                        const idExpediente = document.getElementById('idExpediente').value;
+                        window.location.href = `/nutricion/documentos/${idExpediente}`;
+                    });
+                }
+            });
         });
     });
 });

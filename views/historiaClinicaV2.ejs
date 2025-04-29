@@ -8,9 +8,14 @@
       <div class="box" style="background-color: #f2f2f2;">
         <h1 class="has-text-black pl-6">
           <img src="/images/salud.png" alt="Salud Icon" style="height: 30px;"> Historia Clínica V2
-          <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">
-            <%= datosSesion ? 'Actualizar' : 'Guardar' %>
-          </button>
+          <div class="buttons-container" style="display: inline-block; margin-left: 60%;">
+            <button class="btn-guardar button is-save" type="submit">
+              <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+            </button>
+            <button class="btn-cancelar button is-cancel" type="button">
+              Cancelar
+            </button>
+          </div>
         </h1>
         
         <!-- Información básica -->
@@ -125,7 +130,7 @@
                             value="<%= fechaIndicador %>" required>
                         </td>
                         <td>
-                          <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                          <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
                         </td>
                       </tr>
                     <% }); %>
@@ -142,7 +147,7 @@
                         <input class="input" type="date" name="fechaParametro[]" required>
                       </td>
                       <td>
-                        <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                        <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
                       </td>
                     </tr>
                   <% } %>
@@ -150,7 +155,7 @@
               </table>
 
               <div class="has-text-centered">
-                <button id="btn-agregar-fila" class="button is-success" type="button">
+                <button id="btn-agregar-fila" class="button is-save" type="button">
                   ＋ Agregar parámetro
                 </button>
               </div>
@@ -202,9 +207,14 @@
       <div class="box" style="background-color: #f2f2f2;">
         <h1 class="has-text-black pl-6">
           <img src="/images/salud.png" alt="Salud Icon" style="height: 30px;"> Historia Clínica V2
-          <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">
-            <%= datosSesion ? 'Actualizar' : 'Guardar' %>
-          </button>
+          <div class="buttons-container" style="display: inline-block; margin-left: 60%;">
+            <button class="btn-guardar button is-save" type="submit">
+              <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+            </button>
+            <button class="btn-cancelar button is-cancel" type="button">
+              Cancelar
+            </button>
+          </div>
         </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff;">
@@ -250,7 +260,7 @@
                             value="<%= objetivo.objetivo %>" placeholder="Objetivo..." required>
                         </td>
                         <td>
-                          <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                          <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
                         </td>
                       </tr>
                     <% }); %>
@@ -261,7 +271,7 @@
                         <input class="input" type="text" name="objetivosNutricionales[]" placeholder="Objetivo..." required>
                       </td>
                       <td>
-                        <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                        <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
                       </td>
                     </tr>
                   <% } %>
@@ -269,7 +279,7 @@
               </table>
             
               <div class="has-text-centered">
-                <button id="btn-agregar-fila-objetivos" class="button is-success" type="button">
+                <button id="btn-agregar-fila-objetivos" class="button is-save" type="button">
                   ＋ Agregar objetivo
                 </button>
               </div>

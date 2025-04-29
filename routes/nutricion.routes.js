@@ -43,7 +43,7 @@ router.get('/historiaClinicaV2/:id', nutricionController.renderHistoriaClinicaV2
 
 router.post('/historiaClinica/guardarHistoriaClinicaV1', nutricionController.guardarHistoriaClinicaV1);
 router.post('/historiaClinica/actualizarHistoriaClinicaV1', nutricionController.actualizarHistoriaClinicaV1);
-router.post('/historiaClinica/guardarHistoriaClinicaV2', nutricionController.guardarHistoriaClinicaV2);
-router.post('/historiaClinica/actualizarHistoriaClinicaV2', nutricionController.actualizarHistoriaClinicaV2);
+router.post('/historiaClinica/guardarHistoriaClinicaV2', canRegistarHistorialClinicoVer2, nutricionController.guardarHistoriaClinicaV2);
+router.post('/historiaClinica/actualizarHistoriaClinicaV2', canEditarHistorialClinicoVer2, nutricionController.actualizarHistoriaClinicaV2);
 
 module.exports = router;
