@@ -67,7 +67,7 @@ class Nutricion {
     static async obtenerDatosGenerales(idExpediente) {
         try {
             const [pacienteRows] = await db.execute(`
-                SELECT nombres, apellidoP, apellidoM, fechaNacimiento, contacto, nvEscolar, sexo
+                SELECT nombres, apellidoP, apellidoM, fechaNacimiento, contacto, nvEscolar, sexo, sangre
                 FROM expediente
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
             `, [idExpediente]);
@@ -79,6 +79,65 @@ class Nutricion {
             return pacienteRows[0];
         } catch (error) {
             console.error('Error al obtener datos generales del paciente:', error.message);
+            throw error;
+        }
+    }
+    
+    // Obtener últimos datos antropométricos del paciente
+    static async obtenerUltimosAntropometricos(idExpediente) {
+        try {
+            // Obtener la última sesión con datos antropométricos
+            const [ultimaSesionRows] = await db.execute(`
+                SELECT MAX(numSesion) as ultimaSesion
+                FROM evaluacionantropometrica
+                WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+            `, [idExpediente]);
+            
+            const ultimaSesion = ultimaSesionRows[0]?.ultimaSesion;
+            
+            if (!ultimaSesion) {
+                return {
+                    peso: 'No registrado',
+                    talla: 'No registrado',
+                    imc: 'No registrado',
+                    circunferenciaCintura: 'No registrado',
+                    circunferenciaCadera: 'No registrado'
+                };
+            }
+            
+            // Obtener datos de la última evaluación antropométrica
+            const [antropometricosRows] = await db.execute(`
+                SELECT peso, talla, circunferenciaCintura, circunferenciaCadera,
+                       CASE WHEN (circunferenciaCintura IS NOT NULL AND circunferenciaCadera IS NOT NULL 
+                                 AND circunferenciaCadera > 0)
+                            THEN circunferenciaCintura/circunferenciaCadera
+                            ELSE NULL
+                       END as indiceCinturaCadera
+                FROM evaluacionantropometrica
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [idExpediente, ultimaSesion]);
+            
+            if (antropometricosRows.length === 0) {
+                return {
+                    peso: 'No registrado',
+                    talla: 'No registrado',
+                    imc: 'No registrado',
+                    circunferenciaCintura: 'No registrado',
+                    circunferenciaCadera: 'No registrado'
+                };
+            }
+            
+            return {
+                peso: antropometricosRows[0].peso || 'No registrado',
+                talla: antropometricosRows[0].talla || 'No registrado',
+                imc: antropometricosRows[0].imc || antropometricosRows[0].peso && antropometricosRows[0].talla ? 
+                     (antropometricosRows[0].peso / Math.pow(antropometricosRows[0].talla/100, 2)).toFixed(2) : 'No registrado',
+                circunferenciaCintura: antropometricosRows[0].circunferenciaCintura || 'No registrado',
+                circunferenciaCadera: antropometricosRows[0].circunferenciaCadera || 'No registrado',
+                indiceCinturaCadera: antropometricosRows[0].indiceCinturaCadera || 'No registrado'
+            };
+        } catch (error) {
+            console.error('Error al obtener datos antropométricos:', error.message);
             throw error;
         }
     }
