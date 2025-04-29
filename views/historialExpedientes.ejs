@@ -24,12 +24,21 @@
             <tr>
               <td><%= expediente.nombrePaciente || 'Sin nombre' %></td>
               <td><%= expediente.creadoPor || 'No registrado' %></td>
-              <td><%= expediente.fechaCreacion ? new Date(expediente.fechaCreacion).toLocaleDateString('es-MX') : 'No registrada' %></td>
+              <td>
+                <%= expediente.fechaCreacion && !isNaN(new Date(expediente.fechaCreacion))
+                  ? new Date(expediente.fechaCreacion).toLocaleDateString('es-MX')
+                  : 'No registrada' %>
+              </td>
               <td><%= expediente.modificadoPor || 'No modificado' %></td>
-              <td><%= expediente.fechaModificacion ? new Date(expediente.fechaModificacion).toLocaleDateString('es-MX') : 'No registrada' %></td>
+              <td>
+                <%= expediente.fechaModificacion && !isNaN(new Date(expediente.fechaModificacion))
+                  ? new Date(expediente.fechaModificacion).toLocaleDateString('es-MX')
+                  : 'No registrada' %>
+              </td>
             </tr>
           <% }) %>
         </tbody>
+        
       </table>
     </div>
 

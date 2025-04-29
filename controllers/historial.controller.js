@@ -21,9 +21,13 @@ const getHistorialExpedientes = async (req, res) => {
         IDExpediente: expediente.IDExpediente,
         nombrePaciente: nombrePaciente,
         creadoPor: expediente.creadoPor || 'No registrado',
-        fechaCreacion: expediente.fechaCreacion || null,
+        fechaCreacion: expediente.fechaCreacion
+        ? new Date(expediente.fechaCreacion).toLocaleDateString('es-MX')
+          : 'No registrada',
         modificadoPor: expediente.modificadoPor || 'No modificado',
-        fechaModificacion: expediente.fechaModificacion || null
+        fechaModificacion: expediente.fechaModificacion
+         ? new Date(expediente.fechaModificacion).toLocaleDateString('es-MX')
+          : 'No registrada'
       };
     });
 
