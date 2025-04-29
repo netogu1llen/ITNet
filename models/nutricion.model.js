@@ -522,34 +522,66 @@ class Nutricion {
         try {
             await connection.beginTransaction();
 
+            // Asegurar que ningún valor sea undefined
+            const sanitizedData = {
+                IDExpediente: data.IDExpediente || null,
+                numSesion: data.numSesion || null,
+                fechaSeguimiento: data.fechaSeguimiento || new Date(),
+                peso: data.peso || null,
+                talla: data.talla || null,
+                circunferenciaCintura: data.circunferenciaCintura || null,
+                circunferenciaCadera: data.circunferenciaCadera || null,
+                diagnosticoEvolucion: data.diagnosticoEvolucion || null,
+                energia: data.energia || null,
+                proteinas: data.proteinas || null,
+                lipidos: data.lipidos || null,
+                hidratosCarbono: data.hidratosCarbono || null,
+                fibra: data.fibra || null,
+                agua: data.agua || null
+            };
+
+            // Insertar fecha de seguimiento
+            await connection.execute(`
+                INSERT INTO seguimientonutricional 
+                (IDExpediente, numSesion, fechaSeguimiento)
+                VALUES (?, ?, ?)
+            `, [
+                sanitizedData.IDExpediente,
+                sanitizedData.numSesion,
+                sanitizedData.fechaSeguimiento
+            ]);
+
             // Insertar indicadores bioquímicos
-            if (data.parametrosBioquimicos) {
+            if (Array.isArray(data.parametrosBioquimicos)) {
                 for (let i = 0; i < data.parametrosBioquimicos.length; i++) {
-                    await connection.execute(`
-                        INSERT INTO indicadoresbioquim 
-                        (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha)
-                        VALUES (?, ?, ?, ?, ?)
-                    `, [
-                        data.IDExpediente,
-                        data.numSesion,
-                        data.parametrosBioquimicos[i],
-                        data.valoresReferencia[i],
-                        data.fechasParametro[i]
-                    ]);
+                    if (data.parametrosBioquimicos[i]) {
+                        await connection.execute(`
+                            INSERT INTO indicadoresbioquim 
+                            (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha)
+                            VALUES (?, ?, ?, ?, ?)
+                        `, [
+                            sanitizedData.IDExpediente,
+                            sanitizedData.numSesion,
+                            data.parametrosBioquimicos[i] || null,
+                            data.valoresReferencia?.[i] || null,
+                            data.fechasParametro?.[i] || null
+                        ]);
+                    }
                 }
             }
 
             // Insertar evaluación antropométrica
             await connection.execute(`
                 INSERT INTO evaluacionantropometrica 
-                (IDExpediente, numSesion, peso, talla, imc)
-                VALUES (?, ?, ?, ?, ?)
+                (IDExpediente, numSesion, peso, talla, circunferenciaCintura, circunferenciaCadera)
+                VALUES (?, ?, ?, ?, ?, ?)
             `, [
-                data.IDExpediente,
-                data.numSesion,
-                data.peso,
-                data.talla,
-                data.imc
+                sanitizedData.IDExpediente,
+                sanitizedData.numSesion,
+                sanitizedData.peso,
+                sanitizedData.talla,
+                sanitizedData.circunferenciaCintura,
+                sanitizedData.circunferenciaCadera
             ]);
 
             // Insertar diagnósticos
@@ -558,23 +590,25 @@ class Nutricion {
                 (IDExpediente, numSesion, diagnosticoEvolucion)
                 VALUES (?, ?, ?)
             `, [
-                data.IDExpediente,
-                data.numSesion,
-                data.diagnosticos
+                sanitizedData.IDExpediente,
+                sanitizedData.numSesion,
+                sanitizedData.diagnosticoEvolucion
             ]);
 
             // Insertar objetivos nutricionales
-            if (data.objetivos) {
+            if (Array.isArray(data.objetivos)) {
                 for (const objetivo of data.objetivos) {
-                    await connection.execute(`
-                        INSERT INTO objetivonutricional 
-                        (IDExpediente, numSesion, objetivo)
-                        VALUES (?, ?, ?)
-                    `, [
-                        data.IDExpediente,
-                        data.numSesion,
-                        objetivo
-                    ]);
+                    if (objetivo) {
+                        await connection.execute(`
+                            INSERT INTO objetivonutricional 
+                            (IDExpediente, numSesion, objetivo)
+                            VALUES (?, ?, ?)
+                        `, [
+                            sanitizedData.IDExpediente,
+                            sanitizedData.numSesion,
+                            objetivo
+                        ]);
+                    }
                 }
             }
 
@@ -584,19 +618,21 @@ class Nutricion {
                 (IDExpediente, numSesion, energia, proteinas, lipidos, hidratosDeCarbono, fibra, agua)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `, [
-                data.IDExpediente,
-                data.numSesion,
-                data.energia,
-                data.proteinas,
-                data.lipidos,
-                data.hidratosCarbono,
-                data.fibra,
-                data.agua
+                sanitizedData.IDExpediente,
+                sanitizedData.numSesion,
+                sanitizedData.energia,
+                sanitizedData.proteinas,
+                sanitizedData.lipidos,
+                sanitizedData.hidratosCarbono,
+                sanitizedData.fibra,
+                sanitizedData.agua
             ]);
 
             await connection.commit();
+            return { success: true };
         } catch (error) {
             await connection.rollback();
+            console.error('Error en insertarHistoriaClinicaV2:', error);
             throw error;
         } finally {
             connection.release();
@@ -720,10 +756,19 @@ class Nutricion {
             // Luego insertar los nuevos registros
             if (data.parametro && data.valorReferencia && data.parametroFecha) {
                 for (let i = 0; i < data.parametro.length; i++) {
-                    await connection.execute(
-                        'INSERT INTO indicadoresBioquim (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha) VALUES (?, ?, ?, ?, ?)',
-                        [data.IDExpediente, data.numSesion, data.parametro[i], data.valorReferencia[i], data.parametroFecha[i]]
-                    );
+                    if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
+                        await connection.execute(`
+                            INSERT INTO indicadoresbioquim (
+                                IDExpediente, numSesion, parametro, valorReferencia, parametroFecha
+                            ) VALUES (?, ?, ?, ?, ?)
+                        `, [
+                            data.IDExpediente,
+                            data.numSesion,
+                            data.parametro[i] || null,
+                            data.valorReferencia[i] || null,
+                            data.parametroFecha[i] || null
+                        ]);
+                    }
                 }
             }
 

@@ -70,19 +70,61 @@ document.addEventListener('DOMContentLoaded', function() {
   configurarBotonesEliminarFila();
 });
 
+// Función de validación del formulario
+function validarFormulario() {
+    let errores = [];
+    const camposRequeridos = document.querySelectorAll('[required]');
+    
+    camposRequeridos.forEach(campo => {
+        if (!campo.value.trim()) {
+            errores.push(`El campo ${campo.id || 'requerido'} está vacío`);
+            campo.classList.add('is-danger');
+        } else {
+            campo.classList.remove('is-danger');
+        }
+    });
+
+    // Validaciones específicas para campos numéricos
+    const peso = document.getElementById('peso');
+    const talla = document.getElementById('talla');
+
+    if (peso && (isNaN(peso.value) || parseFloat(peso.value) <= 0)) {
+        errores.push('El peso debe ser un número mayor a 0');
+        peso.classList.add('is-danger');
+    }
+    if (talla && (isNaN(talla.value) || parseFloat(talla.value) <= 0)) {
+        errores.push('La talla debe ser un número mayor a 0');
+        talla.classList.add('is-danger');
+    }
+
+    return errores;
+}
+
+// Modificar el event listener del botón guardar
 document.addEventListener('DOMContentLoaded', function () {
     const modoEdicion = document.getElementById('idExpediente').dataset.modoEdicion === 'true';
     const botonesGuardar = document.querySelectorAll('.btn-guardar');
 
     if (botonesGuardar.length > 0) {
         botonesGuardar.forEach(boton => {
-            // Actualizar el texto del botón
             boton.textContent = modoEdicion ? 'Actualizar' : 'Guardar';
             
             boton.addEventListener('click', async function (e) {
                 e.preventDefault();
 
+                const errores = validarFormulario();
+                if (errores.length > 0) {
+                    Swal.fire({
+                        title: 'Error',
+                        html: errores.join('<br>'),
+                        icon: 'error'
+                    });
+                    return;
+                }
+
                 const datos = recopilarDatosFormulario();
+                if (!datos) return; // Si recopilarDatosFormulario retorna null, detener el proceso
+
                 const url = modoEdicion ? 
                     '/nutricion/historiaClinica/actualizarHistoriaClinicaV1' : 
                     '/nutricion/historiaClinica/guardarHistoriaClinicaV1';
@@ -229,4 +271,88 @@ function recopilarDatosFormulario() {
         agua: document.getElementById('agua')?.value || '',
     };
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Implementación de paginación
+    const paginas = document.querySelectorAll('.entrevista-pagina');
+    const totalPaginas = paginas.length;
+    
+    // Si solo hay una página, eliminar la paginación
+    if (totalPaginas <= 1) {
+        document.querySelector('.pagination')?.remove();
+        return;
+    }
+    
+    // Referencias a elementos de paginación
+    const btnPrev = document.createElement('a');
+    btnPrev.className = 'pagination-previous';
+    btnPrev.textContent = 'Anterior';
+    
+    const btnNext = document.createElement('a');
+    btnNext.className = 'pagination-next';
+    btnNext.textContent = 'Siguiente';
+    
+    const pageLinks = document.querySelectorAll('.pagination-link');
+    const paginationContainer = document.querySelector('.entrevista-pagination');
+    
+    // Agregar botones al contenedor
+    if (paginationContainer) {
+        const nav = paginationContainer.querySelector('nav');
+        nav.insertBefore(btnPrev, nav.firstChild);
+        nav.appendChild(btnNext);
+    }
+    
+    let paginaActual = 1;
+
+    // Función para mostrar una página específica
+    function showPage(pageNum) {
+        // Validar el número de página
+        pageNum = Math.max(1, Math.min(pageNum, totalPaginas));
+        
+        // Ocultar todas las páginas y mostrar la actual
+        paginas.forEach((pagina, index) => {
+            pagina.style.display = index === pageNum - 1 ? 'block' : 'none';
+        });
+        
+        // Actualizar estado de los botones
+        pageLinks.forEach(link => {
+            const linkPage = parseInt(link.getAttribute('data-page'));
+            link.classList.toggle('is-current', linkPage === pageNum);
+        });
+        
+        // Actualizar botones anterior/siguiente
+        btnPrev.classList.toggle('is-disabled', pageNum === 1);
+        btnNext.classList.toggle('is-disabled', pageNum === totalPaginas);
+        
+        // Hacer scroll al principio de la página
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        paginaActual = pageNum;
+    }
+
+    // Event listeners
+    pageLinks.forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            showPage(parseInt(link.getAttribute('data-page')));
+        });
+    });
+
+    btnPrev.addEventListener('click', e => {
+        e.preventDefault();
+        if (paginaActual > 1) {
+            showPage(paginaActual - 1);
+        }
+    });
+
+    btnNext.addEventListener('click', e => {
+        e.preventDefault();
+        if (paginaActual < totalPaginas) {
+            showPage(paginaActual + 1);
+        }
+    });
+
+    // Mostrar primera página al cargar
+    showPage(1);
+});
 

@@ -22,7 +22,7 @@
               <div class="column has-text-black has-text-weight-semibold">
                 <label> Numero de sesión:</label>
 
-                <input id="numSesion" class="input" type="text" 
+                <input id="numSesion" class="input" type="text" required
                     value="<%= datosSesion?.nutricional1?.numSesion || '' %>" 
                     <%= datosSesion ? 'readonly' : '' %> 
                     style="width: 20%; border: 0;" />
@@ -101,42 +101,42 @@
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Diabetes</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="diabetes" class="input" type="text" placeholder="Descripción..." 
+                      <input id="diabetes" class="input" type="text" required placeholder="Descripción..." 
                         value="<%= datosSesion?.nutricional1?.diabetes || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Cáncer</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="cancer" class="input" type="text" placeholder="Descripción..." 
+                      <input id="cancer" class="input" type="text" required placeholder="Descripción..." 
                         value="<%= datosSesion?.nutricional1?.cancer || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Dislipidemia</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="dislipidemia" class="input" type="text" placeholder="Descripción..." 
+                      <input id="dislipidemia" class="input" type="text" required placeholder="Descripción..." 
                         value="<%= datosSesion?.nutricional1?.dislipidemia || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Obesidad</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="obesidad" class="input" type="text" placeholder="Descripción..." 
+                      <input id="obesidad" class="input" type="text" required placeholder="Descripción..." 
                         value="<%= datosSesion?.nutricional1?.obesidad || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Anemia</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="anemia" class="input" type="text" placeholder="Descripción..." 
+                      <input id="anemia" class="input" type="text" required placeholder="Descripción..." 
                         value="<%= datosSesion?.nutricional1?.anemia || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
                   <tr>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Hipertensión arterial</td>
                     <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                      <input id="hipertensionArterial" class="input" type="text" placeholder="Descripción..." 
+                      <input id="hipertensionArterial" class="input" type="text" required placeholder="Descripción..." 
                         value="<%= datosSesion?.nutricional1?.hipertensionArterial || '' %>" style="width: 100%; border: 0;" />
                     </td>
                   </tr>
@@ -159,28 +159,28 @@
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Peso al nacer</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="pesoNacer" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" 
+                          <input id="pesoNacer" class="input" type="text" required placeholder="Descripción..." style="width: 100%; border: 0;" 
                           value="<%= datosSesion?.nutricional1?.pesoNacer|| '' %>" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Talla al nacer</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="tallaNacer" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" 
+                          <input id="tallaNacer" class="input" type="text" required placeholder="Descripción..." style="width: 100%; border: 0;" 
                           value="<%= datosSesion?.nutricional1?.tallaNacer|| '' %>"/>
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tipo de alimentación recibida</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="alimentacionRecibida" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          <input id="alimentacionRecibida" class="input" type="text" required placeholder="Descripción..." style="width: 100%; border: 0;"
                           value="<%= datosSesion?.nutricional1?.alimentacionRecibida|| '' %>" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">SDG</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="sdg" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;" 
+                          <input id="sdg" class="input" type="text" required placeholder="Descripción..." style="width: 100%; border: 0;" 
                           value="<%= datosSesion?.nutricional1?.sdg|| '' %>"/>
                         </td>
                       </tr>
@@ -197,7 +197,7 @@
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Complicaciones durante el embarazo ¿Cuáles?</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="complicaciones" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          <input id="complicaciones" class="input" type="text" required placeholder="Descripción..." style="width: 100%; border: 0;"
                           value="<%= datosSesion?.nutricional1?.complicaciones|| '' %>" />
                         </td>
                       </tr>
@@ -230,21 +230,21 @@
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Tiempo</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="tiempo" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          <input id="tiempo" class="input" type="text" required placeholder="Descripción..." style="width: 100%; border: 0;"
                           value="<%= datosSesion?.nutricional1?.tiempo|| '' %>" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Edad de alimentación complementaria</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="edadAlimentacionComplementaria" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          <input id="edadAlimentacionComplementaria" class="input" type="text" required placeholder="Descripción..." style="width: 100%; border: 0;"
                           value="<%= datosSesion?.nutricional1?.edadAlimentacionComplementaria|| '' %>" />
                         </td>
                       </tr>
                       <tr>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 20%; white-space: nowrap;">Alimentos introducidos el 1er año</td>
                         <td style="border: 1px solid #ddd; padding: 8px; width: 80%;">
-                          <input id="alimentosPrimerAnio" class="input" type="text" placeholder="Descripción..." style="width: 100%; border: 0;"
+                          <input id="alimentosPrimerAnio" class="input" type="text" required placeholder="Descripción..." style="width: 100%; border: 0;"
                           value="<%= datosSesion?.nutricional1?.alimentosPrimerAnio|| '' %>" />
                         </td>
                       </tr>
@@ -506,7 +506,6 @@
                     </div>
                   </div>
                 </div>
-                </div>
 
     <!-- Página 3 -->
     <div class="entrevista-pagina" style="display: none;">
@@ -606,12 +605,12 @@
                 <tbody>
                   <tr>
                     <td>Altura (m)</td>
-                    <td><input id="talla" class="input" type="text" 
+                    <td><input id="talla" class="input" type="text" required
                         value="<%= datosSesion?.evaluacionAntropometrica?.talla || '' %>" /></td>
                   </tr>
                   <tr>
                     <td>Peso (kg)</td>
-                    <td><input id="peso" class="input" type="text" 
+                    <td><input id="peso" class="input" type="text" required
                         value="<%= datosSesion?.evaluacionAntropometrica?.peso || '' %>" /></td>
                   </tr>
                   <tr>
