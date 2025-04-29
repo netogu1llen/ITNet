@@ -25,7 +25,7 @@ const getBoletasByExpediente = async (req, res) => {
       results: boletasFormateadas
     });
   } catch (error) {
-    console.error('❌ Error al obtener boletas:', error);
+    console.error('Error al obtener boletas:', error);
     res.status(500).send('Error al obtener boletas');
   }
 };
@@ -52,7 +52,7 @@ const getBoletaDetalle = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('❌ Error al obtener detalle de boleta:', error);
+    console.error('Error al obtener detalle de boleta:', error);
     res.status(500).send('Error al obtener detalle de boleta');
   }
 };

@@ -81,6 +81,10 @@ app.use('/api', apiRoutes);
 const apiBoletasRoutes = require('./routes/api.boletas.routes');
 app.use('/api', apiBoletasRoutes);
 
+//Rutas de api para Expediente
+const apiExpedienteRoutes = require('./routes/api.expediente.routes');
+app.use('/api', apiExpedienteRoutes);
+
 //Rutas de auth
 const authRoutes = require('./routes/auth.routes');
 app.use('/auth', authRoutes);
