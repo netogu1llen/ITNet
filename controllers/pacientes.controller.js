@@ -3,6 +3,7 @@ const { encrypt, decrypt } = require('../util/encryptData');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const { generatePdfAndUploadToS3, uploadExistingPdfToS3 } = require('../util/generatePdfAndUpload');
 
 // Modificar el método getPacientes para usar nvEscolar en lugar de enfermedades
 
@@ -342,64 +343,42 @@ const obtenerDocumentosPorExpediente = async (req, res) => {
   }
 };
 
-// Configuración de Multer para subir archivos
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-      cb(null, 'uploads/'); // Carpeta donde se guardarán los archivos
-  },
-  filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
+const upload = multer({ storage: multer.memoryStorage() });
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'application/pdf') {
-      cb(null, true); // Aceptar solo archivos PDF
-  } else {
-      cb(new Error('Solo se permiten archivos PDF.'));
-  }
-};
-
-const upload = multer({ storage, fileFilter });
-
-// Middleware para subir documentos
-const subirDocumentoMiddleware = [
+const subirDocumento = async (req,res) =>[
   upload.single('archivoDocumento'),
   async (req, res) => {
-      try {
-          const { nombreDocumento } = req.body;
-          const { IDExpediente } = req.params;
+    try {
+      const { nombreDocumento } = req.body;
+      const { IDExpediente } = req.params;
 
-          if (!req.file) {
-              return res.status(400).json({ error: 'Debe subir un archivo válido.' });
-          }
-
-          const ubicacion = req.file.path;
-          const fecha = new Date();
-          const eliminado = 0;
-
-          console.log('Subiendo documento:', {
-              IDExpediente,
-              nombre: nombreDocumento,
-              ubicacion,
-              fecha
-          });
-
-          // Guardar en la base de datos
-          const nuevoDocumento = await Pacientes.subirDocumento({
-              IDExpediente,
-              nombre: nombreDocumento,
-              ubicacion,
-              fecha,
-              eliminado
-          });
-
-          res.status(201).json({ message: 'Documento subido correctamente', documento: nuevoDocumento });
-      } catch (error) {
-          console.error('Error al subir el documento:', error);
-          res.status(500).json({ error: 'Error al subir el documento' });
+      if (!req.file || req.file.mimetype !== 'application/pdf') {
+        return res.status(400).json({ error: 'Debe subir un archivo PDF válido' });
       }
+
+      const fileName = `${IDExpediente}_${Date.now()}`;
+      const s3Url = await uploadExistingPdfToS3(
+        req.file.buffer,
+        process.env.AWS_BUCKET_NAME,
+        fileName
+      );
+
+      const nuevoDocumento = await Pacientes.subirDocumento({
+        IDExpediente,
+        nombre: nombreDocumento,
+        ubicacion: s3Url,
+        fecha: new Date(),
+        eliminado: 0
+      });
+
+      res.status(201).json({
+        mensaje: 'Documento subido exitosamente',
+        documento: nuevoDocumento
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error al subir el documento' });
+    }
   }
 ];
 
@@ -498,7 +477,7 @@ module.exports = {
   getPacientes,
   obtenerExpediente,
   obtenerDocumentosPorExpediente,
-  subirDocumentoMiddleware,
+  subirDocumento,
   descargarDocumento,
   eliminarDocumento,
   verDocumento
