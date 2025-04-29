@@ -34,34 +34,24 @@ exports.googleCallback = async (req, res, next) => {
   }
 
   try {
-    const { code } = req.query;
+    // IMPORTANTE: No redeclarar 'code' aquí, ya está declarado arriba
+    // const { code } = req.query; <- ELIMINAR ESTA LÍNEA
+
+    // Añadir log para depuración
+    console.log('Código de autorización recibido:', code);
 
     // 1. Autenticación con Google
     const googleUser = await authService.authenticateWithGoogle(code);
+    console.log('Información de usuario de Google:', JSON.stringify(googleUser, null, 2));
 
-    // 2. Validar que el usuario esté registrado en la BD
-    const localUser = await authService.handleGoogleUser(googleUser);
+    // 2. Validar que el usuario esté registrado en la BD y obtener token
+    const token = await authService.handleGoogleUser(googleUser);
 
-    // 3. Generar token JWT
-    const token = generateUserToken({
-      userData: {
-        id: localUser.IDUsuario,
-        email: localUser.correo
-      },
-      authorization: {
-        roles: localUser.IDRoles,          // Array de tipos de rol (ej: ['admin', 'user'])
-        privileges: localUser.IDPrivilegios // Array de actividades (ej: ['create', 'read', 'update'])
-      },
-      metadata: {
-        authMethod: 'google',
-        authTime: new Date().toISOString()
-      }
-    });
-
-    // 4. Establecer cookie y redirigir
+    // 3. Establecer cookie y redirigir
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' // Aumenta seguridad contra CSRF
     }).redirect('/home');
     
   } catch (error) {
@@ -69,7 +59,7 @@ exports.googleCallback = async (req, res, next) => {
     console.error(error.stack); // Opcional: para debug más detallado
 
     // Mensaje específico si el error es por usuario no registrado
-    const mensaje = error.message.includes('no está registrado')
+    const mensaje = error.message.includes('no está registrado') || error.message.includes('no registrado')
       ? error.message
       : 'Ocurrió un error durante el inicio de sesión. Intenta de nuevo.';
 

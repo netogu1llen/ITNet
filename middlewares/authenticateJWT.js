@@ -16,7 +16,7 @@ const authenticateJWT = (req, res, next) => {
   // Prioridad 1: token en cookie (web)
   // Obtiene el token JWT de las cookies de la solicitud
   // El operador ?. es para manejar casos donde req.cookies pueda ser undefined
-  const token = req.cookies?.jwt;
+  let token = req.cookies?.jwt;
 
   // Prioridad 2: token en header Authorization (móvil)
   if (!token) {

@@ -115,29 +115,29 @@ class AuthService {
       if (!user) {
         throw new Error('Usuario no registrado');
       }
-  
+
+      // Construir un payload con la información necesaria del usuario
       const tokenPayload = {
-        userId: user.IDUsuario,
-        email: user.correo,
-        roles: user.IDRoles || [],
-        privileges: user.IDPrivilegios || []
+        userData: {
+          id: user.IDUsuario,
+          email: user.correo
+        },
+        authorization: {
+          roles: user.IDRoles || [],
+          privileges: user.IDPrivilegios || []
+        },
+        metadata: {
+          authMethod: 'google',
+          authTime: new Date().toISOString()
+        }
       };
-  
+
       // Verificación de datos incluidos en el token
-      console.log('Payload del Token JWT:', {
-        datosUsuario: {
-          id: tokenPayload.userId,
-          email: tokenPayload.email
-        },
-        autorizacion: {
-          roles: tokenPayload.roles,
-          privilegios: tokenPayload.privileges
-        },
-        timestamp: new Date().toISOString()
-      });
-  
+      console.log('Payload del Token JWT:', JSON.stringify(tokenPayload, null, 2));
+
+      // Generar y devolver el token JWT
       return generateUserToken(tokenPayload);
-  
+
     } catch (error) {
       console.error('Error en handleGoogleUser:', error);
       throw error;
