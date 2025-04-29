@@ -77,6 +77,10 @@ app.use(loadUserFromJWT); // Estará disponible en todas las vistas
 const apiRoutes = require('./routes/api.routes');
 app.use('/api', apiRoutes);
 
+//Rutas de api para Boletas
+const apiBoletasRoutes = require('./routes/api.boletas.routes');
+app.use('/api', apiBoletasRoutes);
+
 //Rutas de auth
 const authRoutes = require('./routes/auth.routes');
 app.use('/auth', authRoutes);
