@@ -107,11 +107,15 @@ exports.getExpedienteNutricion = async (req, res) => {
             telefono: decrypt(datosGeneralesPacienteEncriptados.contacto || ''),
             escuela: datosGeneralesPacienteEncriptados.nvEscolar || 'No registrado',
             sexo: datosGeneralesPacienteEncriptados.sexo || 'No especificado',
-            edadPaciente: calcularEdad(decrypt(datosGeneralesPacienteEncriptados.fechaNacimiento || ''))
+            edadPaciente: calcularEdad(decrypt(datosGeneralesPacienteEncriptados.fechaNacimiento || '')),
+            tipoSangre: datosGeneralesPacienteEncriptados.sangre || 'No registrado'
         };
 
         // Obtener antecedentes del paciente
         const antecedentes = await Nutricion.obtenerAntecedentes(idExpediente);
+
+        // Obtener datos antropométricos - obtener la última evaluación antropométrica
+        const datosAntropometricos = await Nutricion.obtenerUltimosAntropometricos(idExpediente);
 
         // Obtener manejo nutricional
         const manejoNutricionalData = await Nutricion.obtenerManejoNutricional(idExpediente);
@@ -143,6 +147,7 @@ exports.getExpedienteNutricion = async (req, res) => {
             antecedentesHeredofamiliares: antecedentes.heredofamiliares,
             antecedentesPersonales: antecedentes.personales,
             antecedentesAlimentacion: antecedentes.alimentacion,
+            datosAntropometricos,
             manejoNutricional: manejoNutricionalData.manejoNutricional,
             documentosHistorial: documentosHistorialFormateados,
             nutricional1 // Pasar las sesiones al frontend
