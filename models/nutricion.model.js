@@ -206,18 +206,18 @@ class Nutricion {
                 ORDER BY fecha DESC
             `, [idExpediente]);
             
-            // Obtener historial nutricional V1
+            // Obtener historial clínico V1
             const [nutricionalRows] = await db.execute(`
-                SELECT IDNutricional1 as ID, 'Historial Nutricional V1' as nombre, 
+                SELECT IDNutricional1 as ID, 'Historial Clínico V1' as nombre, 
                     fecha, 'NUTRICIONAL_V1' as tipo, numSesion
                 FROM nutricional1
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
                 ORDER BY fecha DESC
             `, [idExpediente]);
             
-            // Obtener historial nutricional V2 (antes objetivos nutricionales)
+            // Obtener historial clínico V2 (antes objetivos nutricionales)
             const [objetivosRows] = await db.execute(`
-                SELECT IDObjetivoNutricional as ID, 'Historial Nutricional V2' as nombre, 
+                SELECT IDObjetivoNutricional as ID, 'Historial Clínico V2' as nombre, 
                     fecha, 'NUTRICIONAL_V2' as tipo, numSesion
                 FROM objetivonutricional
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)

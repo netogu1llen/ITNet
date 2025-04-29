@@ -23,8 +23,8 @@ const table = $('#documentosTable').DataTable({
         }
     ],
     createdRow: function(row, data, dataIndex) {
-        // Destacar visualmente los documentos Nutricional V1
-        if($(row).find('td:first').text().trim().includes('Historial Nutricional V1')) {
+        // Destacar visualmente los documentos Historial Clínico V1
+        if($(row).find('td:first').text().trim().includes('Historial Clínico V1')) {
             $(row).addClass('highlight-nutricional-v1');
         }
     }
@@ -96,8 +96,8 @@ function moverHistorialV1AlInicio() {
     for (let i = rows.length - 1; i >= 0; i--) {
         const tipo = $(rows[i]).find('td:first').text().trim();
         
-        // Si es un Historial Nutricional V1, moverlo al principio
-        if (tipo.includes('Historial Nutricional V1')) {
+        // Si es un Historial Clínico V1, moverlo al principio
+        if (tipo.includes('Historial Clínico V1')) {
             // Desacoplar la fila actual
             const row = table.row(i).node();
             $(row).detach();
@@ -342,7 +342,7 @@ $(document).on('click', '.btn-descargar', function(event) {
             // Crear elemento para la descarga
             const link = document.createElement('a');
             link.href = url;
-            link.download = (tipo === 'NUTRICIONAL_V1') ? 'historial_nutricional.pdf' : `documento_${documentoId}.pdf`;
+            link.download = (tipo === 'NUTRICIONAL_V1') ? 'historial_clinico_v1.pdf' : `documento_${documentoId}.pdf`;
             document.body.appendChild(link);
             link.click();
             
@@ -375,9 +375,9 @@ $(document).on('click', '.btn-eliminar', function(event) {
     // Personalizar mensaje según el tipo
     let mensaje = '';
     if (tipo === 'NUTRICIONAL_V1') {
-        mensaje = '¿Está seguro de eliminar este Historial Nutricional V1?';
+        mensaje = '¿Está seguro de eliminar este Historial Clínico V1?';
     } else if (tipo === 'NUTRICIONAL_V2') {
-        mensaje = '¿Está seguro de eliminar este Historial Nutricional V2?';
+        mensaje = '¿Está seguro de eliminar este Historial Clínico V2?';
     } else {
         mensaje = '¿Está seguro de eliminar este documento PDF?';
     }
