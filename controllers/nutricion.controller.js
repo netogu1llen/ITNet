@@ -99,6 +99,9 @@ exports.getExpedienteNutricion = async (req, res) => {
             return res.status(404).json({ mensaje: 'Expediente no encontrado.' });
         }
 
+        // Obtener el expediente completo para tener el ID
+        const expediente = await Nutricion.obtenerPorId(idExpediente);
+
         const datosGeneralesPaciente = {
             nombres: decrypt(datosGeneralesPacienteEncriptados.nombres || ''),
             apellidoP: decrypt(datosGeneralesPacienteEncriptados.apellidoP || ''),
@@ -139,13 +142,14 @@ exports.getExpedienteNutricion = async (req, res) => {
         });
 
         res.render('expediente_nutricion', {
+            expediente, // Añadir el objeto expediente completo
             datosGeneralesPaciente,
             antecedentesHeredofamiliares: antecedentes.heredofamiliares,
             antecedentesPersonales: antecedentes.personales,
             antecedentesAlimentacion: antecedentes.alimentacion,
             manejoNutricional: manejoNutricionalData.manejoNutricional,
             documentosHistorial: documentosHistorialFormateados,
-            nutricional1 // Pasar las sesiones al frontend
+            nutricional1
         });
     } catch (error) {
         console.error('Error al obtener el expediente nutricional:', error.message);
@@ -469,6 +473,66 @@ exports.checkAndRedirectHistoriaClinica = async (req, res) => {
     }
 };
 
+exports.guardarHistoriaClinicaV2 = async (req, res) => {
+    try {
+        const datos = req.body;
+        console.log('Datos recibidos para guardar en historiaClinicaV2:', datos);
+
+        // Validar datos requeridos
+        if (!datos.IDExpediente || !datos.numSesion) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'ID de expediente y número de sesión son requeridos' 
+            });
+        }
+
+        // Insertar datos usando el método del modelo
+        await Nutricion.insertarHistoriaClinicaV2(datos);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error guardando datos de historiaClinicaV2:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error en el servidor al guardar la historia clínica V2' 
+        });
+    }
+};
+
+// Añadir el método que falta
+exports.editHistoriaClinicaV1 = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
+
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        if (!expediente) {
+            return res.status(404).send('Expediente no encontrado.');
+        }
+
+        // Obtener los datos de la sesión específica
+        const datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
+        if (!datosSesion) {
+            return res.status(404).send('Sesión no encontrada.');
+        }
+
+        // Renderizar el formulario en modo edición
+        res.render('historiaClinica', { 
+            expediente, 
+            datosSesion,
+            modoEdicion: true
+        });
+
+    } catch (error) {
+        console.error('Error al renderizar formulario de edición:', error);
+        res.status(500).send('Error interno al mostrar el formulario de edición');
+    }
+};
+
 // Nuevo controlador específico para crear V1
 exports.createHistoriaClinicaV1 = async (req, res) => {
     try {
@@ -505,38 +569,6 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
             return res.status(400).send('ID del expediente no válido.');
         }
 
-        // Verificar si existe una Historia Clínica V1
-        const existeV1 = await Nutricion.verificarExistenciaHistoriaV1(IDExpediente);
-        
-        if (!existeV1) {
-            return res.redirect(`/nutricion/historiaClinica/${IDExpediente}`);
-        }
-
-        const expediente = await Nutricion.obtenerPorId(IDExpediente);
-        const datosSesionV1 = await Nutricion.obtenerUltimaSesionV1(IDExpediente);
-
-        res.render('historiaClinicaV2', {
-            expediente,
-            datosSesionV1,
-            datosSesion: null, // Para futuras sesiones V2
-            modoEdicion: !!numSesion
-        });
-    } catch (error) {
-        console.error('Error al renderizar historia clínica V2:', error);
-        res.status(500).send('Error interno al mostrar la historia clínica V2');
-    }
-};
-
-// Nuevo controlador para editar V1
-exports.editHistoriaClinicaV1 = async (req, res) => {
-    try {
-        const IDExpediente = req.params.id;
-        const numSesion = req.query.numSesion;
-
-        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
-            return res.status(400).send('ID del expediente no válido.');
-        }
-
         const expediente = await Nutricion.obtenerPorId(IDExpediente);
         if (!expediente) {
             return res.status(404).send('Expediente no encontrado.');
@@ -544,28 +576,33 @@ exports.editHistoriaClinicaV1 = async (req, res) => {
 
         let datosSesion = null;
         if (numSesion) {
-            datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
+            datosSesion = await Nutricion.obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion);
         }
 
-        res.render('historiaClinica', { 
-            expediente, 
+        // Para mostrar datos de la última sesión V1
+        const ultimaSesionV1 = await Nutricion.obtenerUltimaSesionV1(IDExpediente);
+
+        res.render('historiaClinicaV2', {
+            expediente,
             datosSesion,
-            modoEdicion: true
+            datosSesionV1: ultimaSesionV1,
+            modoEdicion: !!numSesion
         });
 
     } catch (error) {
-        console.error('Error al renderizar formulario de edición:', error);
-        res.status(500).send('Error interno al mostrar el formulario');
+        console.error('Error al renderizar historia clínica V2:', error);
+        res.status(500).send('Error interno al mostrar la historia clínica V2');
     }
 };
 
-exports.guardarHistoriaClinicaV2 = async (req, res) => {
+// Agregar método para actualizar V2
+exports.actualizarHistoriaClinicaV2 = async (req, res) => {
     try {
         const datos = req.body;
-        await Nutricion.insertarHistoriaClinicaV2(datos);
+        await Nutricion.actualizarHistoriaClinicaV2(datos);
         res.json({ success: true });
     } catch (error) {
-        console.error('Error guardando datos de historiaClinicaV2:', error);
-        res.status(500).json({ success: false, message: 'Error en el servidor' });
+        console.error('Error actualizando historia clínica V2:', error);
+        res.status(500).json({ success: false, message: 'Error al actualizar' });
     }
 };

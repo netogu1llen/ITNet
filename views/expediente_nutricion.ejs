@@ -187,49 +187,48 @@
             <th>Tipo de Documento</th>
             <th>Fecha de Creación</th>
             <th>Descargar</th>
-            <th>Eliminar</th>
           </tr>
         </thead>
         <tbody>
           <% if (documentosHistorial && documentosHistorial.length > 0) { %>
-            <% documentosHistorial.forEach(item => { %>
+            <% documentosHistorial.forEach(doc => { %>
             <tr class="fila-documento" 
-                  data-id="<%= item.id %>" 
-                  data-tipo="<%= item.tipo %>" 
-                  data-ruta="<%= item.ruta %>" 
-                  data-sesion="<%= item.numSesion %>">
+                  data-id="<%= doc.id %>" 
+                  data-tipo="<%= doc.tipo %>" 
+                  data-ruta="<%= doc.ruta %>" 
+                  data-sesion="<%= doc.numSesion %>">
               <td>
-                <% if (item.tipo === 'PDF') { %>
+                <% if (doc.tipo === 'PDF') { %>
                   <span class="icon-text">
                     <span class="icon">
                       <i class="fas fa-file-pdf" style="color: #e2423b;"></i>
                     </span>
-                    <span><%= item.nombre %></span>
+                    <span><%= doc.nombre %></span>
                   </span>
-                <% } else if (item.tipo === 'NUTRICIONAL_V1') { %>
+                <% } else if (doc.tipo === 'NUTRICIONAL_V1') { %>
                   <span class="icon-text">
                     <span class="icon">
                       <i class="fas fa-clipboard-list" style="color: #23a094;"></i>
                     </span>
-                    <span><%= item.nombre %></span>
+                    <span><%= doc.nombre %></span>
                   </span>
-                <% } else if (item.tipo === 'NUTRICIONAL_V2') { %>
-                  <span class="icon-text">
-                    <span class="icon">
-                      <i class="fas fa-bullseye" style="color: #3273dc;"></i>
-                    </span>
-                    <span><%= item.nombre %></span>
-                  </span>
+                <% } else if (doc.tipo === 'NUTRICIONAL_V2') { %>
+                    <div class="mt-2">
+                        <strong>Sesión:</strong> <%= doc.numSesion %><br>
+                        <% if (doc.objetivo) { %>
+                            <strong>Objetivo:</strong> <%= doc.objetivo %><br>
+                        <% } %>
+                        <% if (doc.energia) { %>
+                            <strong>Energía:</strong> <%= doc.energia %> kcal<br>
+                        <% } %>
+                    </div>
                 <% } %>
               </td>
-              <td><%= item.fechaFormateada %></td>
+              <td><%= doc.fechaFormateada %></td>
               <td>
-                <span class="btn-descargar" data-id="<%= item.id %>" data-tipo="<%= item.tipo %>" style="cursor: pointer;">
+                <span class="btn-descargar" data-id="<%= doc.id %>" data-tipo="<%= doc.tipo %>" style="cursor: pointer;">
                   <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
                 </span>
-              </td>
-              <td>
-                <button class="button is-small is-danger btn-eliminar" data-id="<%= item.id %>" data-tipo="<%= item.tipo %>">Eliminar</button>
               </td>
             </tr>
             <% }); %>

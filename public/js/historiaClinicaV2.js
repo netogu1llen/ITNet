@@ -1,17 +1,37 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const tablaIndicadores = document.getElementById('tabla-indicadores');
-    const tablaObjetivos = document.getElementById('tabla-objetivos');
-    const btnAgregarIndicador = document.getElementById('btn-agregar-indicador');
-    const btnAgregarObjetivo = document.getElementById('btn-agregar-objetivo');
-    const pesoInput = document.getElementById('peso');
-    const tallaInput = document.getElementById('talla');
-    const imcInput = document.getElementById('imc');
-
-    // Función para agregar nuevo indicador bioquímico
-    if (btnAgregarIndicador) {
-        btnAgregarIndicador.addEventListener('click', function(e) {
+    // Configuración de paginación
+    const paginationLinks = document.querySelectorAll('.pagination-link');
+    const pages = document.querySelectorAll('.entrevista-pagina');
+    
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
-            const tbody = tablaIndicadores.querySelector('tbody');
+            
+            // Remover clase activa de todos los links
+            paginationLinks.forEach(l => l.classList.remove('is-current'));
+            
+            // Agregar clase activa al link actual
+            this.classList.add('is-current');
+            
+            // Obtener número de página
+            const pageNum = parseInt(this.getAttribute('data-page'));
+            
+            // Ocultar todas las páginas
+            pages.forEach(page => page.style.display = 'none');
+            
+            // Mostrar la página seleccionada
+            pages[pageNum - 1].style.display = 'block';
+        });
+    });
+
+    // Manejo de tablas dinámicas (indicadores bioquímicos)
+    const btnAgregarFila = document.getElementById('btn-agregar-fila');
+    const tablaIndicadores = document.getElementById('tabla-indicadores');
+
+    if (btnAgregarFila && tablaIndicadores) {
+        btnAgregarFila.addEventListener('click', function(e) {
+            e.preventDefault();
+            
             const nuevaFila = document.createElement('tr');
             nuevaFila.innerHTML = `
                 <td><input class="input" type="text" name="parametroBioquimico[]" placeholder="Parámetro..." required></td>
@@ -19,30 +39,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td><input class="input" type="date" name="fechaParametro[]" required></td>
                 <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
             `;
-            tbody.appendChild(nuevaFila);
-            configurarBotonesEliminar();
+
+            tablaIndicadores.appendChild(nuevaFila);
+            configurarBotonesEliminarFila();
         });
     }
 
-    // Función para agregar nuevo objetivo
-    if (btnAgregarObjetivo) {
+    // Manejo de tabla de objetivos nutricionales
+    const btnAgregarObjetivo = document.getElementById('btn-agregar-fila-objetivos');
+    const tablaObjetivos = document.getElementById('tabla-objetivos');
+
+    if (btnAgregarObjetivo && tablaObjetivos) {
         btnAgregarObjetivo.addEventListener('click', function(e) {
             e.preventDefault();
-            const tbody = tablaObjetivos.querySelector('tbody');
+            
             const nuevaFila = document.createElement('tr');
             nuevaFila.innerHTML = `
-                <td><input class="input" type="text" name="objetivos[]" placeholder="Objetivo..." required></td>
-                <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
+                <td>
+                    <input class="input" type="text" name="objetivosNutricionales[]" placeholder="Objetivo..." required>
+                </td>
+                <td>
+                    <button type="button" class="button is-danger btn-eliminar-fila">-</button>
+                </td>
             `;
-            tbody.appendChild(nuevaFila);
-            configurarBotonesEliminar();
+
+            tablaObjetivos.appendChild(nuevaFila);
+            configurarBotonesEliminarFila();
         });
     }
 
-    // Configurar botones para eliminar filas
-    function configurarBotonesEliminar() {
-        document.querySelectorAll('.btn-eliminar-fila').forEach(btn => {
-            btn.onclick = function() {
+    // Función para configurar botones de eliminar en todas las tablas
+    function configurarBotonesEliminarFila() {
+        const botonesEliminar = document.querySelectorAll('.btn-eliminar-fila');
+        botonesEliminar.forEach(boton => {
+            boton.onclick = function() {
                 const tabla = this.closest('tbody');
                 if (tabla.children.length > 1) {
                     this.closest('tr').remove();
@@ -57,113 +87,241 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Calcular IMC automáticamente
+    // Configurar inicialmente todos los botones de eliminar
+    configurarBotonesEliminarFila();
+
+    // Cálculo automático de IMC y otros índices cuando se cambian peso o talla
+    const pesoInput = document.getElementById('peso');
+    const tallaInput = document.getElementById('talla');
+    const imcInput = document.getElementById('imc');
+    const circunferenciaCinturaInput = document.getElementById('circunferenciaCintura');
+    const circunferenciaCaderaInput = document.getElementById('circunferenciaCadera');
+    const indiceCinturaCaderaInput = document.getElementById('indiceCinturaCadera');
+
     function calcularIMC() {
-        if (pesoInput?.value && tallaInput?.value) {
+        if (pesoInput && tallaInput && imcInput) {
             const peso = parseFloat(pesoInput.value);
             const talla = parseFloat(tallaInput.value);
-            if (peso > 0 && talla > 0) {
+            
+            if (!isNaN(peso) && !isNaN(talla) && talla > 0) {
                 const imc = (peso / (talla * talla)).toFixed(2);
                 imcInput.value = imc;
             }
         }
     }
 
-    if (pesoInput && tallaInput) {
-        pesoInput.addEventListener('input', calcularIMC);
-        tallaInput.addEventListener('input', calcularIMC);
+    function calcularIndiceCinturaCadera() {
+        if (circunferenciaCinturaInput && circunferenciaCaderaInput && indiceCinturaCaderaInput) {
+            const cintura = parseFloat(circunferenciaCinturaInput.value);
+            const cadera = parseFloat(circunferenciaCaderaInput.value);
+            
+            if (!isNaN(cintura) && !isNaN(cadera) && cadera > 0) {
+                const indice = (cintura / cadera).toFixed(2);
+                indiceCinturaCaderaInput.value = indice;
+            }
+        }
     }
 
-    // Configurar el guardado del formulario
-    document.querySelectorAll('.btn-guardar').forEach(btn => {
-        btn.addEventListener('click', async function(e) {
+    if (pesoInput) pesoInput.addEventListener('input', calcularIMC);
+    if (tallaInput) tallaInput.addEventListener('input', calcularIMC);
+    if (circunferenciaCinturaInput) circunferenciaCinturaInput.addEventListener('input', calcularIndiceCinturaCadera);
+    if (circunferenciaCaderaInput) circunferenciaCaderaInput.addEventListener('input', calcularIndiceCinturaCadera);
+
+    // Ejecutar los cálculos iniciales
+    calcularIMC();
+    calcularIndiceCinturaCadera();
+
+    // Validaciones para campos numéricos
+    const camposNumericos = document.querySelectorAll('input[type="number"]');
+    camposNumericos.forEach(campo => {
+        campo.addEventListener('input', function() {
+            // Remover caracteres no numéricos excepto punto y guión
+            this.value = this.value.replace(/[^\d.-]/g, '');
+            
+            // Validar rango según el campo
+            if (this.id === 'peso') {
+                if (parseFloat(this.value) > 500) this.value = 500;
+                if (parseFloat(this.value) < 0) this.value = 0;
+            }
+            if (this.id === 'talla') {
+                if (parseFloat(this.value) > 3) this.value = 3;
+                if (parseFloat(this.value) < 0) this.value = 0;
+            }
+        });
+    });
+
+    // Validaciones para límites de caracteres
+    const campos = document.querySelectorAll('input[type="text"], textarea');
+    campos.forEach(campo => {
+        // Establecer maxLength según el campo
+        if (campo.id) {
+            switch(campo.id) {
+                case 'observaciones':
+                case 'logrosAlcanzados':
+                case 'areasOportunidad':
+                    campo.maxLength = 500;
+                    break;
+                case 'energia':
+                case 'proteinas':
+                case 'lipidos':
+                case 'hidratosDeCarbono':
+                case 'fibra':
+                case 'agua':
+                    campo.maxLength = 10;
+                    break;
+                default:
+                    campo.maxLength = 255; // Límite por defecto
+            }
+        }
+    });
+
+    // Función de validación del formulario
+    function validarFormulario() {
+        let errores = [];
+        const camposRequeridos = document.querySelectorAll('[required]');
+        
+        camposRequeridos.forEach(campo => {
+            if (!campo.value.trim()) {
+                errores.push(`El campo ${campo.id || 'requerido'} está vacío`);
+                campo.classList.add('is-danger');
+            } else {
+                campo.classList.remove('is-danger');
+            }
+        });
+
+        // Validaciones específicas para campos numéricos
+        if (pesoInput && (isNaN(pesoInput.value) || parseFloat(pesoInput.value) <= 0)) {
+            errores.push('El peso debe ser un número mayor a 0');
+        }
+        if (tallaInput && (isNaN(tallaInput.value) || parseFloat(tallaInput.value) <= 0)) {
+            errores.push('La talla debe ser un número mayor a 0');
+        }
+
+        return errores;
+    }
+
+    // Manejo del guardado de datos
+    const modoEdicion = document.getElementById('idExpediente').dataset.modoEdicion === 'true';
+    const botonesGuardar = document.querySelectorAll('.btn-guardar');
+
+    botonesGuardar.forEach(boton => {
+        // Actualizar el texto del botón según el modo
+        boton.textContent = modoEdicion ? 'Actualizar' : 'Guardar';
+        boton.classList.toggle('is-info', modoEdicion);
+        boton.classList.toggle('is-success', !modoEdicion);
+
+        boton.addEventListener('click', async function(e) {
             e.preventDefault();
             
-            // Validar campos requeridos
-            const camposRequeridos = document.querySelectorAll('input[required]');
-            let todosCamposLlenos = true;
-            
-            camposRequeridos.forEach(campo => {
-                if (!campo.value.trim()) {
-                    todosCamposLlenos = false;
-                    campo.classList.add('is-danger');
-                } else {
-                    campo.classList.remove('is-danger');
-                }
-            });
-
-            if (!todosCamposLlenos) {
+            const errores = validarFormulario();
+            if (errores.length > 0) {
                 Swal.fire({
                     title: 'Error',
-                    text: 'Por favor complete todos los campos requeridos',
+                    html: errores.join('<br>'),
                     icon: 'error'
                 });
                 return;
             }
 
-            // Recopilar datos del formulario
-            const formData = {
-                IDExpediente: document.getElementById('idExpediente')?.value,
-                numSesion: document.getElementById('numSesion')?.value,
-                
-                // Indicadores bioquímicos
-                parametrosBioquimicos: Array.from(document.querySelectorAll('input[name="parametroBioquimico[]"]')).map(input => input.value),
-                valoresReferencia: Array.from(document.querySelectorAll('input[name="valorReferencia[]"]')).map(input => input.value),
-                fechasParametro: Array.from(document.querySelectorAll('input[name="fechaParametro[]"]')).map(input => input.value),
-                
-                // Evaluación antropométrica
-                peso: pesoInput?.value,
-                talla: tallaInput?.value,
-                imc: imcInput?.value,
-                
-                // Diagnósticos
-                diagnosticos: document.getElementById('diagnosticos')?.value,
-                
-                // Objetivos nutricionales
-                objetivos: Array.from(document.querySelectorAll('input[name="objetivos[]"]')).map(input => input.value),
-                
-                // Manejo nutricional
-                energia: document.getElementById('energia')?.value,
-                proteinas: document.getElementById('proteinas')?.value,
-                lipidos: document.getElementById('lipidos')?.value,
-                hidratosCarbono: document.getElementById('hidratosCarbono')?.value,
-                fibra: document.getElementById('fibra')?.value,
-                agua: document.getElementById('agua')?.value
-            };
+            const datos = recopilarDatosFormulario();
+            const url = modoEdicion 
+                ? '/nutricion/historiaClinica/actualizarHistoriaClinicaV2' 
+                : '/nutricion/historiaClinica/guardarHistoriaClinicaV2';
 
             try {
-                const response = await fetch('/nutricion/historiaClinica/guardarHistoriaClinicaV2', {
+                const respuesta = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(datos)
                 });
 
-                const result = await response.json();
+                const resultado = await respuesta.json();
 
-                if (result.success) {
+                if (resultado.success) {
                     Swal.fire({
-                        title: '¡Éxito!',
-                        text: 'Los datos se han guardado correctamente',
-                        icon: 'success'
+                        title: "¡Éxito!",
+                        text: modoEdicion ? "Seguimiento actualizado correctamente." : "Seguimiento guardado correctamente.",
+                        icon: "success"
                     }).then(() => {
-                        window.location.href = `/nutricion/documentos/${formData.IDExpediente}`;
+                        window.location.href = `/nutricion/documentos/${datos.IDExpediente}`;
                     });
                 } else {
-                    throw new Error(result.message);
+                    throw new Error(resultado.message || 'Error al procesar la solicitud');
                 }
             } catch (error) {
+                console.error('Error:', error);
                 Swal.fire({
-                    title: 'Error',
-                    text: error.message || 'Error al guardar los datos',
-                    icon: 'error'
+                    title: "Error",
+                    text: error.message || "Error al procesar la solicitud",
+                    icon: "error"
                 });
             }
         });
     });
-
-    // Inicializar
-    configurarBotonesEliminar();
-    calcularIMC();
 });
+
+function recopilarDatosFormulario() {
+    const idExpediente = document.getElementById('idExpediente')?.value;
+
+    if (!idExpediente) {
+        Swal.fire({
+            title: "Error!",
+            text: "No se encontró IDExpediente.",
+            icon: "error"
+        });
+        return;
+    }
+
+    // Validar que todos los campos requeridos estén llenos
+    const inputsRequeridos = document.querySelectorAll('input[required], textarea[required]');
+    for (const input of inputsRequeridos) {
+        if (!input.value.trim()) {
+            Swal.fire({
+                title: "Campos incompletos",
+                text: "Por favor, rellena todos los campos obligatorios antes de guardar.",
+                icon: "warning"
+            });
+            input.focus();
+            return;
+        }
+    }
+
+    // Para indicadores bioquímicos (mantener los mismos nombres que en V1)
+    const parametro = Array.from(document.querySelectorAll('input[name="parametroBioquimico[]"]'))
+        .map(input => input.value.trim());
+    const valorReferencia = Array.from(document.querySelectorAll('input[name="valorReferencia[]"]'))
+        .map(input => input.value.trim());
+    const parametroFecha = Array.from(document.querySelectorAll('input[name="fechaParametro[]"]'))
+        .map(input => input.value.trim());
+
+    // Para objetivos nutricionales (mantener los mismos nombres que en V1)
+    const objetivo = Array.from(document.querySelectorAll('input[name="objetivosNutricionales[]"]'))
+        .map(input => input.value.trim());
+
+    return {
+        IDExpediente: idExpediente,
+        numSesion: document.getElementById('numSesion')?.value || '',
+        // Agregar los arrays de indicadores bioquímicos
+        parametro,
+        valorReferencia,
+        parametroFecha,
+        // Evaluación antropométrica
+        talla: document.getElementById('talla')?.value || '',
+        peso: document.getElementById('peso')?.value || '',
+        circunferenciaCintura: document.getElementById('circunferenciaCintura')?.value || '',
+        circunferenciaCadera: document.getElementById('circunferenciaCadera')?.value || '',
+        // Diagnóstico
+        diagnosticoEvolucion: document.getElementById('diagnosticoEvolucion')?.value || '',
+        // Objetivos nutricionales
+        objetivo,
+        // Manejo nutricional (corregir nombre de hidratosDeCarbono)
+        energia: document.getElementById('energia')?.value || '',
+        hidratosDeCarbono: document.getElementById('hidratosDeCarbono')?.value || '',
+        lipidos: document.getElementById('lipidos')?.value || '',
+        proteinas: document.getElementById('proteinas')?.value || '',
+        fibra: document.getElementById('fibra')?.value || '',
+        agua: document.getElementById('agua')?.value || ''
+    };
+}
