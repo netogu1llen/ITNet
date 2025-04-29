@@ -8,6 +8,7 @@ const { decrypt } = require('../util/encryptData');
 
 /**
  * Obtiene la lista de alumnos con su periodo, grado y curso.
+ * @returns {Promise<Array>}
  */
 exports.getAlumnos = async () => {
   const [rows] = await db.execute(`
@@ -29,8 +30,8 @@ exports.getAlumnos = async () => {
     WHERE e.eliminado = 0
   `);
 
-  // Desencriptar campos necesarios
-  const alumnos = rows.map(alumno => {
+  // Desencriptar campos sensibles
+  const alumnos = rows.map((alumno) => {
     let nombres = '';
     let apellidoP = '';
     let apellidoM = '';
@@ -70,13 +71,18 @@ exports.getAlumnos = async () => {
 
 /**
  * Obtiene el nombre completo del alumno por su IDExpediente.
+ * @param {number} IDExpediente
+ * @returns {Promise<string>}
  */
 exports.obtenerNombreAlumno = async (IDExpediente) => {
-  const [rows] = await db.execute(`
+  const [rows] = await db.execute(
+    `
     SELECT nombres, apellidoP, apellidoM
     FROM expediente
     WHERE IDExpediente = ?
-  `, [IDExpediente]);
+  `,
+    [IDExpediente]
+  );
 
   if (rows.length === 0) return 'Alumno';
 
@@ -100,6 +106,10 @@ exports.obtenerNombreAlumno = async (IDExpediente) => {
  *  ============================
  */
 
+/**
+ * Obtiene todas las materias activas.
+ * @returns {Promise<Array>}
+ */
 exports.getMaterias = async () => {
   const [rows] = await db.execute(`
     SELECT * FROM materia 
@@ -108,36 +118,76 @@ exports.getMaterias = async () => {
   return rows;
 };
 
+/**
+ * Obtiene una materia por su ID.
+ * @param {number} id
+ * @returns {Promise<Object>}
+ */
 exports.getMateriaById = async (id) => {
-  const [rows] = await db.execute(`
+  const [rows] = await db.execute(
+    `
     SELECT * FROM materia WHERE IDMateria = ?
-  `, [id]);
+  `,
+    [id]
+  );
   return rows[0];
 };
 
+/**
+ * Inserta una nueva materia.
+ * @param {Object} params
+ * @param {string} params.materia
+ * @param {number} params.grado
+ * @param {string} params.nvEscolar
+ */
 exports.insertMateria = async ({ materia, grado, nvEscolar }) => {
-  await db.execute(`
+  await db.execute(
+    `
     INSERT INTO materia (materia, grado, nvEscolar, eliminado) 
     VALUES (?, ?, ?, 0)
-  `, [materia, grado, nvEscolar]);
+  `,
+    [materia, grado, nvEscolar]
+  );
 };
 
+/**
+ * Modifica una materia existente.
+ * @param {Object} params
+ * @param {number} params.idMateria
+ * @param {string} params.materia
+ * @param {number} params.grado
+ * @param {string} params.nvEscolar
+ */
 exports.updateMateria = async ({ idMateria, materia, grado, nvEscolar }) => {
-  await db.execute(`
+  await db.execute(
+    `
     UPDATE materia 
     SET materia = ?, grado = ?, nvEscolar = ? 
     WHERE IDMateria = ?
-  `, [materia, grado, nvEscolar, idMateria]);
+  `,
+    [materia, grado, nvEscolar, idMateria]
+  );
 };
 
+/**
+ * Elimina lógicamente una materia.
+ * @param {number} id
+ */
 exports.deleteMateria = async (id) => {
-  await db.execute(`
+  await db.execute(
+    `
     UPDATE materia 
     SET eliminado = 1 
     WHERE IDMateria = ?
-  `, [id]);
+  `,
+    [id]
+  );
 };
 
+/**
+ * Devuelve una lista con ID y nombre de materias.
+ * @returns {Promise<Array>}
+ */
 exports.getMateriasList = async () => {
   const [rows] = await db.execute(`
     SELECT IDMateria, materia, grado, nvEscolar 
@@ -154,9 +204,12 @@ exports.getMateriasList = async () => {
 
 /**
  * Obtiene todas las boletas asociadas a un expediente.
+ * @param {number} IDExpediente
+ * @returns {Promise<Array>}
  */
 exports.obtenerBoletasPorExpediente = async (IDExpediente) => {
-  const [rows] = await db.execute(`
+  const [rows] = await db.execute(
+    `
     SELECT 
       b.IDBoleta,
       b.periodoEscolar,
@@ -168,77 +221,119 @@ exports.obtenerBoletasPorExpediente = async (IDExpediente) => {
     JOIN boletaMateria bm ON bm.IDBoleta = b.IDBoleta
     WHERE b.IDExpediente = ? AND b.eliminado = 0
     GROUP BY b.IDBoleta
-  `, [IDExpediente]);
+  `,
+    [IDExpediente]
+  );
   return rows;
 };
 
 /**
  * Registra una nueva boleta con sus materias.
+ * @param {Object} params
+ * @param {number} params.IDExpediente
+ * @param {string} params.periodoEscolar
+ * @param {Array} params.materias
+ * @param {Array} params.calificaciones
  */
 exports.registrarBoleta = async ({ IDExpediente, periodoEscolar, materias, calificaciones }) => {
-  const [result] = await db.execute(`
+  const [result] = await db.execute(
+    `
     INSERT INTO boleta (IDExpediente, periodoEscolar, eliminado) 
     VALUES (?, ?, 0)
-  `, [IDExpediente, periodoEscolar]);
+  `,
+    [IDExpediente, periodoEscolar]
+  );
 
   const IDBoleta = result.insertId;
 
   for (let i = 0; i < materias.length; i++) {
-    await db.execute(`
+    await db.execute(
+      `
       INSERT INTO boletaMateria (IDBoleta, IDMateria, calificacion) 
       VALUES (?, ?, ?)
-    `, [IDBoleta, materias[i], calificaciones[i]]);
+    `,
+      [IDBoleta, materias[i], calificaciones[i]]
+    );
   }
 };
 
 /**
  * Obtiene una boleta específica por ID, incluyendo sus materias.
+ * @param {number} IDBoleta
+ * @returns {Promise<Object>}
  */
 exports.obtenerBoletaPorId = async (IDBoleta) => {
-  const [boletaData] = await db.execute(`
+  const [boletaData] = await db.execute(
+    `
     SELECT * FROM boleta WHERE IDBoleta = ?
-  `, [IDBoleta]);
+  `,
+    [IDBoleta]
+  );
 
-  const [materias] = await db.execute(`
+  const [materias] = await db.execute(
+    `
     SELECT m.IDMateria, m.materia, bm.calificacion
     FROM boletaMateria bm
     JOIN materia m ON m.IDMateria = bm.IDMateria
     WHERE bm.IDBoleta = ?
-  `, [IDBoleta]);
+  `,
+    [IDBoleta]
+  );
 
-  return { boleta: boletaData[0], materias };
+  return {
+    boleta: boletaData[0],
+    materias
+  };
 };
 
 /**
  * Modifica una boleta existente y actualiza sus materias.
+ * @param {Object} params
+ * @param {number} params.idBoleta
+ * @param {string} params.periodoEscolar
+ * @param {Array} params.materias
+ * @param {Array} params.calificaciones
  */
 exports.modificarBoleta = async ({ idBoleta, periodoEscolar, materias, calificaciones }) => {
-  await db.execute(`
+  await db.execute(
+    `
     UPDATE boleta 
     SET periodoEscolar = ? 
     WHERE IDBoleta = ?
-  `, [periodoEscolar, idBoleta]);
+  `,
+    [periodoEscolar, idBoleta]
+  );
 
-  await db.execute(`
+  await db.execute(
+    `
     DELETE FROM boletaMateria 
     WHERE IDBoleta = ?
-  `, [idBoleta]);
+  `,
+    [idBoleta]
+  );
 
   for (let i = 0; i < materias.length; i++) {
-    await db.execute(`
+    await db.execute(
+      `
       INSERT INTO boletaMateria (IDBoleta, IDMateria, calificacion) 
       VALUES (?, ?, ?)
-    `, [idBoleta, materias[i], calificaciones[i]]);
+    `,
+      [idBoleta, materias[i], calificaciones[i]]
+    );
   }
 };
 
 /**
  * Elimina lógicamente una boleta.
+ * @param {number} IDBoleta
  */
 exports.eliminarBoleta = async (IDBoleta) => {
-  await db.execute(`
+  await db.execute(
+    `
     UPDATE boleta 
     SET eliminado = 1 
     WHERE IDBoleta = ?
-  `, [IDBoleta]);
+  `,
+    [IDBoleta]
+  );
 };
