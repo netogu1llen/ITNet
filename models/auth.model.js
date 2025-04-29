@@ -25,9 +25,10 @@ class AuthModel {
   
       // 2. Obtener el rol del usuario
       const [rolesRows] = await db.query(
-        `SELECT IDRol 
-         FROM usuarioRol 
-         WHERE IDUsuario = ?`,
+        `SELECT r.Tipo 
+         FROM usuarioRol ur
+         JOIN rol r ON ur.IDRol = r.IDRol
+         WHERE ur.IDUsuario = ?`,
         [user.IDUsuario]
       );
       const roles = rolesRows;
@@ -36,12 +37,15 @@ class AuthModel {
       const privilegios = [];
       for (const rol of roles) {
         const [permisosRows] = await db.query(
-          `SELECT rp.IDPrivilegio 
+          `SELECT p.Actividad 
            FROM rolPrivilegios rp
-           WHERE rp.IDRol = ?`,
-          [rol.IDRol]
+           JOIN privilegios p ON rp.IDPrivilegio = p.IDPrivilegio
+           WHERE rp.IDRol = (
+             SELECT IDRol FROM rol WHERE Tipo = ?
+           )`,
+          [rol.Tipo]
         );
-        privilegios.push(...permisosRows.map(p => p.IDPrivilegio));
+        privilegios.push(...permisosRows.map(p => p.Actividad));
       }
   
       return {
