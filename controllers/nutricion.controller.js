@@ -30,61 +30,45 @@ const { request, response } = require("express");
 
 // Obtener todos los pacientes para nutrición
 exports.obtenerHistoriales = async (req, res) => {
-  try {
-    const pacientes = await Nutricion.obtenerTodos();
-    
-    // Desencriptar datos sensibles con manejo de errores
-    const pacientesDesencriptados = pacientes.map(paciente => {
-      try {
-        // Verificar que cada campo existe antes de desencriptar
-        if (!paciente.nombres || !paciente.apellidoP || !paciente.apellidoM || !paciente.fechaNacimiento) {
-          return {
-            IDExpediente: paciente.IDExpediente,
-            nombreCompleto: '[Datos incompletos]',
-            fechaNacimiento: '[Fecha no disponible]',
-            nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
-          };
-        }
-        
-        // Desencriptar con manejo específico para cada campo
-        let nombres, apellidoP, apellidoM, fechaNacimiento;
-        
-        try { nombres = decrypt(paciente.nombres); } 
-        catch (e) { nombres = '[Error]'; console.error(`Error al desencriptar nombre: ${e.message}`); }
-        
-        try { apellidoP = decrypt(paciente.apellidoP); } 
-        catch (e) { apellidoP = '[Error]'; console.error(`Error al desencriptar apellido paterno: ${e.message}`); }
-        
-        try { apellidoM = decrypt(paciente.apellidoM); } 
-        catch (e) { apellidoM = '[Error]'; console.error(`Error al desencriptar apellido materno: ${e.message}`); }
-        
-        try { fechaNacimiento = decrypt(paciente.fechaNacimiento); } 
-        catch (e) { fechaNacimiento = '[Error]'; console.error(`Error al desencriptar fecha: ${e.message}`); }
-        
-        return {
-          IDExpediente: paciente.IDExpediente,
-          nombreCompleto: `${nombres} ${apellidoP} ${apellidoM}`.trim(),
-          fechaNacimiento: fechaNacimiento,
-          nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
-        };
-      } catch (error) {
-        console.error(`Error al desencriptar paciente ID ${paciente.IDExpediente}:`, error);
-        // En caso de error, devolvemos datos genéricos para ese paciente
-        return {
-          IDExpediente: paciente.IDExpediente,
-          nombreCompleto: '[Error en datos]',
-          fechaNacimiento: '[Error en fecha]',
-          nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
-        };
-      }
-    });
-    
-    res.render('nutricion', { pacientes: pacientesDesencriptados });
-  } catch (error) {
-    console.error('Error al obtener la información:', error.message);
-    res.status(500).send('Error al obtener la información');
-  }
+    try {
+        const pacientes = await Nutricion.obtenerTodos();
 
+        // Desencriptar datos sensibles con manejo de errores
+        const pacientesDesencriptados = pacientes.map(paciente => {
+            try {
+                // Verificar que cada campo existe antes de desencriptar
+                if (!paciente.nombres || !paciente.apellidoP || !paciente.apellidoM || !paciente.fechaNacimiento) {
+                    return {
+                        IDExpediente: paciente.IDExpediente,
+                        nombreCompleto: '[Datos incompletos]',
+                        fechaNacimiento: '[Fecha no disponible]',
+                        nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
+                    };
+                }
+
+                // Desencriptar con manejo específico para cada campo
+                return {
+                    IDExpediente: paciente.IDExpediente,
+                    nombreCompleto: `${decrypt(paciente.nombres)} ${decrypt(paciente.apellidoP)} ${decrypt(paciente.apellidoM)}`.trim(),
+                    fechaNacimiento: decrypt(paciente.fechaNacimiento),
+                    nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
+                };
+            } catch (error) {
+                console.error(`Error al desencriptar paciente ID ${paciente.IDExpediente}:`, error);
+                return {
+                    IDExpediente: paciente.IDExpediente,
+                    nombreCompleto: '[Error en datos]',
+                    fechaNacimiento: '[Error en fecha]',
+                    nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
+                };
+            }
+        });
+
+        res.render('nutricion', { pacientes: pacientesDesencriptados });
+    } catch (error) {
+        console.error('Error al obtener la información:', error);
+        res.status(500).send('Error al obtener la información');
+    }
 };
 
 // Eliminar un paciente
@@ -101,86 +85,72 @@ exports.eliminarHistorial = async (req, res) => {
 
 // Obtener expediente nutricional completo
 exports.getExpedienteNutricion = async (req, res) => {
-  try {
-    // Obtener el ID del expediente de la consulta
-    const idExpediente = req.params.id; 
-    
-    if (!idExpediente) {
-      return res.status(400).json({ mensaje: 'Es necesario proporcionar el ID del expediente' });
-    }
-    
-    // Obtener información general del paciente
-    const datosGeneralesPacienteEncriptados = await Nutricion.obtenerDatosGenerales(idExpediente);
-    
-    // Desencriptar datos sensibles
-    const datosGeneralesPaciente = {
-      nombres: decrypt(datosGeneralesPacienteEncriptados.nombres || ''),
-      apellidoP: decrypt(datosGeneralesPacienteEncriptados.apellidoP || ''),
-      apellidoM: decrypt(datosGeneralesPacienteEncriptados.apellidoM || ''),
-      fechaNacimiento: decrypt(datosGeneralesPacienteEncriptados.fechaNacimiento || ''),
-      telefono: decrypt(datosGeneralesPacienteEncriptados.contacto || ''),
-      escuela: datosGeneralesPacienteEncriptados.nvEscolar || 'No registrado',
-      sexo: datosGeneralesPacienteEncriptados.sexo || 'No especificado',
-      edadPaciente: calcularEdad(decrypt(datosGeneralesPacienteEncriptados.fechaNacimiento || ''))
-    };
-    
-    // Obtener antecedentes del paciente
-    const antecedentes = await Nutricion.obtenerAntecedentes(idExpediente);
-    
-    // Obtener manejo nutricional
-    const manejoNutricionalData = await Nutricion.obtenerManejoNutricional(idExpediente);
-    
-    // Obtener documentos y historial nutricional
-    const documentosHistorial = await Nutricion.obtenerDocumentosHistorial(idExpediente);
-    
-    // Formatear fechas para presentación en la vista
-    const documentosHistorialFormateados = documentosHistorial.map(item => {
-      // Crear copia para no modificar el original
-      const formattedItem = { ...item };
-      // Formatear la fecha si existe
-      if (formattedItem.fecha) {
-        const fecha = new Date(formattedItem.fecha);
-        formattedItem.fechaFormateada = fecha.toLocaleDateString('es-ES', { 
-          day: '2-digit', 
-          month: '2-digit', 
-          year: 'numeric' 
-        });
-      } else {
-        formattedItem.fechaFormateada = 'Sin fecha';
-      }
-      return formattedItem;
-    });
-    
-    // Datos para la evolución antropométrica (datos de muestra por ahora)
-    const evolucionAntropometrica = {
-      labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-      datasets: [
-        {
-          label: 'Peso (kg)',
-          data: [60, 59, 58, 57, 56]
-        },
-        {
-          label: 'IMC (kg/m²)',
-          data: [24.5, 24.1, 23.7, 23.3, 22.9]
+    try {
+        const idExpediente = req.params.id;
+
+        if (!idExpediente || isNaN(parseInt(idExpediente))) {
+            return res.status(400).json({ mensaje: 'ID del expediente no válido.' });
         }
-      ]
-    };
-    
-    // Renderizar la vista con todos los datos
-    res.render('expediente_nutricion', {
-      datosGeneralesPaciente,
-      antecedentesHeredofamiliares: antecedentes.heredofamiliares,
-      antecedentesPersonales: antecedentes.personales,
-      antecedentesAlimentacion: antecedentes.alimentacion,
-      manejoNutricional: manejoNutricionalData.manejoNutricional,
-      evolucionAntropometrica,
-      documentosHistorial: documentosHistorialFormateados
-    });
-    
-  } catch (error) {
-    console.error('Error al obtener el expediente nutricional:', error.message);
-    res.status(500).send('Error al obtener el expediente nutricional');
-  }
+
+        // Obtener información general del paciente
+        const datosGeneralesPacienteEncriptados = await Nutricion.obtenerDatosGenerales(idExpediente);
+
+        if (!datosGeneralesPacienteEncriptados) {
+            return res.status(404).json({ mensaje: 'Expediente no encontrado.' });
+        }
+
+        const datosGeneralesPaciente = {
+            nombres: decrypt(datosGeneralesPacienteEncriptados.nombres || ''),
+            apellidoP: decrypt(datosGeneralesPacienteEncriptados.apellidoP || ''),
+            apellidoM: decrypt(datosGeneralesPacienteEncriptados.apellidoM || ''),
+            fechaNacimiento: decrypt(datosGeneralesPacienteEncriptados.fechaNacimiento || ''),
+            telefono: decrypt(datosGeneralesPacienteEncriptados.contacto || ''),
+            escuela: datosGeneralesPacienteEncriptados.nvEscolar || 'No registrado',
+            sexo: datosGeneralesPacienteEncriptados.sexo || 'No especificado',
+            edadPaciente: calcularEdad(decrypt(datosGeneralesPacienteEncriptados.fechaNacimiento || ''))
+        };
+
+        // Obtener antecedentes del paciente
+        const antecedentes = await Nutricion.obtenerAntecedentes(idExpediente);
+
+        // Obtener manejo nutricional
+        const manejoNutricionalData = await Nutricion.obtenerManejoNutricional(idExpediente);
+
+        // Obtener documentos y historial nutricional
+        const documentosHistorial = await Nutricion.obtenerDocumentosHistorial(idExpediente);
+
+        // Obtener sesiones desde nutricional1
+        const nutricional1 = await Nutricion.obtenerSesionesNutricional1(idExpediente);
+
+        // Formatear fechas para presentación en la vista
+        const documentosHistorialFormateados = documentosHistorial.map(item => {
+            const formattedItem = { ...item };
+            if (formattedItem.fecha) {
+                const fecha = new Date(formattedItem.fecha);
+                formattedItem.fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            } else {
+                formattedItem.fechaFormateada = 'Sin fecha';
+            }
+            return formattedItem;
+        });
+
+        res.render('expediente_nutricion', {
+            datosGeneralesPaciente,
+            antecedentesHeredofamiliares: antecedentes.heredofamiliares,
+            antecedentesPersonales: antecedentes.personales,
+            antecedentesAlimentacion: antecedentes.alimentacion,
+            manejoNutricional: manejoNutricionalData.manejoNutricional,
+            documentosHistorial: documentosHistorialFormateados,
+            nutricional1 // Pasar las sesiones al frontend
+        });
+    } catch (error) {
+        console.error('Error al obtener el expediente nutricional:', error.message);
+        res.status(500).send('Error interno al obtener el expediente nutricional.');
+    }
 };
 
 // Función auxiliar para calcular la edad a partir de la fecha de nacimiento
@@ -392,17 +362,49 @@ exports.subirDocumentoMiddleware = [
 
 // Mostrar el formulario de historia clínica con datos del expediente
 exports.renderHistoriaClinica = async (req, res) => {
-  try {
-    const IDExpediente = req.params.id;
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
 
-    const expediente = await Nutricion.obtenerPorId(IDExpediente);
-    
-    
-    res.render('historiaClinica', { expediente });
-  } catch (error) {
-    console.error('Error al renderizar historia clínica:', error);
-    res.status(500).send('Error interno al mostrar la historia clínica');
-  }
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        if (!expediente) {
+            return res.status(404).send('Expediente no encontrado.');
+        }
+
+        let datosSesion = null;
+        if (numSesion) {
+            datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
+            if (!datosSesion) {
+                return res.status(404).send('Sesión no encontrada.');
+            }
+
+            // Asegurarnos que todos los objetos dentro de datosSesion existan
+            datosSesion = {
+                ...datosSesion,
+                nutricional1: datosSesion.nutricional1 || {},
+                indicadoresClinicos: datosSesion.indicadoresClinicos || {},
+                transtornos: datosSesion.transtornos || {},
+                actividadDiaria: datosSesion.actividadDiaria || {},
+                diagnosticoEvolucion: datosSesion.diagnosticoEvolucion || {},
+                evaluacionAntropometrica: datosSesion.evaluacionAntropometrica || {},
+                manejoNutricional: datosSesion.manejoNutricional || {},
+                indicadoresBioquim: datosSesion.indicadoresBioquim || [] // Array vacío si no hay indicadores
+            };
+        }
+
+        res.render('historiaClinica', { 
+            expediente, 
+            datosSesion,
+            modoEdicion: !!numSesion 
+        });
+    } catch (error) {
+        console.error('Error al renderizar historia clínica:', error);
+        res.status(500).send('Error interno al mostrar la historia clínica');
+    }
 };
 
 exports.guardarHistoriaClinicaV1 = async (req, res) => {
@@ -417,4 +419,153 @@ exports.guardarHistoriaClinicaV1 = async (req, res) => {
     console.error('Error guardando datos de historiaclinicav1:', error);
     res.status(500).json({ success: false, message: 'Error en el servidor' });
   }
+};
+
+exports.actualizarHistoriaClinicaV1 = async (req, res) => {
+    try {
+        const datos = req.body;
+        await Nutricion.actualizarHistoriaClinicaV1(datos);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error actualizando historia clínica:', error);
+        res.status(500).json({ success: false, message: 'Error al actualizar' });
+    }
+};
+
+exports.checkAndRedirectHistoriaClinica = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
+        const forceV1 = req.query.forceV1 === 'true';
+        const editMode = req.query.edit === 'true';
+
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        // Si se está intentando editar un V1 existente, ir directamente a edición
+        if (editMode) {
+            return res.redirect(`/nutricion/historiaClinica/edit/${IDExpediente}?numSesion=${numSesion || ''}`);
+        }
+
+        // Si se fuerza V1, ir a creación
+        if (forceV1) {
+            return res.redirect(`/nutricion/historiaClinica/create/${IDExpediente}`);
+        }
+
+        // Verificar si existe una Historia Clínica V1
+        const existeV1 = await Nutricion.verificarExistenciaHistoriaV1(IDExpediente);
+        
+        if (!existeV1) {
+            return res.redirect(`/nutricion/historiaClinica/create/${IDExpediente}?forceV1=true`);
+        }
+
+        // Si existe V1, redirigir a V2
+        res.redirect(`/nutricion/historiaClinicaV2/${IDExpediente}?numSesion=${numSesion || ''}`);
+        
+    } catch (error) {
+        console.error('Error al verificar historia clínica:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+};
+
+// Nuevo controlador específico para crear V1
+exports.createHistoriaClinicaV1 = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        if (!expediente) {
+            return res.status(404).send('Expediente no encontrado.');
+        }
+
+        // Renderizar el formulario V1 directamente
+        res.render('historiaClinica', { 
+            expediente, 
+            datosSesion: null,
+            modoEdicion: false
+        });
+
+    } catch (error) {
+        console.error('Error al renderizar formulario de historia clínica:', error);
+        res.status(500).send('Error interno al mostrar el formulario');
+    }
+};
+
+exports.renderHistoriaClinicaV2 = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
+
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        // Verificar si existe una Historia Clínica V1
+        const existeV1 = await Nutricion.verificarExistenciaHistoriaV1(IDExpediente);
+        
+        if (!existeV1) {
+            return res.redirect(`/nutricion/historiaClinica/${IDExpediente}`);
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        const datosSesionV1 = await Nutricion.obtenerUltimaSesionV1(IDExpediente);
+
+        res.render('historiaClinicaV2', {
+            expediente,
+            datosSesionV1,
+            datosSesion: null, // Para futuras sesiones V2
+            modoEdicion: !!numSesion
+        });
+    } catch (error) {
+        console.error('Error al renderizar historia clínica V2:', error);
+        res.status(500).send('Error interno al mostrar la historia clínica V2');
+    }
+};
+
+// Nuevo controlador para editar V1
+exports.editHistoriaClinicaV1 = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
+
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        if (!expediente) {
+            return res.status(404).send('Expediente no encontrado.');
+        }
+
+        let datosSesion = null;
+        if (numSesion) {
+            datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
+        }
+
+        res.render('historiaClinica', { 
+            expediente, 
+            datosSesion,
+            modoEdicion: true
+        });
+
+    } catch (error) {
+        console.error('Error al renderizar formulario de edición:', error);
+        res.status(500).send('Error interno al mostrar el formulario');
+    }
+};
+
+exports.guardarHistoriaClinicaV2 = async (req, res) => {
+    try {
+        const datos = req.body;
+        await Nutricion.insertarHistoriaClinicaV2(datos);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error guardando datos de historiaClinicaV2:', error);
+        res.status(500).json({ success: false, message: 'Error en el servidor' });
+    }
 };

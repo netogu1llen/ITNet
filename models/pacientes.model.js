@@ -197,19 +197,112 @@ class Pacientes {
     }
   }
 
-// Obtener todos los pacientes (excluyendo los eliminados)
-static async obtenerTodos() {
-  try {
-      const [results] = await db.execute(`
-          SELECT IDExpediente, nombres, apellidoP, apellidoM, fechaNacimiento, nvEscolar
-          FROM expediente
-          WHERE eliminado IS NULL OR eliminado = 0
-      `);
-      return results;
-  } catch (error) {
-      throw error;
+  // Obtener todos los pacientes (excluyendo los eliminados)
+  static async obtenerTodos() {
+    try {
+        const [results] = await db.execute(`
+            SELECT IDExpediente, nombres, apellidoP, apellidoM, fechaNacimiento, nvEscolar
+            FROM expediente
+            WHERE eliminado IS NULL OR eliminado = 0
+        `);
+        return results;
+    } catch (error) {
+        throw error;
+    }
   }
-}
+
+  // Obtener expediente por ID con formato para vista
+  static async obtenerExpedientePorId(idExpediente) {
+    try {
+        const [results] = await db.execute(`
+            SELECT 
+                nombres, apellidoP, apellidoM,
+                fechaNacimiento, 
+                contacto, 
+                CONCAT(estado, ', ', ciudad) AS ubicacion, 
+                CONCAT(calle, ' ', numCasa) AS domicilio,
+                grado, 
+                nvEscolar AS curso,
+                numExpediente
+            FROM expediente
+            WHERE IDExpediente = ? AND eliminado = 0
+        `, [idExpediente]);
+        return results[0]; // Devuelve el primer resultado
+    } catch (error) {
+        throw error;
+    }
+  }
+
+  // Obtener documentos adjuntos de un expediente
+  static async obtenerDocumentosAdjuntos(idExpediente) {
+    try {
+        const [results] = await db.execute(`
+            SELECT IDDocumento AS idDocumento, IDExpediente AS idExpediente, nombre AS tipo, fecha AS fechaCreacion
+            FROM documentosAdjuntos
+            WHERE IDExpediente = ? AND eliminado = 0
+        `, [idExpediente]);
+        return results;
+    } catch (error) {
+        throw error;    
+    }
+  }
+
+  // Registrar un nuevo documento
+  static async registrarDocumento({ idExpediente, tipo, fechaCreacion, nombreArchivo }) {
+    try {
+        const [result] = await db.execute(`
+            INSERT INTO documentosAdjuntos (IDExpediente, nombre, fecha, ubicacion)
+            VALUES (?, ?, ?, ?)
+        `, [idExpediente, tipo, fechaCreacion, nombreArchivo]);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+  }
+
+  // Obtener un documento por ID
+  static async obtenerDocumentoPorId(id) {
+    try {
+        const [results] = await db.execute(`
+            SELECT IDDocumento AS idDocumento, IDExpediente, nombre AS tipo, fecha AS fechaCreacion, ubicacion AS nombreArchivo
+            FROM documentosAdjuntos
+            WHERE IDDocumento = ?
+        `, [id]);
+        return results[0];
+    } catch (error) {
+        throw error;
+    }
+  }
+
+  // Eliminar un documento (borrado lógico)
+  static async eliminarDocumento(id) {
+    try {
+        const [result] = await db.execute(`
+            UPDATE documentosAdjuntos
+            SET eliminado = 1
+            WHERE IDDocumento = ?
+        `, [id]);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+  }
+
+  // Subir un documento a la base de datos
+  static async subirDocumento({ IDExpediente, nombre, ubicacion, fecha, eliminado }) {
+    try {
+        console.log('Insertando documento en BD:', { IDExpediente, nombre, ubicacion, fecha, eliminado });
+        
+        const [result] = await db.execute(
+            `INSERT INTO documentosAdjuntos (IDExpediente, nombre, ubicacion, fecha, eliminado)
+            VALUES (?, ?, ?, ?, ?)`,
+            [IDExpediente, nombre, ubicacion, fecha, eliminado]
+        );
+        return result;
+    } catch (error) {
+        throw error;
+    }
+  }
 }
 
 module.exports = Pacientes;

@@ -70,52 +70,95 @@ document.addEventListener('DOMContentLoaded', function() {
   configurarBotonesEliminarFila();
 });
 
-
 document.addEventListener('DOMContentLoaded', function () {
-  
-  const botonesGuardar = document.querySelectorAll('.btn-guardar');
+    const modoEdicion = document.getElementById('idExpediente').dataset.modoEdicion === 'true';
+    const botonesGuardar = document.querySelectorAll('.btn-guardar');
 
-  if (botonesGuardar.length > 0) {
-    botonesGuardar.forEach(boton => {
-      boton.addEventListener('click', async function (e) {
-        e.preventDefault();
+    if (botonesGuardar.length > 0) {
+        botonesGuardar.forEach(boton => {
+            // Actualizar el texto del botón
+            boton.textContent = modoEdicion ? 'Actualizar' : 'Guardar';
+            
+            boton.addEventListener('click', async function (e) {
+                e.preventDefault();
 
-        const idExpediente = document.getElementById('idExpediente')?.value;
+                const datos = recopilarDatosFormulario();
+                const url = modoEdicion ? 
+                    '/nutricion/historiaClinica/actualizarHistoriaClinicaV1' : 
+                    '/nutricion/historiaClinica/guardarHistoriaClinicaV1';
 
-        if (!idExpediente) {
-          Swal.fire({
+                try {
+                    const respuesta = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(datos)
+                    });
+
+                    const resultado = await respuesta.json();
+
+                    if (resultado.success) {
+                        Swal.fire({
+                            title: "¡Éxito!",
+                            text: modoEdicion ? "Historia clínica actualizada correctamente." : "Historia clínica guardada correctamente.",
+                            icon: "success"
+                        }).then(() => {
+                            window.location.href = `/nutricion/documentos/${datos.IDExpediente}`;
+                        });
+                    } else {
+                        throw new Error(resultado.message || 'Error al procesar la solicitud');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: "Error",
+                        text: error.message || "Error al procesar la solicitud",
+                        icon: "error"
+                    });
+                }
+            });
+        });
+    }
+});
+
+function recopilarDatosFormulario() {
+    const idExpediente = document.getElementById('idExpediente')?.value;
+
+    if (!idExpediente) {
+        Swal.fire({
             title: "Error!",
             text: "No se encontró IDExpediente.",
             icon: "error"
-          });
-          return;
-        }
+        });
+        return;
+    }
 
-        // Validar que todos los campos requeridos estén llenos
-        const inputsRequeridos = document.querySelectorAll('input[required], textarea[required]');
-        for (const input of inputsRequeridos) {
-          if (!input.value.trim()) {
+    // Validar que todos los campos requeridos estén llenos
+    const inputsRequeridos = document.querySelectorAll('input[required], textarea[required]');
+    for (const input of inputsRequeridos) {
+        if (!input.value.trim()) {
             Swal.fire({
-              title: "Campos incompletos",
-              text: "Por favor, rellena todos los campos obligatorios antes de guardar.",
-              icon: "warning"
+                title: "Campos incompletos",
+                text: "Por favor, rellena todos los campos obligatorios antes de guardar.",
+                icon: "warning"
             });
             input.focus();
             return;
-          }
         }
-        
-        const fechaInicio = document.getElementById('fechaInicio')?.value || '';
+    }
+    
+    const fechaInicio = document.getElementById('fechaInicio')?.value || '';
 
-        // Para indicadores bioquímicos:
-        const parametro = Array.from(document.querySelectorAll('input[name="parametroBioquimico[]"]')).map(input => input.value.trim());
-        const valorReferencia = Array.from(document.querySelectorAll('input[name="valorReferencia[]"]')).map(input => input.value.trim());
-        const parametroFecha = Array.from(document.querySelectorAll('input[name="fechaParametro[]"]')).map(input => input.value.trim());
+    // Para indicadores bioquímicos:
+    const parametro = Array.from(document.querySelectorAll('input[name="parametroBioquimico[]"]')).map(input => input.value.trim());
+    const valorReferencia = Array.from(document.querySelectorAll('input[name="valorReferencia[]"]')).map(input => input.value.trim());
+    const parametroFecha = Array.from(document.querySelectorAll('input[name="fechaParametro[]"]')).map(input => input.value.trim());
 
-        // Para objetivos nutricionales:
-        const objetivo = Array.from(document.querySelectorAll('input[name="objetivosNutricionales[]"]')).map(input => input.value.trim());
+    // Para objetivos nutricionales:
+    const objetivo = Array.from(document.querySelectorAll('input[name="objetivosNutricionales[]"]')).map(input => input.value.trim());
 
-      const datos = {
+    return {
         IDExpediente: document.getElementById('idExpediente')?.value || null,
 
         // Página 1
@@ -184,47 +227,6 @@ document.addEventListener('DOMContentLoaded', function () {
         proteinas: document.getElementById('proteinas')?.value || '',
         fibra: document.getElementById('fibra')?.value || '',
         agua: document.getElementById('agua')?.value || '',
-      };
-
-      console.log('Datos a enviar:', datos);
-
-      try {
-        const respuesta = await fetch('/nutricion/historiaClinica/guardarHistoriaClinicaV1', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(datos)
-        });
-
-        const resultado = await respuesta.json();
-
-        if (resultado.success) {
-          Swal.fire({
-            title: "Éxito!",
-            text: "Datos guardados correctamente.",
-            icon: "success"
-          }).then(() => {
-            location.reload(); // Recargar la página después de guardar
-          });
-        } else {
-          Swal.fire({
-            title: "Error!",
-            text: "Error al guardar datos.",
-            icon: "error"
-          });
-        }
-      } catch (error) {
-        console.error('Error al enviar datos:', error);
-        Swal.fire({
-          title: "Error!",
-          text: "Hubo un problema al procesar la solicitud.",
-          icon: "error"
-        });
-      }});
-    });
-  } else {
-    console.error('No se encontró botón #btnGuardar');
-  }
-});
+    };
+}
 

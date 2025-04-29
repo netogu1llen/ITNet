@@ -1,15 +1,5 @@
 $(document).ready(function () {
-    // Asegurarse de que estamos trabajando con el ID 1
-    const urlParams = new URLSearchParams(window.location.search);
-    if (!urlParams.has('id')) {
-        // Si no hay ID en la URL, redireccionar a la misma página con ID=1
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-    }
-    
-    const idExpediente = urlParams.get('id');
-
-    // Inicializar DataTable para la tabla de documentos
+// Inicializar DataTable para la tabla de documentos
 const table = $('#documentosTable').DataTable({
     language: {
         info: "Mostrando _START_ a _END_ de _TOTAL_ documentos",
@@ -33,13 +23,60 @@ const table = $('#documentosTable').DataTable({
         }
     ],
     createdRow: function(row, data, dataIndex) {
-        // Destacar visualmente los documentos Nutricional V1
-        if($(row).find('td:first').text().trim().includes('Historial Nutricional V1')) {
+        // Destacar visualmente los documentos Historial Clínico V1
+        if($(row).find('td:first').text().trim().includes('Historial Clínico V1')) {
             $(row).addClass('highlight-nutricional-v1');
         }
     }
 });
+// Llamar a la función después de que se inicialice la tabla
+table.on('draw', function() {
+    moverHistorialV1AlInicio();
+});
 
+// También ejecutar después de cualquier búsqueda o filtrado
+table.on('search.dt', function() {
+    setTimeout(moverHistorialV1AlInicio, 100);
+});
+    // Crear barra superior personalizada
+    const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
+    const nuevaSesionButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Archivo</button>');
+    const generarHistoriaButton = $('<button class="button button-create" style="height: 30px;">Generar Historia Clínica</button>');
+    const dtTopBar = $('<div class="dt-top-bar"></div>');
+
+    // Agregar elementos a la barra
+    dtTopBar.append(logo);
+    $('.dataTables_length').appendTo(dtTopBar);
+    $('.dataTables_filter').appendTo(dtTopBar);
+    dtTopBar.append(nuevaSesionButton);
+    dtTopBar.append(generarHistoriaButton);
+    $('#TopBar').append(dtTopBar);
+
+    // Asegurarse de que estamos trabajando con el ID 1
+    const urlParams = new URLSearchParams(window.location.search);
+    let idExpediente = urlParams.get('id');
+
+    // Si no existe en los parámetros, intentar obtenerlo de la ruta
+    if (!idExpediente || idExpediente === 'null') {
+        const urlPath = window.location.pathname;
+        const segments = urlPath.split('/');
+        idExpediente = segments[segments.length - 1];
+
+        // Si aún no es válido, verificar si está en el penúltimo segmento
+        if (isNaN(parseInt(idExpediente)) && segments.length > 2) {
+            idExpediente = segments[segments.length - 2];
+        }
+    }
+
+    // Validar si el ID es válido
+    if (!idExpediente || idExpediente === 'null' || isNaN(parseInt(idExpediente))) {
+        console.error('No se pudo determinar el ID del expediente.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo determinar el ID del expediente. Intente nuevamente o contacte a soporte.'
+        });
+    }
 // Añadir CSS personalizado para destacar los V1
 $('head').append(`
 <style>
@@ -59,8 +96,8 @@ function moverHistorialV1AlInicio() {
     for (let i = rows.length - 1; i >= 0; i--) {
         const tipo = $(rows[i]).find('td:first').text().trim();
         
-        // Si es un Historial Nutricional V1, moverlo al principio
-        if (tipo.includes('Historial Nutricional V1')) {
+        // Si es un Historial Clínico V1, moverlo al principio
+        if (tipo.includes('Historial Clínico V1')) {
             // Desacoplar la fila actual
             const row = table.row(i).node();
             $(row).detach();
@@ -71,7 +108,7 @@ function moverHistorialV1AlInicio() {
     }
 }
 
-// Llamar a la función después de que se inicialice la tabla
+/*// Llamar a la función después de que se inicialice la tabla
 table.on('draw', function() {
     moverHistorialV1AlInicio();
 });
@@ -80,9 +117,10 @@ table.on('draw', function() {
 table.on('search.dt', function() {
     setTimeout(moverHistorialV1AlInicio, 100);
 });
+*/
 
     // Crear barra superior personalizada
-    const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
+    /*const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
     const nuevaSesionButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Archivo</button>');
     const generarHistoriaButton = $('<button class="button button-create" style="height: 30px;">Generar Historia Clínica</button>');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
@@ -93,7 +131,7 @@ table.on('search.dt', function() {
     $('.dataTables_filter').appendTo(dtTopBar);
     dtTopBar.append(nuevaSesionButton);
     dtTopBar.append(generarHistoriaButton);
-    $('#TopBar').append(dtTopBar);
+    $('#TopBar').append(dtTopBar);*/
 
     // Funciones para mostrar y ocultar el modal de carga
     function showLoadingModal(title, message) {
@@ -112,23 +150,24 @@ table.on('search.dt', function() {
 
     // Evento para el botón Nueva Sesión
     nuevaSesionButton.on('click', function() {
-        // Aquí puedes agregar la lógica para crear una nueva sesión
-        console.log('Nueva sesión para ID', idExpediente);
+        console.log("Abriendo modal de subir documento");
+        $('#modalSubirDocumento').addClass('is-active');
+        $('#modalSubirDocumento').css('display', 'flex'); // Asegurar que se muestre
     });
 
     // Evento para el botón Generar Historia Clínica
     generarHistoriaButton.on('click', function() {
-        // Aquí puedes agregar la lógica para generar la historia clínica
-        console.log('Generar historia clínica para ID', idExpediente);
+        if (idExpediente) {
+            window.location.href = `/nutricion/historiaClinica/${idExpediente}`;
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo determinar el ID del expediente.'
+            });
+        }
     });
     
-// ABRIR MODAL
-nuevaSesionButton.on('click', function () {
-    console.log("Abriendo modal de subir documento");
-    $('#modalSubirDocumento').addClass('is-active');
-    $('#modalSubirDocumento').css('display', 'flex'); // Asegurar que se muestre
-});
-
 // CERRAR MODAL
 $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
     console.log("Cerrando modal");
@@ -244,17 +283,13 @@ $(document).on('click', '.fila-documento', function(e) {
     
     const documentoId = $(this).data('id');
     const tipo = $(this).data('tipo');
+    const idExpediente = new URLSearchParams(window.location.search).get('id') || 
+                        window.location.pathname.split('/').pop();
+    const numSesion = $(this).data('sesion');
     
     if (tipo === 'NUTRICIONAL_V1') {
-        console.log('Ver historial nutricional V1:', documentoId);
-        // Redirigir al historial nutricional
-        const idExpediente = new URLSearchParams(window.location.search).get('id');
-        window.location.href = `/nutricion/historial-nutricional?id=${documentoId}&expediente=${idExpediente}`;
-    } else if (tipo === 'NUTRICIONAL_V2') {
-        console.log('Ver historial nutricional V2:', documentoId);
-        // Redirigir a la página de historial nutricional V2
-        const idExpediente = new URLSearchParams(window.location.search).get('id');
-        window.location.href = `/nutricion/historial-nutricional-v2?id=${documentoId}&expediente=${idExpediente}`;
+        // Redirigir a edición de V1 con el parámetro edit=true
+        window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${numSesion}&edit=true`;
     } else if (tipo === 'PDF') {
         // Código existente para PDF...
         console.log('Ver documento PDF:', documentoId);
@@ -307,7 +342,7 @@ $(document).on('click', '.btn-descargar', function(event) {
             // Crear elemento para la descarga
             const link = document.createElement('a');
             link.href = url;
-            link.download = (tipo === 'NUTRICIONAL_V1') ? 'historial_nutricional.pdf' : `documento_${documentoId}.pdf`;
+            link.download = (tipo === 'NUTRICIONAL_V1') ? 'historial_clinico_v1.pdf' : `documento_${documentoId}.pdf`;
             document.body.appendChild(link);
             link.click();
             
@@ -340,9 +375,9 @@ $(document).on('click', '.btn-eliminar', function(event) {
     // Personalizar mensaje según el tipo
     let mensaje = '';
     if (tipo === 'NUTRICIONAL_V1') {
-        mensaje = '¿Está seguro de eliminar este Historial Nutricional V1?';
+        mensaje = '¿Está seguro de eliminar este Historial Clínico V1?';
     } else if (tipo === 'NUTRICIONAL_V2') {
-        mensaje = '¿Está seguro de eliminar este Historial Nutricional V2?';
+        mensaje = '¿Está seguro de eliminar este Historial Clínico V2?';
     } else {
         mensaje = '¿Está seguro de eliminar este documento PDF?';
     }
@@ -397,4 +432,36 @@ $(document).on('click', '.btn-eliminar', function(event) {
         $('#modalVistaPreviaDocumento').css('display', 'none');
         $('#iframeVistaPreviaDocumento').attr('src', '');  // Limpiar el iframe cuando se cierra
     });
+
+// Hacer que las filas de la tabla de sesiones sean clicables
+$(document).on('click', '.fila-sesion', function () {
+    const numSesion = $(this).data('num-sesion');
+    const idExpediente = $(this).data('id-expediente');
+    if (numSesion && idExpediente) {
+        window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${numSesion}`;
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo determinar la sesión o el expediente.'
+        });
+    }
+});
+
+// Centrar datos de la tabla de sesiones
+$('#sesionesTable').find('td, th').css('text-align', 'center');
+
+// Formatear fechas de la tabla de sesiones
+$('#sesionesTable tbody tr').each(function () {
+    const fechaCell = $(this).find('td:nth-child(2)');
+    const fechaOriginal = fechaCell.text().trim();
+    if (fechaOriginal) {
+        const fechaFormateada = new Date(fechaOriginal).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+        fechaCell.text(fechaFormateada);
+    }
+});
 });
