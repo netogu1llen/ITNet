@@ -15,6 +15,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const authenticateJWT = require('../middlewares/authenticateJWT');
 
 // Ruta para mostrar el login
 router.get('/', (req, res) => {
@@ -24,7 +25,7 @@ router.get('/', (req, res) => {
 });
 
 // Rutas principales
-router.get('/home', authController.getHome);
+router.get('/home', authenticateJWT, authController.getHome);
 
 /**
  * Ruta que inicia el proceso de autenticación con Google OAuth 2.0
