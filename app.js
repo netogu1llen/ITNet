@@ -108,6 +108,10 @@ app.use('/educacion', educacionRoutes);
 const pacientesRoutes = require('./routes/pacientes.routes');
 app.use('/pacientes', pacientesRoutes);
 
+// Ruta de hisorial de expendientes
+const historialRoutes = require('./routes/historial.routes');
+app.use('/historial', historialRoutes);
+
 // Manejo de errores 404 (Página no encontrada)
 app.use((req, res, next) => {
     res.status(404).render('404', {

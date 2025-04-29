@@ -39,7 +39,7 @@ class AuthModel {
         const [permisosRows] = await db.query(
           `SELECT p.Actividad 
            FROM rolPrivilegios rp
-           JOIN privilegio p ON rp.IDPrivilegio = p.IDPrivilegio
+           JOIN privilegios p ON rp.IDPrivilegio = p.IDPrivilegio
            WHERE rp.IDRol = (
              SELECT IDRol FROM rol WHERE Tipo = ?
            )`,

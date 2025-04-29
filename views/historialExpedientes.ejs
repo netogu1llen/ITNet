@@ -1,0 +1,60 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/styles.css">
+
+<section class="section">
+  <div class="container">
+
+    <!-- Título -->
+    <h1 class="title has-text-centered mb-5">Actividad de expedientes</h1>
+
+    <!-- Tabla -->
+    <div class="table-container">
+      <table id="tablaHistorial" class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Creado por</th>
+            <th>Fecha de creación</th>
+            <th>Modificado por</th>
+            <th>Fecha de modificación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% historial.forEach(expediente => { %>
+            <tr>
+              <td><%= expediente.nombrePaciente || 'Sin nombre' %></td>
+              <td><%= expediente.creadoPor || 'No registrado' %></td>
+              <td>
+                <%= expediente.fechaCreacion && !isNaN(new Date(expediente.fechaCreacion))
+                  ? new Date(expediente.fechaCreacion).toLocaleDateString('es-MX')
+                  : 'No registrada' %>
+              </td>
+              <td><%= expediente.modificadoPor || 'No modificado' %></td>
+              <td>
+                <%= expediente.fechaModificacion && !isNaN(new Date(expediente.fechaModificacion))
+                  ? new Date(expediente.fechaModificacion).toLocaleDateString('es-MX')
+                  : 'No registrada' %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+        
+      </table>
+    </div>
+
+  </div>
+</section>
+
+<!-- Scripts -->
+<script src="/vendor/jquery-3.6.0.min.js"></script>
+<script src="/vendor/jquery.dataTables.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#tablaHistorial').DataTable({
+      language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.1/i18n/es-MX.json'
+      },
+      order: [[2, 'desc']] // Ordenar por fecha de creación más reciente
+    });
+  });
+</script>
