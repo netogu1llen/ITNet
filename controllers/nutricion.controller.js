@@ -183,7 +183,7 @@ function calcularEdad(fechaNacimiento) {
 exports.descargarDocumento = async (req, res) => {
     try {
         const id = req.params.id;
-        const tipo = req.query.tipo; // Obtener tipo desde query parameters
+        const tipo = req.query.tipo;
         const numSesion = req.query.numSesion;
         
         // Primero intentar obtener como documento PDF almacenado

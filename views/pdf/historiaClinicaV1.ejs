@@ -1,8 +1,35 @@
-# Plantilla de PDF para Historia Clínica v1
+<%
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('es-MX', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  });
+}
 
-## Estructura del documento
+function getTipoDeLactancia(value) {
+  switch(value) {
+    case 'value1': return 'Lactancia exclusiva';
+    case 'value2': return 'Fórmula';
+    case 'value3': return 'Mixta';
+    default: return '';
+  }
+}
 
-```html
+function calcularEdad(fechaNacimiento) {
+  if (!fechaNacimiento) return '';
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const m = hoy.getMonth() - nacimiento.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+  return edad;
+}
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -97,10 +124,10 @@
     <div class="info-basic">
       <div class="columns">
         <div class="column">
-          <strong>No. Expediente:</strong> {{expediente.IDExpediente}}
+          <strong>No. Expediente: <%= datosSesion?.IDExpediente %></strong>
         </div>
         <div class="column">
-          <strong>Número de sesión:</strong> {{datosSesion.numSesion}}
+          <strong>Número de sesión:</strong> <%= datosSesion?.nutricional1?.numSesion || '' %>
         </div>
       </div>
       
@@ -108,21 +135,21 @@
       
       <div class="columns">
         <div class="column">
-          <p><strong>Nombre Completo:</strong> {{expediente.nombres}} {{expediente.apellidoP}} {{expediente.apellidoM}}</p>
+          <p><strong>Nombre Completo:</strong> <%= datosSesion?.nombres %> <%= datosSesion?.apellidoP %> <%= datosSesion?.apellidoM %></p>
           <div class="columns">
             <div class="column">
-              <p><strong>Grado:</strong> {{expediente.grado}}</p>
+              <p><strong>Grado:</strong> <%= datosSesion?.grado %></p>
             </div>
             <div class="column">
-              <p><strong>Nivel Escolar:</strong> {{expediente.nvEscolar}}</p>
+              <p><strong>Nivel Escolar:</strong> <%= datosSesion?.nvEscolar %></p>
             </div>
           </div>
           <div class="columns">
             <div class="column">
-              <p><strong>Fecha de nacimiento:</strong> {{expediente.fechaNacimiento}}</p>
+              <p><strong>Fecha de nacimiento:</strong> <%= datosSesion?.fechaNacimiento %></p>
             </div>
             <div class="column">
-              <p><strong>Edad (años):</strong> {{edad}}</p>
+              <p><strong>Edad (años):</strong> <%= calcularEdad(datosSesion?.fechaNacimiento) %></p>
             </div>
           </div>
         </div>
@@ -139,27 +166,27 @@
       <tbody>
         <tr>
           <td width="30%">Diabetes</td>
-          <td>{{datosSesion.nutricional1.diabetes}}</td>
+          <td><%= datosSesion?.nutricional1?.diabetes || '' %></td>
         </tr>
         <tr>
           <td>Cáncer</td>
-          <td>{{datosSesion.nutricional1.cancer}}</td>
+          <td><%= datosSesion?.nutricional1?.cancer || '' %></td>
         </tr>
         <tr>
           <td>Dislipidemia</td>
-          <td>{{datosSesion.nutricional1.dislipidemia}}</td>
+          <td><%= datosSesion?.nutricional1?.dislipidemia || '' %></td>
         </tr>
         <tr>
           <td>Obesidad</td>
-          <td>{{datosSesion.nutricional1.obesidad}}</td>
+          <td><%= datosSesion?.nutricional1?.obesidad || '' %></td>
         </tr>
         <tr>
           <td>Anemia</td>
-          <td>{{datosSesion.nutricional1.anemia}}</td>
+          <td><%= datosSesion?.nutricional1?.anemia || '' %></td>
         </tr>
         <tr>
           <td>Hipertensión arterial</td>
-          <td>{{datosSesion.nutricional1.hipertensionArterial}}</td>
+          <td><%= datosSesion?.nutricional1?.hipertensionArterial || '' %></td>
         </tr>
       </tbody>
     </table>
@@ -176,27 +203,27 @@
           <tbody>
             <tr>
               <td width="40%">Peso al nacer</td>
-              <td>{{datosSesion.nutricional1.pesoNacer}}</td>
+              <td><%= datosSesion?.nutricional1?.pesoNacer || '' %></td>
             </tr>
             <tr>
               <td>Talla al nacer</td>
-              <td>{{datosSesion.nutricional1.tallaNacer}}</td>
+              <td><%= datosSesion?.nutricional1?.tallaNacer || '' %></td>
             </tr>
             <tr>
               <td>Tipo de alimentación recibida</td>
-              <td>{{datosSesion.nutricional1.alimentacionRecibida}}</td>
+              <td><%= datosSesion?.nutricional1?.alimentacionRecibida || '' %></td>
             </tr>
             <tr>
               <td>SDG</td>
-              <td>{{datosSesion.nutricional1.sdg}}</td>
+              <td><%= datosSesion?.nutricional1?.sdg || '' %></td>
             </tr>
             <tr>
               <td>Tipo de parto</td>
-              <td>{{datosSesion.nutricional1.tipoParto}}</td>
+              <td><%= datosSesion?.nutricional1?.tipoParto || '' %></td>
             </tr>
             <tr>
               <td>Complicaciones durante el embarazo</td>
-              <td>{{datosSesion.nutricional1.complicaciones}}</td>
+              <td><%= datosSesion?.nutricional1?.complicaciones || '' %></td>
             </tr>
           </tbody>
         </table>
@@ -213,19 +240,27 @@
           <tbody>
             <tr>
               <td width="40%">Tipo de lactancia</td>
-              <td>{{getTipoDeLactancia(datosSesion.nutricional1.lactancia)}}</td>
+              <td>
+                <% 
+                  let tipoLactancia = '';
+                  if (datosSesion?.nutricional1?.lactancia === 'value1') tipoLactancia = 'Lactancia exclusiva';
+                  if (datosSesion?.nutricional1?.lactancia === 'value2') tipoLactancia = 'Fórmula';
+                  if (datosSesion?.nutricional1?.lactancia === 'value3') tipoLactancia = 'Mixta';
+                %>
+                <%= tipoLactancia %>
+              </td>
             </tr>
             <tr>
               <td>Tiempo</td>
-              <td>{{datosSesion.nutricional1.tiempo}}</td>
+              <td><%= datosSesion?.nutricional1?.tiempo || '' %></td>
             </tr>
             <tr>
               <td>Edad de alimentación complementaria</td>
-              <td>{{datosSesion.nutricional1.edadAlimentacionComplementaria}}</td>
+              <td><%= datosSesion?.nutricional1?.edadAlimentacionComplementaria || '' %></td>
             </tr>
             <tr>
               <td>Alimentos introducidos el 1er año</td>
-              <td>{{datosSesion.nutricional1.alimentosPrimerAnio}}</td>
+              <td><%= datosSesion?.nutricional1?.alimentosPrimerAnio || '' %></td>
             </tr>
           </tbody>
         </table>
@@ -251,31 +286,31 @@
       <tbody>
         <tr>
           <td width="30%">Cabello</td>
-          <td>{{datosSesion.indicadoresClinicos.cabello}}</td>
+          <td><%= datosSesion?.indicadoresClinicos?.cabello || '' %></td>
         </tr>
         <tr>
           <td>Conjunto</td>
-          <td>{{datosSesion.indicadoresClinicos.conjunto}}</td>
+          <td><%= datosSesion?.indicadoresClinicos?.conjunto || '' %></td>
         </tr>
         <tr>
           <td>Uñas</td>
-          <td>{{datosSesion.indicadoresClinicos.unias}}</td>
+          <td><%= datosSesion?.indicadoresClinicos?.unias || '' %></td>
         </tr>
         <tr>
           <td>Boca (labio/lengua)</td>
-          <td>{{datosSesion.indicadoresClinicos.boca}}</td>
+          <td><%= datosSesion?.indicadoresClinicos?.boca || '' %></td>
         </tr>
         <tr>
           <td>Dientes</td>
-          <td>{{datosSesion.indicadoresClinicos.dientes}}</td>
+          <td><%= datosSesion?.indicadoresClinicos?.dientes || '' %></td>
         </tr>
         <tr>
           <td>Piel</td>
-          <td>{{datosSesion.indicadoresClinicos.piel}}</td>
+          <td><%= datosSesion?.indicadoresClinicos?.piel || '' %></td>
         </tr>
         <tr>
           <td>Edema</td>
-          <td>{{datosSesion.indicadoresClinicos.edema}}</td>
+          <td><%= datosSesion?.indicadoresClinicos?.edema || '' %></td>
         </tr>
       </tbody>
     </table>
@@ -296,23 +331,23 @@
           <tbody>
             <tr>
               <td>Vomito</td>
-              <td>{{datosSesion.transtornos.vomito}}</td>
+              <td><%= datosSesion?.transtornos?.vomito || '' %></td>
             </tr>
             <tr>
               <td>Diarrea</td>
-              <td>{{datosSesion.transtornos.diarrea}}</td>
+              <td><%= datosSesion?.transtornos?.diarrea || '' %></td>
             </tr>
             <tr>
               <td>Estreñimiento</td>
-              <td>{{datosSesion.transtornos.estrenimiento}}</td>
+              <td><%= datosSesion?.transtornos?.estrenimiento || '' %></td>
             </tr>
             <tr>
               <td>Colitis</td>
-              <td>{{datosSesion.transtornos.colitis}}</td>
+              <td><%= datosSesion?.transtornos?.colitis || '' %></td>
             </tr>
             <tr>
               <td>Gastritis</td>
-              <td>{{datosSesion.transtornos.gastritis}}</td>
+              <td><%= datosSesion?.transtornos?.gastritis || '' %></td>
             </tr>
           </tbody>
         </table>
@@ -333,27 +368,27 @@
           <tbody>
             <tr>
               <td>Reflujo</td>
-              <td>{{datosSesion.transtornos.reflujo}}</td>
+              <td><%= datosSesion?.transtornos?.reflujo || '' %></td>
             </tr>
             <tr>
               <td>Disfagia</td>
-              <td>{{datosSesion.transtornos.disfagia}}</td>
+              <td><%= datosSesion?.transtornos?.disfagia || '' %></td>
             </tr>
             <tr>
               <td>Flatulencias</td>
-              <td>{{datosSesion.transtornos.flatulencias}}</td>
+              <td><%= datosSesion?.transtornos?.flatulencias || '' %></td>
             </tr>
             <tr>
               <td>Distención</td>
-              <td>{{datosSesion.transtornos.distencion}}</td>
+              <td><%= datosSesion?.transtornos?.distencion || '' %></td>
             </tr>
             <tr>
               <td>Pirosis</td>
-              <td>{{datosSesion.transtornos.pirosis}}</td>
+              <td><%= datosSesion?.transtornos?.pirosis || '' %></td>
             </tr>
             <tr>
               <td>Otro</td>
-              <td>{{datosSesion.transtornos.otro}}</td>
+              <td><%= datosSesion?.transtornos?.otro || '' %></td>
             </tr>
           </tbody>
         </table>
@@ -370,15 +405,21 @@
       <tbody>
         <tr>
           <td width="30%">¿Realiza ejercicio físico?</td>
-          <td>{{datosSesion.actividadDiaria.ejercicioFisico}}</td>
+          <td><%= datosSesion?.actividadDiaria?.ejercicioFisico || '' %></td>
         </tr>
         <tr>
           <td>Fecha de Inicio</td>
-          <td>{{formatDate(datosSesion.actividadDiaria.fechaInicio)}}</td>
+          <td>
+            <% if (datosSesion?.actividadDiaria?.fechaInicio) { %>
+              <%= formatDate(datosSesion.actividadDiaria.fechaInicio) %>
+            <% } else { %>
+              
+            <% } %>
+          </td>
         </tr>
         <tr>
           <td>Frecuencia</td>
-          <td>{{datosSesion.actividadDiaria.frecuencia}}</td>
+          <td><%= datosSesion?.actividadDiaria?.frecuencia || '' %></td>
         </tr>
       </tbody>
     </table>
@@ -405,13 +446,19 @@
         </tr>
       </thead>
       <tbody>
-        {{#each datosSesion.indicadoresBioquim}}
-        <tr>
-          <td>{{this.parametro}}</td>
-          <td>{{this.valorReferencia}}</td>
-          <td>{{formatDate(this.parametroFecha)}}</td>
-        </tr>
-        {{/each}}
+        <% if (datosSesion?.indicadoresBioquim && datosSesion.indicadoresBioquim.length > 0) { %>
+          <% datosSesion.indicadoresBioquim.forEach(function(indicador) { %>
+            <tr>
+              <td><%= indicador.parametro %></td>
+              <td><%= indicador.valorReferencia %></td>
+              <td><%= formatDate(indicador.parametroFecha) %></td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="3" style="text-align: center;">No hay indicadores registrados</td>
+          </tr>
+        <% } %>
       </tbody>
     </table>
     
@@ -429,19 +476,19 @@
       <tbody>
         <tr>
           <td>Altura (m)</td>
-          <td>{{datosSesion.evaluacionAntropometrica.talla}}</td>
+          <td><%= datosSesion?.evaluacionAntropometrica?.talla || '' %></td>
         </tr>
         <tr>
           <td>Peso (kg)</td>
-          <td>{{datosSesion.evaluacionAntropometrica.peso}}</td>
+          <td><%= datosSesion?.evaluacionAntropometrica?.peso || '' %></td>
         </tr>
         <tr>
           <td>Circunferencia cintura (cm)</td>
-          <td>{{datosSesion.evaluacionAntropometrica.circunferenciaCintura}}</td>
+          <td><%= datosSesion?.evaluacionAntropometrica?.circunferenciaCintura || '' %></td>
         </tr>
         <tr>
           <td>Circunferencia cadera (cm)</td>
-          <td>{{datosSesion.evaluacionAntropometrica.circunferenciaCadera}}</td>
+          <td><%= datosSesion?.evaluacionAntropometrica?.circunferenciaCadera || '' %></td>
         </tr>
       </tbody>
     </table>
@@ -456,7 +503,7 @@
       <tbody>
         <tr>
           <td width="30%"><strong>Diagnósticos secundarios:</strong></td>
-          <td>{{datosSesion.diagnosticoEvolucion.diagnosticoEvolucion}}</td>
+          <td><%= datosSesion?.diagnosticoEvolucion?.diagnosticoEvolucion || '' %></td>
         </tr>
       </tbody>
     </table>
@@ -478,11 +525,17 @@
         </tr>
       </thead>
       <tbody>
-        {{#each datosSesion.objetivoNutricional}}
-        <tr>
-          <td>{{this.objetivo}}</td>
-        </tr>
-        {{/each}}
+        <% if (datosSesion?.objetivoNutricional && datosSesion.objetivoNutricional.length > 0) { %>
+          <% datosSesion.objetivoNutricional.forEach(function(objetivo) { %>
+            <tr>
+              <td><%= objetivo.objetivo %></td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td style="text-align: center;">No hay objetivos registrados</td>
+          </tr>
+        <% } %>
       </tbody>
     </table>
     
@@ -496,27 +549,27 @@
       <tbody>
         <tr>
           <td width="30%">Energía (kcal)</td>
-          <td>{{datosSesion.manejoNutricional.energia}}</td>
+          <td><%= datosSesion?.manejoNutricional?.energia || '' %></td>
         </tr>
         <tr>
           <td>Hidratos de carbono</td>
-          <td>{{datosSesion.manejoNutricional.hidratosDeCarbono}}</td>
+          <td><%= datosSesion?.manejoNutricional?.hidratosDeCarbono || '' %></td>
         </tr>
         <tr>
           <td>Lípidos</td>
-          <td>{{datosSesion.manejoNutricional.lipidos}}</td>
+          <td><%= datosSesion?.manejoNutricional?.lipidos || '' %></td>
         </tr>
         <tr>
           <td>Proteínas</td>
-          <td>{{datosSesion.manejoNutricional.proteinas}}</td>
+          <td><%= datosSesion?.manejoNutricional?.proteinas || '' %></td>
         </tr>
         <tr>
           <td>Fibra</td>
-          <td>{{datosSesion.manejoNutricional.fibra}}</td>
+          <td><%= datosSesion?.manejoNutricional?.fibra || '' %></td>
         </tr>
         <tr>
           <td>Agua</td>
-          <td>{{datosSesion.manejoNutricional.agua}}</td>
+          <td><%= datosSesion?.manejoNutricional?.agua || '' %></td>
         </tr>
       </tbody>
     </table>

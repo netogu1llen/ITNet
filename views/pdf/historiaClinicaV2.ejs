@@ -1,3 +1,26 @@
+<%
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('es-MX', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  });
+}
+
+function calcularEdad(fechaNacimiento) {
+  if (!fechaNacimiento) return '';
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const m = hoy.getMonth() - nacimiento.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+  return edad;
+}
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -98,104 +121,89 @@
 <body>
   <!-- Página 1 -->
   <div class="header">
-    <h1><img src="data:image/png;base64,IMAGEN_CODIFICADA_AQUI" alt="Salud Icon"> Historia Clínica V2</h1>
+    <h1>Historia Clínica V2</h1>
   </div>
   
-  <div class="box">
-    <div class="info-basic">
-      <div class="columns">
-        <div class="column">
-          <strong>No. Expediente:</strong> {{expediente.IDExpediente}}
-        </div>
-        <div class="column">
-          <strong>Número de sesión:</strong> {{datosSesion.numSesion}}
-        </div>
+<div class="box">
+  <div class="info-basic">
+    <div class="columns">
+      <div class="column">
+        <strong>No. Expediente:</strong> <%= datosSesion?.IDExpediente %>
       </div>
-      
-      <!-- Última evaluación V1 -->
-      <div class="last-evaluation">
-        <h2>Última Evaluación (V1)</h2>
-        <div class="columns">
-          <div class="column">
-            <p><strong>Peso anterior:</strong> {{datosSesionV1.peso || 'No registrado'}} kg</p>
-          </div>
-          <div class="column">
-            <p><strong>Talla anterior:</strong> {{datosSesionV1.talla || 'No registrado'}} m</p>
-          </div>
-        </div>
-      </div>
-      
-      <hr>
-      
-      <div class="columns">
-        <div class="column">
-          <p><strong>Nombre Completo:</strong> {{expediente.nombres}} {{expediente.apellidoP}} {{expediente.apellidoM}}</p>
-          <p><strong>Edad (años):</strong> {{edad}}</p>
-        </div>
+      <div class="column">
+        <strong>Número de sesión:</strong> <%= datosSesion?.numSesion || '' %>
       </div>
     </div>
     
-    <!-- Sección I. INDICADORES BIOQUÍMICOS -->
-    <table>
-      <thead>
-        <tr>
-          <th colspan="3" class="section-title">I. INDICADORES BIOQUÍMICOS</th>
-        </tr>
-        <tr>
-          <th>Parámetro Bioquímico</th>
-          <th>Valor de referencia</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each datosSesion.indicadoresBioquim}}
-        <tr>
-          <td>{{this.parametro}}</td>
-          <td>{{this.valorReferencia}}</td>
-          <td>{{formatDate(this.parametroFecha)}}</td>
-        </tr>
-        {{/each}}
-      </tbody>
-    </table>
-    
-    <!-- Sección II. EVALUACIÓN ANTROPOMÉTRICA -->
-    <table>
-      <thead>
-        <tr>
-          <th colspan="2" class="section-title">II. EVALUACIÓN ANTROPOMÉTRICA</th>
-        </tr>
-        <tr>
-          <th>Aspectos por evaluar</th>
-          <th>Medidas</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Altura (m)</td>
-          <td>{{datosSesion.evaluacionAntropometrica.talla}}</td>
-        </tr>
-        <tr>
-          <td>Peso (kg)</td>
-          <td>{{datosSesion.evaluacionAntropometrica.peso}}</td>
-        </tr>
-        <tr>
-          <td>Circunferencia cintura (cm)</td>
-          <td>{{datosSesion.evaluacionAntropometrica.circunferenciaCintura}}</td>
-        </tr>
-        <tr>
-          <td>Circunferencia cadera (cm)</td>
-          <td>{{datosSesion.evaluacionAntropometrica.circunferenciaCadera}}</td>
-        </tr>
-      </tbody>
-    </table>
+    <hr>    
+    <div class="columns">
+      <div class="column">
+        <p><strong>Nombre Completo:</strong> <%= datosSesion?.nombres %> <%= datosSesion?.apellidoP %> <%= datosSesion?.apellidoM %></p>
+        <p><strong>Edad (años):</strong> <%= calcularEdad(datosSesion?.fechaNacimiento) %></p>
+      </div>
+    </div>
   </div>
   
-  <div class="page-break"></div>
+  <!-- Sección I. INDICADORES BIOQUÍMICOS -->
+  <table>
+    <thead>
+      <tr>
+        <th colspan="3" class="section-title">I. INDICADORES BIOQUÍMICOS</th>
+      </tr>
+      <tr>
+        <th>Parámetro Bioquímico</th>
+        <th>Valor de referencia</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (datosSesion?.indicadoresBioquim && datosSesion.indicadoresBioquim.length > 0) { %>
+        <% datosSesion.indicadoresBioquim.forEach(function(indicador) { %>
+          <tr>
+            <td><%= indicador.parametro %></td>
+            <td><%= indicador.valorReferencia %></td>
+            <td><%= formatDate(indicador.parametroFecha) %></td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr>
+          <td colspan="3" style="text-align: center;">No hay indicadores registrados</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
   
-  <!-- Página 2 -->
-  <div class="header">
-    <h1><img src="data:image/png;base64,IMAGEN_CODIFICADA_AQUI" alt="Salud Icon"> Historia Clínica V2</h1>
-  </div>
+  <!-- Sección II. EVALUACIÓN ANTROPOMÉTRICA -->
+  <table>
+    <thead>
+      <tr>
+        <th colspan="2" class="section-title">II. EVALUACIÓN ANTROPOMÉTRICA</th>
+      </tr>
+      <tr>
+        <th>Aspectos por evaluar</th>
+        <th>Medidas</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Altura (m)</td>
+        <td><%= datosSesion?.evaluacionAntropometrica?.talla || '' %></td>
+      </tr>
+      <tr>
+        <td>Peso (kg)</td>
+        <td><%= datosSesion?.evaluacionAntropometrica?.peso || '' %></td>
+      </tr>
+      <tr>
+        <td>Circunferencia cintura (cm)</td>
+        <td><%= datosSesion?.evaluacionAntropometrica?.circunferenciaCintura || '' %></td>
+      </tr>
+      <tr>
+        <td>Circunferencia cadera (cm)</td>
+        <td><%= datosSesion?.evaluacionAntropometrica?.circunferenciaCadera || '' %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
   
   <div class="box">
     <!-- Sección III. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE -->
@@ -208,7 +216,7 @@
       <tbody>
         <tr>
           <td><strong>Diagnósticos actualizados:</strong></td>
-          <td>{{datosSesion.diagnosticoEvolucion.diagnosticoEvolucion}}</td>
+          <td><%= datosSesion?.diagnosticoEvolucion?.diagnosticoEvolucion || '' %></td>
         </tr>
       </tbody>
     </table>
@@ -221,11 +229,17 @@
         </tr>
       </thead>
       <tbody>
-        {{#each datosSesion.objetivoNutricional}}
-        <tr>
-          <td>{{this.objetivo}}</td>
-        </tr>
-        {{/each}}
+        <% if (datosSesion?.objetivoNutricional && datosSesion.objetivoNutricional.length > 0) { %>
+          <% datosSesion.objetivoNutricional.forEach(function(objetivo) { %>
+            <tr>
+              <td><%= objetivo.objetivo %></td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td style="text-align: center;">No hay objetivos registrados</td>
+          </tr>
+        <% } %>
       </tbody>
     </table>
     
@@ -239,30 +253,32 @@
       <tbody>
         <tr>
           <td width="30%">Energía (kcal)</td>
-          <td>{{datosSesion.manejoNutricional.energia}}</td>
+          <td><%= datosSesion?.manejoNutricional?.energia || '' %></td>
         </tr>
         <tr>
           <td>Hidratos de carbono</td>
-          <td>{{datosSesion.manejoNutricional.hidratosDeCarbono}}</td>
+          <td><%= datosSesion?.manejoNutricional?.hidratosDeCarbono || '' %></td>
         </tr>
         <tr>
           <td>Lípidos</td>
-          <td>{{datosSesion.manejoNutricional.lipidos}}</td>
+          <td><%= datosSesion?.manejoNutricional?.lipidos || '' %></td>
         </tr>
         <tr>
           <td>Proteínas</td>
-          <td>{{datosSesion.manejoNutricional.proteinas}}</td>
+          <td><%= datosSesion?.manejoNutricional?.proteinas || '' %></td>
         </tr>
         <tr>
           <td>Fibra</td>
-          <td>{{datosSesion.manejoNutricional.fibra}}</td>
+          <td><%= datosSesion?.manejoNutricional?.fibra || '' %></td>
         </tr>
         <tr>
           <td>Agua</td>
-          <td>{{datosSesion.manejoNutricional.agua}}</td>
+          <td><%= datosSesion?.manejoNutricional?.agua || '' %></td>
         </tr>
       </tbody>
     </table>
   </div>
 </body>
-</html>
+<div class="page-break"></div>
+
+  
