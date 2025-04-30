@@ -78,8 +78,16 @@ exports.logout = (req, res) => {
   res.redirect('/');
 };
 
-exports.getHome = (request, response) => {
-  response.render('home');
+exports.getHome = (req, res) => {
+  // Ahora puedes acceder a la información del usuario
+  const userData = {
+    id: req.user.id,
+    email: req.user.email,
+    // otros datos que hayas incluido en el token
+  };
+  
+  // Pasar los datos del usuario a la vista
+  res.render('home', { user: userData });
 };
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID_ANDROID); // Usa el client ID de Android
