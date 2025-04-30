@@ -25,6 +25,7 @@ exports.googleAuthInit = (req, res) => {
  * @param {Function} next - Función para pasar errores al middleware.
  */
 exports.googleCallback = async (req, res, next) => {
+  
   const { code, error: googleError } = req.query;
 
   if (googleError) {
@@ -57,6 +58,8 @@ exports.googleCallback = async (req, res, next) => {
         authTime: new Date().toISOString()
       }
     });
+
+    req.session.userId = localUser.IDUsuario;
 
     // 4. Establecer cookie y redirigir
     res.cookie('jwt', token, {
