@@ -280,7 +280,7 @@ $(document).ready(function () {
         
         // Usar AJAX para la descarga
         $.ajax({
-            url: `/nutricion/documentos/descargar/${documentoId}`,
+            url: `/pacientes/documentos/descargar/${documentoId}`,
             method: 'GET',
             xhrFields: {
                 responseType: 'blob' // Importante para manejar PDFs

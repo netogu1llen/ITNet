@@ -317,47 +317,53 @@ $(document).on('click', '.fila-documento', function(e) {
 // Modificar la función para el botón de descarga en el archivo expedienteNutricion.js
 $(document).on('click', '.btn-descargar', function(event) {
     event.preventDefault();
-    event.stopPropagation(); // Evitar que se active la vista previa
+    event.stopPropagation();
     
-    const documentoId = $(this).data('id');
-    const tipo = $(this).data('tipo');
-    const numSesion = $(this).data('sesion');
-    const idExpediente = new URLSearchParams(window.location.search).get('id') || 
-                       window.location.pathname.split('/').pop();
+    const button = $(this);
+    const documentoId = button.attr('data-id');
+    const tipo = button.attr('data-tipo');
+    const numSesion = button.attr('data-num-sesion');
+    const idExpediente = button.attr('data-expediente');
     
-    console.log('Descargando documento:', documentoId, 'de tipo:', tipo, 'sesión:', numSesion);
+    console.log('Datos para descarga:', {
+        documentoId,
+        tipo,
+        numSesion,
+        idExpediente
+    });
     
-    // Mostrar modal de carga
-    showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
-    
-    // Construir URL con parámetros
-    let downloadUrl = `/nutricion/documentos/descargar/${documentoId}?tipo=${tipo}`;
-    
-    // Añadir parámetros adicionales para historiales clínicos
-    if (tipo === 'NUTRICIONAL_V1' || tipo === 'NUTRICIONAL_V2') {
-        downloadUrl += `&numSesion=${numSesion}&expediente=${idExpediente}`;
+    if (!numSesion && tipo.includes('NUTRICIONAL')) {
+        console.error('No se encontró el número de sesión para el documento:', documentoId);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo determinar el número de sesión del documento'
+        });
+        return;
     }
     
-    // Usar AJAX para la descarga
+    showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
+    
+    // Construir URL con todos los parámetros
+    const downloadUrl = `/nutricion/documentos/descargar/${documentoId}?tipo=${tipo}&numSesion=${numSesion}&expediente=${idExpediente}`;
+    
+    // Realizar la descarga
     $.ajax({
         url: downloadUrl,
         method: 'GET',
         xhrFields: {
-            responseType: 'blob' // Importante para manejar PDFs
+            responseType: 'blob'
         },
         success: function(data) {
             hideLoadingModal();
             
-            // Crear objeto URL para la descarga
             const blob = new Blob([data], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
-            
-            // Crear elemento para la descarga
             const link = document.createElement('a');
             link.href = url;
             
-            // Nombre de archivo según tipo
-            let filename = 'documento.pdf';
+            // Nombre del archivo según el tipo
+            let filename;
             if (tipo === 'NUTRICIONAL_V1') {
                 filename = `historial_clinico_v1_sesion_${numSesion}.pdf`;
             } else if (tipo === 'NUTRICIONAL_V2') {
@@ -370,7 +376,6 @@ $(document).on('click', '.btn-descargar', function(event) {
             document.body.appendChild(link);
             link.click();
             
-            // Limpiar
             setTimeout(() => {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(link);
@@ -378,12 +383,12 @@ $(document).on('click', '.btn-descargar', function(event) {
         },
         error: function(xhr) {
             hideLoadingModal();
+            console.error('Error en la descarga:', xhr);
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'No se pudo descargar el documento.'
+                text: 'No se pudo descargar el documento. Por favor, intente nuevamente.'
             });
-            console.error(xhr);
         }
     });
 });

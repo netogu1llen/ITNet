@@ -194,10 +194,10 @@
           <% if (documentosHistorial && documentosHistorial.length > 0) { %>
             <% documentosHistorial.forEach(doc => { %>
             <tr class="fila-documento" 
-                  data-id="<%= doc.id %>" 
-                  data-tipo="<%= doc.tipo %>" 
-                  data-ruta="<%= doc.ruta %>" 
-                  data-sesion="<%= doc.numSesion %>">
+                data-id="<%= doc.id %>" 
+                data-tipo="<%= doc.tipo %>" 
+                data-ruta="<%= doc.ruta %>" 
+                data-num-sesion="<%= doc.numSesion %>">
               <td>
                 <% if (doc.tipo === 'PDF') { %>
                   <span class="icon-text">
@@ -227,8 +227,13 @@
               </td>
               <td><%= doc.fechaFormateada %></td>
               <td>
-                <span class="btn-descargar" data-id="<%= doc.id %>" data-tipo="<%= doc.tipo %>" style="cursor: pointer;">
-                  <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
+                <span class="btn-descargar" 
+                    data-id="<%= doc.id %>" 
+                    data-tipo="<%= doc.tipo %>"
+                    data-num-sesion="<%= doc.numSesion %>"
+                    data-expediente="<%= expediente.IDExpediente %>"
+                    style="cursor: pointer;">
+                    <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
                 </span>
               </td>
               <td>
