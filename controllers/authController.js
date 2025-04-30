@@ -111,36 +111,57 @@ exports.googleMobileLogin = async (req, res) => {
   const { idToken } = req.body;
 
   if (!idToken) {
-    return res.status(400).json({ error: 'Token ID no proporcionado' });
+    return res.status(400).json({ success: false, error: 'ID no proporcionado' });
   }
 
   try {
-    // Verificar token con Google
-    const ticket = await client.verifyIdToken({
-      idToken,
-      audience: process.env.GOOGLE_CLIENT_ID_ANDROID,
-    });
+    // Determinar si es email o token
+    const isEmail = idToken.includes('@');
+    
+    let email, googleId;
+    
+    if (isEmail) {
+      // Si es email, usarlo directamente
+      email = idToken;
+      googleId = null; // No tenemos ID de Google
+    } else {
+      // Verificar token con Google como antes
+      const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID_ANDROID,
+      });
+      const payload = ticket.getPayload();
+      email = payload.email;
+      googleId = payload.sub;
+    }
 
-    const payload = ticket.getPayload();
-    const { email, sub: googleId, name, picture } = payload;
-
-    // Verifica si el usuario existe en la base de datos
-    const localUser = await authService.handleGoogleUser({
-      email,
-      googleId,
-      name,
-    });
-
-    // Genera el JWT propio
-    const token = generateUserToken({
-      id: localUser.id,
-      email: localUser.email,
-    });
-
-    return res.status(200).json({ token });
+    // Crear un objeto googleUser similar al que espera handleGoogleUser
+    const googleUser = { email: email };
+    
+    // Usar el método existente handleGoogleUser para gestionar el usuario
+    try {
+      const jwt = await authService.handleGoogleUser(googleUser);
+      
+      return res.status(200).json({
+        token: jwt,
+        expiresIn: 3600,
+        success: true
+      });
+    } catch (error) {
+      // Si el usuario no está registrado u otro error
+      return res.status(401).json({
+        success: false,
+        error: 'Error de autenticación',
+        message: error.message
+      });
+    }
 
   } catch (error) {
-    console.error('Error verificando token de Google:', error.message);
-    return res.status(401).json({ error: 'Token inválido' });
+    console.error('Error en autenticación:', error.message);
+    return res.status(401).json({
+      success: false,
+      error: 'Error de autenticación',
+      message: error.message
+    });
   }
 };
