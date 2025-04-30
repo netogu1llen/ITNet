@@ -238,10 +238,10 @@ const postEditarPaciente = async (req, res) => {
     await Pacientes.editarPaciente(pacienteEncriptado);
 
     const idUsuarioActual = req.session.userId;
-    await db.query(
+    /*await db.query(
       'UPDATE expediente SET modificadoPor = ?, fechaModificacion = NOW() WHERE IDExpediente = ?',
       [idUsuarioActual, idExpediente]
-    );
+    );*/
 
     res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
 
