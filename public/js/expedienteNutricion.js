@@ -273,11 +273,10 @@ $('#subirDocumentoForm').on('submit', function (e) {
 
 
 
-
 // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
 $(document).on('click', '.fila-documento', function(e) {
     // No hacer nada si el clic fue en un botón
-    if ($(e.target).closest('button, .btn-descargar').length) {
+    if ($(e.target).closest('button, .btn-descargar, .btn-eliminar').length) {
         return;
     }
     
@@ -290,6 +289,9 @@ $(document).on('click', '.fila-documento', function(e) {
     if (tipo === 'NUTRICIONAL_V1') {
         // Redirigir a edición de V1 con el parámetro edit=true
         window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${numSesion}&edit=true`;
+    } else if (tipo === 'NUTRICIONAL_V2') {
+        // Redirigir a la vista de edición de V2
+        window.location.href = `/nutricion/historiaClinicaV2/${idExpediente}?numSesion=${numSesion}`;
     } else if (tipo === 'PDF') {
         // Código existente para PDF...
         console.log('Ver documento PDF:', documentoId);
@@ -312,41 +314,68 @@ $(document).on('click', '.fila-documento', function(e) {
     }
 });
 
-// Manejador de eventos para botones de descarga
+// Modificar la función para el botón de descarga en el archivo expedienteNutricion.js
 $(document).on('click', '.btn-descargar', function(event) {
     event.preventDefault();
-    event.stopPropagation(); // Evitar que se active la vista previa
+    event.stopPropagation();
     
-    const documentoId = $(this).data('id');
-    const tipo = $(this).data('tipo');
+    const button = $(this);
+    const documentoId = button.attr('data-id');
+    const tipo = button.attr('data-tipo');
+    const numSesion = button.attr('data-num-sesion');
+    const idExpediente = button.attr('data-expediente');
     
-    console.log('Descargando documento:', documentoId, 'de tipo:', tipo);
+    console.log('Datos para descarga:', {
+        documentoId,
+        tipo,
+        numSesion,
+        idExpediente
+    });
     
-    // Mostrar modal de carga
+    if (!numSesion && tipo.includes('NUTRICIONAL')) {
+        console.error('No se encontró el número de sesión para el documento:', documentoId);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo determinar el número de sesión del documento'
+        });
+        return;
+    }
+    
     showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
     
-    // Usar AJAX para la descarga
+    // Construir URL con todos los parámetros
+    const downloadUrl = `/nutricion/documentos/descargar/${documentoId}?tipo=${tipo}&numSesion=${numSesion}&expediente=${idExpediente}`;
+    
+    // Realizar la descarga
     $.ajax({
-        url: `/nutricion/documentos/descargar/${documentoId}`,
+        url: downloadUrl,
         method: 'GET',
         xhrFields: {
-            responseType: 'blob' // Importante para manejar PDFs
+            responseType: 'blob'
         },
         success: function(data) {
             hideLoadingModal();
             
-            // Crear objeto URL para la descarga
             const blob = new Blob([data], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
-            
-            // Crear elemento para la descarga
             const link = document.createElement('a');
             link.href = url;
-            link.download = (tipo === 'NUTRICIONAL_V1') ? 'historial_clinico_v1.pdf' : `documento_${documentoId}.pdf`;
+            
+            // Nombre del archivo según el tipo
+            let filename;
+            if (tipo === 'NUTRICIONAL_V1') {
+                filename = `historial_clinico_v1_sesion_${numSesion}.pdf`;
+            } else if (tipo === 'NUTRICIONAL_V2') {
+                filename = `historial_clinico_v2_sesion_${numSesion}.pdf`;
+            } else {
+                filename = `documento_${documentoId}.pdf`;
+            }
+            
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             
-            // Limpiar
             setTimeout(() => {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(link);
@@ -354,17 +383,17 @@ $(document).on('click', '.btn-descargar', function(event) {
         },
         error: function(xhr) {
             hideLoadingModal();
+            console.error('Error en la descarga:', xhr);
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'No se pudo descargar el documento.'
+                text: 'No se pudo descargar el documento. Por favor, intente nuevamente.'
             });
-            console.error(xhr);
         }
     });
 });
 
-    // Botón Eliminar Documento
+// Botón Eliminar Documento
 $(document).on('click', '.btn-eliminar', function(event) {
     event.preventDefault();
     event.stopPropagation(); // Evitar que se active la vista previa
@@ -372,11 +401,19 @@ $(document).on('click', '.btn-eliminar', function(event) {
     const id = $(this).data('id');
     const tipo = $(this).data('tipo');
     
+    // No permitir eliminar historiales V1 (verificación adicional por seguridad)
+    if (tipo === 'NUTRICIONAL_V1') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Operación no permitida',
+            text: 'No es posible eliminar un Historial Clínico V1.'
+        });
+        return;
+    }
+    
     // Personalizar mensaje según el tipo
     let mensaje = '';
-    if (tipo === 'NUTRICIONAL_V1') {
-        mensaje = '¿Está seguro de eliminar este Historial Clínico V1?';
-    } else if (tipo === 'NUTRICIONAL_V2') {
+    if (tipo === 'NUTRICIONAL_V2') {
         mensaje = '¿Está seguro de eliminar este Historial Clínico V2?';
     } else {
         mensaje = '¿Está seguro de eliminar este documento PDF?';
