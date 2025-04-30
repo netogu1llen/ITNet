@@ -24,49 +24,64 @@ exports.googleAuthInit = (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @param {Function} next - Función para pasar errores al middleware.
  */
+
+
 exports.googleCallback = async (req, res, next) => {
   const { code, error: googleError } = req.query;
 
   if (googleError) {
-    // El usuario canceló el login en la ventana de Google
     const mensaje = 'Autenticación cancelada. Por favor intenta nuevamente.';
     return res.redirect(`/?error=${encodeURIComponent(mensaje)}`);
   }
 
   try {
-    // IMPORTANTE: No redeclarar 'code' aquí, ya está declarado arriba
-    // const { code } = req.query; <- ELIMINAR ESTA LÍNEA
-
-    // Añadir log para depuración
     console.log('Código de autorización recibido:', code);
 
     // 1. Autenticación con Google
     const googleUser = await authService.authenticateWithGoogle(code);
     console.log('Información de usuario de Google:', JSON.stringify(googleUser, null, 2));
 
-    // 2. Validar que el usuario esté registrado en la BD y obtener token
-    const token = await authService.handleGoogleUser(googleUser);
+    // 2. Validar que el usuario esté registrado en la BD y obtener usuario
+    const localUser = await authService.handleGoogleUser(googleUser);
 
-    // 3. Establecer cookie y redirigir
+    // 3. Generar token JWT
+    const token = generateUserToken({
+      userData: {
+        id: localUser.IDUsuario,
+        email: localUser.correo
+      },
+      authorization: {
+        roles: localUser.IDRoles,
+        privileges: localUser.IDPrivilegios
+      },
+      metadata: {
+        authMethod: 'google',
+        authTime: new Date().toISOString()
+      }
+    });
+
+    // 4. Guardar ID de usuario en sesión
+    req.session.userId = localUser.IDUsuario;
+
+    // 5. Establecer cookie y redirigir
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' // Aumenta seguridad contra CSRF
+      sameSite: 'lax'
     }).redirect('/home');
-    
+
   } catch (error) {
     console.error('Error durante autenticación:', error.message);
-    console.error(error.stack); // Opcional: para debug más detallado
+    console.error(error.stack);
 
-    // Mensaje específico si el error es por usuario no registrado
     const mensaje = error.message.includes('no está registrado') || error.message.includes('no registrado')
       ? error.message
       : 'Ocurrió un error durante el inicio de sesión. Intenta de nuevo.';
 
-    // Redirigir siempre al login con el mensaje de error
     return res.redirect(`/?error=${encodeURIComponent(mensaje)}`);
   }
 };
+
 
 /**
  * Cierra la sesión del usuario eliminando la cookie JWT.

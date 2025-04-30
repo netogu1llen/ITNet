@@ -226,7 +226,8 @@ const postEditarPaciente = async (req, res) => {
       grado,
       nvEscolar,
       sangre,
-      idExpediente
+      idExpediente,
+      modificadoPor: req.session.userId 
     };
 
     await Pacientes.editarPaciente(pacienteEncriptado);
