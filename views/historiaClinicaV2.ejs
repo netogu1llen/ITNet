@@ -7,195 +7,83 @@
     <div class="entrevista-pagina">
       <div class="box" style="background-color: #f2f2f2;">
         <h1 class="has-text-black pl-6">
-          <img src="/images/salud.png" alt="Salud Icon" style="height: 30px;"> Historia Clínica V2
-          <div class="buttons-container" style="display: inline-block; margin-left: 60%;">
-            <button class="btn-guardar button is-save" type="submit">
-              <%= datosSesion ? 'Actualizar' : 'Guardar' %>
-            </button>
-            <button class="btn-cancelar button is-cancel" type="button">
-              Cancelar
-            </button>
-          </div>
+          <img src="/images/salud.png" alt="Salud Icon" style="height: 30px;"> Historia Clínica - Seguimiento
+          <button class="btn-guardar button is-success" type="submit" style="margin-left: 75%; margin-bottom: 10px;">
+            <%= datosSesion ? 'Actualizar' : 'Guardar' %>
+          </button>
         </h1>
-        
-        <!-- Información básica -->
-        <div class="columns pl-6 pr-6">
-          <div class="column has-text-black has-text-weight-semibold">
-            No. Expediente: <%= expediente.IDExpediente %>
-          </div>
-          <div class="column has-text-black has-text-weight-semibold">
-            <label>Número de Sesión:</label>
-            <input id="numSesion" class="input" type="text" 
-              value="<%= datosSesion?.numSesion || '' %>"
-              <%= datosSesion ? 'readonly' : '' %>
-              style="width: 60px; display: inline-block;"
-              required>
-          </div>
-        </div>
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff;">
+            <!-- Información básica -->
+            <div class="columns">
+              <div class="column has-text-black has-text-weight-semibold">
+                No. Expediente: <%= expediente.IDExpediente %>
+              </div>
+              <div class="column has-text-black has-text-weight-semibold">
+                <label>Número de Sesión:</label>
+                <input id="numSesion" class="input" type="text" 
+                  value="<%= datosSesion?.numSesion || '' %>"
+                  <%= datosSesion ? 'readonly' : '' %>
+                  style="width: 60px; display: inline-block;">
+              </div>
+            </div>
 
-        <!-- Última evaluación V1 -->
-        <div class="columns pl-6 pr-6">
-          <div class="column">
-            <div style="background-color: #f8f9fa; padding: 1rem; border-radius: 4px;">
+            <!-- Información del paciente -->
+            <div class="columns">
+              <div class="column">
+                <label class="label">Nombre Completo</label>
+                <input class="input" type="text" 
+                  value="<%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %>" 
+                  readonly>
+              </div>
+            </div>
+
+            <!-- Última evaluación V1 -->
+            <div class="box" style="background-color: #f8f9fa;">
               <h4 class="title is-6">Última Evaluación (V1)</h4>
               <div class="columns">
                 <div class="column">
-                  <p><strong> Peso anterior:</strong> <%= datosSesionV1?.peso || 'No registrado' %> kg</p>
+                  <p><strong>Peso anterior:</strong> <%= datosSesionV1?.evaluacionAntropometrica?.peso || 'No registrado' %> kg</p>
                 </div>
                 <div class="column">
-                  <p><strong>Talla anterior:</strong> <%= datosSesionV1?.talla || 'No registrado' %> m</p>
+                  <p><strong>Talla anterior:</strong> <%= datosSesionV1?.evaluacionAntropometrica?.talla || 'No registrado' %> m</p>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Resto del contenido de la página 1 -->
-        <div class="pl-6">
-          <div class="box" style="background-color: #ffffff;">
-            <hr class="has-background-grey-lighter">
-            
-            <!-- Información Básica del Paciente -->
-            <div class="columns">
-              <div class="column pr-6">
-                <div class="columns">
-                  <div class="column" style="border:2px">
-                    <label class="label">Nombre Completo</label>
-                    <input class="input" type="text" 
-                          name="expediente[nombreCompleto]" 
-                          value="<%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %>" 
-                          readonly/>
-                  </div>
-                </div>
-
-                <div class="columns">
-                  <div class="column">
-                    <label class="label">Edad</label>
-                    <%function calcularEdad(fechaNacimiento) {
-                          if (!fechaNacimiento) return '';
-                          const hoy = new Date();
-                          const nacimiento = new Date(fechaNacimiento);
-                          let edad = hoy.getFullYear() - nacimiento.getFullYear();
-                          const m = hoy.getMonth() - nacimiento.getMonth();
-                          if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
-                            edad--;
-                          }
-                          return edad;
-                        }
-                      %>
-                    <input class="input" type="number" 
-                          name="expediente[edad]" 
-                          value="<%= calcularEdad(expediente.fechaNacimiento) %>" 
-                          readonly/>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- INDICADORES BIOQUÍMICOS -->
+            <!-- Indicadores Bioquímicos -->
             <div class="container">
-              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
-                <thead>
-                  <tr>
-                    <th colspan="4" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
-                      I. INDICADORES BIOQUÍMICOS
-                    </th>
-                  </tr>
-                  <tr>
-                    <th>Parámetro Bioquímico</th>
-                    <th>Valor de referencia</th>
-                    <th>Fecha</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="tabla-indicadores">
-                  <% if (datosSesion?.indicadoresBioquim?.length > 0) { %>
-                    <% datosSesion.indicadoresBioquim.forEach(indicador => { %>
-                      <% 
-                        const fechaIndicador = indicador.parametroFecha 
-                          ? new Date(indicador.parametroFecha).toISOString().split('T')[0] 
-                          : '';
-                      %>
-                      <tr>
-                        <td>
-                          <input class="input" type="text" name="parametroBioquimico[]" 
-                            value="<%= indicador.parametro %>" placeholder="Parámetro..." required>
-                        </td>
-                        <td>
-                          <input class="input" type="text" name="valorReferencia[]" 
-                            value="<%= indicador.valorReferencia %>" placeholder="Valor de referencia..." required>
-                        </td>
-                        <td>
-                          <input class="input" type="date" name="fechaParametro[]" 
-                            value="<%= fechaIndicador %>" required>
-                        </td>
-                        <td>
-                          <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
-                        </td>
-                      </tr>
-                    <% }); %>
-                  <% } else { %>
-                    <!-- Fila por defecto cuando no hay datos -->
+              <div class="box">
+                <h3 class="title is-5 has-text-centered">INDICADORES BIOQUÍMICOS</h3>
+                <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+                  <thead>
                     <tr>
-                      <td>
-                        <input class="input" type="text" name="parametroBioquimico[]" placeholder="Parámetro..." required>
-                      </td>
-                      <td>
-                        <input class="input" type="text" name="valorReferencia[]" placeholder="Valor de referencia..." required>
-                      </td>
-                      <td>
-                        <input class="input" type="date" name="fechaParametro[]" required>
-                      </td>
-                      <td>
-                        <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
-                      </td>
+                      <th colspan="4" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                        INDICADORES BIOQUÍMICOS
+                      </th>
                     </tr>
-                  <% } %>
-                </tbody>
-              </table>
-
-              <div class="has-text-centered">
-                <button id="btn-agregar-fila" class="button is-save" type="button">
-                  ＋ Agregar parámetro
-                </button>
+                  </thead>
+                  <tbody id="tabla-indicadores">
+                    <tr>
+                      <th>Parámetro Bioquímico</th>
+                      <th>Valor de referencia</th>
+                      <th>Fecha</th>
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <td><input class="input" type="text" name="parametroBioquimico[]" required></td>
+                      <td><input class="input" type="text" name="valorReferencia[]" required></td>
+                      <td><input class="input" type="date" name="fechaParametro[]" required></td>
+                      <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="has-text-centered mt-3">
+                  <button id="btn-agregar-indicador" class="button is-success is-small">
+                    ＋ Agregar indicador
+                  </button>
+                </div>
               </div>
-            </div>
-
-            <!-- EVALUACIÓN ANTROPOMÉTRICA -->
-            <div class="container">
-              <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
-                <thead>
-                  <tr>
-                    <th colspan="3" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">II. EVALUACIÓN ANTROPOMÉTRICA</th>
-                  </tr>
-                  <tr>
-                    <th>Aspectos por evaluar</th>
-                    <th>Medidas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Altura (m)</td>
-                    <td><input id="talla" class="input" type="text" 
-                        value="<%= datosSesion?.evaluacionAntropometrica?.talla || '' %>" required/></td>
-                  </tr>
-                  <tr>
-                    <td>Peso (kg)</td>
-                    <td><input id="peso" class="input" type="text" 
-                        value="<%= datosSesion?.evaluacionAntropometrica?.peso || '' %>" required/></td>
-                  </tr>
-                  <tr>
-                    <td>Circunferencia cintura (cm)</td>
-                    <td><input id="circunferenciaCintura" class="input" type="text" name="medida[Circunferencia cintura (cm)]" placeholder="Medida..."
-                      value="<%= datosSesion?.evaluacionAntropometrica?.circunferenciaCintura || '' %>" required/></td>
-                  </tr>
-                  <tr>
-                    <td>Circunferencia cadera (cm)</td>
-                    <td><input id="circunferenciaCadera" class="input" type="text" name="medida[Circunferencia cadera (cm)]" placeholder="Medida..."
-                      value="<%= datosSesion?.evaluacionAntropometrica?.circunferenciaCadera || '' %>" required/></td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
@@ -205,124 +93,112 @@
     <!-- Página 2 -->
     <div class="entrevista-pagina" style="display: none;">
       <div class="box" style="background-color: #f2f2f2;">
-        <h1 class="has-text-black pl-6">
-          <img src="/images/salud.png" alt="Salud Icon" style="height: 30px;"> Historia Clínica V2
-          <div class="buttons-container" style="display: inline-block; margin-left: 60%;">
-            <button class="btn-guardar button is-save" type="submit">
-              <%= datosSesion ? 'Actualizar' : 'Guardar' %>
-            </button>
-            <button class="btn-cancelar button is-cancel" type="button">
-              Cancelar
-            </button>
-          </div>
-        </h1>
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff;">
-            <hr class="has-background-grey-lighter">
-
-            <!-- DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE -->
-            <div class="container">
+            <!-- Evaluación Antropométrica -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">EVALUACIÓN ANTROPOMÉTRICA</h3>
               <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
                   <tr>
-                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">III. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE</th>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      EVALUACIÓN ANTROPOMÉTRICA
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="has-text-weight-semibold">Diagnósticos actualizados:</td>
-                    <td><textarea id="diagnosticoEvolucion" class="textarea" placeholder="Diagnósticos actualizados..." required><%= datosSesion?.diagnosticoEvolucion?.diagnosticoEvolucion || '' %></textarea></td>
+                    <td>Peso actual (kg)</td>
+                    <td><input class="input" type="number" step="0.1" id="peso" required></td>
+                  </tr>
+                  <tr>
+                    <td>Talla actual (m)</td>
+                    <td><input class="input" type="number" step="0.01" id="talla" required></td>
+                  </tr>
+                  <tr>
+                    <td>IMC (kg/m²)</td>
+                    <td><input class="input" type="text" id="imc" readonly></td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <!-- OBJETIVOS NUTRICIONALES -->
-            <div class="container">
+            <!-- Diagnósticos Secundarios -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">DIAGNÓSTICOS SECUNDARIOS</h3>
+              <textarea id="diagnosticos" class="textarea" rows="4" 
+                placeholder="Ingrese los diagnósticos secundarios..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Página 3 -->
+    <div class="entrevista-pagina" style="display: none;">
+      <div class="box" style="background-color: #f2f2f2;">
+        <div class="pl-6">
+          <div class="box" style="background-color: #ffffff;">
+            <!-- Objetivos Nutricionales -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">OBJETIVOS NUTRICIONALES</h3>
               <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
                   <tr>
-                    <th class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
-                      IV. OBJETIVOS NUTRICIONALES
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      OBJETIVOS NUTRICIONALES
                     </th>
-                  </tr>
-                  <tr>
-                    <th>Objetivo</th>
-                    <th></th>
                   </tr>
                 </thead>
                 <tbody id="tabla-objetivos">
-                  <% if (datosSesion?.objetivoNutricional?.length > 0) { %>
-                    <% datosSesion.objetivoNutricional.forEach(objetivo => { %>
-                      <tr>
-                        <td>
-                          <input class="input" type="text" name="objetivosNutricionales[]" 
-                            value="<%= objetivo.objetivo %>" placeholder="Objetivo..." required>
-                        </td>
-                        <td>
-                          <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
-                        </td>
-                      </tr>
-                    <% }); %>
-                  <% } else { %>
-                    <!-- Fila por defecto cuando no hay datos -->
-                    <tr>
-                      <td>
-                        <input class="input" type="text" name="objetivosNutricionales[]" placeholder="Objetivo..." required>
-                      </td>
-                      <td>
-                        <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
-                      </td>
-                    </tr>
-                  <% } %>
+                  <tr>
+                    <td><input class="input" type="text" name="objetivos[]" placeholder="Objetivo..." required></td>
+                    <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
+                  </tr>
                 </tbody>
               </table>
-            
-              <div class="has-text-centered">
-                <button id="btn-agregar-fila-objetivos" class="button is-save" type="button">
+              <div class="has-text-centered mt-3">
+                <button id="btn-agregar-objetivo" class="button is-success is-small">
                   ＋ Agregar objetivo
                 </button>
               </div>
             </div>
 
-            <!-- MANEJO NUTRICIONAL -->
-            <div class="container">
+            <!-- Manejo Nutricional -->
+            <div class="box">
+              <h3 class="title is-5 has-text-centered">MANEJO NUTRICIONAL</h3>
               <table class="table is-fullwidth" style="border-collapse: collapse; border-radius: 10px; overflow: hidden;">
                 <thead>
                   <tr>
-                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">V. MANEJO NUTRICIONAL</th>
+                    <th colspan="2" class="has-text-black" style="text-align: center; background-color:#f2f2f2;">
+                      MANEJO NUTRICIONAL
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Energía (kcal)</td>
-                    <td><input id="energia" class="input" type="text" 
-                        value="<%= datosSesion?.manejoNutricional?.energia || '' %>" required/></td>
+                    <td>Energía (kcal/día)</td>
+                    <td><input class="input" type="text" id="energia" required></td>
                   </tr>
                   <tr>
-                    <td>Hidratos de carbono</td>
-                    <td><input id="hidratosDeCarbono" class="input" type="text" 
-                        value="<%= datosSesion?.manejoNutricional?.hidratosDeCarbono || '' %>" required/></td>
+                    <td>Proteínas (g/día)</td>
+                    <td><input class="input" type="text" id="proteinas" required></td>
                   </tr>
                   <tr>
-                    <td>Lípidos</td>
-                    <td><input id="lipidos" class="input" type="text" name="manejo[Lípidos]" placeholder="..." 
-                      value="<%= datosSesion?.manejoNutricional?.lipidos || '' %>" required/></td>
+                    <td>Lípidos (g/día)</td>
+                    <td><input class="input" type="text" id="lipidos" required></td>
                   </tr>
                   <tr>
-                    <td>Proteínas</td>
-                    <td><input id="proteinas" class="input" type="text" name="manejo[Proteínas]" placeholder="..." 
-                      value="<%= datosSesion?.manejoNutricional?.proteinas || '' %>" required/></td>
+                    <td>Hidratos de carbono (g/día)</td>
+                    <td><input class="input" type="text" id="hidratosCarbono" required></td>
                   </tr>
                   <tr>
-                    <td>Fibra</td>
-                    <td><input id="fibra" class="input" type="text" name="manejo[Fibra]" placeholder="..."
-                      value="<%= datosSesion?.manejoNutricional?.fibra || '' %>" required/></td>
+                    <td>Fibra (g/día)</td>
+                    <td><input class="input" type="text" id="fibra" required></td>
                   </tr>
                   <tr>
-                    <td>Agua</td>
-                    <td><input id="agua" class="input" type="text" name="manejo[Agua]" placeholder="..." 
-                      value="<%= datosSesion?.manejoNutricional?.agua || '' %>" required/></td>
+                    <td>Agua (ml/día)</td>
+                    <td><input class="input" type="text" id="agua" required></td>
                   </tr>
                 </tbody>
               </table>
@@ -333,20 +209,8 @@
     </div>
 
     <!-- Paginación -->
-    <div class="entrevista-pagination has-text-centered mt-4">
-      <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-        <ul class="pagination-list">
-          <% for(let i = 1; i <= 2; i++) { %>
-            <li>
-              <a class="pagination-link <%= i === 1 ? 'is-current' : '' %>" 
-                data-page="<%= i %>" 
-                aria-label="Ir a página <%= i %>">
-                <%= i %>
-              </a>
-            </li>
-          <% } %>
-        </ul>
-      </nav>
+    <div class="entrevista-pagination">
+      <%- include('partials/pagination', { totalPaginas: 3, paginaActual: 1 }) %>
     </div>
   </main>
 

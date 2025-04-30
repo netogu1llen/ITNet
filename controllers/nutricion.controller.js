@@ -3,8 +3,6 @@ const { decrypt } = require('../util/encryptData');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-const ejs = require('ejs');
-const puppeteer = require('puppeteer');
 
 // Configuración de Multer para guardar archivos localmente
 const storage = multer.diskStorage({
@@ -101,9 +99,6 @@ exports.getExpedienteNutricion = async (req, res) => {
             return res.status(404).json({ mensaje: 'Expediente no encontrado.' });
         }
 
-        // Obtener el expediente completo para tener el ID
-        const expediente = await Nutricion.obtenerPorId(idExpediente);
-
         const datosGeneralesPaciente = {
             nombres: decrypt(datosGeneralesPacienteEncriptados.nombres || ''),
             apellidoP: decrypt(datosGeneralesPacienteEncriptados.apellidoP || ''),
@@ -148,7 +143,6 @@ exports.getExpedienteNutricion = async (req, res) => {
         });
 
         res.render('expediente_nutricion', {
-            expediente, // Añadir el objeto expediente completo
             datosGeneralesPaciente,
             antecedentesHeredofamiliares: antecedentes.heredofamiliares,
             antecedentesPersonales: antecedentes.personales,
@@ -156,7 +150,7 @@ exports.getExpedienteNutricion = async (req, res) => {
             datosAntropometricos,
             manejoNutricional: manejoNutricionalData.manejoNutricional,
             documentosHistorial: documentosHistorialFormateados,
-            nutricional1
+            nutricional1 // Pasar las sesiones al frontend
         });
     } catch (error) {
         console.error('Error al obtener el expediente nutricional:', error.message);
@@ -184,120 +178,32 @@ function calcularEdad(fechaNacimiento) {
 }
 
 // Descargar documento
-// Modificar la función descargarDocumento en controllers/nutricion.controller.js
 exports.descargarDocumento = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const tipo = req.query.tipo;
-        const numSesion = req.query.numSesion;
-        
-        // Primero intentar obtener como documento PDF almacenado
-        let documento = await Nutricion.obtenerDocumentoPorId(id);
+  try {
+      const id = req.params.id;
 
-        if (!documento) {
-            console.log('No se encontró documento PDF, intentando generar expediente...');
-            
-            // Determinar el tipo de documento a generar
-            if (tipo === 'NUTRICIONAL_V1' || tipo === 'NUTRICIONAL_V2') {
-                // Obtener datos para el expediente
-                const idExpediente = req.query.expediente; // Nuevo parámetro
-                
-                if (!idExpediente) {
-                    return res.status(400).send('ID de expediente requerido');
-                }
-                
-                // Obtener datos del expediente
-                const expediente = await Nutricion.obtenerPorId(idExpediente);
-                
-                if (!expediente) {
-                    return res.status(404).send('Expediente no encontrado');
-                }
+      // Buscar el documento en la base de datos usando el modelo de Nutrición
+      let documento = await Nutricion.obtenerDocumentoPorId(id);
 
-                // Obtener datos completos de la sesión
-                const datosSesion = await Nutricion.obtenerDatosSesionCompletos(idExpediente, numSesion);
-                
-                if (!datosSesion) {
-                    return res.status(404).send('Sesión no encontrada');
-                }
-                
-                // Desencriptar datos del paciente para el PDF
-                const datosGeneralesPaciente = {
-                    nombres: expediente.nombres,
-                    apellidoP: expediente.apellidoP,
-                    apellidoM: expediente.apellidoM,
-                    fechaNacimiento: expediente.fechaNacimiento,
-                    edadPaciente: calcularEdad(expediente.fechaNacimiento)
-                };
+      if (!documento) {
+          console.error('Documento no encontrado en la base de datos');
+          return res.status(404).send('Documento no encontrado');
+      }
 
-                // Generar HTML según el tipo de documento
-                let html;
-                if (tipo === 'NUTRICIONAL_V1') {
-                    // Usar plantilla para Historia Clínica V1
-                    html = await ejs.renderFile(
-                        path.join(__dirname, '../views/pdf/historiaClinicaV1.ejs'),
-                        { 
-                            datosSesion, 
-                            datosGeneralesPaciente, 
-                            fechaGeneracion: new Date().toLocaleDateString() 
-                        }
-                    );
-                } else if (tipo === 'NUTRICIONAL_V2') {
-                    // Para V2, obtener también la última sesión V1 como referencia
-                    const datosSesionV1 = await Nutricion.obtenerUltimaSesionV1(idExpediente);
-                    
-                    // Usar plantilla para Historia Clínica V2
-                    html = await ejs.renderFile(
-                        path.join(__dirname, '../views/pdf/historiaClinicaV2.ejs'),
-                        { 
-                            datosSesion, 
-                            datosSesionV1,
-                            datosGeneralesPaciente,
-                            fechaGeneracion: new Date().toLocaleDateString() 
-                        }
-                    );
-                } else {
-                    return res.status(400).send('Tipo de documento no válido');
-                }
+      // Si se encontró un documento, intentar descargarlo desde el sistema de archivos
+      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${id}.pdf`);
 
-                // Generar PDF con Puppeteer
-                const browser = await puppeteer.launch({
-                    args: ['--no-sandbox', '--disable-setuid-sandbox']
-                });
-                const page = await browser.newPage();
-                await page.setContent(html, { waitUntil: 'networkidle0' });
-                
-                const pdfBuffer = await page.pdf({
-                    format: 'A4',
-                    margin: {
-                        top: "20px",
-                        bottom: "20px",
-                        left: "20px",
-                        right: "20px"
-                    }
-                });
+      if (fs.existsSync(rutaDocumento)) {
+          return res.download(rutaDocumento);
+      } else {
+          console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
+          return res.status(404).send('Archivo no encontrado');
+      }
 
-                await browser.close();
-
-                // Enviar el PDF generado
-                res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader('Content-Disposition', `attachment; filename=${tipo === 'NUTRICIONAL_V1' ? 'historial_clinico_v1' : 'historial_clinico_v2'}.pdf`);
-                return res.end(pdfBuffer);
-            }
-        }
-
-        // Si es un documento almacenado, enviarlo desde el sistema de archivos
-        const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo);
-        if (fs.existsSync(rutaDocumento)) {
-            return res.download(rutaDocumento);
-        } else {
-            console.error('Archivo no encontrado:', rutaDocumento);
-            return res.status(404).send('Archivo no encontrado');
-        }
-
-    } catch (error) {
-        console.error('Error al procesar la solicitud de descarga:', error);
-        return res.status(500).send('Error interno del servidor');
-    }
+  } catch (error) {
+      console.error('Error al procesar la solicitud de descarga:', error);
+      return res.status(500).send('Error interno del servidor');
+  }
 };
 
 // Ver documento
@@ -378,13 +284,13 @@ exports.eliminarDocumento = async (req, res) => {
       const tipo = req.query.tipo; // Obtener el tipo desde query parameters
       console.log(`Intentando eliminar ${tipo || 'elemento'} con ID:`, id);
 
-      // Verificación de seguridad: no permitir eliminar historiales V1
-      if (tipo === 'NUTRICIONAL_V1') {
-          return res.status(403).json({ error: 'No está permitido eliminar Historiales Nutricionales V1' });
-      }
-
       // Determinar qué eliminar según el tipo
-      if (tipo === 'NUTRICIONAL_V2') {
+      if (tipo === 'NUTRICIONAL_V1') {
+          // Eliminar historial nutricional V1
+          await Nutricion.eliminarHistorialV1(id);
+          return res.json({ message: 'Historial Nutricional V1 eliminado correctamente' });
+      } 
+      else if (tipo === 'NUTRICIONAL_V2') {
           // Eliminar historial nutricional V2
           await Nutricion.eliminarHistorialV2(id);
           return res.json({ message: 'Historial Nutricional V2 eliminado correctamente' });
@@ -568,66 +474,6 @@ exports.checkAndRedirectHistoriaClinica = async (req, res) => {
     }
 };
 
-exports.guardarHistoriaClinicaV2 = async (req, res) => {
-    try {
-        const datos = req.body;
-        console.log('Datos recibidos para guardar en historiaClinicaV2:', datos);
-
-        // Validar datos requeridos
-        if (!datos.IDExpediente || !datos.numSesion) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'ID de expediente y número de sesión son requeridos' 
-            });
-        }
-
-        // Insertar datos usando el método del modelo
-        await Nutricion.insertarHistoriaClinicaV2(datos);
-
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Error guardando datos de historiaClinicaV2:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error en el servidor al guardar la historia clínica V2' 
-        });
-    }
-};
-
-// Añadir el método que falta
-exports.editHistoriaClinicaV1 = async (req, res) => {
-    try {
-        const IDExpediente = req.params.id;
-        const numSesion = req.query.numSesion;
-
-        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
-            return res.status(400).send('ID del expediente no válido.');
-        }
-
-        const expediente = await Nutricion.obtenerPorId(IDExpediente);
-        if (!expediente) {
-            return res.status(404).send('Expediente no encontrado.');
-        }
-
-        // Obtener los datos de la sesión específica
-        const datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
-        if (!datosSesion) {
-            return res.status(404).send('Sesión no encontrada.');
-        }
-
-        // Renderizar el formulario en modo edición
-        res.render('historiaClinica', { 
-            expediente, 
-            datosSesion,
-            modoEdicion: true
-        });
-
-    } catch (error) {
-        console.error('Error al renderizar formulario de edición:', error);
-        res.status(500).send('Error interno al mostrar el formulario de edición');
-    }
-};
-
 // Nuevo controlador específico para crear V1
 exports.createHistoriaClinicaV1 = async (req, res) => {
     try {
@@ -664,6 +510,38 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
             return res.status(400).send('ID del expediente no válido.');
         }
 
+        // Verificar si existe una Historia Clínica V1
+        const existeV1 = await Nutricion.verificarExistenciaHistoriaV1(IDExpediente);
+        
+        if (!existeV1) {
+            return res.redirect(`/nutricion/historiaClinica/${IDExpediente}`);
+        }
+
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        const datosSesionV1 = await Nutricion.obtenerUltimaSesionV1(IDExpediente);
+
+        res.render('historiaClinicaV2', {
+            expediente,
+            datosSesionV1,
+            datosSesion: null, // Para futuras sesiones V2
+            modoEdicion: !!numSesion
+        });
+    } catch (error) {
+        console.error('Error al renderizar historia clínica V2:', error);
+        res.status(500).send('Error interno al mostrar la historia clínica V2');
+    }
+};
+
+// Nuevo controlador para editar V1
+exports.editHistoriaClinicaV1 = async (req, res) => {
+    try {
+        const IDExpediente = req.params.id;
+        const numSesion = req.query.numSesion;
+
+        if (!IDExpediente || isNaN(parseInt(IDExpediente))) {
+            return res.status(400).send('ID del expediente no válido.');
+        }
+
         const expediente = await Nutricion.obtenerPorId(IDExpediente);
         if (!expediente) {
             return res.status(404).send('Expediente no encontrado.');
@@ -671,45 +549,28 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
 
         let datosSesion = null;
         if (numSesion) {
-            datosSesion = await Nutricion.obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion);
-            
-            // Transformar objetivos al formato esperado
-            if (datosSesion && Array.isArray(datosSesion.objetivo)) {
-                datosSesion.objetivoNutricional = datosSesion.objetivo.map(obj => ({ objetivo: obj }));
-            }
-
-            // Asegurarse que el diagnóstico tenga el formato correcto
-            if (datosSesion && datosSesion.diagnosticoEvolucion) {
-                datosSesion.diagnosticoEvolucion = {
-                    diagnosticoEvolucion: datosSesion.diagnosticoEvolucion
-                };
-            }
+            datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
         }
 
-        // Para mostrar datos de la última sesión V1
-        const ultimaSesionV1 = await Nutricion.obtenerUltimaSesionV1(IDExpediente);
-
-        res.render('historiaClinicaV2', {
-            expediente,
+        res.render('historiaClinica', { 
+            expediente, 
             datosSesion,
-            datosSesionV1: ultimaSesionV1,
-            modoEdicion: !!numSesion
+            modoEdicion: true
         });
 
     } catch (error) {
-        console.error('Error al renderizar historia clínica V2:', error);
-        res.status(500).send('Error interno al mostrar la historia clínica V2');
+        console.error('Error al renderizar formulario de edición:', error);
+        res.status(500).send('Error interno al mostrar el formulario');
     }
 };
 
-// Agregar método para actualizar V2
-exports.actualizarHistoriaClinicaV2 = async (req, res) => {
+exports.guardarHistoriaClinicaV2 = async (req, res) => {
     try {
         const datos = req.body;
-        await Nutricion.actualizarHistoriaClinicaV2(datos);
-        res.sendStatus(200); // Solo envía código de estado 200 (OK)
+        await Nutricion.insertarHistoriaClinicaV2(datos);
+        res.json({ success: true });
     } catch (error) {
-        console.error('Error actualizando historia clínica V2:', error);
-        res.sendStatus(500); // Solo envía código de estado 500 (Error)
+        console.error('Error guardando datos de historiaClinicaV2:', error);
+        res.status(500).json({ success: false, message: 'Error en el servidor' });
     }
 };

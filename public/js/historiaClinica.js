@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <td><input class="input" type="text" name="parametroBioquimico[]" placeholder="Parámetro..." required></td>
       <td><input class="input" type="text" name="valorReferencia[]" placeholder="Valor de referencia..." required></td>
       <td><input class="input" type="date" name="fechaParametro[]" required></td>
-      <td><button type="button" class="button is-cancel btn-eliminar-fila">-</button></td>
+      <td><button type="button" class="button is-danger btn-eliminar-fila">-</button></td>
     `;
 
     tabla.appendChild(nuevaFila);
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <input name="objetivosNutricionales[]" class="input" type="text" placeholder="Objetivo..." required>
       </td>
       <td>
-        <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
+        <button type="button" class="button is-danger btn-eliminar-fila">-</button>
       </td>
     `;
 
@@ -70,96 +70,17 @@ document.addEventListener('DOMContentLoaded', function() {
   configurarBotonesEliminarFila();
 });
 
-function validarFormulario() {
-    let errores = [];
-    // Objeto para mapear IDs a nombres más amigables
-    const nombresCampos = {
-        'numSesion': 'Número de Sesión',
-        'diabetes': 'Diabetes',
-        'cancer': 'Cáncer',
-        'dislipidemia': 'Dislipidemia',
-        'obesidad': 'Obesidad',
-        'anemia': 'Anemia',
-        'hipertensionArterial': 'Hipertensión Arterial',
-        'pesoNacer': 'Peso al Nacer',
-        'tallaNacer': 'Talla al Nacer',
-        'alimentacionRecibida': 'Alimentación Recibida',
-        'sdg': 'SDG',
-        'complicaciones': 'Complicaciones',
-        'tiempo': 'Tiempo',
-        'edadAlimentacionComplementaria': 'Edad de Alimentación Complementaria',
-        'alimentosPrimerAnio': 'Alimentos Primer Año',
-        'peso': 'Peso',
-        'talla': 'Talla'
-    };
-    
-    const camposRequeridos = document.querySelectorAll('[required]');
-    
-    camposRequeridos.forEach(campo => {
-        if (!campo.value.trim()) {
-            // Usar el nombre amigable si existe, sino usar el ID o un texto genérico
-            const nombreCampo = nombresCampos[campo.id] || campo.id || 'requerido';
-            errores.push(`El campo "${nombreCampo}" está vacío`);
-            campo.classList.add('is-danger');
-        } else {
-            campo.classList.remove('is-danger');
-        }
-    });
-
-    // Validaciones específicas para campos numéricos
-    const peso = document.getElementById('peso');
-    const talla = document.getElementById('talla');
-
-    if (peso && peso.value && (isNaN(peso.value) || parseFloat(peso.value) <= 0)) {
-        errores.push('El peso debe ser un número mayor a 0');
-        peso.classList.add('is-danger');
-    }
-    if (talla && talla.value && (isNaN(talla.value) || parseFloat(talla.value) <= 0)) {
-        errores.push('La talla debe ser un número mayor a 0');
-        talla.classList.add('is-danger');
-    }
-
-    // Validar tablas dinámicas
-    const tablaIndicadores = document.getElementById('tabla-indicadores');
-    if (tablaIndicadores) {
-        const filasIndicadores = tablaIndicadores.querySelectorAll('tr');
-        filasIndicadores.forEach((fila, index) => {
-            if (index > 0) { // Saltamos la fila de encabezado
-                const inputs = fila.querySelectorAll('input[required]');
-                inputs.forEach(input => {
-                    if (!input.value.trim()) {
-                        errores.push(`Falta completar información en la fila ${index} de Indicadores Bioquímicos`);
-                        input.classList.add('is-danger');
-                    }
-                });
-            }
-        });
-    }
-
-    return errores;
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     const modoEdicion = document.getElementById('idExpediente').dataset.modoEdicion === 'true';
     const botonesGuardar = document.querySelectorAll('.btn-guardar');
 
     if (botonesGuardar.length > 0) {
         botonesGuardar.forEach(boton => {
+            // Actualizar el texto del botón
             boton.textContent = modoEdicion ? 'Actualizar' : 'Guardar';
             
             boton.addEventListener('click', async function (e) {
                 e.preventDefault();
-
-                const errores = validarFormulario();
-                if (errores.length > 0) {
-                    Swal.fire({
-                        title: 'Campos Incompletos',
-                        html: errores.join('<br>'),
-                        icon: 'warning',
-                        confirmButtonText: 'Entendido'
-                    });
-                    return;
-                }
 
                 const datos = recopilarDatosFormulario();
                 const url = modoEdicion ? 
@@ -199,33 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
-});
-
-// Agregar funcionalidad al botón de cancelar
-document.addEventListener('DOMContentLoaded', function() {
-    const botonesCancelar = document.querySelectorAll('.btn-cancelar');
-    
-    botonesCancelar.forEach(boton => {
-        boton.addEventListener('click', function() {
-            Swal.fire({
-                title: "Estás a punto de cancelar la operación",
-                text: "¿Estás seguro?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí",
-                cancelButtonText: "No"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire("No se guardaron los cambios", "", "info").then(() => {
-                        const idExpediente = document.getElementById('idExpediente').value;
-                        window.location.href = `/nutricion/documentos/${idExpediente}`;
-                    });
-                }
-            });
-        });
-    });
 });
 
 function recopilarDatosFormulario() {
