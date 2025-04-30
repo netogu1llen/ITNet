@@ -101,11 +101,11 @@
                       %>
                       <tr>
                         <td>
-                          <input class="input" type="text" name="parametroBioquimico[]" 
+                          <input class="input" required maxlength="30" type="text" name="parametroBioquimico[]" 
                             value="<%= indicador.parametro %>" placeholder="Parámetro..." required>
                         </td>
                         <td>
-                          <input class="input" type="text" name="valorReferencia[]" 
+                          <input class="input" required maxlength="30" type="text" name="valorReferencia[]" 
                             value="<%= indicador.valorReferencia %>" placeholder="Valor de referencia..." required>
                         </td>
                         <td>
@@ -159,22 +159,22 @@
                 <tbody>
                   <tr>
                     <td>Altura (m)</td>
-                    <td><input id="talla" class="input" type="text" 
+                    <td><input id="talla" class="input" type="number" step="0.1"  placeholder="Medida..."
                         value="<%= datosSesion?.evaluacionAntropometrica?.talla%>" required/></td>
                   </tr>
                   <tr>
                     <td>Peso (kg)</td>
-                    <td><input id="peso" class="input" type="text" 
+                    <td><input id="peso" class="input" type="number" step="0.1" placeholder="Medida..."
                         value="<%= datosSesion?.evaluacionAntropometrica?.peso || '' %>" required/></td>
                   </tr>
                   <tr>
                     <td>Circunferencia cintura (cm)</td>
-                    <td><input id="circunferenciaCintura" class="input" type="text" name="medida[Circunferencia cintura (cm)]" placeholder="Medida..."
+                    <td><input id="circunferenciaCintura" class="input" type="number" step="0.1" name="medida[Circunferencia cintura (cm)]" placeholder="Medida..."
                       value="<%= datosSesion?.evaluacionAntropometrica?.circunferenciaCintura || '' %>" required/></td>
                   </tr>
                   <tr>
                     <td>Circunferencia cadera (cm)</td>
-                    <td><input id="circunferenciaCadera" class="input" type="text" name="medida[Circunferencia cadera (cm)]" placeholder="Medida..."
+                    <td><input id="circunferenciaCadera" class="input" type="number" step="0.1" name="medida[Circunferencia cadera (cm)]" placeholder="Medida..."
                       value="<%= datosSesion?.evaluacionAntropometrica?.circunferenciaCadera || '' %>" required/></td>
                   </tr>
                 </tbody>
@@ -214,7 +214,7 @@
                 <tbody>
                   <tr>
                     <td class="has-text-weight-semibold">Diagnósticos actualizados:</td>
-                    <td><textarea id="diagnosticoEvolucion" class="textarea" required>
+                    <td><textarea id="diagnosticoEvolucion" required maxlength="60"class="textarea" required> 
                       <%= datosSesion?.diagnosticoEvolucion?.diagnosticoEvolucion || '' %>
                   </textarea></td>
                   </tr>
@@ -241,7 +241,7 @@
                     <% datosSesion.objetivoNutricional.forEach(objetivo => { %>
                       <tr>
                         <td>
-                          <input class="input" type="text" name="objetivosNutricionales[]" 
+                          <input class="input" type="text" required maxlength="60" name="objetivosNutricionales[]" 
                             value="<%= objetivo.objetivo %>" placeholder="Objetivo..." required>
                         </td>
                         <td>
@@ -253,7 +253,7 @@
                     <!-- Fila por defecto cuando no hay datos -->
                     <tr>
                       <td>
-                        <input class="input" type="text" name="objetivosNutricionales[]" placeholder="Objetivo..." required>
+                        <input class="input" type="text" required maxlength="60" name="objetivosNutricionales[]" placeholder="Objetivo..." required>
                       </td>
                       <td>
                         <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
@@ -281,32 +281,32 @@
                 <tbody>
                   <tr>
                     <td>Energía (kcal)</td>
-                    <td><input id="energia" class="input" type="text" 
+                    <td><input id="energia" class="input" type="number" step="0.1" placeholder="Valor..."
                         value="<%= datosSesion?.manejoNutricional?.energia || '' %>" required/></td>
                   </tr>
                   <tr>
-                    <td>Hidratos de carbono</td>
-                    <td><input id="hidratosDeCarbono" class="input" type="text" 
+                    <td>Hidratos de carbono (g)</td>
+                    <td><input id="hidratosDeCarbono" class="input" type="number" step="0.1" placeholder="Valor..."
                         value="<%= datosSesion?.manejoNutricional?.hidratosDeCarbono || '' %>" required/></td>
                   </tr>
                   <tr>
-                    <td>Lípidos</td>
-                    <td><input id="lipidos" class="input" type="text" 
+                    <td>Lípidos  (g)</td>
+                    <td><input id="lipidos" class="input" type="number" step="0.1" placeholder="Valor..."
                         value="<%= datosSesion?.manejoNutricional?.lipidos || '' %>" required/></td>
                   </tr>
                   <tr>
-                    <td>Proteínas</td>
-                    <td><input id="proteinas" class="input" type="text" 
+                    <td>Proteínas (g)</td>
+                    <td><input id="proteinas" class="input" type="number" step="0.1" placeholder="Valor..."
                         value="<%= datosSesion?.manejoNutricional?.proteinas || '' %>" required/></td>
                   </tr>
                   <tr>
-                    <td>Fibra</td>
-                    <td><input id="fibra" class="input" type="text" 
+                    <td>Fibra (g)</td>
+                    <td><input id="fibra" class="input" type="number" step="0.1" placeholder="Valor..."
                         value="<%= datosSesion?.manejoNutricional?.fibra || '' %>" required/></td>
                   </tr>
                   <tr>
-                    <td>Agua</td>
-                    <td><input id="agua" class="input" type="text" 
+                    <td>Agua (ml)</td>
+                    <td><input id="agua" class="input" type="number" step="0.1" placeholder="Valor..."
                         value="<%= datosSesion?.manejoNutricional?.agua || '' %>" required/></td>
                   </tr>
                 </tbody>
