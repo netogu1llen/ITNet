@@ -4,6 +4,7 @@ const db = require('../util/database');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const s3 = require('../util/s3Client');
 
 // Modificar el método getPacientes para usar nvEscolar en lugar de enfermedades
 
@@ -103,7 +104,8 @@ const postRegistrarPaciente = async (req, res) => {
       estudioSocioeconomico,
       grado,
       nvEscolar,
-      sangre
+      sangre,
+      sexo
     } = req.body;
 
     // Encriptar los campos sensibles
@@ -125,7 +127,8 @@ const postRegistrarPaciente = async (req, res) => {
       estudioSocioeconomico,
       grado,
       nvEscolar,
-      sangre
+      sangre,
+      sexo
     };
 
     const result = await Pacientes.registrarPaciente(pacienteEncriptado);
@@ -155,9 +158,9 @@ const postRegistrarPaciente = async (req, res) => {
 const getEditarPaciente = async (req, res) => {
   try {
     const idExpediente = req.params.id;
+    console.log("El id del expediente es: ", idExpediente)
     const datosPaciente = await Pacientes.getPaciente(idExpediente);
     let paciente = datosPaciente;
-
     // Desencriptar campos sensibles
     paciente.nombres = decrypt(paciente.nombres);
     paciente.apellidoP = decrypt(paciente.apellidoP);
@@ -170,6 +173,8 @@ const getEditarPaciente = async (req, res) => {
     paciente.cp = decrypt(paciente.cp);
     paciente.localidad = decrypt(paciente.localidad);
     paciente.numCasa = decrypt(paciente.numCasa);
+    paciente.sexo = paciente.sexo ? paciente.sexo : "";
+    console.log(paciente)
 
 
     res.render('editarPaciente', { datos: paciente});
@@ -205,7 +210,8 @@ const postEditarPaciente = async (req, res) => {
       estudioSocioeconomico,
       grado,
       nvEscolar,
-      sangre
+      sangre,
+      sexo
     } = req.body;
     const pacienteEncriptado = {
       nombres: encrypt(nombres).encryptedData,
@@ -226,17 +232,17 @@ const postEditarPaciente = async (req, res) => {
       grado,
       nvEscolar,
       sangre,
-      idExpediente,
-      modificadoPor: req.session.userId 
+      sexo,
+      idExpediente
     };
 
     await Pacientes.editarPaciente(pacienteEncriptado);
 
     const idUsuarioActual = req.session.userId;
-    await db.query(
+    /*await db.query(
       'UPDATE expediente SET modificadoPor = ?, fechaModificacion = NOW() WHERE IDExpediente = ?',
       [idUsuarioActual, idExpediente]
-    );
+    );*/
 
     res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
 
@@ -317,7 +323,6 @@ const desencriptarExpediente = (expediente) => {
 const obtenerExpediente = async (req, res) => {
   try {
       const { idExpediente } = req.params;
-
       // Obtener documentos
       const documentosAdjuntos = await Pacientes.obtenerDocumentosAdjuntos(idExpediente);
       const documentos = [...documentosAdjuntos];
@@ -361,150 +366,284 @@ const obtenerDocumentosPorExpediente = async (req, res) => {
   }
 };
 
-// Configuración de Multer para subir archivos
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-      cb(null, 'uploads/'); // Carpeta donde se guardarán los archivos
-  },
-  filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
+const upload = multer({ storage: multer.memoryStorage() });
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'application/pdf') {
-      cb(null, true); // Aceptar solo archivos PDF
-  } else {
-      cb(new Error('Solo se permiten archivos PDF.'));
-  }
-};
-
-const upload = multer({ storage, fileFilter });
-
-// Middleware para subir documentos
-const subirDocumentoMiddleware = [
+const subirDocumento = [
   upload.single('archivoDocumento'),
   async (req, res) => {
-      try {
-          const { nombreDocumento } = req.body;
-          const { IDExpediente } = req.params;
+    try {
+      const { nombreDocumento } = req.body;
+      const { IDExpediente } = req.params;
 
-          if (!req.file) {
-              return res.status(400).json({ error: 'Debe subir un archivo válido.' });
-          }
-
-          const ubicacion = req.file.path;
-          const fecha = new Date();
-          const eliminado = 0;
-
-          console.log('Subiendo documento:', {
-              IDExpediente,
-              nombre: nombreDocumento,
-              ubicacion,
-              fecha
-          });
-
-          // Guardar en la base de datos
-          const nuevoDocumento = await Pacientes.subirDocumento({
-              IDExpediente,
-              nombre: nombreDocumento,
-              ubicacion,
-              fecha,
-              eliminado
-          });
-
-          res.status(201).json({ message: 'Documento subido correctamente', documento: nuevoDocumento });
-      } catch (error) {
-          console.error('Error al subir el documento:', error);
-          res.status(500).json({ error: 'Error al subir el documento' });
+      if (!req.file || req.file.mimetype !== 'application/pdf') {
+        return res.status(400).json({ error: 'Debe subir un archivo PDF válido' });
       }
+
+      // Primero obtener los datos del paciente para crear la carpeta
+      const paciente = await Pacientes.getPaciente(IDExpediente);
+      
+      // Desencriptar nombres para crear el nombre de la carpeta
+      const nombres = decrypt(paciente.nombres);
+      const apellidoP = decrypt(paciente.apellidoP);
+      const apellidoM = decrypt(paciente.apellidoM);
+      
+      // Crear nombre de carpeta normalizado (sin espacios ni caracteres especiales)
+      const nombreCarpeta = `${apellidoP}_${apellidoM}_${nombres}`
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
+        .replace(/[^a-z0-9]/g, '_'); // Reemplazar caracteres especiales con _
+
+      // Crear la ruta completa del archivo
+      const fileName = `general/${nombreCarpeta}/${Date.now()}_${nombreDocumento.replace(/[^a-z0-9]/gi, '_')}`;
+      const fileKey = `${fileName}.pdf`;
+      
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: fileKey,
+        Body: req.file.buffer, // Usar el buffer directamente sin convertir a base64
+        ContentType: 'application/pdf',
+      };
+
+      // Subir archivo a S3
+      const data = await s3.upload(params).promise();
+
+      const nuevoDocumento = await Pacientes.subirDocumento({
+        IDExpediente,
+        nombre: nombreDocumento,
+        ubicacion: fileKey, // Guardar solo la Key en lugar de la URL completa
+        fecha: new Date(),
+        eliminado: 0
+      });
+
+      res.status(201).json({
+        mensaje: 'Documento subido exitosamente',
+        documento: nuevoDocumento
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error al subir el documento' });
+    }
   }
 ];
 
-// Descargar documento
-const descargarDocumento = async (req, res) => {
-  try {
-      const id = req.params.id;
-      const documento = await Pacientes.obtenerDocumentoPorId(id);
-
-      if (!documento) {
-          return res.status(404).send('Documento no encontrado');
-      }
-
-      // Intentar descargar desde el sistema de archivos
-      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${id}.pdf`);
-
-      if (fs.existsSync(rutaDocumento)) {
-          return res.download(rutaDocumento);
-      } else {
-          console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
-          return res.status(404).send('Archivo no encontrado');
-      }
-  } catch (error) {
-      console.error('Error al procesar la solicitud de descarga:', error);
-      return res.status(500).send('Error interno del servidor');
-  }
-};
-
-// Eliminar documento
-const eliminarDocumento = async (req, res) => {
-  try {
-      const { id } = req.params;
-      const tipo = req.query.tipo;
-      console.log(`Intentando eliminar documento con ID:`, id);
-
-      const documento = await Pacientes.obtenerDocumentoPorId(id);
-      if (documento) {
-          console.log('Documento encontrado:', documento);
-          if (documento.ubicacion) {
-              const filePath = path.join(__dirname, '..', documento.ubicacion);
-              if (fs.existsSync(filePath)) {
-                  console.log('Archivo encontrado pero no eliminado físicamente:', filePath);
-              }
-          }
-          await Pacientes.eliminarDocumento(id);
-          return res.json({ message: 'Documento eliminado correctamente' });
-      } else {
-          return res.status(404).json({ error: 'Documento no encontrado' });
-      }
-  } catch (error) {
-      console.error('Error al eliminar:', error);
-      res.status(500).json({ error: 'Error al eliminar el documento' });
-  }
-};
-
-// Ver documento (preview)
+// VER DOCUMENTO (INLINE)
 const verDocumento = async (req, res) => {
   try {
-      const documentoId = req.params.id;
-      console.log('verDocumento con id:', documentoId);
+    const { id } = req.params;
+    console.log(`Intentando visualizar documento con ID: ${id}`);
+    
+    const documento = await Pacientes.obtenerDocumentoPorId(id);
+    
+    if (!documento) {
+      console.error(`Documento con ID ${id} no encontrado en la base de datos`);
+      return res.status(404).send('Documento no encontrado en la base de datos');
+    }
+    
+    // Verificar ubicación en ambos campos posibles (ubicacion y nombreArchivo)
+    let rutaArchivo = documento.ubicacion;
+    
+    // Si no hay ubicación pero existe nombreArchivo, usar ese valor
+    if ((!rutaArchivo || rutaArchivo.trim() === '') && documento.nombreArchivo) {
+      console.log(`Usando nombreArchivo como alternativa: ${documento.nombreArchivo}`);
+      rutaArchivo = documento.nombreArchivo;
+    }
+    
+    // Verificación final de la ruta del archivo
+    if (!rutaArchivo || rutaArchivo.trim() === '') {
+      console.error(`Documento con ID ${id} no tiene ubicación definida. Datos del documento:`, documento);
+      return res.status(404).send('Documento sin ubicación válida');
+    }
+    
+    console.log(`Documento encontrado, ubicación: ${rutaArchivo}`);
+    
+    // Normalizar la key para S3
+    let key = rutaArchivo;
+    key = key.replace(/\\/g, '/');
+    
+    if (key.startsWith('http')) {
+      const url = new URL(key);
+      key = url.pathname.replace(/^\/+/, '');
+    }
+    
+    console.log(`Intentando obtener archivo de S3 con clave normalizada: ${key}`);
+    console.log(`Bucket: ${process.env.AWS_BUCKET_NAME}`);
+    
+    try {
+      const data = await s3.getObject({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key
+      }).promise();
       
-      // Buscar el documento en la base de datos
-      const documento = await Pacientes.obtenerDocumentoPorId(documentoId);
+      console.log(`Archivo recuperado de S3, tamaño: ${data.Body.length} bytes`);
       
-      if (!documento) {
-          console.error('Documento no encontrado en la base de datos');
-          return res.status(404).send('Documento no encontrado');
+      // Usar documento.nombre o documento.tipo para el nombre del archivo
+      const nombreArchivo = documento.nombre || documento.tipo || 'documento';
+      
+      res
+        .setHeader('Content-Type', 'application/pdf')
+        .setHeader('Content-Disposition', `inline; filename="${nombreArchivo}.pdf"`)
+        .send(data.Body);
+    } catch (s3Error) {
+      console.error(`Error de S3: ${s3Error.code} - ${s3Error.message}`);
+      if (s3Error.code === 'NoSuchKey') {
+        return res.status(404).send(`Archivo no encontrado en S3 (clave: ${key})`);
       }
-      
-      console.log('Documento encontrado:', documento);
-      
-      // Construir la ruta al archivo
-      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${documentoId}.pdf`);
-      
-      console.log('Intentando acceder al archivo en:', rutaDocumento);
-      
-      // Verificar si el archivo existe
-      if (fs.existsSync(rutaDocumento)) {
-          return res.sendFile(rutaDocumento);
-      } else {
-          console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
-          return res.status(404).send('Archivo no encontrado');
-      }
+      throw s3Error;
+    }
   } catch (error) {
-      console.error('Error al mostrar documento:', error);
-      return res.status(500).send('Error al procesar la solicitud');
+    console.error('Error al mostrar documento:', error);
+    res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+// DESCARGAR DOCUMENTO
+const descargarDocumento = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(`Intentando descargar documento con ID: ${id}`);
+    
+    const documento = await Pacientes.obtenerDocumentoPorId(id);
+    
+    if (!documento) {
+      console.error(`Documento con ID ${id} no encontrado en la base de datos`);
+      return res.status(404).json({ 
+        error: 'Documento no encontrado en la base de datos',
+        detalles: 'El documento solicitado no existe en nuestros registros'
+      });
+    }
+    
+    // Verificar ubicación en ambos campos posibles (ubicacion y nombreArchivo)
+    let rutaArchivo = documento.ubicacion;
+    
+    // Si no hay ubicación pero existe nombreArchivo, usar ese valor
+    if ((!rutaArchivo || rutaArchivo.trim() === '') && documento.nombreArchivo) {
+      console.log(`Usando nombreArchivo como alternativa: ${documento.nombreArchivo}`);
+      rutaArchivo = documento.nombreArchivo;
+    }
+    
+    // Verificación final de la ruta del archivo
+    if (!rutaArchivo || rutaArchivo.trim() === '') {
+      console.error(`Documento con ID ${id} no tiene ubicación definida. Datos del documento:`, documento);
+      return res.status(404).json({ 
+        error: 'Documento sin ubicación válida',
+        detalles: 'Este documento existe en la base de datos pero no tiene una ruta de archivo válida',
+        sugerencia: 'Por favor contacte al administrador para corregir el registro'
+      });
+    }
+    
+    console.log(`Documento encontrado, ubicación: ${rutaArchivo}`);
+    
+    // Normalizar la key para S3
+    let key = rutaArchivo;
+    key = key.replace(/\\/g, '/');
+    
+    if (key.startsWith('http')) {
+      const url = new URL(key);
+      key = url.pathname.replace(/^\/+/, '');
+    }
+    
+    console.log(`Intentando obtener archivo de S3 con clave normalizada: ${key}`);
+    console.log(`Bucket: ${process.env.AWS_BUCKET_NAME}`);
+    
+    try {
+      const data = await s3.getObject({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key
+      }).promise();
+      
+      console.log(`Archivo recuperado de S3, tamaño: ${data.Body.length} bytes`);
+      
+      // Usar documento.nombre o documento.tipo para el nombre del archivo
+      const nombreDescarga = documento.nombre || documento.tipo || 'documento';
+      
+      res
+        .setHeader('Content-Type', 'application/pdf')
+        .setHeader('Content-Disposition', `attachment; filename="${nombreDescarga}.pdf"`)
+        .send(data.Body);
+    } catch (s3Error) {
+      console.error(`Error de S3: ${s3Error.code} - ${s3Error.message}`);
+      if (s3Error.code === 'NoSuchKey') {
+        return res.status(404).json({ 
+          error: `Archivo no encontrado en S3`,
+          detalles: `La clave ${key} no existe en el bucket ${process.env.AWS_BUCKET_NAME}`,
+          sugerencia: 'El archivo puede haber sido eliminado del almacenamiento'
+        });
+      }
+      throw s3Error;
+    }
+  } catch (error) {
+    console.error('Error al descargar documento:', error);
+    res.status(500).json({ 
+      error: 'Error al procesar la solicitud de descarga',
+      mensaje: error.message
+    });
+  }
+};
+
+// ELIMINAR DOCUMENTO
+const eliminarDocumento = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('1. Iniciando eliminación de documento:', { id });
+
+    const documento = await Pacientes.obtenerDocumentoPorId(id);
+    console.log('2. Documento encontrado en BD:', documento);
+
+    // Verificar ubicación en ambos campos posibles (ubicacion y nombreArchivo)
+    let key = documento?.ubicacion || documento?.nombreArchivo;
+    
+    if (!key) {
+      console.log('3. Error: Documento no tiene ubicación ni nombreArchivo');
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    console.log('4. Key original:', key);
+
+    // Extraer la key del path de S3
+    if (key.includes('amazonaws.com')) {
+      key = key.split('.com/')[1];
+      console.log('5. Key después de procesar URL:', key);
+    }
+
+    console.log('6. Intentando eliminar de S3:', {
+      bucket: process.env.AWS_BUCKET_NAME,
+      key: key
+    });
+
+    const deleteParams = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: key
+    };
+
+    const deleteResult = await s3.deleteObject(deleteParams).promise();
+    console.log('7. Resultado de eliminación en S3:', deleteResult);
+
+    const dbResult = await Pacientes.eliminarDocumento(id);
+    console.log('8. Resultado de eliminación en BD:', dbResult);
+
+    res.json({ 
+      message: 'Documento eliminado correctamente',
+      s3Result: deleteResult,
+      dbResult: dbResult
+    });
+
+  } catch (error) {
+    console.error('9. Error en eliminarDocumento:', {
+      code: error.code,
+      message: error.message,
+      stack: error.stack
+    });
+
+    const status = error.code === 'NoSuchKey' ? 404 : 500;
+    const msg = error.code === 'NoSuchKey'
+      ? 'Archivo no encontrado en S3'
+      : 'Error al eliminar el documento';
+      
+    res.status(status).json({ 
+      error: msg,
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -517,7 +656,7 @@ module.exports = {
   getPacientes,
   obtenerExpediente,
   obtenerDocumentosPorExpediente,
-  subirDocumentoMiddleware,
+  subirDocumento,
   descargarDocumento,
   eliminarDocumento,
   verDocumento
