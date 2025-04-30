@@ -403,6 +403,77 @@ const subirDocumento = [
     }
   }
 ];
+
+// VER DOCUMENTO (INLINE)
+const verDocumento = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(`Intentando visualizar documento con ID: ${id}`);
+    
+    const documento = await Pacientes.obtenerDocumentoPorId(id);
+    
+    if (!documento) {
+      console.error(`Documento con ID ${id} no encontrado en la base de datos`);
+      return res.status(404).send('Documento no encontrado en la base de datos');
+    }
+    
+    // Verificar ubicación en ambos campos posibles (ubicacion y nombreArchivo)
+    let rutaArchivo = documento.ubicacion;
+    
+    // Si no hay ubicación pero existe nombreArchivo, usar ese valor
+    if ((!rutaArchivo || rutaArchivo.trim() === '') && documento.nombreArchivo) {
+      console.log(`Usando nombreArchivo como alternativa: ${documento.nombreArchivo}`);
+      rutaArchivo = documento.nombreArchivo;
+    }
+    
+    // Verificación final de la ruta del archivo
+    if (!rutaArchivo || rutaArchivo.trim() === '') {
+      console.error(`Documento con ID ${id} no tiene ubicación definida. Datos del documento:`, documento);
+      return res.status(404).send('Documento sin ubicación válida');
+    }
+    
+    console.log(`Documento encontrado, ubicación: ${rutaArchivo}`);
+    
+    // Normalizar la key para S3
+    let key = rutaArchivo;
+    key = key.replace(/\\/g, '/');
+    
+    if (key.startsWith('http')) {
+      const url = new URL(key);
+      key = url.pathname.replace(/^\/+/, '');
+    }
+    
+    console.log(`Intentando obtener archivo de S3 con clave normalizada: ${key}`);
+    console.log(`Bucket: ${process.env.AWS_BUCKET_NAME}`);
+    
+    try {
+      const data = await s3.getObject({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key
+      }).promise();
+      
+      console.log(`Archivo recuperado de S3, tamaño: ${data.Body.length} bytes`);
+      
+      // Usar documento.nombre o documento.tipo para el nombre del archivo
+      const nombreArchivo = documento.nombre || documento.tipo || 'documento';
+      
+      res
+        .setHeader('Content-Type', 'application/pdf')
+        .setHeader('Content-Disposition', `inline; filename="${nombreArchivo}.pdf"`)
+        .send(data.Body);
+    } catch (s3Error) {
+      console.error(`Error de S3: ${s3Error.code} - ${s3Error.message}`);
+      if (s3Error.code === 'NoSuchKey') {
+        return res.status(404).send(`Archivo no encontrado en S3 (clave: ${key})`);
+      }
+      throw s3Error;
+    }
+  } catch (error) {
+    console.error('Error al mostrar documento:', error);
+    res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
 // DESCARGAR DOCUMENTO
 const descargarDocumento = async (req, res) => {
   try {
@@ -491,104 +562,65 @@ const descargarDocumento = async (req, res) => {
 const eliminarDocumento = async (req, res) => {
   try {
     const { id } = req.params;
-    const documento = await Pacientes.obtenerDocumentoPorId(id);
+    console.log('1. Iniciando eliminación de documento:', { id });
 
-    if (!documento?.ubicacion) {
+    const documento = await Pacientes.obtenerDocumentoPorId(id);
+    console.log('2. Documento encontrado en BD:', documento);
+
+    // Verificar ubicación en ambos campos posibles (ubicacion y nombreArchivo)
+    let key = documento?.ubicacion || documento?.nombreArchivo;
+    
+    if (!key) {
+      console.log('3. Error: Documento no tiene ubicación ni nombreArchivo');
       return res.status(404).json({ error: 'Documento no encontrado' });
     }
 
-    let key = documento.ubicacion;
-    if (key.startsWith('http')) {
-      const url = new URL(key);
-      key = url.pathname.replace(/^\/+/, '');
+    console.log('4. Key original:', key);
+
+    // Extraer la key del path de S3
+    if (key.includes('amazonaws.com')) {
+      key = key.split('.com/')[1];
+      console.log('5. Key después de procesar URL:', key);
     }
 
-    await s3.deleteObject({
+    console.log('6. Intentando eliminar de S3:', {
+      bucket: process.env.AWS_BUCKET_NAME,
+      key: key
+    });
+
+    const deleteParams = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: key
-    }).promise();
+    };
 
-    await Pacientes.eliminarDocumento(id);
+    const deleteResult = await s3.deleteObject(deleteParams).promise();
+    console.log('7. Resultado de eliminación en S3:', deleteResult);
 
-    res.json({ message: 'Documento eliminado correctamente' });
+    const dbResult = await Pacientes.eliminarDocumento(id);
+    console.log('8. Resultado de eliminación en BD:', dbResult);
+
+    res.json({ 
+      message: 'Documento eliminado correctamente',
+      s3Result: deleteResult,
+      dbResult: dbResult
+    });
 
   } catch (error) {
-    console.error('Error al eliminar documento:', error);
+    console.error('9. Error en eliminarDocumento:', {
+      code: error.code,
+      message: error.message,
+      stack: error.stack
+    });
+
     const status = error.code === 'NoSuchKey' ? 404 : 500;
     const msg = error.code === 'NoSuchKey'
       ? 'Archivo no encontrado en S3'
       : 'Error al eliminar el documento';
-    res.status(status).json({ error: msg });
-  }
-};
-
-// VER DOCUMENTO (INLINE)
-const verDocumento = async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(`Intentando visualizar documento con ID: ${id}`);
-    
-    const documento = await Pacientes.obtenerDocumentoPorId(id);
-    
-    if (!documento) {
-      console.error(`Documento con ID ${id} no encontrado en la base de datos`);
-      return res.status(404).send('Documento no encontrado en la base de datos');
-    }
-    
-    // Verificar ubicación en ambos campos posibles (ubicacion y nombreArchivo)
-    let rutaArchivo = documento.ubicacion;
-    
-    // Si no hay ubicación pero existe nombreArchivo, usar ese valor
-    if ((!rutaArchivo || rutaArchivo.trim() === '') && documento.nombreArchivo) {
-      console.log(`Usando nombreArchivo como alternativa: ${documento.nombreArchivo}`);
-      rutaArchivo = documento.nombreArchivo;
-    }
-    
-    // Verificación final de la ruta del archivo
-    if (!rutaArchivo || rutaArchivo.trim() === '') {
-      console.error(`Documento con ID ${id} no tiene ubicación definida. Datos del documento:`, documento);
-      return res.status(404).send('Documento sin ubicación válida');
-    }
-    
-    console.log(`Documento encontrado, ubicación: ${rutaArchivo}`);
-    
-    // Normalizar la key para S3
-    let key = rutaArchivo;
-    key = key.replace(/\\/g, '/');
-    
-    if (key.startsWith('http')) {
-      const url = new URL(key);
-      key = url.pathname.replace(/^\/+/, '');
-    }
-    
-    console.log(`Intentando obtener archivo de S3 con clave normalizada: ${key}`);
-    console.log(`Bucket: ${process.env.AWS_BUCKET_NAME}`);
-    
-    try {
-      const data = await s3.getObject({
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: key
-      }).promise();
       
-      console.log(`Archivo recuperado de S3, tamaño: ${data.Body.length} bytes`);
-      
-      // Usar documento.nombre o documento.tipo para el nombre del archivo
-      const nombreArchivo = documento.nombre || documento.tipo || 'documento';
-      
-      res
-        .setHeader('Content-Type', 'application/pdf')
-        .setHeader('Content-Disposition', `inline; filename="${nombreArchivo}.pdf"`)
-        .send(data.Body);
-    } catch (s3Error) {
-      console.error(`Error de S3: ${s3Error.code} - ${s3Error.message}`);
-      if (s3Error.code === 'NoSuchKey') {
-        return res.status(404).send(`Archivo no encontrado en S3 (clave: ${key})`);
-      }
-      throw s3Error;
-    }
-  } catch (error) {
-    console.error('Error al mostrar documento:', error);
-    res.status(500).send('Error al procesar la solicitud');
+    res.status(status).json({ 
+      error: msg,
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
