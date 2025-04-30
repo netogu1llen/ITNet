@@ -213,7 +213,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         boton.addEventListener('click', async function(e) {
             e.preventDefault();
-            
             const errores = validarFormulario();
             if (errores.length > 0) {
                 Swal.fire({
@@ -223,12 +222,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 return;
             }
-
+        
             const datos = recopilarDatosFormulario();
-            const url = modoEdicion 
-                ? '/nutricion/historiaClinica/actualizarHistoriaClinicaV2' 
-                : '/nutricion/historiaClinica/guardarHistoriaClinicaV2';
-
+            if (!datos) return;
+        
+            const url = '/nutricion/historiaClinica/actualizarHistoriaClinicaV2';
+        
             try {
                 const respuesta = await fetch(url, {
                     method: 'POST',
@@ -237,25 +236,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify(datos)
                 });
-
-                const resultado = await respuesta.json();
-
-                if (resultado.success) {
-                    Swal.fire({
+        
+                if (respuesta.status === 200) {
+                    await Swal.fire({
                         title: "¡Éxito!",
-                        text: modoEdicion ? "Seguimiento actualizado correctamente." : "Seguimiento guardado correctamente.",
+                        text: "Seguimiento actualizado correctamente.",
                         icon: "success"
-                    }).then(() => {
-                        window.location.href = `/nutricion/documentos/${datos.IDExpediente}`;
                     });
+                    window.location.href = `/nutricion/documentos/${datos.IDExpediente}`;
                 } else {
-                    throw new Error(resultado.message || 'Error al procesar la solicitud');
+                    throw new Error(`Error del servidor: ${respuesta.status}`);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                Swal.fire({
+                console.error('Error al actualizar:', error);
+                
+                await Swal.fire({
                     title: "Error",
-                    text: error.message || "Error al procesar la solicitud",
+                    text: "Error al actualizar el seguimiento",
                     icon: "error"
                 });
             }

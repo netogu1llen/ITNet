@@ -271,18 +271,6 @@ class Nutricion {
     static async obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion) {
         const connection = await db.getConnection();
         try {
-            // Obtener indicadores bioquímicos
-            const [indicadoresBioquim] = await connection.execute(
-                'SELECT parametro, valorReferencia, parametroFecha FROM indicadoresbioquim WHERE IDExpediente = ? AND numSesion = ?',
-                [IDExpediente, numSesion]
-            );
-
-            // Obtener evaluación antropométrica
-            const [evaluacionAntropometrica] = await connection.execute(
-                'SELECT talla, peso, circunferenciaCintura, circunferenciaCadera FROM evaluacionantropometrica WHERE IDExpediente = ? AND numSesion = ?',
-                [IDExpediente, numSesion]
-            );
-
             // Obtener diagnóstico evolución
             const [diagnosticoEvolucion] = await connection.execute(
                 'SELECT diagnosticoEvolucion FROM diagnosticoevolucion WHERE IDExpediente = ? AND numSesion = ?',
@@ -295,13 +283,22 @@ class Nutricion {
                 [IDExpediente, numSesion]
             );
 
-            // Obtener manejo nutricional
+            // Resto de las consultas existentes
+            const [indicadoresBioquim] = await connection.execute(
+                'SELECT parametro, valorReferencia, parametroFecha FROM indicadoresbioquim WHERE IDExpediente = ? AND numSesion = ?',
+                [IDExpediente, numSesion]
+            );
+
+            const [evaluacionAntropometrica] = await connection.execute(
+                'SELECT talla, peso, circunferenciaCintura, circunferenciaCadera FROM evaluacionantropometrica WHERE IDExpediente = ? AND numSesion = ?',
+                [IDExpediente, numSesion]
+            );
+
             const [manejoNutricional] = await connection.execute(
                 'SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua FROM manejonutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
-            // Construir y retornar el objeto con todos los datos
             return {
                 IDExpediente,
                 numSesion,
@@ -640,6 +637,105 @@ class Nutricion {
                 data.agua || null
             ]);
 
+            await connection.commit();
+            return { success: true };
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
+
+    static async actualizarHistoriaClinicaV2(data) {
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+    
+            // Actualizar evaluación antropométrica
+            await connection.execute(`
+                UPDATE evaluacionantropometrica 
+                SET talla = ?, peso = ?, circunferenciaCintura = ?, circunferenciaCadera = ?
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [
+                data.talla || null,
+                data.peso || null,
+                data.circunferenciaCintura || null,
+                data.circunferenciaCadera || null,
+                data.IDExpediente,
+                data.numSesion
+            ]);
+    
+            // Actualizar diagnóstico evolución
+            await connection.execute(`
+                UPDATE diagnosticoevolucion 
+                SET diagnosticoEvolucion = ?
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [
+                data.diagnosticoEvolucion || null,
+                data.IDExpediente,
+                data.numSesion
+            ]);
+    
+            // Actualizar manejo nutricional
+            await connection.execute(`
+                UPDATE manejonutricional 
+                SET energia = ?, hidratosDeCarbono = ?, lipidos = ?, 
+                    proteinas = ?, fibra = ?, agua = ?
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [
+                data.energia || null,
+                data.hidratosDeCarbono || null,
+                data.lipidos || null,
+                data.proteinas || null,
+                data.fibra || null,
+                data.agua || null,
+                data.IDExpediente,
+                data.numSesion
+            ]);
+    
+            // Actualizar indicadores bioquímicos
+            // Primero eliminar los existentes
+            await connection.execute(
+                'DELETE FROM indicadoresbioquim WHERE IDExpediente = ? AND numSesion = ?',
+                [data.IDExpediente, data.numSesion]
+            );
+    
+            // Insertar los nuevos indicadores
+            if (data.parametro && data.valorReferencia && data.parametroFecha) {
+                for (let i = 0; i < data.parametro.length; i++) {
+                    if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
+                        await connection.execute(
+                            'INSERT INTO indicadoresbioquim (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha) VALUES (?, ?, ?, ?, ?)',
+                            [
+                                data.IDExpediente,
+                                data.numSesion,
+                                data.parametro[i],
+                                data.valorReferencia[i],
+                                data.parametroFecha[i]
+                            ]
+                        );
+                    }
+                }
+            }
+    
+            // Actualizar objetivos nutricionales
+            // Primero eliminar los existentes
+            await connection.execute(
+                'DELETE FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                [data.IDExpediente, data.numSesion]
+            );
+    
+            // Insertar los nuevos objetivos
+            if (data.objetivo) {
+                for (const obj of data.objetivo) {
+                    await connection.execute(
+                        'INSERT INTO objetivonutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
+                        [data.IDExpediente, data.numSesion, obj]
+                    );
+                }
+            }
+    
             await connection.commit();
             return { success: true };
         } catch (error) {

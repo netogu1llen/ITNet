@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .section { margin: 15px 0; }
+        .section-title { 
+            background-color: #f0f0f0;
+            padding: 8px;
+            font-weight: bold;
+        }
+        .grid { 
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .field { margin: 5px 0; }
+        .label { font-weight: bold; }
+        table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th { background-color: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Historia Clínica Nutricional V2</h1>
+        <p>Fecha de generación: <%= fechaGeneracion %></p>
+        <div class="field">
+            <span class="label">Número de Sesión:</span>
+            <span><%= datosSesion.numSesion %></span>
+        </div>
+    </div>
+
+    <!-- Datos de la última sesión V1 -->
+    <div class="section">
+        <div class="section-title">Última Evaluación V1</div>
+        <div class="grid">
+            <div class="field">
+                <span class="label">Peso anterior:</span>
+                <span><%= datosSesionV1?.peso || 'No registrado' %> kg</span>
+            </div>
+            <div class="field">
+                <span class="label">Talla anterior:</span>
+                <span><%= datosSesionV1?.talla || 'No registrado' %> m</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- I. INDICADORES BIOQUÍMICOS -->
+    <div class="section">
+        <div class="section-title">I. Indicadores Bioquímicos</div>
+        <% if (datosSesion.indicadoresBioquim && datosSesion.indicadoresBioquim.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Valor de Referencia</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% datosSesion.indicadoresBioquim.forEach(indicador => { %>
+                        <tr>
+                            <td><%= indicador.parametro %></td>
+                            <td><%= indicador.valorReferencia %></td>
+                            <td><%= new Date(indicador.parametroFecha).toLocaleDateString() %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+
+    <!-- II. EVALUACIÓN ANTROPOMÉTRICA con todos los campos -->
+    <div class="section">
+        <div class="section-title">II. Evaluación Antropométrica</div>
+        <% if (datosSesion.evaluacionAntropometrica) { %>
+            <div class="grid">
+                <div class="field">
+                    <span class="label">Peso:</span>
+                    <span><%= datosSesion.evaluacionAntropometrica.peso %> kg</span>
+                </div>
+                <div class="field">
+                    <span class="label">Talla:</span>
+                    <span><%= datosSesion.evaluacionAntropometrica.talla %> cm</span>
+                </div>
+                <div class="field">
+                    <span class="label">Circunferencia Cintura:</span>
+                    <span><%= datosSesion.evaluacionAntropometrica.circunferenciaCintura %> cm</span>
+                </div>
+                <div class="field">
+                    <span class="label">Circunferencia Cadera:</span>
+                    <span><%= datosSesion.evaluacionAntropometrica.circunferenciaCadera %> cm</span>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <div
+                <div class="field">
+                    <span class="label">Energía:</span>
+                    <span><%= datosSesion.manejoNutricional.energia %> kcal</span>
+                </div>
+                <div class="field">
+                    <span class="label">H. de Carbono:</span>
+                    <span><%= datosSesion.manejoNutricional.hidratosDeCarbono %> g</span>
+                </div>
+                <div class="field">
+                    <span class="label">Lípidos:</span>
+                    <span><%= datosSesion.manejoNutricional.lipidos %> g</span>
+                </div>
+                <div class="field">
+                    <span class="label">Proteínas:</span>
+                    <span><%= datosSesion.manejoNutricional.proteinas %> g</span>
+                </div>
+                <div class="field">
+                    <span class="label">Fibra:</span>
+                    <span><%= datosSesion.manejoNutricional.fibra %> g</span>
+                </div>
+                <div class="field">
+                    <span class="label">Agua:</span>
+                    <span><%= datosSesion.manejoNutricional.agua %> ml</span>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

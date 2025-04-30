@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .section { margin: 15px 0; }
+        .section-title { 
+            background-color: #f0f0f0;
+            padding: 8px;
+            font-weight: bold;
+        }
+        .grid { 
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .field { margin: 5px 0; }
+        .label { font-weight: bold; }
+        table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th { background-color: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Historia Clínica Nutricional V1</h1>
+        <p>Fecha de generación: <%= fechaGeneracion %></p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Datos del Paciente</div>
+        <div class="grid">
+            <div class="field">
+                <span class="label">Nombre:</span>
+                <span><%= datosGeneralesPaciente.nombres %> <%= datosGeneralesPaciente.apellidoP %> <%= datosGeneralesPaciente.apellidoM %></span>
+            </div>
+            <div class="field">
+                <span class="label">Edad:</span>
+                <span><%= datosGeneralesPaciente.edadPaciente %> años</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">2. Antecedentes Heredofamiliares</div>
+        <div class="grid">
+            <% const heredofamiliares = ['diabetes', 'cancer', 'dislipidemia', 'obesidad', 'anemia', 'hipertensionArterial'] %>
+            <% heredofamiliares.forEach(antecedente => { %>
+                <div class="field">
+                    <span class="label"><%= antecedente.charAt(0).toUpperCase() + antecedente.slice(1) %>:</span>
+                    <span><%= datosSesion.nutricional1[antecedente] || 'No registrado' %></span>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">3. Antecedentes Personales</div>
+        <div class="grid">
+            <div class="field">
+                <span class="label">Peso al nacer:</span>
+                <span><%= datosSesion.nutricional1.pesoNacer || 'No registrado' %> kg</span>
+            </div>
+            <div class="field">
+                <span class="label">Talla al nacer:</span>
+                <span><%= datosSesion.nutricional1.tallaNacer || 'No registrado' %> cm</span>
+            </div>
+            <div class="field">
+                <span class="label">SDG:</span>
+                <span><%= datosSesion.nutricional1.sdg || 'No registrado' %></span>
+            </div>
+            <div class="field">
+                <span class="label">Tipo de parto:</span>
+                <span><%= datosSesion.nutricional1.tipoParto || 'No registrado' %></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">4. Indicadores Clínicos</div>
+        <% if (datosSesion.indicadoresClinicos) { %>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="label">Cabello:</td>
+                        <td><%= datosSesion.indicadoresClinicos.cabello || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Conjunto:</td>
+                        <td><%= datosSesion.indicadoresClinicos.conjunto || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Uñas:</td>
+                        <td><%= datosSesion.indicadoresClinicos.unias || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Boca:</td>
+                        <td><%= datosSesion.indicadoresClinicos.boca || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Dientes:</td>
+                        <td><%= datosSesion.indicadoresClinicos.dientes || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Piel:</td>
+                        <td><%= datosSesion.indicadoresClinicos.piel || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Edema:</td>
+                        <td><%= datosSesion.indicadoresClinicos.edema || 'No registrado' %></td>
+                    </tr>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+
+    <div class="section">
+        <div class="section-title">5. Trastornos Gastrointestinales</div>
+        <div class="grid">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="label">Vómito:</td>
+                        <td><%= datosSesion.transtornos?.vomito || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Reflujo:</td>
+                        <td><%= datosSesion.transtornos?.reflujo || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Disfagia:</td>
+                        <td><%= datosSesion.transtornos?.disfagia || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Diarrea:</td>
+                        <td><%= datosSesion.transtornos?.diarrea || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Flatulencias:</td>
+                        <td><%= datosSesion.transtornos?.flatulencias || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Estreñimiento:</td>
+                        <td><%= datosSesion.transtornos?.estrenimiento || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Distención:</td>
+                        <td><%= datosSesion.transtornos?.distencion || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Colitis:</td>
+                        <td><%= datosSesion.transtornos?.colitis || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Pirosis:</td>
+                        <td><%= datosSesion.transtornos?.pirosis || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Gastritis:</td>
+                        <td><%= datosSesion.transtornos?.gastritis || 'No registrado' %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Otro:</td>
+                        <td><%= datosSesion.transtornos?.otro || 'No registrado' %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">6. Actividad Diaria</div>
+        <% if (datosSesion.actividadDiaria) { %>
+            <div class="grid">
+                <div class="field">
+                    <span class="label">Ejercicio Físico:</span>
+                    <span><%= datosSesion.actividadDiaria.ejercicioFisico || 'No registrado' %></span>
+                </div>
+                <div class="field">
+                    <span class="label">Fecha de Inicio:</span>
+                    <span><%= datosSesion.actividadDiaria.fechaInicio ? new Date(datosSesion.actividadDiaria.fechaInicio).toLocaleDateString() : 'No registrado' %></span>
+                </div>
+                <div class="field">
+                    <span class="label">Frecuencia:</span>
+                    <span><%= datosSesion.actividadDiaria.frecuencia || 'No registrado' %></span>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="section">
+        <div class="section-title">7. Evaluación Antropométrica</div>
+        <% if (datosSesion.evaluacionAntropometrica) { %>
+            <div class="grid">
+                <div class="field">
+                    <span class="label">Peso:</span>
+                    <span><%= datosSesion.evaluacionAntropometrica.peso %> kg</span>
+                </div>
+                <div class="field">
+                    <span class="label">Talla:</span>
+                    <span><%= datosSesion.evaluacionAntropometrica.talla %> cm</span>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="section">
+        <div class="section-title">8. Manejo Nutricional</div>
+        <% if (datosSesion.manejoNutricional) { %>
+            <div class="grid">
+                <div class="field">
+                    <span class="label">Energía:</span>
+                    <span><%= datosSesion.manejoNutricional.energia %> kcal</span>
+                </div>
+                <div class="field">
+                    <span class="label">Proteínas:</span>
+                    <span><%= datosSesion.manejoNutricional.proteinas %> g</span>
+                </div>
+                <div class="field">
+                    <span class="label">H. de Carbono:</span>
+                    <span><%= datosSesion.manejoNutricional.hidratosDeCarbono %> g</span>
+                </div>
+                <div class="field">
+                    <span class="label">Lípidos:</span>
+                    <span><%= datosSesion.manejoNutricional.lipidos %> g</span>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

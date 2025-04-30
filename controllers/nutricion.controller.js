@@ -3,6 +3,8 @@ const { decrypt } = require('../util/encryptData');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const ejs = require('ejs');
+const puppeteer = require('puppeteer');
 
 // Configuración de Multer para guardar archivos localmente
 const storage = multer.diskStorage({
@@ -178,31 +180,80 @@ function calcularEdad(fechaNacimiento) {
 
 // Descargar documento
 exports.descargarDocumento = async (req, res) => {
-  try {
-      const id = req.params.id;
+    try {
+        const id = req.params.id;
+        
+        // Primero intentar obtener como documento PDF almacenado
+        let documento = await Nutricion.obtenerDocumentoPorId(id);
 
-      // Buscar el documento en la base de datos usando el modelo de Nutrición
-      let documento = await Nutricion.obtenerDocumentoPorId(id);
+        if (!documento) {
+            console.log('No se encontró documento PDF, intentando generar expediente...');
+            
+            // Obtener datos para el expediente
+            const numSesion = req.query.numSesion;
+            const datosSesion = await Nutricion.obtenerDatosSesionCompletos(id, numSesion);
+            
+            if (!datosSesion) {
+                console.error('No se encontraron datos de la sesión');
+                return res.status(404).send('Documento o sesión no encontrada');
+            }
 
-      if (!documento) {
-          console.error('Documento no encontrado en la base de datos');
-          return res.status(404).send('Documento no encontrado');
-      }
+            // Obtener datos del expediente
+            let expediente = await Nutricion.obtenerPorId(datosSesion.nutricional1.IDExpediente);
 
-      // Si se encontró un documento, intentar descargarlo desde el sistema de archivos
-      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${id}.pdf`);
+            // Renderizar plantilla EJS a HTML
+            let html;
+            const tipo = req.query.tipo; // Obtener tipo desde query parameters
+            if (tipo === 'NUTRICIONAL_V1') {
+                html = await ejs.renderFile(
+                    path.join(__dirname, '../views/pdf/historiaClinicaV1.ejs'),
+                    { datosSesion, datosGeneralesPaciente, fechaGeneracion: new Date().toLocaleDateString() }
+                );
+            } else if (tipo === 'NUTRICIONAL_V2') {
+                html = await ejs.renderFile(
+                    path.join(__dirname, '../views/pdf/historiaClinicaV2.ejs'),
+                    { datosSesion, fechaGeneracion: new Date().toLocaleDateString() }
+                );
+            } else {
+                return res.status(400).send('Tipo de documento no válido');
+            }
 
-      if (fs.existsSync(rutaDocumento)) {
-          return res.download(rutaDocumento);
-      } else {
-          console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
-          return res.status(404).send('Archivo no encontrado');
-      }
+            // Generar PDF con Puppeteer
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
+            await page.setContent(html, { waitUntil: 'networkidle0' });
+            
+            const pdfBuffer = await page.pdf({
+                format: 'A4',
+                margin: {
+                    top: "20px",
+                    bottom: "20px",
+                    left: "20px",
+                    right: "20px"
+                }
+            });
 
-  } catch (error) {
-      console.error('Error al procesar la solicitud de descarga:', error);
-      return res.status(500).send('Error interno del servidor');
-  }
+            await browser.close();
+
+            // Enviar el PDF generado
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename=expediente.pdf');
+            return res.end(pdfBuffer);
+        }
+
+        // Si es un documento almacenado, enviarlo desde el sistema de archivos
+        const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo);
+        if (fs.existsSync(rutaDocumento)) {
+            return res.download(rutaDocumento);
+        } else {
+            console.error('Archivo no encontrado:', rutaDocumento);
+            return res.status(404).send('Archivo no encontrado');
+        }
+
+    } catch (error) {
+        console.error('Error al procesar la solicitud de descarga:', error);
+        return res.status(500).send('Error interno del servidor');
+    }
 };
 
 // Ver documento
@@ -577,6 +628,18 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
         let datosSesion = null;
         if (numSesion) {
             datosSesion = await Nutricion.obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion);
+            
+            // Transformar objetivos al formato esperado
+            if (datosSesion && Array.isArray(datosSesion.objetivo)) {
+                datosSesion.objetivoNutricional = datosSesion.objetivo.map(obj => ({ objetivo: obj }));
+            }
+
+            // Asegurarse que el diagnóstico tenga el formato correcto
+            if (datosSesion && datosSesion.diagnosticoEvolucion) {
+                datosSesion.diagnosticoEvolucion = {
+                    diagnosticoEvolucion: datosSesion.diagnosticoEvolucion
+                };
+            }
         }
 
         // Para mostrar datos de la última sesión V1
@@ -600,9 +663,9 @@ exports.actualizarHistoriaClinicaV2 = async (req, res) => {
     try {
         const datos = req.body;
         await Nutricion.actualizarHistoriaClinicaV2(datos);
-        res.json({ success: true });
+        res.sendStatus(200); // Solo envía código de estado 200 (OK)
     } catch (error) {
         console.error('Error actualizando historia clínica V2:', error);
-        res.status(500).json({ success: false, message: 'Error al actualizar' });
+        res.sendStatus(500); // Solo envía código de estado 500 (Error)
     }
 };
