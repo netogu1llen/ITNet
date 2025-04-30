@@ -701,15 +701,15 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
             const evaluacionAntropometrica = await Nutricion.obtenerEvaluacionAntropometrica(IDExpediente, numSesion);
             const diagnosticoEvolucion = await Nutricion.obtenerDiagnosticoEvolucion(IDExpediente, numSesion);
             const objetivoNutricional = await Nutricion.obtenerObjetivosNutricionales(IDExpediente, numSesion);
-            const manejoNutricional = await Nutricion.obtenerManejoNutricional(IDExpediente, numSesion);
             const indicadoresBioquim = await Nutricion.obtenerIndicadoresBioquimicos(IDExpediente, numSesion);
+            const manejoNutricionalData = await Nutricion.obtenerManejoNutricionalPorSesion(IDExpediente, numSesion);
 
             datosSesion = {
                 numSesion,
                 evaluacionAntropometrica: evaluacionAntropometrica[0] || {},
                 diagnosticoEvolucion: diagnosticoEvolucion[0] || {},
                 objetivoNutricional: objetivoNutricional || [],
-                manejoNutricional: manejoNutricional[0] || {},
+                manejoNutricional: manejoNutricionalData || {},
                 indicadoresBioquim: indicadoresBioquim || []
             };
         }

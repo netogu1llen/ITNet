@@ -161,6 +161,22 @@ class Nutricion {
         }
     }
     
+    static async obtenerManejoNutricionalPorSesion(idExpediente, numSesion) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
+                FROM manejonutricional
+                WHERE IDExpediente = ? AND numSesion = ?
+                LIMIT 1
+            `, [idExpediente, numSesion]);
+            
+            return rows.length > 0 ? rows[0] : null;
+        } catch (error) {
+            console.error('Error al obtener manejo nutricional por sesión:', error);
+            throw error;
+        }
+    }
+
     // Obtener manejo nutricional
     static async obtenerManejoNutricional(idExpediente) {
         try {
