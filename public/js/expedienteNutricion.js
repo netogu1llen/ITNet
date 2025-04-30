@@ -271,8 +271,6 @@ $('#subirDocumentoForm').on('submit', function (e) {
     });
 });
 
-
-
 // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
 $(document).on('click', '.fila-documento', function(e) {
     // No hacer nada si el clic fue en un botón
@@ -282,32 +280,21 @@ $(document).on('click', '.fila-documento', function(e) {
     
     const documentoId = $(this).data('id');
     const tipo = $(this).data('tipo');
+    const numSesion = $(this).data('sesion'); // Asegurarnos de obtener el numSesion
     const idExpediente = new URLSearchParams(window.location.search).get('id') || 
                         window.location.pathname.split('/').pop();
-    const numSesion = $(this).data('sesion');
     
     if (tipo === 'NUTRICIONAL_V1') {
-        // Redirigir a edición de V1 con el parámetro edit=true
-        window.location.href = `/nutricion/historiaClinica/${idExpediente}?numSesion=${numSesion}&edit=true`;
+        window.location.href = `/nutricion/historiaClinica/edit/${idExpediente}?numSesion=${numSesion}&edit=true`;
     } else if (tipo === 'NUTRICIONAL_V2') {
-        // Redirigir a la vista de edición de V2
         window.location.href = `/nutricion/historiaClinicaV2/${idExpediente}?numSesion=${numSesion}`;
     } else if (tipo === 'PDF') {
         // Código existente para PDF...
         console.log('Ver documento PDF:', documentoId);
-        
-        // Usar URL absoluta con el origen completo
         const url = `${window.location.origin}/nutricion/documentos/ver/${documentoId}`;
-        console.log('URL del documento:', url);
-        
-        // Limpiar el iframe antes de cargar el nuevo contenido
         const iframe = $('#iframeVistaPreviaDocumento');
         iframe.attr('src', 'about:blank');
-        
-        // Mostrar el modal primero
         $('#modalVistaPreviaDocumento').css('display', 'flex');
-        
-        // Pequeño timeout para asegurar que el modal esté visible
         setTimeout(() => {
             iframe.attr('src', url);
         }, 100);

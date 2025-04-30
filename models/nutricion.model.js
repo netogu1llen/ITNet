@@ -220,6 +220,22 @@ class Nutricion {
         }
     }
     
+    static async obtenerManejoNutricionalPorSesion(idExpediente, numSesion) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
+                FROM manejonutricional
+                WHERE IDExpediente = ? AND numSesion = ?
+                LIMIT 1
+            `, [idExpediente, numSesion]);
+            
+            return rows.length > 0 ? rows[0] : null;
+        } catch (error) {
+            console.error('Error al obtener manejo nutricional por sesión:', error);
+            throw error;
+        }
+    }
+
     // Obtener manejo nutricional
     static async obtenerManejoNutricional(idExpediente) {
         try {
@@ -621,90 +637,97 @@ class Nutricion {
         const connection = await db.getConnection();
         try {
             await connection.beginTransaction();
+            console.log('Iniciando inserción de Historia Clínica V2:', data);
 
-            // Insertar indicadores bioquímicos
-            if (data.parametro && data.valorReferencia && data.parametroFecha) {
+            // 1. Insertar indicadores bioquímicos
+            if (data.parametro && Array.isArray(data.parametro)) {
                 for (let i = 0; i < data.parametro.length; i++) {
-                    if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
-                        await connection.execute(
-                            'INSERT INTO indicadoresbioquim (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha) VALUES (?, ?, ?, ?, ?)',
-                            [
-                                data.IDExpediente, 
-                                data.numSesion, 
-                                data.parametro[i], 
-                                data.valorReferencia[i], 
-                                data.parametroFecha[i]
-                            ]
-                        );
+                    if (data.parametro[i] && data.valorReferencia[i]) {
+                        await connection.execute(`
+                            INSERT INTO indicadoresbioquim 
+                            (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha)
+                            VALUES (?, ?, ?, ?, ?)
+                        `, [
+                            data.IDExpediente,
+                            data.numSesion,
+                            data.parametro[i],
+                            data.valorReferencia[i],
+                            data.parametroFecha[i]
+                        ]);
                     }
                 }
             }
 
-            // Insertar evaluación antropométrica
+            // 2. Insertar evaluación antropométrica
             await connection.execute(`
-                INSERT INTO evaluacionantropometrica (
-                    IDExpediente, numSesion, talla, peso, circunferenciaCintura, circunferenciaCadera
-                ) VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO evaluacionantropometrica 
+                (IDExpediente, numSesion, peso, talla, circunferenciaCintura, circunferenciaCadera)
+                VALUES (?, ?, ?, ?, ?, ?)
             `, [
                 data.IDExpediente,
                 data.numSesion,
-                data.talla || null,
-                data.peso || null,
-                data.circunferenciaCintura || null,
-                data.circunferenciaCadera || null
+                data.peso,
+                data.talla,
+                data.circunferenciaCintura,
+                data.circunferenciaCadera
             ]);
 
-            // Insertar diagnóstico evolución
+            // 3. Insertar diagnóstico evolución
             await connection.execute(`
-                INSERT INTO diagnosticoevolucion (
-                    IDExpediente, numSesion, diagnosticoEvolucion
-                ) VALUES (?, ?, ?)
+                INSERT INTO diagnosticoevolucion 
+                (IDExpediente, numSesion, diagnosticoEvolucion)
+                VALUES (?, ?, ?)
             `, [
                 data.IDExpediente,
                 data.numSesion,
-                data.diagnosticoEvolucion || null
+                data.diagnosticoEvolucion
             ]);
 
-            // Insertar objetivos nutricionales
-            if (data.objetivo) {
-                for (const obj of data.objetivo) {
-                    await connection.execute(`
-                        INSERT INTO objetivonutricional (
-                            IDExpediente, numSesion, objetivo
-                        ) VALUES (?, ?, ?)
-                    `, [
-                        data.IDExpediente,
-                        data.numSesion,
-                        obj
-                    ]);
+            // 4. Insertar objetivos nutricionales
+            if (data.objetivosNutricionales && Array.isArray(data.objetivosNutricionales)) {
+                for (const objetivo of data.objetivosNutricionales) {
+                    if (objetivo) {
+                        await connection.execute(`
+                            INSERT INTO objetivonutricional 
+                            (IDExpediente, numSesion, objetivo)
+                            VALUES (?, ?, ?)
+                        `, [
+                            data.IDExpediente,
+                            data.numSesion,
+                            objetivo
+                        ]);
+                    }
                 }
             }
 
-            // Insertar manejo nutricional
+            // 5. Insertar manejo nutricional
             await connection.execute(`
-                INSERT INTO manejonutricional (
-                    IDExpediente, numSesion, energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO manejonutricional 
+                (IDExpediente, numSesion, energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `, [
                 data.IDExpediente,
                 data.numSesion,
-                data.energia || null,
-                data.hidratosDeCarbono || null,
-                data.lipidos || null,
-                data.proteinas || null,
-                data.fibra || null,
-                data.agua || null
+                data.energia,
+                data.hidratosDeCarbono,
+                data.lipidos,
+                data.proteinas,
+                data.fibra,
+                data.agua
             ]);
 
             await connection.commit();
+            console.log('Historia Clínica V2 insertada correctamente');
             return { success: true };
         } catch (error) {
+            console.error('Error en insertarHistoriaClinicaV2:', error);
             await connection.rollback();
             throw error;
         } finally {
             connection.release();
         }
     }
+    
 
     static async actualizarHistoriaClinicaV2(data) {
         const connection = await db.getConnection();
@@ -992,6 +1015,58 @@ class Nutricion {
             return rows[0] || null;
         } catch (error) {
             console.error('Error al obtener última sesión V1:', error);
+            throw error;
+        }
+    }
+
+    static async obtenerEvaluacionAntropometrica(IDExpediente, numSesion) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT talla, peso, circunferenciaCintura, circunferenciaCadera 
+                FROM evaluacionantropometrica 
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [IDExpediente, numSesion]);
+            return rows;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async obtenerDiagnosticoEvolucion(IDExpediente, numSesion) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT diagnosticoEvolucion 
+                FROM diagnosticoevolucion 
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [IDExpediente, numSesion]);
+            return rows;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async obtenerObjetivosNutricionales(IDExpediente, numSesion) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT objetivo 
+                FROM objetivonutricional 
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [IDExpediente, numSesion]);
+            return rows;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async obtenerIndicadoresBioquimicos(IDExpediente, numSesion) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT parametro, valorReferencia, parametroFecha 
+                FROM indicadoresbioquim 
+                WHERE IDExpediente = ? AND numSesion = ?
+            `, [IDExpediente, numSesion]);
+            return rows;
+        } catch (error) {
             throw error;
         }
     }

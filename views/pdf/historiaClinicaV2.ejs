@@ -38,7 +38,7 @@ function calcularEdad(fechaNacimiento) {
       background-color: #f2f2f2;
       padding: 15px;
       border-radius: 5px;
-      margin-bottom: 20px;
+      margin-bottom: 20px
     }
     
     .header h1 {
@@ -128,18 +128,17 @@ function calcularEdad(fechaNacimiento) {
   <div class="info-basic">
     <div class="columns">
       <div class="column">
-        <strong>No. Expediente:</strong> <%= datosSesion?.IDExpediente %>
+        <strong>No. Expediente:</strong> <%= expediente.IDExpediente %>
       </div>
       <div class="column">
-        <strong>Número de sesión:</strong> <%= datosSesion?.numSesion || '' %>
-      </div>
+        <strong>Número de sesión:</strong><%= datosSesion?.evaluacionAntropometrica?.numSesion || '' %></div>
     </div>
     
     <hr>    
     <div class="columns">
       <div class="column">
-        <p><strong>Nombre Completo:</strong> <%= datosSesion?.nombres %> <%= datosSesion?.apellidoP %> <%= datosSesion?.apellidoM %></p>
-        <p><strong>Edad (años):</strong> <%= calcularEdad(datosSesion?.fechaNacimiento) %></p>
+        <p><strong>Nombre Completo:</strong><%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %></p>
+        <p><strong>Edad (años):</strong> <%= calcularEdad(expediente.fechaNacimiento) %></p>
       </div>
     </div>
   </div>
@@ -281,4 +280,3 @@ function calcularEdad(fechaNacimiento) {
 </body>
 <div class="page-break"></div>
 
-  

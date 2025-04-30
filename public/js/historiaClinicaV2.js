@@ -226,7 +226,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const datos = recopilarDatosFormulario();
             if (!datos) return;
         
-            const url = '/nutricion/historiaClinica/actualizarHistoriaClinicaV2';
+            const url = modoEdicion ? 
+                '/nutricion/historiaClinica/actualizarHistoriaClinicaV2' : 
+                '/nutricion/historiaClinica/guardarHistoriaClinicaV2';
         
             try {
                 const respuesta = await fetch(url, {
@@ -287,31 +289,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function recopilarDatosFormulario() {
     const idExpediente = document.getElementById('idExpediente')?.value;
+    const numSesion = document.getElementById('numSesion')?.value;
 
-    if (!idExpediente) {
+    if (!idExpediente || !numSesion) {
         Swal.fire({
             title: "Error!",
-            text: "No se encontró IDExpediente.",
+            text: "ID de expediente y número de sesión son requeridos.",
             icon: "error"
         });
-        return;
+        return null;
     }
 
-    // Validar que todos los campos requeridos estén llenos
-    const inputsRequeridos = document.querySelectorAll('input[required], textarea[required]');
-    for (const input of inputsRequeridos) {
-        if (!input.value.trim()) {
-            Swal.fire({
-                title: "Campos incompletos",
-                text: "Por favor, rellena todos los campos obligatorios antes de guardar.",
-                icon: "warning"
-            });
-            input.focus();
-            return;
-        }
-    }
-
-    // Para indicadores bioquímicos (mantener los mismos nombres que en V1)
+    // Recopilar datos de indicadores bioquímicos
     const parametro = Array.from(document.querySelectorAll('input[name="parametroBioquimico[]"]'))
         .map(input => input.value.trim());
     const valorReferencia = Array.from(document.querySelectorAll('input[name="valorReferencia[]"]'))
@@ -319,27 +308,32 @@ function recopilarDatosFormulario() {
     const parametroFecha = Array.from(document.querySelectorAll('input[name="fechaParametro[]"]'))
         .map(input => input.value.trim());
 
-    // Para objetivos nutricionales (mantener los mismos nombres que en V1)
-    const objetivo = Array.from(document.querySelectorAll('input[name="objetivosNutricionales[]"]'))
+    // Recopilar objetivos nutricionales
+    const objetivosNutricionales = Array.from(document.querySelectorAll('input[name="objetivosNutricionales[]"]'))
         .map(input => input.value.trim());
 
     return {
         IDExpediente: idExpediente,
-        numSesion: document.getElementById('numSesion')?.value || '',
-        // Agregar los arrays de indicadores bioquímicos
+        numSesion: numSesion,
+        
+        // Indicadores bioquímicos
         parametro,
         valorReferencia,
         parametroFecha,
+        
         // Evaluación antropométrica
         talla: document.getElementById('talla')?.value || '',
         peso: document.getElementById('peso')?.value || '',
         circunferenciaCintura: document.getElementById('circunferenciaCintura')?.value || '',
         circunferenciaCadera: document.getElementById('circunferenciaCadera')?.value || '',
+        
         // Diagnóstico
         diagnosticoEvolucion: document.getElementById('diagnosticoEvolucion')?.value || '',
+        
         // Objetivos nutricionales
-        objetivo,
-        // Manejo nutricional (corregir nombre de hidratosDeCarbono)
+        objetivosNutricionales,
+        
+        // Manejo nutricional
         energia: document.getElementById('energia')?.value || '',
         hidratosDeCarbono: document.getElementById('hidratosDeCarbono')?.value || '',
         lipidos: document.getElementById('lipidos')?.value || '',
