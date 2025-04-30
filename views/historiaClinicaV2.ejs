@@ -33,23 +33,6 @@
           </div>
         </div>
 
-        <!-- Última evaluación V1 -->
-        <div class="columns pl-6 pr-6">
-          <div class="column">
-            <div style="background-color: #f8f9fa; padding: 1rem; border-radius: 4px;">
-              <h4 class="title is-6">Última Evaluación (V1)</h4>
-              <div class="columns">
-                <div class="column">
-                  <p><strong> Peso anterior:</strong> <%= datosSesionV1?.peso || 'No registrado' %> kg</p>
-                </div>
-                <div class="column">
-                  <p><strong>Talla anterior:</strong> <%= datosSesionV1?.talla || 'No registrado' %> m</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Resto del contenido de la página 1 -->
         <div class="pl-6">
           <div class="box" style="background-color: #ffffff;">
@@ -231,7 +214,9 @@
                 <tbody>
                   <tr>
                     <td class="has-text-weight-semibold">Diagnósticos actualizados:</td>
-                    <td><textarea id="diagnosticoEvolucion" class="textarea" placeholder="Diagnósticos actualizados..." required><%= datosSesion?.diagnosticoEvolucion?.diagnosticoEvolucion || '' %></textarea></td>
+                    <td><textarea id="diagnosticoEvolucion" class="textarea" required>
+                      <%= datosSesion?.diagnosticoEvolucion?.diagnosticoEvolucion || '' %>
+                  </textarea></td>
                   </tr>
                 </tbody>
               </table>
@@ -306,23 +291,23 @@
                   </tr>
                   <tr>
                     <td>Lípidos</td>
-                    <td><input id="lipidos" class="input" type="text" name="manejo[Lípidos]" placeholder="..." 
-                      value="<%= datosSesion?.manejoNutricional?.lipidos || '' %>" required/></td>
+                    <td><input id="lipidos" class="input" type="text" 
+                        value="<%= datosSesion?.manejoNutricional?.lipidos || '' %>" required/></td>
                   </tr>
                   <tr>
                     <td>Proteínas</td>
-                    <td><input id="proteinas" class="input" type="text" name="manejo[Proteínas]" placeholder="..." 
-                      value="<%= datosSesion?.manejoNutricional?.proteinas || '' %>" required/></td>
+                    <td><input id="proteinas" class="input" type="text" 
+                        value="<%= datosSesion?.manejoNutricional?.proteinas || '' %>" required/></td>
                   </tr>
                   <tr>
                     <td>Fibra</td>
-                    <td><input id="fibra" class="input" type="text" name="manejo[Fibra]" placeholder="..."
-                      value="<%= datosSesion?.manejoNutricional?.fibra || '' %>" required/></td>
+                    <td><input id="fibra" class="input" type="text" 
+                        value="<%= datosSesion?.manejoNutricional?.fibra || '' %>" required/></td>
                   </tr>
                   <tr>
                     <td>Agua</td>
-                    <td><input id="agua" class="input" type="text" name="manejo[Agua]" placeholder="..." 
-                      value="<%= datosSesion?.manejoNutricional?.agua || '' %>" required/></td>
+                    <td><input id="agua" class="input" type="text" 
+                        value="<%= datosSesion?.manejoNutricional?.agua || '' %>" required/></td>
                   </tr>
                 </tbody>
               </table>

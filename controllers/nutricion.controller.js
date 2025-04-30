@@ -569,25 +569,53 @@ exports.checkAndRedirectHistoriaClinica = async (req, res) => {
 exports.guardarHistoriaClinicaV2 = async (req, res) => {
     try {
         const datos = req.body;
-        console.log('Datos recibidos para guardar en historiaClinicaV2:', datos);
+        console.log('Datos recibidos en controlador:', datos);
 
-        // Validar datos requeridos
         if (!datos.IDExpediente || !datos.numSesion) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'ID de expediente y número de sesión son requeridos' 
+            return res.status(400).json({
+                success: false,
+                message: 'ID de expediente y número de sesión son requeridos'
             });
         }
 
-        // Insertar datos usando el método del modelo
-        await Nutricion.insertarHistoriaClinicaV2(datos);
+        // Formatear datos según el modelo
+        const datosFormateados = {
+            IDExpediente: datos.IDExpediente,
+            numSesion: datos.numSesion,
+            
+            // Indicadores bioquímicos
+            parametro: datos.parametro,
+            valorReferencia: datos.valorReferencia,
+            parametroFecha: datos.parametroFecha,
+            
+            // Evaluación antropométrica
+            peso: datos.peso,
+            talla: datos.talla,
+            circunferenciaCintura: datos.circunferenciaCintura,
+            circunferenciaCadera: datos.circunferenciaCadera,
+            
+            // Diagnóstico
+            diagnosticoEvolucion: datos.diagnosticoEvolucion,
+            
+            // Objetivos nutricionales
+            objetivosNutricionales: datos.objetivosNutricionales,
+            
+            // Manejo nutricional
+            energia: datos.energia,
+            hidratosDeCarbono: datos.hidratosDeCarbono,
+            lipidos: datos.lipidos,
+            proteinas: datos.proteinas,
+            fibra: datos.fibra,
+            agua: datos.agua
+        };
 
+        await Nutricion.insertarHistoriaClinicaV2(datosFormateados);
         res.json({ success: true });
     } catch (error) {
         console.error('Error guardando datos de historiaClinicaV2:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Error en el servidor al guardar la historia clínica V2' 
+            message: error.message || 'Error en el servidor' 
         });
     }
 };
@@ -669,7 +697,21 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
 
         let datosSesion = null;
         if (numSesion) {
-            datosSesion = await Nutricion.obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion);
+            // Obtener todos los datos relacionados con la sesión
+            const evaluacionAntropometrica = await Nutricion.obtenerEvaluacionAntropometrica(IDExpediente, numSesion);
+            const diagnosticoEvolucion = await Nutricion.obtenerDiagnosticoEvolucion(IDExpediente, numSesion);
+            const objetivoNutricional = await Nutricion.obtenerObjetivosNutricionales(IDExpediente, numSesion);
+            const manejoNutricional = await Nutricion.obtenerManejoNutricional(IDExpediente, numSesion);
+            const indicadoresBioquim = await Nutricion.obtenerIndicadoresBioquimicos(IDExpediente, numSesion);
+
+            datosSesion = {
+                numSesion,
+                evaluacionAntropometrica: evaluacionAntropometrica[0] || {},
+                diagnosticoEvolucion: diagnosticoEvolucion[0] || {},
+                objetivoNutricional: objetivoNutricional || [],
+                manejoNutricional: manejoNutricional[0] || {},
+                indicadoresBioquim: indicadoresBioquim || []
+            };
         }
 
         // Para mostrar datos de la última sesión V1
@@ -678,8 +720,7 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
         res.render('historiaClinicaV2', {
             expediente,
             datosSesion,
-            datosSesionV1: ultimaSesionV1,
-            modoEdicion: !!numSesion
+            datosSesionV1: ultimaSesionV1
         });
 
     } catch (error) {
