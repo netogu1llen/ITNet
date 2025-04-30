@@ -1,0 +1,284 @@
+<%
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('es-MX', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  });
+}
+
+function calcularEdad(fechaNacimiento) {
+  if (!fechaNacimiento) return '';
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const m = hoy.getMonth() - nacimiento.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+  return edad;
+}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Historia Clínica V2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .header {
+      background-color: #f2f2f2;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .header h1 {
+      margin: 0;
+      color: #000;
+      font-size: 24px;
+    }
+    
+    .header img {
+      height: 30px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    
+    .box {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .info-basic {
+      margin-bottom: 15px;
+    }
+    
+    .section-title {
+      background-color: #f2f2f2;
+      text-align: center;
+      padding: 8px;
+      border-radius: 5px 5px 0 0;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    
+    th {
+      background-color: #f8f9fa;
+      text-align: left;
+    }
+    
+    .page-break {
+      page-break-after: always;
+    }
+    
+    .columns {
+      display: flex;
+      margin-bottom: 15px;
+    }
+    
+    .column {
+      flex: 1;
+      padding: 0 10px;
+    }
+    
+    .last-evaluation {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .last-evaluation h2 {
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Página 1 -->
+  <div class="header">
+    <h1>Historia Clínica V2</h1>
+  </div>
+  
+<div class="box">
+  <div class="info-basic">
+    <div class="columns">
+      <div class="column">
+        <strong>No. Expediente:</strong> <%= datosSesion?.IDExpediente %>
+      </div>
+      <div class="column">
+        <strong>Número de sesión:</strong> <%= datosSesion?.numSesion || '' %>
+      </div>
+    </div>
+    
+    <hr>    
+    <div class="columns">
+      <div class="column">
+        <p><strong>Nombre Completo:</strong> <%= datosSesion?.nombres %> <%= datosSesion?.apellidoP %> <%= datosSesion?.apellidoM %></p>
+        <p><strong>Edad (años):</strong> <%= calcularEdad(datosSesion?.fechaNacimiento) %></p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sección I. INDICADORES BIOQUÍMICOS -->
+  <table>
+    <thead>
+      <tr>
+        <th colspan="3" class="section-title">I. INDICADORES BIOQUÍMICOS</th>
+      </tr>
+      <tr>
+        <th>Parámetro Bioquímico</th>
+        <th>Valor de referencia</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (datosSesion?.indicadoresBioquim && datosSesion.indicadoresBioquim.length > 0) { %>
+        <% datosSesion.indicadoresBioquim.forEach(function(indicador) { %>
+          <tr>
+            <td><%= indicador.parametro %></td>
+            <td><%= indicador.valorReferencia %></td>
+            <td><%= formatDate(indicador.parametroFecha) %></td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr>
+          <td colspan="3" style="text-align: center;">No hay indicadores registrados</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+  
+  <!-- Sección II. EVALUACIÓN ANTROPOMÉTRICA -->
+  <table>
+    <thead>
+      <tr>
+        <th colspan="2" class="section-title">II. EVALUACIÓN ANTROPOMÉTRICA</th>
+      </tr>
+      <tr>
+        <th>Aspectos por evaluar</th>
+        <th>Medidas</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Altura (m)</td>
+        <td><%= datosSesion?.evaluacionAntropometrica?.talla || '' %></td>
+      </tr>
+      <tr>
+        <td>Peso (kg)</td>
+        <td><%= datosSesion?.evaluacionAntropometrica?.peso || '' %></td>
+      </tr>
+      <tr>
+        <td>Circunferencia cintura (cm)</td>
+        <td><%= datosSesion?.evaluacionAntropometrica?.circunferenciaCintura || '' %></td>
+      </tr>
+      <tr>
+        <td>Circunferencia cadera (cm)</td>
+        <td><%= datosSesion?.evaluacionAntropometrica?.circunferenciaCadera || '' %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  
+  <div class="box">
+    <!-- Sección III. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE -->
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2" class="section-title">III. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Diagnósticos actualizados:</strong></td>
+          <td><%= datosSesion?.diagnosticoEvolucion?.diagnosticoEvolucion || '' %></td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Sección IV. OBJETIVOS NUTRICIONALES -->
+    <table>
+      <thead>
+        <tr>
+          <th class="section-title">IV. OBJETIVOS NUTRICIONALES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (datosSesion?.objetivoNutricional && datosSesion.objetivoNutricional.length > 0) { %>
+          <% datosSesion.objetivoNutricional.forEach(function(objetivo) { %>
+            <tr>
+              <td><%= objetivo.objetivo %></td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td style="text-align: center;">No hay objetivos registrados</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    
+    <!-- Sección V. MANEJO NUTRICIONAL -->
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2" class="section-title">V. MANEJO NUTRICIONAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td width="30%">Energía (kcal)</td>
+          <td><%= datosSesion?.manejoNutricional?.energia || '' %></td>
+        </tr>
+        <tr>
+          <td>Hidratos de carbono</td>
+          <td><%= datosSesion?.manejoNutricional?.hidratosDeCarbono || '' %></td>
+        </tr>
+        <tr>
+          <td>Lípidos</td>
+          <td><%= datosSesion?.manejoNutricional?.lipidos || '' %></td>
+        </tr>
+        <tr>
+          <td>Proteínas</td>
+          <td><%= datosSesion?.manejoNutricional?.proteinas || '' %></td>
+        </tr>
+        <tr>
+          <td>Fibra</td>
+          <td><%= datosSesion?.manejoNutricional?.fibra || '' %></td>
+        </tr>
+        <tr>
+          <td>Agua</td>
+          <td><%= datosSesion?.manejoNutricional?.agua || '' %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+<div class="page-break"></div>
+
+  

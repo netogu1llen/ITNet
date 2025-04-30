@@ -15,8 +15,6 @@
             <th>Paciente</th>
             <th>Creado por</th>
             <th>Fecha de creación</th>
-            <th>Modificado por</th>
-            <th>Fecha de modificación</th>
           </tr>
         </thead>
         <tbody>
@@ -27,12 +25,6 @@
               <td>
                 <%= expediente.fechaCreacion && !isNaN(new Date(expediente.fechaCreacion))
                   ? new Date(expediente.fechaCreacion).toLocaleDateString('es-MX')
-                  : 'No registrada' %>
-              </td>
-              <td><%= expediente.modificadoPor || 'No modificado' %></td>
-              <td>
-                <%= expediente.fechaModificacion && !isNaN(new Date(expediente.fechaModificacion))
-                  ? new Date(expediente.fechaModificacion).toLocaleDateString('es-MX')
                   : 'No registrada' %>
               </td>
             </tr>

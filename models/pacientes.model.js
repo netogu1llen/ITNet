@@ -151,7 +151,6 @@ class Pacientes {
     idExpediente
   }) {
     try {
-      // Usamos el método de promesas para la consulta
       const [result] = await db.execute(
         `UPDATE expediente SET
           nombres = ?, apellidoP = ?, apellidoM = ?,
@@ -183,12 +182,13 @@ class Pacientes {
           idExpediente
         ]
       );
-    } catch (error) {
-      console.error('Error al actualizar paciente:', error);
-      throw new Error('Error al actualizar paciente');
-    }
+      return result;
+  } catch (error) {
+    console.error('Error al actualizar paciente:', error);
+    throw new Error('Error al actualizar paciente');
   }
-
+  }
+    
   static async eliminarPaciente(idExpediente) {
     try {
         // Usamos el método de promesas para la consulta
@@ -310,28 +310,25 @@ class Pacientes {
     }
   }
     // Obtener historial de expedientes con creador y modificador
-  static async obtenerHistorialExpedientes() {
-    try {
-      const [results] = await db.execute(`
-        SELECT 
-          e.IDExpediente,
-          e.nombres AS nombrePaciente,
-          uCreador.nombres AS creadoPor,
-          ue.fecha AS fechaCreacion,
-          uMod.nombres AS modificadoPor,
-          e.fechaModificacion
-        FROM expediente e
-        LEFT JOIN usuarioExpediente ue ON e.IDExpediente = ue.IDExpediente AND ue.numSesion = 1
-        LEFT JOIN usuario uCreador ON ue.IDUsuario = uCreador.IDUsuario
-        LEFT JOIN usuario uMod ON e.modificadoPor = uMod.IDUsuario
-        WHERE e.eliminado IS NULL OR e.eliminado = 0;
-      `);
-      return results;
-    } catch (error) {
-      console.error('Error al obtener historial de expedientes:', error);
-      throw new Error('Error al obtener historial de expedientes');
+    static async obtenerHistorialExpedientes() {
+      try {
+        const [results] = await db.execute(`
+          SELECT 
+            e.IDExpediente,
+            e.nombres AS nombrePaciente,
+            uCreador.nombres AS creadoPor,
+            ue.fecha AS fechaCreacion
+          FROM expediente e
+          LEFT JOIN usuarioExpediente ue ON e.IDExpediente = ue.IDExpediente AND ue.numSesion = 1
+          LEFT JOIN usuario uCreador ON ue.IDUsuario = uCreador.IDUsuario
+          WHERE e.eliminado IS NULL OR e.eliminado = 0;
+        `);
+        return results;
+      } catch (error) {
+        console.error('Error al obtener historial de expedientes:', error);
+        throw new Error('Error al obtener historial de expedientes');
+      }
     }
-  }
     
 }
 

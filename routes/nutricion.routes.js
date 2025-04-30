@@ -34,7 +34,6 @@ router.delete('/documentos/eliminar/:id', nutricionController.eliminarDocumento)
 
 // Ruta para subir un documento
 router.post('/documentos/subir/:IDExpediente', nutricionController.subirDocumentoMiddleware);
-router.get('/documentos/:id', nutricionController.getExpedienteNutricion);
 
 // Reorganizar las rutas de historia clínica (el orden es importante)
 router.get('/historiaClinica/create/:id', nutricionController.createHistoriaClinicaV1);
@@ -45,5 +44,6 @@ router.get('/historiaClinicaV2/:id', nutricionController.renderHistoriaClinicaV2
 router.post('/historiaClinica/guardarHistoriaClinicaV1', nutricionController.guardarHistoriaClinicaV1);
 router.post('/historiaClinica/actualizarHistoriaClinicaV1', nutricionController.actualizarHistoriaClinicaV1);
 router.post('/historiaClinica/guardarHistoriaClinicaV2', nutricionController.guardarHistoriaClinicaV2);
+router.post('/historiaClinica/actualizarHistoriaClinicaV2', nutricionController.actualizarHistoriaClinicaV2);
 
 module.exports = router;
