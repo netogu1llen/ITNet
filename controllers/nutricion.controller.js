@@ -112,7 +112,8 @@ exports.getExpedienteNutricion = async (req, res) => {
             telefono: decrypt(datosGeneralesPacienteEncriptados.contacto || ''),
             escuela: datosGeneralesPacienteEncriptados.nvEscolar || 'No registrado',
             sexo: datosGeneralesPacienteEncriptados.sexo || 'No especificado',
-            edadPaciente: calcularEdad(decrypt(datosGeneralesPacienteEncriptados.fechaNacimiento || ''))
+            edadPaciente: calcularEdad(decrypt(datosGeneralesPacienteEncriptados.fechaNacimiento || '')),
+            tipoSangre: datosGeneralesPacienteEncriptados.sangre || 'No registrado'
         };
 
         // Obtener antecedentes del paciente
@@ -230,22 +231,24 @@ exports.descargarDocumento = async (req, res) => {
                     // Usar plantilla para Historia Clínica V1
                     html = await ejs.renderFile(
                         path.join(__dirname, '../views/pdf/historiaClinicaV1.ejs'),
-                        { 
+                        {   
+                            idExpediente,
+                            tipo,
+                            expediente,
                             datosSesion, 
                             datosGeneralesPaciente, 
                             fechaGeneracion: new Date().toLocaleDateString() 
                         }
                     );
                 } else if (tipo === 'NUTRICIONAL_V2') {
-                    // Para V2, obtener también la última sesión V1 como referencia
-                    const datosSesionV1 = await Nutricion.obtenerUltimaSesionV1(idExpediente);
-                    
+
                     // Usar plantilla para Historia Clínica V2
                     html = await ejs.renderFile(
                         path.join(__dirname, '../views/pdf/historiaClinicaV2.ejs'),
-                        { 
+                        {   idExpediente,
+                            tipo,
+                            expediente,
                             datosSesion, 
-                            datosSesionV1,
                             datosGeneralesPaciente,
                             fechaGeneracion: new Date().toLocaleDateString() 
                         }
@@ -329,42 +332,42 @@ exports.verDocumento = async (req, res) => {
 
 // Obtener y mostrar un Historial Nutricional V2
 exports.getHistorialNutricionalV2 = async (req, res) => {
-  try {
-    const id = req.query.id;
-    const idExpediente = req.query.expediente;
-    
-    if (!id || !idExpediente) {
-      return res.status(400).send('Se requieren los IDs');
+    try {
+      const id = req.query.id;
+      const idExpediente = req.query.expediente;
+      
+      if (!id || !idExpediente) {
+        return res.status(400).send('Se requieren los IDs');
+      }
+      
+      // Obtener datos del historial nutricional V2 (antes objetivo nutricional)
+      const historial = await Nutricion.obtenerHistorialNutricionalV2PorId(id);
+      
+      if (!historial) {
+        return res.status(404).send('Historial nutricional V2 no encontrado');
+      }
+      
+      // Obtener datos del paciente
+      const pacienteEncriptado = await Nutricion.obtenerPorId(idExpediente);
+      
+      // Desencriptar datos sensibles del paciente
+      const paciente = {
+        nombres: decrypt(pacienteEncriptado.nombres || ''),
+        apellidoP: decrypt(pacienteEncriptado.apellidoP || ''),
+        apellidoM: decrypt(pacienteEncriptado.apellidoM || ''),
+        fechaNacimiento: decrypt(pacienteEncriptado.fechaNacimiento || '')
+      };
+      
+      // Renderizar la vista con los datos
+      res.render('historial_nutricional_v2', { 
+        historial, 
+        paciente
+      });
+    } catch (error) {
+      console.error('Error al obtener historial nutricional V2:', error);
+      res.status(500).send('Error al cargar el historial nutricional V2');
     }
-    
-    // Obtener datos del historial nutricional V2 (antes objetivo nutricional)
-    const historial = await Nutricion.obtenerHistorialNutricionalV2PorId(id);
-    
-    if (!historial) {
-      return res.status(404).send('Historial nutricional V2 no encontrado');
-    }
-    
-    // Obtener datos del paciente
-    const pacienteEncriptado = await Nutricion.obtenerPorId(idExpediente);
-    
-    // Desencriptar datos sensibles del paciente
-    const paciente = {
-      nombres: decrypt(pacienteEncriptado.nombres || ''),
-      apellidoP: decrypt(pacienteEncriptado.apellidoP || ''),
-      apellidoM: decrypt(pacienteEncriptado.apellidoM || ''),
-      fechaNacimiento: decrypt(pacienteEncriptado.fechaNacimiento || '')
-    };
-    
-    // Renderizar la vista con los datos
-    res.render('historial_nutricional_v2', { 
-      historial, 
-      paciente
-    });
-  } catch (error) {
-    console.error('Error al obtener historial nutricional V2:', error);
-    res.status(500).send('Error al cargar el historial nutricional V2');
-  }
-};
+  };
 
 // Eliminar documento o historial
 exports.eliminarDocumento = async (req, res) => {
@@ -667,18 +670,6 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
         let datosSesion = null;
         if (numSesion) {
             datosSesion = await Nutricion.obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion);
-            
-            // Transformar objetivos al formato esperado
-            if (datosSesion && Array.isArray(datosSesion.objetivo)) {
-                datosSesion.objetivoNutricional = datosSesion.objetivo.map(obj => ({ objetivo: obj }));
-            }
-
-            // Asegurarse que el diagnóstico tenga el formato correcto
-            if (datosSesion && datosSesion.diagnosticoEvolucion) {
-                datosSesion.diagnosticoEvolucion = {
-                    diagnosticoEvolucion: datosSesion.diagnosticoEvolucion
-                };
-            }
         }
 
         // Para mostrar datos de la última sesión V1
@@ -702,9 +693,9 @@ exports.actualizarHistoriaClinicaV2 = async (req, res) => {
     try {
         const datos = req.body;
         await Nutricion.actualizarHistoriaClinicaV2(datos);
-        res.sendStatus(200); // Solo envía código de estado 200 (OK)
+        res.json({ success: true });
     } catch (error) {
         console.error('Error actualizando historia clínica V2:', error);
-        res.sendStatus(500); // Solo envía código de estado 500 (Error)
+        res.status(500).json({ success: false, message: 'Error al actualizar' });
     }
 };

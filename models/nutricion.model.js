@@ -646,6 +646,7 @@ class Nutricion {
             connection.release();
         }
     }
+    
 
     static async actualizarHistoriaClinicaV2(data) {
         const connection = await db.getConnection();
