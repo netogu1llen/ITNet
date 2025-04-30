@@ -179,9 +179,12 @@ function calcularEdad(fechaNacimiento) {
 }
 
 // Descargar documento
+// Modificar la función descargarDocumento en controllers/nutricion.controller.js
 exports.descargarDocumento = async (req, res) => {
     try {
         const id = req.params.id;
+        const tipo = req.query.tipo; // Obtener tipo desde query parameters
+        const numSesion = req.query.numSesion;
         
         // Primero intentar obtener como documento PDF almacenado
         let documento = await Nutricion.obtenerDocumentoPorId(id);
@@ -189,56 +192,92 @@ exports.descargarDocumento = async (req, res) => {
         if (!documento) {
             console.log('No se encontró documento PDF, intentando generar expediente...');
             
-            // Obtener datos para el expediente
-            const numSesion = req.query.numSesion;
-            const datosSesion = await Nutricion.obtenerDatosSesionCompletos(id, numSesion);
-            
-            if (!datosSesion) {
-                console.error('No se encontraron datos de la sesión');
-                return res.status(404).send('Documento o sesión no encontrada');
-            }
-
-            // Obtener datos del expediente
-            let expediente = await Nutricion.obtenerPorId(datosSesion.nutricional1.IDExpediente);
-
-            // Renderizar plantilla EJS a HTML
-            let html;
-            const tipo = req.query.tipo; // Obtener tipo desde query parameters
-            if (tipo === 'NUTRICIONAL_V1') {
-                html = await ejs.renderFile(
-                    path.join(__dirname, '../views/pdf/historiaClinicaV1.ejs'),
-                    { datosSesion, datosGeneralesPaciente, fechaGeneracion: new Date().toLocaleDateString() }
-                );
-            } else if (tipo === 'NUTRICIONAL_V2') {
-                html = await ejs.renderFile(
-                    path.join(__dirname, '../views/pdf/historiaClinicaV2.ejs'),
-                    { datosSesion, fechaGeneracion: new Date().toLocaleDateString() }
-                );
-            } else {
-                return res.status(400).send('Tipo de documento no válido');
-            }
-
-            // Generar PDF con Puppeteer
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            await page.setContent(html, { waitUntil: 'networkidle0' });
-            
-            const pdfBuffer = await page.pdf({
-                format: 'A4',
-                margin: {
-                    top: "20px",
-                    bottom: "20px",
-                    left: "20px",
-                    right: "20px"
+            // Determinar el tipo de documento a generar
+            if (tipo === 'NUTRICIONAL_V1' || tipo === 'NUTRICIONAL_V2') {
+                // Obtener datos para el expediente
+                const idExpediente = req.query.expediente; // Nuevo parámetro
+                
+                if (!idExpediente) {
+                    return res.status(400).send('ID de expediente requerido');
                 }
-            });
+                
+                // Obtener datos del expediente
+                const expediente = await Nutricion.obtenerPorId(idExpediente);
+                
+                if (!expediente) {
+                    return res.status(404).send('Expediente no encontrado');
+                }
 
-            await browser.close();
+                // Obtener datos completos de la sesión
+                const datosSesion = await Nutricion.obtenerDatosSesionCompletos(idExpediente, numSesion);
+                
+                if (!datosSesion) {
+                    return res.status(404).send('Sesión no encontrada');
+                }
+                
+                // Desencriptar datos del paciente para el PDF
+                const datosGeneralesPaciente = {
+                    nombres: expediente.nombres,
+                    apellidoP: expediente.apellidoP,
+                    apellidoM: expediente.apellidoM,
+                    fechaNacimiento: expediente.fechaNacimiento,
+                    edadPaciente: calcularEdad(expediente.fechaNacimiento)
+                };
 
-            // Enviar el PDF generado
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename=expediente.pdf');
-            return res.end(pdfBuffer);
+                // Generar HTML según el tipo de documento
+                let html;
+                if (tipo === 'NUTRICIONAL_V1') {
+                    // Usar plantilla para Historia Clínica V1
+                    html = await ejs.renderFile(
+                        path.join(__dirname, '../views/pdf/historiaClinicaV1.ejs'),
+                        { 
+                            datosSesion, 
+                            datosGeneralesPaciente, 
+                            fechaGeneracion: new Date().toLocaleDateString() 
+                        }
+                    );
+                } else if (tipo === 'NUTRICIONAL_V2') {
+                    // Para V2, obtener también la última sesión V1 como referencia
+                    const datosSesionV1 = await Nutricion.obtenerUltimaSesionV1(idExpediente);
+                    
+                    // Usar plantilla para Historia Clínica V2
+                    html = await ejs.renderFile(
+                        path.join(__dirname, '../views/pdf/historiaClinicaV2.ejs'),
+                        { 
+                            datosSesion, 
+                            datosSesionV1,
+                            datosGeneralesPaciente,
+                            fechaGeneracion: new Date().toLocaleDateString() 
+                        }
+                    );
+                } else {
+                    return res.status(400).send('Tipo de documento no válido');
+                }
+
+                // Generar PDF con Puppeteer
+                const browser = await puppeteer.launch({
+                    args: ['--no-sandbox', '--disable-setuid-sandbox']
+                });
+                const page = await browser.newPage();
+                await page.setContent(html, { waitUntil: 'networkidle0' });
+                
+                const pdfBuffer = await page.pdf({
+                    format: 'A4',
+                    margin: {
+                        top: "20px",
+                        bottom: "20px",
+                        left: "20px",
+                        right: "20px"
+                    }
+                });
+
+                await browser.close();
+
+                // Enviar el PDF generado
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', `attachment; filename=${tipo === 'NUTRICIONAL_V1' ? 'historial_clinico_v1' : 'historial_clinico_v2'}.pdf`);
+                return res.end(pdfBuffer);
+            }
         }
 
         // Si es un documento almacenado, enviarlo desde el sistema de archivos

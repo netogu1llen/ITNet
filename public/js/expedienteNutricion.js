@@ -314,22 +314,33 @@ $(document).on('click', '.fila-documento', function(e) {
     }
 });
 
-// Manejador de eventos para botones de descarga
+// Modificar la función para el botón de descarga en el archivo expedienteNutricion.js
 $(document).on('click', '.btn-descargar', function(event) {
     event.preventDefault();
     event.stopPropagation(); // Evitar que se active la vista previa
     
     const documentoId = $(this).data('id');
     const tipo = $(this).data('tipo');
+    const numSesion = $(this).data('sesion');
+    const idExpediente = new URLSearchParams(window.location.search).get('id') || 
+                       window.location.pathname.split('/').pop();
     
-    console.log('Descargando documento:', documentoId, 'de tipo:', tipo);
+    console.log('Descargando documento:', documentoId, 'de tipo:', tipo, 'sesión:', numSesion);
     
     // Mostrar modal de carga
     showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
     
+    // Construir URL con parámetros
+    let downloadUrl = `/nutricion/documentos/descargar/${documentoId}?tipo=${tipo}`;
+    
+    // Añadir parámetros adicionales para historiales clínicos
+    if (tipo === 'NUTRICIONAL_V1' || tipo === 'NUTRICIONAL_V2') {
+        downloadUrl += `&numSesion=${numSesion}&expediente=${idExpediente}`;
+    }
+    
     // Usar AJAX para la descarga
     $.ajax({
-        url: `/nutricion/documentos/descargar/${documentoId}`,
+        url: downloadUrl,
         method: 'GET',
         xhrFields: {
             responseType: 'blob' // Importante para manejar PDFs
@@ -344,7 +355,18 @@ $(document).on('click', '.btn-descargar', function(event) {
             // Crear elemento para la descarga
             const link = document.createElement('a');
             link.href = url;
-            link.download = (tipo === 'NUTRICIONAL_V1') ? 'historial_clinico_v1.pdf' : `documento_${documentoId}.pdf`;
+            
+            // Nombre de archivo según tipo
+            let filename = 'documento.pdf';
+            if (tipo === 'NUTRICIONAL_V1') {
+                filename = `historial_clinico_v1_sesion_${numSesion}.pdf`;
+            } else if (tipo === 'NUTRICIONAL_V2') {
+                filename = `historial_clinico_v2_sesion_${numSesion}.pdf`;
+            } else {
+                filename = `documento_${documentoId}.pdf`;
+            }
+            
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             

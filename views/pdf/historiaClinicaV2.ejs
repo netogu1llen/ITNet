@@ -1,138 +1,268 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .section { margin: 15px 0; }
-        .section-title { 
-            background-color: #f0f0f0;
-            padding: 8px;
-            font-weight: bold;
-        }
-        .grid { 
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .field { margin: 5px 0; }
-        .label { font-weight: bold; }
-        table { 
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th { background-color: #f5f5f5; }
-    </style>
+  <meta charset="utf-8">
+  <title>Historia Clínica V2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .header {
+      background-color: #f2f2f2;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    
+    .header h1 {
+      margin: 0;
+      color: #000;
+      font-size: 24px;
+    }
+    
+    .header img {
+      height: 30px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    
+    .box {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .info-basic {
+      margin-bottom: 15px;
+    }
+    
+    .section-title {
+      background-color: #f2f2f2;
+      text-align: center;
+      padding: 8px;
+      border-radius: 5px 5px 0 0;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    
+    th {
+      background-color: #f8f9fa;
+      text-align: left;
+    }
+    
+    .page-break {
+      page-break-after: always;
+    }
+    
+    .columns {
+      display: flex;
+      margin-bottom: 15px;
+    }
+    
+    .column {
+      flex: 1;
+      padding: 0 10px;
+    }
+    
+    .last-evaluation {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .last-evaluation h2 {
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Historia Clínica Nutricional V2</h1>
-        <p>Fecha de generación: <%= fechaGeneracion %></p>
-        <div class="field">
-            <span class="label">Número de Sesión:</span>
-            <span><%= datosSesion.numSesion %></span>
+  <!-- Página 1 -->
+  <div class="header">
+    <h1><img src="data:image/png;base64,IMAGEN_CODIFICADA_AQUI" alt="Salud Icon"> Historia Clínica V2</h1>
+  </div>
+  
+  <div class="box">
+    <div class="info-basic">
+      <div class="columns">
+        <div class="column">
+          <strong>No. Expediente:</strong> {{expediente.IDExpediente}}
         </div>
-    </div>
-
-    <!-- Datos de la última sesión V1 -->
-    <div class="section">
-        <div class="section-title">Última Evaluación V1</div>
-        <div class="grid">
-            <div class="field">
-                <span class="label">Peso anterior:</span>
-                <span><%= datosSesionV1?.peso || 'No registrado' %> kg</span>
-            </div>
-            <div class="field">
-                <span class="label">Talla anterior:</span>
-                <span><%= datosSesionV1?.talla || 'No registrado' %> m</span>
-            </div>
+        <div class="column">
+          <strong>Número de sesión:</strong> {{datosSesion.numSesion}}
         </div>
+      </div>
+      
+      <!-- Última evaluación V1 -->
+      <div class="last-evaluation">
+        <h2>Última Evaluación (V1)</h2>
+        <div class="columns">
+          <div class="column">
+            <p><strong>Peso anterior:</strong> {{datosSesionV1.peso || 'No registrado'}} kg</p>
+          </div>
+          <div class="column">
+            <p><strong>Talla anterior:</strong> {{datosSesionV1.talla || 'No registrado'}} m</p>
+          </div>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <div class="columns">
+        <div class="column">
+          <p><strong>Nombre Completo:</strong> {{expediente.nombres}} {{expediente.apellidoP}} {{expediente.apellidoM}}</p>
+          <p><strong>Edad (años):</strong> {{edad}}</p>
+        </div>
+      </div>
     </div>
-
-    <!-- I. INDICADORES BIOQUÍMICOS -->
-    <div class="section">
-        <div class="section-title">I. Indicadores Bioquímicos</div>
-        <% if (datosSesion.indicadoresBioquim && datosSesion.indicadoresBioquim.length > 0) { %>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Parámetro</th>
-                        <th>Valor de Referencia</th>
-                        <th>Fecha</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% datosSesion.indicadoresBioquim.forEach(indicador => { %>
-                        <tr>
-                            <td><%= indicador.parametro %></td>
-                            <td><%= indicador.valorReferencia %></td>
-                            <td><%= new Date(indicador.parametroFecha).toLocaleDateString() %></td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        <% } %>
-    </div>
-
-    <!-- II. EVALUACIÓN ANTROPOMÉTRICA con todos los campos -->
-    <div class="section">
-        <div class="section-title">II. Evaluación Antropométrica</div>
-        <% if (datosSesion.evaluacionAntropometrica) { %>
-            <div class="grid">
-                <div class="field">
-                    <span class="label">Peso:</span>
-                    <span><%= datosSesion.evaluacionAntropometrica.peso %> kg</span>
-                </div>
-                <div class="field">
-                    <span class="label">Talla:</span>
-                    <span><%= datosSesion.evaluacionAntropometrica.talla %> cm</span>
-                </div>
-                <div class="field">
-                    <span class="label">Circunferencia Cintura:</span>
-                    <span><%= datosSesion.evaluacionAntropometrica.circunferenciaCintura %> cm</span>
-                </div>
-                <div class="field">
-                    <span class="label">Circunferencia Cadera:</span>
-                    <span><%= datosSesion.evaluacionAntropometrica.circunferenciaCadera %> cm</span>
-                </div>
-            </div>
-        <% } %>
-    </div>
-
-    <div
-                <div class="field">
-                    <span class="label">Energía:</span>
-                    <span><%= datosSesion.manejoNutricional.energia %> kcal</span>
-                </div>
-                <div class="field">
-                    <span class="label">H. de Carbono:</span>
-                    <span><%= datosSesion.manejoNutricional.hidratosDeCarbono %> g</span>
-                </div>
-                <div class="field">
-                    <span class="label">Lípidos:</span>
-                    <span><%= datosSesion.manejoNutricional.lipidos %> g</span>
-                </div>
-                <div class="field">
-                    <span class="label">Proteínas:</span>
-                    <span><%= datosSesion.manejoNutricional.proteinas %> g</span>
-                </div>
-                <div class="field">
-                    <span class="label">Fibra:</span>
-                    <span><%= datosSesion.manejoNutricional.fibra %> g</span>
-                </div>
-                <div class="field">
-                    <span class="label">Agua:</span>
-                    <span><%= datosSesion.manejoNutricional.agua %> ml</span>
-                </div>
-            </div>
-        <% } %>
-    </div>
+    
+    <!-- Sección I. INDICADORES BIOQUÍMICOS -->
+    <table>
+      <thead>
+        <tr>
+          <th colspan="3" class="section-title">I. INDICADORES BIOQUÍMICOS</th>
+        </tr>
+        <tr>
+          <th>Parámetro Bioquímico</th>
+          <th>Valor de referencia</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each datosSesion.indicadoresBioquim}}
+        <tr>
+          <td>{{this.parametro}}</td>
+          <td>{{this.valorReferencia}}</td>
+          <td>{{formatDate(this.parametroFecha)}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    
+    <!-- Sección II. EVALUACIÓN ANTROPOMÉTRICA -->
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2" class="section-title">II. EVALUACIÓN ANTROPOMÉTRICA</th>
+        </tr>
+        <tr>
+          <th>Aspectos por evaluar</th>
+          <th>Medidas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Altura (m)</td>
+          <td>{{datosSesion.evaluacionAntropometrica.talla}}</td>
+        </tr>
+        <tr>
+          <td>Peso (kg)</td>
+          <td>{{datosSesion.evaluacionAntropometrica.peso}}</td>
+        </tr>
+        <tr>
+          <td>Circunferencia cintura (cm)</td>
+          <td>{{datosSesion.evaluacionAntropometrica.circunferenciaCintura}}</td>
+        </tr>
+        <tr>
+          <td>Circunferencia cadera (cm)</td>
+          <td>{{datosSesion.evaluacionAntropometrica.circunferenciaCadera}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="page-break"></div>
+  
+  <!-- Página 2 -->
+  <div class="header">
+    <h1><img src="data:image/png;base64,IMAGEN_CODIFICADA_AQUI" alt="Salud Icon"> Historia Clínica V2</h1>
+  </div>
+  
+  <div class="box">
+    <!-- Sección III. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE -->
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2" class="section-title">III. DIAGNÓSTICO Y EVOLUCIÓN DEL PACIENTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Diagnósticos actualizados:</strong></td>
+          <td>{{datosSesion.diagnosticoEvolucion.diagnosticoEvolucion}}</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Sección IV. OBJETIVOS NUTRICIONALES -->
+    <table>
+      <thead>
+        <tr>
+          <th class="section-title">IV. OBJETIVOS NUTRICIONALES</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each datosSesion.objetivoNutricional}}
+        <tr>
+          <td>{{this.objetivo}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    
+    <!-- Sección V. MANEJO NUTRICIONAL -->
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2" class="section-title">V. MANEJO NUTRICIONAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td width="30%">Energía (kcal)</td>
+          <td>{{datosSesion.manejoNutricional.energia}}</td>
+        </tr>
+        <tr>
+          <td>Hidratos de carbono</td>
+          <td>{{datosSesion.manejoNutricional.hidratosDeCarbono}}</td>
+        </tr>
+        <tr>
+          <td>Lípidos</td>
+          <td>{{datosSesion.manejoNutricional.lipidos}}</td>
+        </tr>
+        <tr>
+          <td>Proteínas</td>
+          <td>{{datosSesion.manejoNutricional.proteinas}}</td>
+        </tr>
+        <tr>
+          <td>Fibra</td>
+          <td>{{datosSesion.manejoNutricional.fibra}}</td>
+        </tr>
+        <tr>
+          <td>Agua</td>
+          <td>{{datosSesion.manejoNutricional.agua}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
