@@ -101,6 +101,11 @@ class AuthService {
     }
   }
 
+  async findUserByEmail(email) {
+    // Usa el método existente del modelo AuthModel
+    return await userService.findByEmail(email);
+  }
+
   /**
    * Maneja un usuario autenticado con Google y genera JWT
    * @param {Object} googleUser - Usuario obtenido de Google
@@ -115,29 +120,29 @@ class AuthService {
       if (!user) {
         throw new Error('Usuario no registrado');
       }
-
-      // Construir un payload con la información necesaria del usuario
+  
       const tokenPayload = {
-        userData: {
-          id: user.IDUsuario,
-          email: user.correo
-        },
-        authorization: {
-          roles: user.IDRoles || [],
-          privileges: user.IDPrivilegios || []
-        },
-        metadata: {
-          authMethod: 'google',
-          authTime: new Date().toISOString()
-        }
+        userId: user.IDUsuario,
+        email: user.correo,
+        roles: user.IDRoles || [],
+        privileges: user.IDPrivilegios || []
       };
-
+  
       // Verificación de datos incluidos en el token
-      console.log('Payload del Token JWT:', JSON.stringify(tokenPayload, null, 2));
-
-      // Generar y devolver el token JWT
+      console.log('Payload del Token JWT:', {
+        datosUsuario: {
+          id: tokenPayload.userId,
+          email: tokenPayload.email
+        },
+        autorizacion: {
+          roles: tokenPayload.roles,
+          privilegios: tokenPayload.privileges
+        },
+        timestamp: new Date().toISOString()
+      });
+  
       return generateUserToken(tokenPayload);
-
+  
     } catch (error) {
       console.error('Error en handleGoogleUser:', error);
       throw error;
