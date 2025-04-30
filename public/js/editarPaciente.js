@@ -75,6 +75,7 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
             const grado = document.getElementById('grado').value;
             const nvEscolar = document.getElementById('nvEscolar').value;
             const sangre = document.getElementById('sangre').value;
+            const sexo = document.getElementById('sexo').value;
 
             // Arreglo de campos para validaciones
             const campos = [
@@ -94,7 +95,8 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
                 { id: 'estudioSocioeconomico', nombre: 'estudioSocioeconomico' },
                 { id: 'grado', nombre: 'grado' },
                 { id: 'nvEscolar', nombre: 'nvEscolar' },
-                { id: 'sangre', nombre: 'sangre' }
+                { id: 'sangre', nombre: 'sangre' },
+                { id: 'sexo', nombre: 'sexo' }
             ];
 
             let camposVacios = [];
@@ -179,7 +181,8 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
                 estudioSocioeconomico,
                 grado,
                 nvEscolar,
-                sangre
+                sangre,
+                sexo
             };
 
             // Llamar a la función para enviar los datos

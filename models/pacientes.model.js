@@ -41,7 +41,8 @@ class Pacientes {
     estudioSocioeconomico,
     grado,
     nvEscolar,
-    sangre
+    sangre,
+    sexo
   })
   {
     try {
@@ -51,7 +52,7 @@ class Pacientes {
           fechaNacimiento = ?, contacto = ?, estado = ?,  ciudad = ?,
           calle = ?,  cp = ?,  localidad = ?,  numCasa = ?, numExpediente = ?,
           enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
-          grado = ?, nvEscolar = ?, sangre = ?, eliminado = 0`,
+          grado = ?, nvEscolar = ?, sangre = ?, eliminado = 0, sexo= ?`,
         [
           nombres,
           apellidoP,
@@ -70,7 +71,8 @@ class Pacientes {
           estudioSocioeconomico,
           grado,
           nvEscolar,
-          sangre
+          sangre,
+          sexo
         ]
       );
       return result;
@@ -91,12 +93,12 @@ class Pacientes {
         `SELECT nombres, apellidoP, apellidoM, numExpediente,
           fechaNacimiento, contacto, estado,  ciudad,
           calle,  cp,  localidad,  numCasa, enfermedades,
-          medicamentos, estudioSocioeconomico, grado, nvEscolar, sangre
+          medicamentos, estudioSocioeconomico, grado, nvEscolar, sangre, sexo
          FROM expediente
-         WHERE IDExpediente = ?`,
+         WHERE IDExpediente = ? AND eliminado = 0`,
         [idExpediente]
       );
-      return result; 
+      return result[0]; 
     } catch (error) {
       console.error('Error al obtener paciente:', error);
       throw new Error('Error al obtener paciente');
@@ -145,6 +147,7 @@ class Pacientes {
     grado,
     nvEscolar,
     sangre,
+    sexo,
     idExpediente
   }) {
     try {
@@ -155,7 +158,7 @@ class Pacientes {
            fechaNacimiento = ?, contacto = ?, estado = ?,  ciudad = ?,
            calle = ?,  cp = ?,  localidad = ?,  numCasa = ?, numExpediente = ?,
            enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
-           grado = ?, nvEscolar = ?, sangre = ?
+           grado = ?, nvEscolar = ?, sangre = ?, sexo = ?
          WHERE IDExpediente = ?`,
          [
           nombres,
@@ -176,6 +179,7 @@ class Pacientes {
           grado,
           nvEscolar,
           sangre,
+          sexo,
           idExpediente
         ]
       );
@@ -224,7 +228,8 @@ class Pacientes {
                 CONCAT(calle, ' ', numCasa) AS domicilio,
                 grado, 
                 nvEscolar AS curso,
-                numExpediente
+                numExpediente,
+                sexo
             FROM expediente
             WHERE IDExpediente = ? AND eliminado = 0
         `, [idExpediente]);
