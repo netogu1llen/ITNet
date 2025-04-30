@@ -5,6 +5,7 @@ const ejs = require('ejs');
 const puppeteer = require('puppeteer');
 const multer = require('multer'); // Añadir multer al controlador
 const { decrypt } = require('../util/encryptData'); // Importar función de desencriptación
+const s3 = require('../util/s3Client');
 
 // Función helper para desencriptar expediente con manejo de errores
 const desencriptarExpediente = (expediente) => {
@@ -112,205 +113,61 @@ exports.registrarDocumento = async (req, res) => {
     }
 };
 
-exports.descargarDocumento = async (req, res) => {
-  try {
-      const id = req.params.id;
-      console.log('descargarDocumento con id:', id);
 
-      let documento = await Psicologia.obtenerDocumentoPorId(id);
-
-      if (!documento) {
-          console.warn('No se encontró documento, intentando buscar seguimiento...');
-
-          const seguimiento = await Psicologia.obtenerPorId(id);
-          if (!seguimiento) {
-              console.error('Ni documento ni seguimiento encontrados');
-              return res.status(404).send('Documento o seguimiento no encontrado');
-          }
-          
-          const actividades = await Psicologia.obtenerObjetivosPorSeguimientoId(id);
-          
-          // Obtener expediente y desencriptarlo
-          let expediente = await Psicologia.obtenerExpedientePorId(seguimiento.IDExpediente);
-          expediente = desencriptarExpediente(expediente);
-          
-          // Verificar datos críticos antes de renderizar
-          console.log('Datos del expediente para PDF:', JSON.stringify(expediente, null, 2));
-          
-          const html = await ejs.renderFile(
-              path.join(__dirname, '../views/pdf/seguimiento.ejs'),
-              { seguimiento, actividades, expediente }
-          );
-          
-          // Guardar HTML para depuración
-          fs.writeFileSync(path.join(__dirname, '../temp_seguimiento.html'), html);
-          
-          // Generar PDF con Puppeteer
-          const browser = await puppeteer.launch({
-              headless: 'new',  // Usar nuevo modo headless
-              args: ['--no-sandbox', '--disable-setuid-sandbox']
-          });
-          const page = await browser.newPage();
-          await page.emulateMediaType('screen');
-          await page.setContent(html, { waitUntil: 'networkidle0' });
-
-          const pdfBuffer = await page.pdf({
-              format: 'A4',
-              printBackground: true,
-              margin: { top: "20px", bottom: "20px", left: "20px", right: "20px" }
-          });
-
-          await browser.close();
-
-          // Configurar respuesta para PDF
-          res.setHeader('Content-Type', 'application/pdf');
-          res.setHeader('Content-Disposition', 'attachment; filename=seguimiento.pdf');
-          return res.end(pdfBuffer);
-      }
-
-      // Si se encontró un documento normal, intentar descargarlo desde el sistema de archivos
-      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${id}.pdf`);
-
-      if (fs.existsSync(rutaDocumento)) {
-          return res.download(rutaDocumento);
-      } else {
-          console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
-          return res.status(404).send('Archivo no encontrado');
-      }
-
-  } catch (error) {
-      console.error('Error al procesar la solicitud de descarga:', error);
-      return res.status(500).send('Error interno del servidor');
-  }
-};
-
-  
-
-exports.eliminarDocumento = async (req, res) => {
-  try {
-      const { id } = req.params;
-      const tipo = req.query.tipo; // Obtener el tipo desde query parameters
-      console.log(`Intentando eliminar ${tipo || 'elemento'} con ID:`, id);
-
-      // Si se especifica el tipo como "seguimiento", buscar directamente como seguimiento
-      if (tipo === 'seguimiento') {
-          const seguimiento = await Psicologia.obtenerPorId(id);
-          if (seguimiento) {
-              console.log('Encontrado como seguimiento psicológico:', seguimiento);
-              await Psicologia.eliminarSeguimiento(id);
-              return res.json({ message: 'Seguimiento eliminado correctamente' });
-          } else {
-              return res.status(404).json({ error: 'Seguimiento no encontrado' });
-          }
-      } 
-      // Si se especifica el tipo como "documento", buscar directamente como documento
-      else if (tipo === 'documento') {
-          const documento = await Psicologia.obtenerDocumentoPorId(id);
-          if (documento) {
-              console.log('Encontrado como documento:', documento);
-              if (documento.ubicacion) {
-                  const filePath = path.join(__dirname, '..', documento.ubicacion);
-                  if (fs.existsSync(filePath)) {
-                      console.log('Archivo encontrado pero no eliminado físicamente:', filePath);
-                  }
-              }
-              await Psicologia.eliminarDocumento(id);
-              return res.json({ message: 'Documento eliminado correctamente' });
-          } else {
-              return res.status(404).json({ error: 'Documento no encontrado' });
-          }
-      } 
-      // Si no se especifica tipo, intentar buscar en ambas tablas (comportamiento actual)
-      else {
-          // Primero intentar obtener como seguimiento psicológico
-          let documento = await Psicologia.obtenerPorId(id);
-          if (documento) {
-              console.log('Encontrado como seguimiento psicológico:', documento);
-              await Psicologia.eliminarSeguimiento(id);
-              return res.json({ message: 'Seguimiento eliminado correctamente' });
-          }
-
-          // Si no es seguimiento, intentar como documento normal
-          documento = await Psicologia.obtenerDocumentoPorId(id);
-          if (documento) {
-              console.log('Encontrado como documento:', documento);
-              if (documento.ubicacion) {
-                  const filePath = path.join(__dirname, '..', documento.ubicacion);
-                  if (fs.existsSync(filePath)) {
-                      console.log('Archivo encontrado pero no eliminado físicamente:', filePath);
-                  }
-              }
-              await Psicologia.eliminarDocumento(id);
-              return res.json({ message: 'Documento eliminado correctamente' });
-          }
-
-          // Si no se encontró en ninguna tabla
-          return res.status(404).json({ error: 'Documento o seguimiento no encontrado' });
-      }
-  } catch (error) {
-      console.error('Error al eliminar:', error);
-      res.status(500).json({ error: 'Error al eliminar el documento o seguimiento' });
-  }
-};
-
-
-// Configuración de Multer para guardar archivos localmente
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-      cb(null, 'uploads/'); // Carpeta donde se guardarán los archivos
-  },
-  filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, uniqueSuffix + path.extname(file.originalname)); // Nombre único para evitar conflictos
-  }
-});
-
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'application/pdf') {
-      cb(null, true); // Aceptar solo archivos PDF
-  } else {
-      cb(new Error('Solo se permiten archivos PDF.'));
-  }
-};
-
-const upload = multer({ storage, fileFilter });
-
-
-
-// Middleware de subida con controlador integrado
+const upload = multer({ storage: multer.memoryStorage() });
 exports.subirDocumentoMiddleware = [
   upload.single('archivoDocumento'),
   async (req, res) => {
       try {
           const { nombreDocumento } = req.body;
-          const { IDExpediente } = req.params; // Obtener ID del expediente desde la URL
+          const { IDExpediente } = req.params;
 
-          if (!req.file) {
-              return res.status(400).json({ error: 'Debe subir un archivo válido.' });
+          if (!req.file || req.file.mimetype !== 'application/pdf') {
+              return res.status(400).json({ error: 'Debe subir un archivo PDF válido' });
           }
 
-          // Creamos la ruta completa al archivo
-          const ubicacion = req.file.path;
-          const fecha = new Date(); // Fecha actual
-          const eliminado = 0; // Por defecto, no eliminado
+          // Obtener datos del paciente para crear la carpeta
+          const expediente = await Psicologia.obtenerExpedientePorId(IDExpediente);
+          
+          // Desencriptar nombres para crear el nombre de la carpeta
+          const nombres = decrypt(expediente.nombres);
+          const apellidoP = decrypt(expediente.apellidoP);
+          const apellidoM = decrypt(expediente.apellidoM);
+          
+          // Crear nombre de carpeta normalizado
+          const nombreCarpeta = `${apellidoP}_${apellidoM}_${nombres}`
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .replace(/[^a-z0-9]/g, '_');
 
-          console.log('Subiendo documento:', {
-              IDExpediente,
-              nombre: nombreDocumento,
-              ubicacion,
-              fecha
-          });
+          // Crear la ruta del archivo en S3
+          const fileName = `psicologia/${nombreCarpeta}/${Date.now()}_${nombreDocumento.replace(/[^a-z0-9]/gi, '_')}`;
+          const fileKey = `${fileName}.pdf`;
+          
+          const params = {
+              Bucket: process.env.AWS_BUCKET_NAME,
+              Key: fileKey,
+              Body: req.file.buffer,
+              ContentType: 'application/pdf',
+          };
+
+          // Subir archivo a S3
+          await s3.upload(params).promise();
 
           // Guardar en la base de datos
           const nuevoDocumento = await Psicologia.subirPrueba({
               IDExpediente,
               nombre: nombreDocumento,
-              ubicacion,
-              fecha,
-              eliminado
+              ubicacion: fileKey,
+              fecha: new Date(),
+              eliminado: 0
           });
 
-          res.status(201).json({ message: 'Documento subido correctamente', documento: nuevoDocumento });
+          res.status(201).json({
+              message: 'Documento subido correctamente',
+              documento: nuevoDocumento
+          });
       } catch (error) {
           console.error('Error al subir el documento:', error);
           res.status(500).json({ error: 'Error al subir el documento' });
@@ -318,37 +175,260 @@ exports.subirDocumentoMiddleware = [
   }
 ];
 
-// Ver documento
 exports.verDocumento = async (req, res) => {
     try {
-        const documentoId = req.params.id;
-        console.log('verDocumento con id:', documentoId);
+        const { id } = req.params;
+        console.log(`Intentando visualizar documento con ID: ${id}`);
         
-        // Buscar el documento en la base de datos
-        const documento = await Psicologia.obtenerDocumentoPorId(documentoId);
+        // Primero intentar obtener el documento
+        const documento = await Psicologia.obtenerDocumentoPorId(id);
         
         if (!documento) {
-            console.error('Documento no encontrado en la base de datos');
-            return res.status(404).send('Documento no encontrado');
+            console.error(`Documento con ID ${id} no encontrado en la base de datos`);
+            return res.status(404).json({
+                error: 'Documento no encontrado en la base de datos',
+                detalles: 'El documento solicitado no existe en nuestros registros'
+            });
         }
         
-        console.log('Documento encontrado:', documento);
+        // Verificar ubicación en ambos campos posibles
+        let rutaArchivo = documento.ubicacion;
         
-        // Construir la ruta directamente sin agregar 'uploads'
-        const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${documentoId}.pdf`);
+        if ((!rutaArchivo || rutaArchivo.trim() === '') && documento.nombreArchivo) {
+            console.log(`Usando nombreArchivo como alternativa: ${documento.nombreArchivo}`);
+            rutaArchivo = documento.nombreArchivo;
+        }
         
-        console.log('Intentando acceder al archivo en:', rutaDocumento);
+        if (!rutaArchivo || rutaArchivo.trim() === '') {
+            console.error(`Documento con ID ${id} no tiene ubicación definida:`, documento);
+            return res.status(404).json({
+                error: 'Documento sin ubicación válida',
+                detalles: 'El documento existe pero no tiene una ruta válida',
+                sugerencia: 'Contacte al administrador del sistema'
+            });
+        }
         
-        // Verificar si el archivo existe
-        if (fs.existsSync(rutaDocumento)) {
-            return res.sendFile(rutaDocumento); // Si el archivo existe, lo enviamos
-        } else {
-            console.error('Archivo no encontrado en el sistema de archivos:', rutaDocumento);
-            return res.status(404).send('Archivo no encontrado');
+        console.log(`Documento encontrado, ubicación: ${rutaArchivo}`);
+        
+        // Normalizar la key para S3
+        let key = rutaArchivo;
+        key = key.replace(/\\/g, '/');
+        
+        if (key.startsWith('http')) {
+            const url = new URL(key);
+            key = url.pathname.replace(/^\/+/, '');
+        }
+        
+        console.log(`Intentando obtener archivo de S3 con clave normalizada: ${key}`);
+        console.log(`Bucket: ${process.env.AWS_BUCKET_NAME}`);
+        
+        try {
+            const data = await s3.getObject({
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: key
+            }).promise();
+            
+            console.log(`Archivo recuperado de S3, tamaño: ${data.Body.length} bytes`);
+            
+            // Usar nombre del documento o tipo, con fallback a 'documento'
+            const nombreArchivo = documento.nombre || documento.tipo || 'documento';
+            
+            res
+                .setHeader('Content-Type', 'application/pdf')
+                .setHeader('Content-Disposition', `inline; filename="${nombreArchivo}.pdf"`)
+                .send(data.Body);
+                
+        } catch (s3Error) {
+            console.error(`Error de S3: ${s3Error.code} - ${s3Error.message}`);
+            if (s3Error.code === 'NoSuchKey') {
+                return res.status(404).json({
+                    error: 'Archivo no encontrado en S3',
+                    detalles: `La clave ${key} no existe en el bucket ${process.env.AWS_BUCKET_NAME}`,
+                    sugerencia: 'El archivo puede haber sido eliminado del almacenamiento'
+                });
+            }
+            throw s3Error;
         }
     } catch (error) {
         console.error('Error al mostrar documento:', error);
-        return res.status(500).send('Error al procesar la solicitud');
+        res.status(500).json({
+            error: 'Error al procesar la solicitud',
+            mensaje: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
+exports.descargarDocumento = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('1. Iniciando descarga, ID:', id);
+
+        // Primero verificar si es un seguimiento
+        const seguimiento = await Psicologia.obtenerPorId(id);
+        
+        if (seguimiento) {
+            console.log('2. Es un seguimiento, obteniendo datos adicionales...');
+            
+            // Obtener datos necesarios para el seguimiento
+            const actividades = await Psicologia.obtenerObjetivosPorSeguimientoId(id);
+            let expediente = await Psicologia.obtenerExpedientePorId(seguimiento.IDExpediente);
+            expediente = desencriptarExpediente(expediente);
+
+            console.log('3. Generando PDF del seguimiento...');
+
+            // Generar HTML del seguimiento
+            const html = await ejs.renderFile(
+                path.join(__dirname, '../views/pdf/seguimiento.ejs'),
+                { seguimiento, actividades, expediente }
+            );
+
+            // Guardar HTML para depuración
+            fs.writeFileSync(path.join(__dirname, '../temp_seguimiento.html'), html);
+
+            // Configurar y generar PDF
+            console.log('4. Iniciando Puppeteer...');
+            const browser = await puppeteer.launch({
+                headless: 'new',
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
+
+            const page = await browser.newPage();
+            await page.emulateMediaType('screen');
+            await page.setContent(html, { waitUntil: 'networkidle0' });
+
+            const pdfBuffer = await page.pdf({
+                format: 'A4',
+                printBackground: true,
+                margin: { top: "20px", bottom: "20px", left: "20px", right: "20px" }
+            });
+
+            await browser.close();
+            console.log('5. PDF generado correctamente');
+
+            // Enviar PDF generado
+            res.setHeader('Content-Type', 'application/pdf')
+               .setHeader('Content-Disposition', 'attachment; filename=seguimiento.pdf')
+               .end(pdfBuffer);
+            return;
+        }
+
+        // Si no es un seguimiento, buscar documento
+        console.log('2. No es seguimiento, buscando documento...');
+        const documento = await Psicologia.obtenerDocumentoPorId(id);
+
+        if (!documento) {
+            console.error('3. No se encontró ni seguimiento ni documento');
+            return res.status(404).json({
+                error: 'Recurso no encontrado',
+                detalles: 'No se encontró ningún documento o seguimiento con el ID proporcionado'
+            });
+        }
+
+        // Procesar documento desde S3
+        console.log('3. Documento encontrado, procesando...');
+        let rutaArchivo = documento.ubicacion;
+        
+        if ((!rutaArchivo || rutaArchivo.trim() === '') && documento.nombreArchivo) {
+            console.log('4. Usando nombreArchivo alternativo');
+            rutaArchivo = documento.nombreArchivo;
+        }
+
+        if (!rutaArchivo || rutaArchivo.trim() === '') {
+            console.error('5. Error: Documento sin ubicación válida');
+            return res.status(404).json({
+                error: 'Documento sin ubicación válida',
+                detalles: 'El documento existe pero no tiene una ruta válida'
+            });
+        }
+
+        // Normalizar key para S3
+        let key = rutaArchivo;
+        key = key.replace(/\\/g, '/');
+        
+        if (key.startsWith('http')) {
+            const url = new URL(key);
+            key = url.pathname.replace(/^\/+/, '');
+        }
+
+        console.log('6. Intentando obtener archivo de S3:', key);
+
+        try {
+            const data = await s3.getObject({
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: key
+            }).promise();
+
+            console.log('7. Archivo S3 recuperado correctamente');
+            
+            const nombreDescarga = documento.nombre || documento.tipo || 'documento';
+            
+            res.setHeader('Content-Type', 'application/pdf')
+               .setHeader('Content-Disposition', `attachment; filename="${nombreDescarga}.pdf"`)
+               .send(data.Body);
+
+        } catch (s3Error) {
+            console.error('8. Error de S3:', s3Error);
+            if (s3Error.code === 'NoSuchKey') {
+                return res.status(404).json({
+                    error: 'Archivo no encontrado en S3',
+                    detalles: `No se encontró el archivo en el almacenamiento`
+                });
+            }
+            throw s3Error;
+        }
+
+    } catch (error) {
+        console.error('Error general:', error);
+        res.status(500).json({
+            error: 'Error al procesar la solicitud',
+            detalles: process.env.NODE_ENV === 'development' ? error.message : 'Error interno del servidor'
+        });
+    }
+};
+
+
+exports.eliminarDocumento = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const tipo = req.query.tipo;
+        console.log(`Intentando eliminar ${tipo || 'elemento'} con ID:`, id);
+
+        // Manejar eliminación de seguimientos (mantener lógica existente)
+        if (tipo === 'seguimiento') {
+            const seguimiento = await Psicologia.obtenerPorId(id);
+            if (seguimiento) {
+                await Psicologia.eliminarSeguimiento(id);
+                return res.json({ message: 'Seguimiento eliminado correctamente' });
+            }
+            return res.status(404).json({ error: 'Seguimiento no encontrado' });
+        }
+
+        // Manejar eliminación de documentos
+        const documento = await Psicologia.obtenerDocumentoPorId(id);
+        if (documento) {
+            if (documento.ubicacion) {
+                const key = documento.ubicacion.startsWith('http') 
+                    ? documento.ubicacion.split('.com/')[1]
+                    : documento.ubicacion;
+
+                await s3.deleteObject({
+                    Bucket: process.env.AWS_BUCKET_NAME,
+                    Key: key
+                }).promise();
+            }
+            
+            await Psicologia.eliminarDocumento(id);
+            return res.json({ message: 'Documento eliminado correctamente' });
+        }
+
+        return res.status(404).json({ error: 'Documento no encontrado' });
+
+    } catch (error) {
+        console.error('Error al eliminar:', error);
+        res.status(500).json({ 
+            error: 'Error al eliminar el documento o seguimiento',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 };
 
@@ -382,9 +462,7 @@ exports.get_editar_seguimiento = async (req, res) => {
   }
 };
   
-  
-
-  exports.post_editar_seguimiento = async (req, res) => {
+exports.post_editar_seguimiento = async (req, res) => {
     const id = req.params.id;
     const {
       objetivoSesion,
@@ -459,7 +537,7 @@ exports.get_editar_seguimiento = async (req, res) => {
     }
   };
 
-  exports.get_registrar_seguimiento = async (req, res) => {
+exports.get_registrar_seguimiento = async (req, res) => {
     try {
         const idExpediente = req.params.id;
         // CAMBIO: Usar obtenerExpedientePorId en lugar de getDatosGenerales
