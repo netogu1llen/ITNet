@@ -1,5 +1,6 @@
 const Pacientes = require('../models/pacientes.model');
 const { encrypt, decrypt } = require('../util/encryptData');
+const db = require('../util/database'); 
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
@@ -105,6 +106,7 @@ const postRegistrarPaciente = async (req, res) => {
       nvEscolar,
       sangre
     } = req.body;
+
     // Encriptar los campos sensibles
     const pacienteEncriptado = {
       nombres: encrypt(nombres).encryptedData,
@@ -126,7 +128,16 @@ const postRegistrarPaciente = async (req, res) => {
       nvEscolar,
       sangre
     };
-    await Pacientes.registrarPaciente(pacienteEncriptado);
+
+    const result = await Pacientes.registrarPaciente(pacienteEncriptado);
+    const idExpedienteNuevo = result.insertId;
+
+    const idUsuarioActual = req.session.userId; 
+    console.log('Usuario actual al registrar paciente:', idUsuarioActual);
+    await db.query(
+      'INSERT INTO usuarioExpediente (IDUsuario, IDExpediente, numSesion, fecha) VALUES (?, ?, 1, NOW())',
+      [idUsuarioActual, idExpedienteNuevo]
+    );
 
     res.status(200).json({ mensaje: 'Datos registrados correctamente' });
   } catch (error) {
@@ -216,12 +227,20 @@ const postEditarPaciente = async (req, res) => {
       grado,
       nvEscolar,
       sangre,
-      idExpediente
+      idExpediente,
+      modificadoPor: req.session.userId 
     };
 
     await Pacientes.editarPaciente(pacienteEncriptado);
 
+    const idUsuarioActual = req.session.userId;
+    await db.query(
+      'UPDATE expediente SET modificadoPor = ?, fechaModificacion = NOW() WHERE IDExpediente = ?',
+      [idUsuarioActual, idExpediente]
+    );
+
     res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
+
   } catch (error) {
     console.error('Error al actualizar paciente:', error.message);
     res.status(500).json({

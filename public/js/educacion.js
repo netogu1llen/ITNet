@@ -1,5 +1,7 @@
 $(document).ready(function () {
-  // Inicializa DataTable con idioma personalizado y AJAX
+  /**
+   * Inicializa DataTable para listar alumnos con configuración personalizada
+   */
   const table = $('#alumnosTable').DataTable({
     language: {
       emptyTable: 'No se encontraron Alumnos',
@@ -23,7 +25,9 @@ $(document).ready(function () {
     ]
   });
 
-  // Redirige a la vista de boletas al dar clic en una fila
+  /**
+   * Redirige a la vista de boletas al hacer clic en una fila
+   */
   $('#alumnosTable tbody').on('click', 'tr', function () {
     const data = table.row(this).data();
     if (data && data.IDExpediente) {
@@ -31,7 +35,9 @@ $(document).ready(function () {
     }
   });
 
-  // Barra superior personalizada
+  /**
+   * Inserta barra superior con logo y controles
+   */
   const logo = $('<img src="/images/educacion.png" alt="Logo" class="dt-logo">');
   const dtTopBar = $('<div class="dt-top-bar exp-psicologico-wide"></div>');
 
@@ -39,12 +45,14 @@ $(document).ready(function () {
   $('.dataTables_length').appendTo(dtTopBar);
   $('.dataTables_filter').appendTo(dtTopBar);
 
-  // Botón "Ver Materias" 
+  /**
+   * Botón para ver materias
+   */
   const btnMaterias = $(
-    '<a href="/educacion/materias" class="button is-success is-small ml-2">Ver Materias</a>'
+    '<a href="/educacion/materias" class="button button-create ml-2">Ver Materias</a>'
   );
   dtTopBar.append(btnMaterias);
 
-  // Inserta la barra superior antes de la tabla
+  // Inserta barra completa antes de la tabla
   $('.dataTables_wrapper').prepend(dtTopBar);
 });

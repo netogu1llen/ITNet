@@ -113,6 +113,7 @@ exports.registrarDocumento = async (req, res) => {
     }
 };
 
+
 const upload = multer({ storage: multer.memoryStorage() });
 exports.subirDocumentoMiddleware = [
   upload.single('archivoDocumento'),

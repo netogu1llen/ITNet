@@ -14,17 +14,23 @@
 
 const express = require('express');
 const router = express.Router();
+// Corregir la ruta de importación si es necesario
 const authController = require('../controllers/authController');
+const authenticateJWT = require('../middlewares/authenticateJWT');
 
 // Ruta para mostrar el login
 router.get('/', (req, res) => {
+    // Obtener mensaje de error de la URL si existe
+    const error = req.query.error || null;
+    
     res.render('login', {
-        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID  // Pasar la variable GOOGLE_CLIENT_ID desde .env
+        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,  // Pasar la variable GOOGLE_CLIENT_ID desde .env
+        error: error // Pasar el mensaje de error a la vista
     });
 });
 
 // Rutas principales
-router.get('/home', authController.getHome);
+router.get('/home', authenticateJWT, authController.getHome);
 
 /**
  * Ruta que inicia el proceso de autenticación con Google OAuth 2.0
