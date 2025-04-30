@@ -131,7 +131,7 @@ class Nutricion {
                 peso: antropometricosRows[0].peso || 'No registrado',
                 talla: antropometricosRows[0].talla || 'No registrado',
                 imc: antropometricosRows[0].imc || antropometricosRows[0].peso && antropometricosRows[0].talla ? 
-                     (antropometricosRows[0].peso / Math.pow(antropometricosRows[0].talla/100, 2)).toFixed(2) : 'No registrado',
+                     (antropometricosRows[0].peso / Math.pow(antropometricosRows[0].talla, 2)).toFixed(2) : 'No registrado',
                 circunferenciaCintura: antropometricosRows[0].circunferenciaCintura || 'No registrado',
                 circunferenciaCadera: antropometricosRows[0].circunferenciaCadera || 'No registrado',
                 indiceCinturaCadera: antropometricosRows[0].indiceCinturaCadera || 'No registrado'

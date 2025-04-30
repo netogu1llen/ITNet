@@ -115,6 +115,7 @@ exports.registrarDocumento = async (req, res) => {
 exports.descargarDocumento = async (req, res) => {
   try {
       const id = req.params.id;
+      console.log('descargarDocumento con id:', id);
 
       let documento = await Psicologia.obtenerDocumentoPorId(id);
 
@@ -129,18 +130,26 @@ exports.descargarDocumento = async (req, res) => {
           
           const actividades = await Psicologia.obtenerObjetivosPorSeguimientoId(id);
           
-          // Usar getDatosGenerales para obtener datos consistentes sin info antropométrica
+          // Obtener expediente y desencriptarlo
           let expediente = await Psicologia.obtenerExpedientePorId(seguimiento.IDExpediente);
-          
-          // Desencriptar expediente
           expediente = desencriptarExpediente(expediente);
-
+          
+          // Verificar datos críticos antes de renderizar
+          console.log('Datos del expediente para PDF:', JSON.stringify(expediente, null, 2));
+          
           const html = await ejs.renderFile(
               path.join(__dirname, '../views/pdf/seguimiento.ejs'),
               { seguimiento, actividades, expediente }
           );
-
-          const browser = await puppeteer.launch();
+          
+          // Guardar HTML para depuración
+          fs.writeFileSync(path.join(__dirname, '../temp_seguimiento.html'), html);
+          
+          // Generar PDF con Puppeteer
+          const browser = await puppeteer.launch({
+              headless: 'new',  // Usar nuevo modo headless
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
+          });
           const page = await browser.newPage();
           await page.emulateMediaType('screen');
           await page.setContent(html, { waitUntil: 'networkidle0' });
@@ -153,13 +162,13 @@ exports.descargarDocumento = async (req, res) => {
 
           await browser.close();
 
-          // Esto es clave para evitar PDFs corruptos
+          // Configurar respuesta para PDF
           res.setHeader('Content-Type', 'application/pdf');
           res.setHeader('Content-Disposition', 'attachment; filename=seguimiento.pdf');
           return res.end(pdfBuffer);
       }
 
-      // Si se encontró un documento normal, intentar descargarlo desde el sistema de archivos.
+      // Si se encontró un documento normal, intentar descargarlo desde el sistema de archivos
       const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo || `${id}.pdf`);
 
       if (fs.existsSync(rutaDocumento)) {
