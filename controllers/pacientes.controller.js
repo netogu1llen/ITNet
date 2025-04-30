@@ -104,7 +104,8 @@ const postRegistrarPaciente = async (req, res) => {
       estudioSocioeconomico,
       grado,
       nvEscolar,
-      sangre
+      sangre,
+      sexo
     } = req.body;
 
     // Encriptar los campos sensibles
@@ -126,7 +127,8 @@ const postRegistrarPaciente = async (req, res) => {
       estudioSocioeconomico,
       grado,
       nvEscolar,
-      sangre
+      sangre,
+      sexo
     };
 
     const result = await Pacientes.registrarPaciente(pacienteEncriptado);
@@ -156,9 +158,9 @@ const postRegistrarPaciente = async (req, res) => {
 const getEditarPaciente = async (req, res) => {
   try {
     const idExpediente = req.params.id;
+    console.log("El id del expediente es: ", idExpediente)
     const datosPaciente = await Pacientes.getPaciente(idExpediente);
     let paciente = datosPaciente;
-
     // Desencriptar campos sensibles
     paciente.nombres = decrypt(paciente.nombres);
     paciente.apellidoP = decrypt(paciente.apellidoP);
@@ -171,6 +173,8 @@ const getEditarPaciente = async (req, res) => {
     paciente.cp = decrypt(paciente.cp);
     paciente.localidad = decrypt(paciente.localidad);
     paciente.numCasa = decrypt(paciente.numCasa);
+    paciente.sexo = paciente.sexo ? paciente.sexo : "";
+    console.log(paciente)
 
 
     res.render('editarPaciente', { datos: paciente});
@@ -206,7 +210,8 @@ const postEditarPaciente = async (req, res) => {
       estudioSocioeconomico,
       grado,
       nvEscolar,
-      sangre
+      sangre,
+      sexo
     } = req.body;
     const pacienteEncriptado = {
       nombres: encrypt(nombres).encryptedData,
@@ -227,17 +232,17 @@ const postEditarPaciente = async (req, res) => {
       grado,
       nvEscolar,
       sangre,
-      idExpediente,
-      modificadoPor: req.session.userId 
+      sexo,
+      idExpediente
     };
 
     await Pacientes.editarPaciente(pacienteEncriptado);
 
     const idUsuarioActual = req.session.userId;
-    await db.query(
+    /*await db.query(
       'UPDATE expediente SET modificadoPor = ?, fechaModificacion = NOW() WHERE IDExpediente = ?',
       [idUsuarioActual, idExpediente]
-    );
+    );*/
 
     res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
 
@@ -318,7 +323,6 @@ const desencriptarExpediente = (expediente) => {
 const obtenerExpediente = async (req, res) => {
   try {
       const { idExpediente } = req.params;
-
       // Obtener documentos
       const documentosAdjuntos = await Pacientes.obtenerDocumentosAdjuntos(idExpediente);
       const documentos = [...documentosAdjuntos];
