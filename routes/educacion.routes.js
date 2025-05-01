@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+// Permisos
 const canVerExpediente = require('../util/can-verExpediente');
 const canRegistrarBoleta = require('../util/can-registrarBoleta');
 const canEditarBoleta = require('../util/can-editarBoleta');
@@ -11,13 +12,18 @@ const canEditarMateria = require('../util/can-editarMateria');
 const canEliminarMateria = require('../util/can-eliminarMateria');
 const canEditarCalificacion = require('../util/can-editarCalificacion');
 
+// Controlador
 const controller = require('../controllers/educacion.controller');
 
-// ========== VISTA PRINCIPAL ==========
+/**
+ * ========== VISTA PRINCIPAL ==========
+ */
 router.get('/', controller.renderEducacionView);
 router.get('/alumnos/data', controller.getAlumnosInfo);
 
-// ========== MATERIAS ==========
+/**
+ * ========== MATERIAS ==========
+ */
 router.get('/materias', controller.renderMaterias);
 router.get('/materias/lista', controller.getMateriasList);
 router.get('/materias/:id', controller.getMateriaById);
@@ -26,7 +32,9 @@ router.post('/materias/registrar', controller.insertMateria);
 router.post('/materias/modificar', controller.updateMateria);
 router.post('/materias/eliminar', controller.deleteMateria);
 
-// ========== BOLETAS ==========
+/**
+ * ========== BOLETAS ==========
+ */
 router.get('/boletas', controller.renderBoletasView);
 router.post('/boletas/registrar', controller.registrarBoleta);
 router.get('/boletas/obtener/:id', controller.obtenerBoletaPorId);

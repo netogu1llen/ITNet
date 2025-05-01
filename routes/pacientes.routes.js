@@ -18,4 +18,12 @@ router.post('/editar/:id', pacientesController.postEditarPaciente);
 
 router.post('/eliminar/:id', pacientesController.postEliminarPaciente);
 
+// Nuevas rutas para manejar expedientes y documentos
+router.get('/expediente/:idExpediente', pacientesController.obtenerExpediente);
+router.get('/documentos/:idExpediente', pacientesController.obtenerDocumentosPorExpediente);
+router.post('/documentos/subir/:IDExpediente', pacientesController.subirDocumento);
+router.get('/documentos/descargar/:id', pacientesController.descargarDocumento);
+router.delete('/documentos/eliminar/:id', pacientesController.eliminarDocumento);
+router.get('/documentos/ver/:id', pacientesController.verDocumento);
+
 module.exports = router;

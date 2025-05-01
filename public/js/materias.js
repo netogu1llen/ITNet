@@ -1,5 +1,7 @@
 $(document).ready(function () {
-  /** Inicialización de la tabla DataTable **/
+  /**
+   * Inicializa DataTable con configuración en español
+   */
   const table = $('#materiasTable').DataTable({
     language: {
       info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
@@ -16,47 +18,56 @@ $(document).ready(function () {
     order: [[0, 'asc']]
   });
 
-  /** Construcción de barra superior como en otras vistas **/
+  // Barra superior: logo, controles y botón
   const logo = $('<img src="/images/materias.png" alt="Logo" class="dt-logo">');
-  const btnRegistrar = $(
-    '<button class="button is-success is-small registrar-btn">Registrar Materia</button>'
-  );
-  const dtTopBar = $('<div class="dt-top-bar exp-psicologico-wide"></div>');
+  const btnRegistrar = $('<button class="button button-create registrar-btn">Registrar Materia</button>');
+  const dtTopBar = $('#TopBar');
 
   dtTopBar.append(logo);
   $('.dataTables_length').appendTo(dtTopBar);
   $('.dataTables_filter').appendTo(dtTopBar);
   dtTopBar.append(btnRegistrar);
-  $('.dataTables_wrapper').prepend(dtTopBar);
 
-  /** Mostrar el modal de registro **/
+  /**
+   * Abre el modal para registrar una nueva materia
+   */
   $(document).on('click', '.registrar-btn', function () {
     $('#modalRegistrar').css('display', 'flex');
   });
 
-  /** Ocultar modales y resetear formularios **/
+  /**
+   * Cierra cualquier modal abierto y resetea formularios
+   */
   $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
     $('.modal').hide();
     $('form').trigger('reset');
   });
 
-  /** Envío del formulario para registrar materia **/
+  /**
+   * Envío del formulario para registrar una nueva materia
+   */
   $('#registrarForm').on('submit', function (e) {
     e.preventDefault();
     const datos = $(this).serialize();
 
     $.post('/educacion/materias/registrar', datos)
       .done(() => {
-        Swal.fire('¡Materia registrada!', '', 'success').then(() => location.reload());
+        Swal.fire('¡Materia registrada!', '', 'success')
+          .then(() => location.reload());
       })
       .fail(() => {
         Swal.fire('Error al registrar', '', 'error');
       });
   });
 
-  /** Al hacer clic en una fila, abrir el modal de modificación **/
-  $('#materiasTable tbody').on('click', 'tr', function () {
+  /**
+   * Carga los datos de la materia seleccionada en el modal de edición
+   */
+  $('#materiasTable tbody').on('click', 'tr', function (e) {
+    if ($(e.target).is('button') || $(e.target).is('i')) return;
+
     const id = $(this).data('id');
+
     $.get(`/educacion/materias/obtener/${id}`, function (materia) {
       $('#modalModificar').find('[name="idMateria"]').val(materia.IDMateria);
       $('#modalModificar').find('[name="materia"]').val(materia.materia);
@@ -66,26 +77,32 @@ $(document).ready(function () {
     });
   });
 
-  /** Envío del formulario para modificar materia **/
+  /**
+   * Envío del formulario para modificar una materia existente
+   */
   $('#modificarForm').on('submit', function (e) {
     e.preventDefault();
     const datos = $(this).serialize();
 
     $.post('/educacion/materias/modificar', datos)
       .done(() => {
-        Swal.fire('¡Materia modificada!', '', 'success').then(() => location.reload());
+        Swal.fire('¡Materia modificada!', '', 'success')
+          .then(() => location.reload());
       })
       .fail(() => {
         Swal.fire('Error al modificar', '', 'error');
       });
   });
 
-  /** Eliminación lógica de materia con confirmación **/
+  /**
+   * Elimina lógicamente una materia con confirmación
+   */
   $(document).on('click', '.btn-eliminar', function () {
     const id = $(this).data('id');
+
     Swal.fire({
       title: '¿Estás seguro?',
-      text: 'Esto eliminará la materia de forma lógica',
+      text: 'Esto eliminará la materia',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -93,7 +110,8 @@ $(document).ready(function () {
     }).then((result) => {
       if (result.isConfirmed) {
         $.post('/educacion/materias/eliminar', { id }, function () {
-          Swal.fire('Eliminado', '', 'success').then(() => location.reload());
+          Swal.fire('Eliminado', '', 'success')
+            .then(() => location.reload());
         }).fail(() => {
           Swal.fire('Error al eliminar', '', 'error');
         });

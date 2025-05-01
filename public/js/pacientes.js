@@ -34,12 +34,12 @@ $(document).ready(function () {
         window.location.href = '/pacientes/registrar';
     });
 
-    // Hacer que las filas sean clicables para editar (excepto el botón eliminar)
+    // Hacer que las filas sean clicables para ver el expediente (excepto el botón eliminar)
     $(document).on('click', '.fila-paciente', function(e) {
         // Evitar la redirección si se hizo clic en el botón de eliminar
         if(!$(e.target).hasClass('btn-eliminar') && !$(e.target).closest('.btn-eliminar').length) {
             const idExpediente = $(this).data('id');
-            window.location.href = `/pacientes/editar/${idExpediente}`;
+            window.location.href = `/pacientes/expediente/${idExpediente}`;
         }
     });
 

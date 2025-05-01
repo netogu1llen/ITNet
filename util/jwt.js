@@ -17,9 +17,8 @@ const JWT_EXPIRES_IN = '7d'; // Expiración del token (7 días en este caso)
  * @throws {Error} Si JWT_SECRET no está definido o hay error en la generación.
  */
 function generateUserToken(payload) {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 }
-
 /**
  * Verifica la validez de un token JWT.
  * Comprueba la firma y la fecha de expiración.

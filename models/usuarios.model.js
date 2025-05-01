@@ -26,8 +26,8 @@ class Usuario {
         try {
             // Convertir formato de fecha si es necesario (del formato YYYY-MM-DD del input date al formato MySQL)
             const [result] = await db.execute(`
-                INSERT INTO usuario (nombres, apellidoP, apellidoM, correo, fechaNacimiento)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO usuario (nombres, apellidoP, apellidoM, correo, fechaNacimiento, eliminado)
+                VALUES (?, ?, ?, ?, ?, 0)
             `, [nombres, apellidoP, apellidoM, correo, fechaNacimiento]);
             return result;
         } catch (error) {
@@ -57,7 +57,8 @@ class Usuario {
         try {
             const [result] = await db.execute(`
                 UPDATE usuario
-                SET nombres = ?, apellidoP = ?, apellidoM = ?, correo = ?, fechaNacimiento = ?
+                SET nombres = ?, apellidoP = ?, apellidoM = ?, correo = ?, fechaNacimiento = ?, eliminado = 0
+
                 WHERE IDUsuario = ?
             `, [nombres, apellidoP, apellidoM, correo, fechaNacimiento, idUsuario]);
             return result;
@@ -83,7 +84,7 @@ class Usuario {
     // Verificar si un correo ya existe en la base de datos
     static async verificarCorreoExistente(correo, idUsuario = null) {
         try {
-            let query = 'SELECT COUNT(*) as count FROM usuario WHERE correo = ?';
+            let query = 'SELECT COUNT(*) as count FROM usuario WHERE correo = ? AND eliminado = 0';
             let params = [correo];
             
             // Si se proporciona un ID de usuario, excluirlo de la verificación (para modificaciones)

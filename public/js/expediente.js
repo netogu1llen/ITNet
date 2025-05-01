@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    const table = $('#expedientePsicologicoTable').DataTable({
+    const table = $('#expedienteTable').DataTable({
         language: {
             info: "Mostrando _START_ a _END_ de _TOTAL_ documentos",
             infoEmpty: "No hay documentos disponibles",
@@ -17,9 +17,9 @@ $(document).ready(function () {
     });
 
     // Crear barra superior personalizada
-    const logo = $('<img src="/images/psychology.png" alt="Logo Psicologia" class="dt-logo">');
+    const logo = $('<img src="/images/pacientes.png" alt="Logo Pacientes" class="dt-logo">');
     const subirDocumentoButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Documento</button>');
-    const registrarSeguimientoButton = $('<button class="button button-create" style="height: 30px;">Registrar Seguimiento</button>');
+    const editarPacienteButton = $('<button class="button button-create" style="height: 30px;">Editar Paciente</button>');
     const dtTopBar = $('<div class="dt-top-bar"></div>');
 
     // Agregar elementos a la barra
@@ -27,7 +27,7 @@ $(document).ready(function () {
     $('.dataTables_length').appendTo(dtTopBar);
     $('.dataTables_filter').appendTo(dtTopBar);
     dtTopBar.append(subirDocumentoButton);
-    dtTopBar.append(registrarSeguimientoButton);
+    dtTopBar.append(editarPacienteButton);
     $('#TopBar').append(dtTopBar);
 
     // Crear modal de carga y añadirlo al DOM
@@ -50,30 +50,30 @@ $(document).ready(function () {
         $('#loadingModalTitle').text(title || 'Procesando...');
         $('#loadingModalMessage').text(message || 'Por favor espere mientras se procesa su solicitud.');
         $('#loadingModal').addClass('is-active');
-        $('#loadingModal').css('display', 'flex'); // Añade display:flex para garantizar que se muestre
-        console.log('Modal mostrado:', title); // Para depuración
+        $('#loadingModal').css('display', 'flex');
+        console.log('Modal mostrado:', title);
     }
 
     function hideLoadingModal() {
-        setTimeout(() => { // Añade un pequeño retraso para que sea visible
+        setTimeout(() => {
             $('#loadingModal').removeClass('is-active');
             $('#loadingModal').css('display', 'none');
-            console.log('Modal ocultado'); // Para depuración
-        }, 500); // 500ms de retraso mínimo
+            console.log('Modal ocultado');
+        }, 500);
     }
 
     // ABRIR MODAL
     subirDocumentoButton.on('click', function () {
         console.log("Abriendo modal de subir documento");
         $('#modalSubirDocumento').addClass('is-active');
-        $('#modalSubirDocumento').css('display', 'flex'); // Asegurar que se muestre
+        $('#modalSubirDocumento').css('display', 'flex');
     });
 
     // CERRAR MODAL
     $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
         console.log("Cerrando modal");
         $('#modalSubirDocumento').removeClass('is-active');
-        $('#modalSubirDocumento').css('display', 'none'); // Asegurar que se oculte
+        $('#modalSubirDocumento').css('display', 'none');
         $('#subirDocumentoForm')[0].reset();
         $('#nombreArchivo').text('No hay archivo seleccionado');
     });
@@ -112,7 +112,7 @@ $(document).ready(function () {
         formData.append('archivoDocumento', archivo);
 
         $.ajax({
-            url: `/psicologia/documentos/subir/${expedienteId}`,
+            url: `/pacientes/documentos/subir/${expedienteId}`,
             method: 'POST',
             data: formData,
             processData: false,
@@ -144,85 +144,78 @@ $(document).ready(function () {
         });
     });
 
-    // Acción del botón Registrar Seguimiento
-    registrarSeguimientoButton.on('click', function () {
+    // Acción del botón Editar Paciente
+    editarPacienteButton.on('click', function () {
         // Obtener el ID del expediente de la URL actual
         const urlPath = window.location.pathname;
-        const expedienteId = urlPath.split('/').pop(); // Suponiendo que el ID está al final de la URL
-        const redirectUrl = `/psicologia/seguimientos/registrar/${expedienteId}`;
+        const expedienteId = urlPath.split('/').pop();
+        const redirectUrl = `/pacientes/editar/${expedienteId}`;
 
         // Redirigir sin mostrar modal de carga
         window.location.href = redirectUrl;
     });
 
-    // Botón Eliminar Documento - ACTUALIZADO
-$('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
-    const id = $(this).data('id');
-    const tipo = $(this).data('tipo');
-    const tipoParam = tipo === 'seguimientoPsicologico' ? 'seguimiento' : 'documento';
-    
-    // Mostrar un SweetAlert2 de confirmación
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Esta acción no se puede deshacer.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `/psicologia/documentos/eliminar/${id}?tipo=${tipoParam}`, // AÑADIDO el parámetro tipo
-                type: 'DELETE',
-                success: function () {
-                    // SweetAlert2 para indicar éxito
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Eliminado!',
-                        text: `El ${tipoParam === 'seguimiento' ? 'seguimiento' : 'documento'} ha sido eliminado.`,
-                    }).then(() => {
-                        location.reload();
-                    });
-                },
-                error: function (err) {
-                    // SweetAlert2 para error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: `No se pudo eliminar el ${tipoParam === 'seguimiento' ? 'seguimiento' : 'documento'}.`,
-                    });
-                    console.error(err);
-                }
-            });
-        }
+    // Botón Eliminar Documento
+    $('#expedienteTable').on('click', '.btn-eliminar', function () {
+        const id = $(this).data('id');
+        const tipo = $(this).data('tipo');
+        
+        // Mostrar un SweetAlert2 de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/pacientes/documentos/eliminar/${id}?tipo=${tipo}`,
+                    type: 'DELETE',
+                    success: function () {
+                        // SweetAlert2 para indicar éxito
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Eliminado!',
+                            text: 'El documento ha sido eliminado.',
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (err) {
+                        // SweetAlert2 para error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo eliminar el documento.',
+                        });
+                        console.error(err);
+                    }
+                });
+            }
+        });
     });
-});
 
     // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
     $(document).on('click', '.fila-documento', function () {
         const documentoId = $(this).data('id');
-        const tipo = $(this).data('tipo');
-    
-        if (tipo === 'seguimientoPsicologico') {
-            // Navegar directamente sin mostrar modal de carga
-            window.location.href = `/psicologia/seguimientos/editar/${documentoId}`;
-        } else {
-            // Mostrar el documento PDF sin modal de carga
-            const url = `/psicologia/documentos/ver/${documentoId}`;
-            const iframe = $('#iframeVistaPreviaDocumento');
-            
-            iframe.attr('src', url);
-            $('#modalVistaPreviaDocumento').css('display', 'flex');
-        }
+        
+        // Mostrar el documento PDF sin modal de carga
+        const url = `/pacientes/documentos/ver/${documentoId}`;
+        const iframe = $('#iframeVistaPreviaDocumento');
+        
+        iframe.attr('src', url);
+        $('#modalVistaPreviaDocumento').css('display', 'flex');
     });    
 
     // Asegurarse de que el evento de clic en los botones no active la vista previa
-    $('#expedientePsicologicoTable').on('click', 'td a, td .btn-eliminar', function (event) {
+    $('#expedienteTable').on('click', 'td a, td .btn-eliminar', function (event) {
         event.stopPropagation();  // Detener la propagación del clic hacia la fila
     });
 
-    // Función para descargar documentos (agregada)
+    // Función para descargar documentos
     window.descargarDocumento = function(documentoId, tipo) {
         // Prevenir comportamiento por defecto para evitar la navegación a #
         event.preventDefault();
@@ -235,7 +228,7 @@ $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
         
         // Usar AJAX para descargar el documento
         $.ajax({
-            url: `/psicologia/documentos/descargar/${documentoId}`,
+            url: `/pacientes/documentos/descargar/${documentoId}`,
             method: 'GET',
             xhrFields: {
                 responseType: 'blob' // Crucial para manejar archivos binarios (PDF)
@@ -250,7 +243,7 @@ $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
                 // Crear un elemento <a> temporal para la descarga
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = (tipo === 'seguimientoPsicologico') ? 'seguimiento.pdf' : `documento_${documentoId}.pdf`;
+                link.download = `documento_${documentoId}.pdf`;
                 document.body.appendChild(link);
                 link.click();
                 
@@ -287,7 +280,7 @@ $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
         
         // Usar AJAX para la descarga
         $.ajax({
-            url: `/psicologia/documentos/descargar/${documentoId}`,
+            url: `/pacientes/documentos/descargar/${documentoId}`,
             method: 'GET',
             xhrFields: {
                 responseType: 'blob' // Importante para manejar PDFs
@@ -302,7 +295,7 @@ $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
                 // Crear elemento para la descarga
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = (tipo === 'seguimientoPsicologico') ? 'seguimiento.pdf' : `documento_${documentoId}.pdf`;
+                link.download = `documento_${documentoId}.pdf`;
                 document.body.appendChild(link);
                 link.click();
                 
@@ -329,6 +322,4 @@ $('#expedientePsicologicoTable').on('click', '.btn-eliminar', function () {
         $('#modalVistaPreviaDocumento').css('display', 'none');
         $('#iframeVistaPreviaDocumento').attr('src', '');  // Limpiar el iframe cuando se cierra
     });
-
-
 });
