@@ -368,64 +368,121 @@ const obtenerDocumentosPorExpediente = async (req, res) => {
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-const subirDocumento = [
-  upload.single('archivoDocumento'),
+
+// Middleware para subir múltiples documentos
+const subirMultiplesDocumentos = [
+  upload.array('archivosDocumento'), 
   async (req, res) => {
     try {
-      const { nombreDocumento } = req.body;
       const { IDExpediente } = req.params;
-
-      if (!req.file || req.file.mimetype !== 'application/pdf') {
-        return res.status(400).json({ error: 'Debe subir un archivo PDF válido' });
+      console.log('Iniciando subida de múltiples documentos. ID expediente:', IDExpediente);
+      
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ error: 'Debe subir al menos un archivo PDF válido' });
       }
-
-      // Primero obtener los datos del paciente para crear la carpeta
+      
+      console.log('Archivos recibidos:', req.files.length);
+      
+      // Obtener datos del paciente para crear la carpeta
       const paciente = await Pacientes.getPaciente(IDExpediente);
       
-      // Desencriptar nombres para crear el nombre de la carpeta
-      const nombres = decrypt(paciente.nombres);
-      const apellidoP = decrypt(paciente.apellidoP);
-      const apellidoM = decrypt(paciente.apellidoM);
+      if (!paciente) {
+        return res.status(404).json({ error: 'Expediente no encontrado' });
+      }
       
-      // Crear nombre de carpeta normalizado (sin espacios ni caracteres especiales)
+      // Desencriptar nombres con manejo de errores
+      let nombres, apellidoP, apellidoM;
+      try {
+        nombres = decrypt(paciente.nombres);
+        apellidoP = decrypt(paciente.apellidoP);
+        apellidoM = decrypt(paciente.apellidoM);
+      } catch (decryptError) {
+        console.error('Error al desencriptar datos:', decryptError);
+        nombres = `paciente_${IDExpediente}`;
+        apellidoP = 'apellido';
+        apellidoM = '';
+      }
+      
+      // Crear nombre de carpeta normalizado
       const nombreCarpeta = `${apellidoP}_${apellidoM}_${nombres}`
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
-        .replace(/[^a-z0-9]/g, '_'); // Reemplazar caracteres especiales con _
-
-      // Crear la ruta completa del archivo
-      const fileName = `general/${nombreCarpeta}/${Date.now()}_${nombreDocumento.replace(/[^a-z0-9]/gi, '_')}`;
-      const fileKey = `${fileName}.pdf`;
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '_');
       
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: fileKey,
-        Body: req.file.buffer, // Usar el buffer directamente sin convertir a base64
-        ContentType: 'application/pdf',
-      };
-
-      // Subir archivo a S3
-      const data = await s3.upload(params).promise();
-
-      const nuevoDocumento = await Pacientes.subirDocumento({
-        IDExpediente,
-        nombre: nombreDocumento,
-        ubicacion: fileKey, // Guardar solo la Key en lugar de la URL completa
-        fecha: new Date(),
-        eliminado: 0
-      });
-
+      console.log('Nombre de carpeta generado:', nombreCarpeta);
+      
+      // Procesar y subir cada archivo
+      const resultados = [];
+      
+      for (const archivo of req.files) {
+        try {
+          console.log('Procesando archivo:', archivo.originalname);
+          
+          // Verificar que sea PDF
+          if (archivo.mimetype !== 'application/pdf') {
+            console.log('Archivo ignorado - no es PDF:', archivo.originalname);
+            continue;
+          }
+          
+          // Verificar buffer
+          if (!archivo.buffer || archivo.buffer.length === 0) {
+            console.error(`Error: El archivo ${archivo.originalname} no tiene un buffer válido`);
+            continue;
+          }
+          
+          console.log(`Tamaño del buffer: ${archivo.buffer.length} bytes`);
+          
+          // Obtener nombre original del archivo sin extensión
+          const nombreOriginal = path.basename(archivo.originalname, '.pdf');
+          
+          // Crear ruta para S3
+          const fileKey = `general/${nombreCarpeta}/${Date.now()}_${nombreOriginal.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+          
+          // Subir a S3
+          const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: fileKey,
+            Body: archivo.buffer,
+            ContentType: 'application/pdf',
+          };
+          
+          await s3.upload(params).promise();
+          console.log('Archivo subido a S3 exitosamente');
+          
+          // Guardar en base de datos - incluir nombre original para descarga
+          const nuevoDocumento = await Pacientes.subirDocumento({
+            IDExpediente,
+            nombre: nombreOriginal, // Guardar el nombre original
+            ubicacion: fileKey,
+            fecha: new Date(),
+            eliminado: 0
+          });
+          
+          resultados.push({
+            nombre: nombreOriginal,
+            documento: nuevoDocumento
+          });
+        } catch (fileError) {
+          console.error(`Error al procesar archivo ${archivo.originalname}:`, fileError);
+        }
+      }
+      
+      if (resultados.length === 0) {
+        return res.status(400).json({ error: 'No se pudo subir ningún documento' });
+      }
+      
       res.status(201).json({
-        mensaje: 'Documento subido exitosamente',
-        documento: nuevoDocumento
+        message: `${resultados.length} documento(s) subido(s) correctamente`,
+        documentos: resultados
       });
     } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Error al subir el documento' });
+      console.error('Error general:', error);
+      res.status(500).json({ error: 'Error al subir los documentos' });
     }
   }
 ];
+
 
 // VER DOCUMENTO (INLINE)
 const verDocumento = async (req, res) => {
@@ -554,12 +611,17 @@ const descargarDocumento = async (req, res) => {
       
       console.log(`Archivo recuperado de S3, tamaño: ${data.Body.length} bytes`);
       
-      // Usar documento.nombre o documento.tipo para el nombre del archivo
-      const nombreDescarga = documento.nombre || documento.tipo || 'documento';
+      // Priorizar el tipo (es lo que se muestra en la interfaz) sobre el nombre original
+      const nombreDescarga = documento.tipo || documento.nombre || 'documento';
+      
+      // Normalizar el nombre para asegurar que sea válido para descargas
+      const nombreArchivo = nombreDescarga
+        .replace(/[\/\\:*?"<>|]/g, '_') // Reemplazar caracteres no válidos
+        .trim();
       
       res
         .setHeader('Content-Type', 'application/pdf')
-        .setHeader('Content-Disposition', `attachment; filename="${nombreDescarga}.pdf"`)
+        .setHeader('Content-Disposition', `attachment; filename="${nombreArchivo}.pdf"`)
         .send(data.Body);
     } catch (s3Error) {
       console.error(`Error de S3: ${s3Error.code} - ${s3Error.message}`);
@@ -656,7 +718,7 @@ module.exports = {
   getPacientes,
   obtenerExpediente,
   obtenerDocumentosPorExpediente,
-  subirDocumento,
+  subirMultiplesDocumentos,
   descargarDocumento,
   eliminarDocumento,
   verDocumento

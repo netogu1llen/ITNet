@@ -33,8 +33,8 @@ router.get('/documentos/ver/:id', nutricionController.verDocumento);
 // Ruta para eliminar documento
 router.delete('/documentos/eliminar/:id', nutricionController.eliminarDocumento);
 
-// Ruta para subir un documento
-router.post('/documentos/subir/:IDExpediente', nutricionController.subirDocumentoMiddleware);
+// Ruta para subir múltiples documentos
+router.post('/documentos/subir-multiple/:IDExpediente', nutricionController.subirMultiplesDocumentosMiddleware);
 
 // Reorganizar las rutas de historia clínica (el orden es importante)
 router.get('/historiaClinica/create/:id', nutricionController.createHistoriaClinicaV1);

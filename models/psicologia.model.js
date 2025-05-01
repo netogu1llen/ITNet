@@ -7,7 +7,7 @@ class Psicologia {
             const [results] = await db.execute(`
                 SELECT IDDocumento AS idDocumento, IDExpediente AS idExpediente, nombre AS tipo, fecha AS fechaCreacion
                 FROM documentosAdjuntos
-                WHERE IDExpediente = ? AND eliminado = 0
+                WHERE IDExpediente = ? AND eliminado = 0 AND (ubicacion LIKE 'psicologia/%' OR ubicacion LIKE '%/psicologia/%')
             `, [idExpediente]);
             return results;
         } catch (error) {
