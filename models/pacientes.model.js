@@ -213,4 +213,3 @@ static async obtenerTodos() {
 }
 
 module.exports = Pacientes;
-

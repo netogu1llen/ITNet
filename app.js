@@ -72,9 +72,17 @@ app.use(session({
 const loadUserFromJWT = require('./middlewares/loadUserFromJWT');
 app.use(loadUserFromJWT); // Estará disponible en todas las vistas
 
+//Rutas de api
+const apiRoutes = require('./routes/api.routes');
+app.use('/api', apiRoutes);
+
+//Rutas de api para Expediente
+const apiExpedienteRoutes = require('./routes/api.expediente.routes');
+app.use('/api', apiExpedienteRoutes);
+
 //Rutas de api para Psicologia
 const apiPsicologiaRoutes = require('./routes/api.psicologia.routes');
-app.use('/api', apiPsicologiaRoutes);
+app.use('/api/psicologia', apiPsicologiaRoutes);
 
 //Rutas de auth
 const authRoutes = require('./routes/auth.routes');
