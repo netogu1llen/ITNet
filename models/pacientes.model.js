@@ -246,6 +246,7 @@ class Pacientes {
             SELECT IDDocumento AS idDocumento, IDExpediente AS idExpediente, nombre AS tipo, fecha AS fechaCreacion
             FROM documentosAdjuntos
             WHERE IDExpediente = ? AND eliminado = 0
+            AND (ubicacion LIKE 'general/%' OR ubicacion LIKE '%/general/%' OR ubicacion NOT LIKE '%/psicologia/%' AND ubicacion NOT LIKE '%/nutricion/%')
         `, [idExpediente]);
         return results;
     } catch (error) {
