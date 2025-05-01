@@ -1,43 +1,76 @@
 $(document).ready(function () {
-// Inicializar DataTable para la tabla de documentos
-const table = $('#documentosTable').DataTable({
-    language: {
-        info: "Mostrando _START_ a _END_ de _TOTAL_ documentos",
-        infoEmpty: "No hay documentos disponibles",
-        infoFiltered: "(filtrado de _MAX_ documentos en total)",
-        paginate: {
-            previous: "Anterior",
-            next: "Siguiente"
+    // Inicializar DataTable para la tabla de documentos
+    const table = $('#documentosTable').DataTable({
+        language: {
+            info: "Mostrando _START_ a _END_ de _TOTAL_ documentos",
+            infoEmpty: "No hay documentos disponibles",
+            infoFiltered: "(filtrado de _MAX_ documentos en total)",
+            paginate: {
+                previous: "Anterior",
+                next: "Siguiente"
+            },
+            lengthMenu: "Mostrar _MENU_ documentos por página",
+            search: "Buscar documento:"
         },
-        lengthMenu: "Mostrar _MENU_ documentos por página",
-        search: "Buscar documento:"
-    },
-    pageLength: 10,
-    lengthMenu: [5, 10, 25, 50],
-    order: [], // No aplicar ordenamiento inicial - usar el orden del backend
-    columnDefs: [
-        {
-            // Asegúrate de que la primera columna (tipo de documento) no se pueda ordenar
-            targets: 0,
-            orderable: false
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        order: [], // No aplicar ordenamiento inicial - usar el orden del backend
+        columnDefs: [
+            {
+                // Asegúrate de que la primera columna (tipo de documento) no se pueda ordenar
+                targets: 0,
+                orderable: false
+            }
+        ],
+        createdRow: function(row, data, dataIndex) {
+            // Destacar visualmente los documentos Historial Clínico V1
+            if($(row).find('td:first').text().trim().includes('Historial Clínico V1')) {
+                $(row).addClass('highlight-nutricional-v1');
+            }
         }
-    ],
-    createdRow: function(row, data, dataIndex) {
-        // Destacar visualmente los documentos Historial Clínico V1
-        if($(row).find('td:first').text().trim().includes('Historial Clínico V1')) {
-            $(row).addClass('highlight-nutricional-v1');
+    });
+
+    // Añadir CSS personalizado para destacar los V1
+    $('head').append(`
+    <style>
+    .highlight-nutricional-v1 {
+        background-color: rgba(35, 160, 148, 0.1) !important;
+        font-weight: bold;
+    }
+    </style>
+    `);
+
+    // Mover manualmente todos los Historiales V1 al inicio de la tabla al cargar
+    function moverHistorialV1AlInicio() {
+        // Obtener todas las filas
+        const rows = table.rows().nodes();
+        
+        // Recorrer las filas en orden inverso para no afectar los índices
+        for (let i = rows.length - 1; i >= 0; i--) {
+            const tipo = $(rows[i]).find('td:first').text().trim();
+            
+            // Si es un Historial Clínico V1, moverlo al principio
+            if (tipo.includes('Historial Clínico V1')) {
+                // Desacoplar la fila actual
+                const row = table.row(i).node();
+                $(row).detach();
+                
+                // Insertar al principio de la tabla
+                $(table.table().body()).prepend(row);
+            }
         }
     }
-});
-// Llamar a la función después de que se inicialice la tabla
-table.on('draw', function() {
-    moverHistorialV1AlInicio();
-});
 
-// También ejecutar después de cualquier búsqueda o filtrado
-table.on('search.dt', function() {
-    setTimeout(moverHistorialV1AlInicio, 100);
-});
+    // Llamar a la función después de que se inicialice la tabla
+    table.on('draw', function() {
+        moverHistorialV1AlInicio();
+    });
+
+    // También ejecutar después de cualquier búsqueda o filtrado
+    table.on('search.dt', function() {
+        setTimeout(moverHistorialV1AlInicio, 100);
+    });
+
     // Crear barra superior personalizada
     const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
     const nuevaSesionButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Archivo</button>');
@@ -52,7 +85,7 @@ table.on('search.dt', function() {
     dtTopBar.append(generarHistoriaButton);
     $('#TopBar').append(dtTopBar);
 
-    // Asegurarse de que estamos trabajando con el ID 1
+    // Asegurarse de que estamos trabajando con el ID correcto
     const urlParams = new URLSearchParams(window.location.search);
     let idExpediente = urlParams.get('id');
 
@@ -77,61 +110,6 @@ table.on('search.dt', function() {
             text: 'No se pudo determinar el ID del expediente. Intente nuevamente o contacte a soporte.'
         });
     }
-// Añadir CSS personalizado para destacar los V1
-$('head').append(`
-<style>
-.highlight-nutricional-v1 {
-    background-color: rgba(35, 160, 148, 0.1) !important;
-    font-weight: bold;
-}
-</style>
-`);
-
-// Mover manualmente todos los Historiales V1 al inicio de la tabla al cargar
-function moverHistorialV1AlInicio() {
-    // Obtener todas las filas
-    const rows = table.rows().nodes();
-    
-    // Recorrer las filas en orden inverso para no afectar los índices
-    for (let i = rows.length - 1; i >= 0; i--) {
-        const tipo = $(rows[i]).find('td:first').text().trim();
-        
-        // Si es un Historial Clínico V1, moverlo al principio
-        if (tipo.includes('Historial Clínico V1')) {
-            // Desacoplar la fila actual
-            const row = table.row(i).node();
-            $(row).detach();
-            
-            // Insertar al principio de la tabla
-            $(table.table().body()).prepend(row);
-        }
-    }
-}
-
-/*// Llamar a la función después de que se inicialice la tabla
-table.on('draw', function() {
-    moverHistorialV1AlInicio();
-});
-
-// También ejecutar después de cualquier búsqueda o filtrado
-table.on('search.dt', function() {
-    setTimeout(moverHistorialV1AlInicio, 100);
-});
-*/
-
-    // Crear barra superior personalizada
-    /*const logo = $('<img src="/images/icono_salud.png" alt="Logo Nutrición" class="dt-logo">');
-    const nuevaSesionButton = $('<button class="button button-create button-upload" style="height: 30px;">Subir Archivo</button>');
-    const generarHistoriaButton = $('<button class="button button-create" style="height: 30px;">Generar Historia Clínica</button>');
-    const dtTopBar = $('<div class="dt-top-bar"></div>');
-
-    // Agregar elementos a la barra
-    dtTopBar.append(logo);
-    $('.dataTables_length').appendTo(dtTopBar);
-    $('.dataTables_filter').appendTo(dtTopBar);
-    dtTopBar.append(nuevaSesionButton);
-    dtTopBar.append(generarHistoriaButton);
-    $('#TopBar').append(dtTopBar);*/
 
     // Funciones para mostrar y ocultar el modal de carga
     function showLoadingModal(title, message) {
@@ -148,9 +126,22 @@ table.on('search.dt', function() {
         }, 500);
     }
 
+    // Función para limpiar el formulario de documentos
+    function limpiarFormularioDocumentos() {
+        // Resetear el formulario
+        $('#subirDocumentoForm')[0].reset();
+        
+        // Limpiar el mensaje de archivos seleccionados
+        $('#nombreArchivo').text('No hay archivos seleccionados');
+        
+        // Limpiar la lista de archivos
+        $('#listaArchivosSeleccionados').empty();
+    }
+
     // Evento para el botón Nueva Sesión
     nuevaSesionButton.on('click', function() {
         console.log("Abriendo modal de subir documento");
+        limpiarFormularioDocumentos();
         $('#modalSubirDocumento').addClass('is-active');
         $('#modalSubirDocumento').css('display', 'flex'); // Asegurar que se muestre
     });
@@ -168,107 +159,139 @@ table.on('search.dt', function() {
         }
     });
     
-// CERRAR MODAL
-$(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
-    console.log("Cerrando modal");
-    $('#modalSubirDocumento').removeClass('is-active');
-    $('#modalSubirDocumento').css('display', 'none'); // Asegurar que se oculte
-    $('#subirDocumentoForm')[0].reset();
-    $('#nombreArchivo').text('No hay archivo seleccionado');
-});
+    // CERRAR MODAL
+    $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
+        console.log("Cerrando modal");
+        $('#modalSubirDocumento').removeClass('is-active');
+        $('#modalSubirDocumento').css('display', 'none'); // Asegurar que se oculte
+        limpiarFormularioDocumentos();
+    });
 
-// MOSTRAR NOMBRE DEL ARCHIVO
-$('input[name="archivoDocumento"]').on('change', function () {
-    const archivo = $(this)[0].files[0];
-    $('#nombreArchivo').text(archivo ? archivo.name : 'No hay archivo seleccionado');
-});
-
-// Función de envío del formulario
-$('#subirDocumentoForm').on('submit', function (e) {
-    e.preventDefault();
-
-    const nombreDocumento = $('input[name="nombreDocumento"]').val().trim();
-    const archivo = $('input[name="archivoDocumento"]')[0].files[0];
-
-    if (!archivo || archivo.type !== "application/pdf") {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Debe seleccionar un archivo PDF válido.'
-        });
-        return;
-    }
-
-    // Obtener el ID del expediente
-    // Intentar obtener primero de la URL como parámetro de consulta (como está ahora)
-    let idExpediente = urlParams.get('id');
-    
-    // Si no existe en los parámetros, intentar obtenerlo de la ruta (como en psicología)
-    if (!idExpediente || idExpediente === 'null') {
-        const urlPath = window.location.pathname;
-        const segments = urlPath.split('/');
-        idExpediente = segments[segments.length - 1];
+    // MOSTRAR NOMBRES DE LOS ARCHIVOS
+    $(document).on('change', 'input[name="archivosDocumento"]', function () {
+        const archivos = $(this)[0].files;
+        const listaArchivos = $('#listaArchivosSeleccionados');
         
-        // Si aún no es válido, verificar si está en el penúltimo segmento
-        if (isNaN(parseInt(idExpediente)) && segments.length > 2) {
-            idExpediente = segments[segments.length - 2];
+        if (archivos.length === 0) {
+            $('#nombreArchivo').text('No hay archivos seleccionados');
+            listaArchivos.empty();
+            return;
         }
-    }
-    
-    // Si aún no tenemos un ID válido, extraer del DOM (como último recurso)
-    if (!idExpediente || idExpediente === 'null' || isNaN(parseInt(idExpediente))) {
-        // Intentar extraer del título o de algún elemento que contenga el ID
-        const tituloPaciente = $('.basic-black').first().text();
-        // Si hay un ID en algún lugar visible en la página, podrías intentar extraerlo
         
-        // Mostrar error si no se puede determinar el ID
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo determinar el ID del expediente. Intente nuevamente o contacte a soporte.'
-        });
-        return;
-    }
-    
-    console.log('ID de expediente para subir:', idExpediente);
-    
-    // Ahora que tenemos un ID, continuar con la subida
-    showLoadingModal('Subiendo archivo', 'Por favor espere mientras se sube el documento...');
+        $('#nombreArchivo').text(`${archivos.length} archivo(s) seleccionado(s)`);
+        
+        // Mostrar lista de archivos
+        listaArchivos.empty();
+        if (archivos.length > 0) {
+            const ul = $('<ul></ul>');
+            for (let i = 0; i < archivos.length; i++) {
+                const li = $('<li></li>').text(archivos[i].name);
+                ul.append(li);
+            }
+            listaArchivos.append(ul);
+        }
+    });
 
-    const formData = new FormData();
-    formData.append('nombreDocumento', nombreDocumento);
-    formData.append('archivoDocumento', archivo);
-
-    $.ajax({
-        url: `/nutricion/documentos/subir/${idExpediente}`,
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            hideLoadingModal();
-            
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: 'Documento subido correctamente.'
-            }).then(() => {
-                $('#modalSubirDocumento').removeClass('is-active');
-                $('#modalSubirDocumento').css('display', 'none');
-                location.reload();
-            });
-        },
-        error: function (xhr) {
-            hideLoadingModal();
-            
-            console.error('Error al subir documento:', xhr);
+    // ENVÍO DEL FORMULARIO - VERSIÓN PARA MÚLTIPLES ARCHIVOS
+    $('#subirDocumentoForm').on('submit', function (e) {
+        e.preventDefault();
+        console.log('Formulario enviado');
+        
+        const archivos = $('input[name="archivosDocumento"]')[0].files;
+        console.log('Archivos seleccionados:', archivos.length);
+        
+        if (archivos.length === 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: xhr.responseJSON?.error || 'Error al subir el documento. Por favor, intenta de nuevo.'
+                text: 'Debe seleccionar al menos un archivo PDF.'
             });
+            return;
         }
+        
+        // Verificar que todos son PDFs
+        for (let i = 0; i < archivos.length; i++) {
+            if (archivos[i].type !== "application/pdf") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: `El archivo "${archivos[i].name}" no es un PDF válido.`
+                });
+                return;
+            }
+        }
+        
+        // Obtener el ID del expediente
+        let idExpediente = new URLSearchParams(window.location.search).get('id');
+        
+        if (!idExpediente) {
+            const urlPath = window.location.pathname;
+            const segments = urlPath.split('/');
+            idExpediente = segments[segments.length - 1];
+        }
+        
+        if (!idExpediente || isNaN(parseInt(idExpediente))) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo determinar el ID del expediente.'
+            });
+            return;
+        }
+        
+        console.log('ID de expediente para subir:', idExpediente);
+        
+        // Mostrar modal de carga
+        showLoadingModal('Subiendo archivos', `Subiendo ${archivos.length} documento(s)...`);
+        
+        const formData = new FormData();
+        
+        // Agregar todos los archivos al FormData
+        for (let i = 0; i < archivos.length; i++) {
+            formData.append('archivosDocumento', archivos[i]);
+        }
+        
+        $.ajax({
+            url: `/nutricion/documentos/subir-multiple/${idExpediente}`,
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                hideLoadingModal();
+                console.log('Respuesta del servidor:', response);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: `${archivos.length} documento(s) subido(s) correctamente.`
+                }).then(() => {
+                    $('#modalSubirDocumento').css('display', 'none');
+                    limpiarFormularioDocumentos();
+                    location.reload();
+                });
+            },
+            error: function (xhr) {
+                hideLoadingModal();
+                console.error('Error al subir documentos:', xhr);
+                
+                let mensaje = 'Error al subir los documentos. Por favor, intenta de nuevo.';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    mensaje = xhr.responseJSON.error;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: mensaje
+                });
+            }
+        });
     });
+
+    // Hacer global las funciones de modal para los eventos fuera del document.ready
+    window.showLoadingModal = showLoadingModal;
+    window.hideLoadingModal = hideLoadingModal;
 });
 
 // VISTA PREVIA DEL DOCUMENTO AL CLIC EN UNA FILA
@@ -301,7 +324,7 @@ $(document).on('click', '.fila-documento', function(e) {
     }
 });
 
-// Modificar la función para el botón de descarga en el archivo expedienteNutricion.js
+// Modificar la función para el botón de descarga
 $(document).on('click', '.btn-descargar', function(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -451,11 +474,11 @@ $(document).on('click', '.btn-eliminar', function(event) {
     });
 });
 
-    // CERRAR MODAL DE VISTA PREVIA
-    $(document).on('click', '#modalVistaPreviaDocumento .modal-background, #modalVistaPreviaDocumento .delete', function () {
-        $('#modalVistaPreviaDocumento').css('display', 'none');
-        $('#iframeVistaPreviaDocumento').attr('src', '');  // Limpiar el iframe cuando se cierra
-    });
+// CERRAR MODAL DE VISTA PREVIA
+$(document).on('click', '#modalVistaPreviaDocumento .modal-background, #modalVistaPreviaDocumento .delete', function () {
+    $('#modalVistaPreviaDocumento').css('display', 'none');
+    $('#iframeVistaPreviaDocumento').attr('src', '');  // Limpiar el iframe cuando se cierra
+});
 
 // Hacer que las filas de la tabla de sesiones sean clicables
 $(document).on('click', '.fila-sesion', function () {
@@ -487,5 +510,4 @@ $('#sesionesTable tbody tr').each(function () {
         });
         fechaCell.text(fechaFormateada);
     }
-});
 });

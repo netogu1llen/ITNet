@@ -64,55 +64,96 @@ $(document).ready(function () {
 
     // ABRIR MODAL
     subirDocumentoButton.on('click', function () {
-        console.log("Abriendo modal de subir documento");
-        $('#modalSubirDocumento').addClass('is-active');
-        $('#modalSubirDocumento').css('display', 'flex');
+        console.log("Abriendo modal de subir documentos");
+        $('#modalSubirDocumentos').addClass('is-active');
+        $('#modalSubirDocumentos').css('display', 'flex');
+        // Limpiar el formulario al abrir
+        limpiarFormularioDocumentos();
     });
 
     // CERRAR MODAL
     $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
         console.log("Cerrando modal");
-        $('#modalSubirDocumento').removeClass('is-active');
-        $('#modalSubirDocumento').css('display', 'none');
-        $('#subirDocumentoForm')[0].reset();
-        $('#nombreArchivo').text('No hay archivo seleccionado');
+        $('#modalSubirDocumentos').removeClass('is-active');
+        $('#modalSubirDocumentos').css('display', 'none');
+        limpiarFormularioDocumentos();
     });
 
-    // MOSTRAR NOMBRE DEL ARCHIVO
-    $('input[name="archivoDocumento"]').on('change', function () {
-        const archivo = $(this)[0].files[0];
-        $('#nombreArchivo').text(archivo ? archivo.name : 'No hay archivo seleccionado');
+    // Función para limpiar formulario
+    function limpiarFormularioDocumentos() {
+        $('#subirMultiplesDocumentosForm')[0].reset();
+        $('#nombreArchivo').text('No hay archivos seleccionados');
+        $('#listaArchivosSeleccionados').empty();
+    }
+
+    // MOSTRAR NOMBRES DE LOS ARCHIVOS SELECCIONADOS
+    $('input[name="archivosDocumento"]').on('change', function () {
+        const archivos = $(this)[0].files;
+        const listaArchivos = $('#listaArchivosSeleccionados');
+        
+        if (archivos.length === 0) {
+            $('#nombreArchivo').text('No hay archivos seleccionados');
+            listaArchivos.empty();
+            return;
+        }
+        
+        $('#nombreArchivo').text(`${archivos.length} archivo(s) seleccionado(s)`);
+        
+        // Mostrar lista de archivos
+        listaArchivos.empty();
+        if (archivos.length > 0) {
+            const ul = $('<ul></ul>');
+            for (let i = 0; i < archivos.length; i++) {
+                const li = $('<li></li>').text(archivos[i].name);
+                ul.append(li);
+            }
+            listaArchivos.append(ul);
+        }
     });
 
-    // ENVÍO DEL FORMULARIO
-    $('#subirDocumentoForm').on('submit', function (e) {
+    // ENVÍO DEL FORMULARIO DE MÚLTIPLES DOCUMENTOS
+    $('#subirMultiplesDocumentosForm').on('submit', function (e) {
         e.preventDefault();
-
-        const nombreDocumento = $('input[name="nombreDocumento"]').val().trim();
-        const archivo = $('input[name="archivoDocumento"]')[0].files[0];
-
-        if (!archivo || archivo.type !== "application/pdf") {
+        
+        const archivos = $('input[name="archivosDocumento"]')[0].files;
+        
+        if (archivos.length === 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Debe seleccionar un archivo PDF válido.'
+                text: 'Debe seleccionar al menos un archivo PDF.'
             });
             return;
         }
-
+        
+        // Verificar que todos son PDFs
+        for (let i = 0; i < archivos.length; i++) {
+            if (archivos[i].type !== "application/pdf") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: `El archivo "${archivos[i].name}" no es un PDF válido.`
+                });
+                return;
+            }
+        }
+        
         // Mostrar modal de carga
-        showLoadingModal('Subiendo archivo', 'Por favor espere mientras se sube el documento...');
-
+        showLoadingModal('Subiendo archivos', `Subiendo ${archivos.length} documento(s)...`);
+        
         // Obtener el ID del expediente de la URL actual
         const urlPath = window.location.pathname;
         const expedienteId = urlPath.split('/').pop();
-
+        
         const formData = new FormData();
-        formData.append('nombreDocumento', nombreDocumento);
-        formData.append('archivoDocumento', archivo);
-
+        
+        // Agregar todos los archivos al FormData
+        for (let i = 0; i < archivos.length; i++) {
+            formData.append('archivosDocumento', archivos[i]);
+        }
+        
         $.ajax({
-            url: `/pacientes/documentos/subir/${expedienteId}`,
+            url: `/pacientes/documentos/subir-multiple/${expedienteId}`,
             method: 'POST',
             data: formData,
             processData: false,
@@ -124,9 +165,10 @@ $(document).ready(function () {
                 Swal.fire({
                     icon: 'success',
                     title: '¡Éxito!',
-                    text: 'Documento subido correctamente.'
+                    text: `${archivos.length} documento(s) subido(s) correctamente.`
                 }).then(() => {
-                    $('#modalSubirDocumento').css('display', 'none');
+                    $('#modalSubirDocumentos').removeClass('is-active');
+                    $('#modalSubirDocumentos').css('display', 'none');
                     location.reload();
                 });
             },
@@ -134,25 +176,14 @@ $(document).ready(function () {
                 // Ocultar modal de carga incluso en caso de error
                 hideLoadingModal();
                 
-                console.error('Error al subir documento:', xhr);
+                console.error('Error al subir documentos:', xhr);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Error al subir el documento. Por favor, intenta de nuevo.'
+                    text: 'Error al subir los documentos. Por favor, intente de nuevo.'
                 });
             }
         });
-    });
-
-    // Acción del botón Editar Paciente
-    editarPacienteButton.on('click', function () {
-        // Obtener el ID del expediente de la URL actual
-        const urlPath = window.location.pathname;
-        const expedienteId = urlPath.split('/').pop();
-        const redirectUrl = `/pacientes/editar/${expedienteId}`;
-
-        // Redirigir sin mostrar modal de carga
-        window.location.href = redirectUrl;
     });
 
     // Botón Eliminar Documento
@@ -233,17 +264,30 @@ $(document).ready(function () {
             xhrFields: {
                 responseType: 'blob' // Crucial para manejar archivos binarios (PDF)
             },
-            success: function(data) {
+            success: function(data, status, xhr) {
                 hideLoadingModal();
                 
                 // Crear un objeto URL para la descarga
                 const blob = new Blob([data], { type: 'application/pdf' });
                 const url = window.URL.createObjectURL(blob);
                 
+                // Usar el tipo como nombre del archivo
+                let filename = `${tipo || 'documento'}.pdf`;
+                
+                // Intentar extraer el nombre del header Content-Disposition
+                const disposition = xhr.getResponseHeader('Content-Disposition');
+                if (disposition && disposition.indexOf('attachment') !== -1) {
+                    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    const matches = filenameRegex.exec(disposition);
+                    if (matches != null && matches[1]) { 
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
+                }
+                
                 // Crear un elemento <a> temporal para la descarga
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `documento_${documentoId}.pdf`;
+                link.download = filename;
                 document.body.appendChild(link);
                 link.click();
                 
@@ -285,17 +329,31 @@ $(document).ready(function () {
             xhrFields: {
                 responseType: 'blob' // Importante para manejar PDFs
             },
-            success: function(data) {
+            success: function(data, status, xhr) {
                 hideLoadingModal();
                 
                 // Crear objeto URL para la descarga
                 const blob = new Blob([data], { type: 'application/pdf' });
                 const url = window.URL.createObjectURL(blob);
                 
+                // Obtener nombre de archivo del Content-Disposition si existe
+                let filename = `${tipo || 'documento'}.pdf`; // Usar el tipo como nombre por defecto
+                
+                // Intentar extraer el nombre del header Content-Disposition
+                const disposition = xhr.getResponseHeader('Content-Disposition');
+                if (disposition && disposition.indexOf('attachment') !== -1) {
+                    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    const matches = filenameRegex.exec(disposition);
+                    if (matches != null && matches[1]) { 
+                        // Eliminar comillas si existen
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
+                }
+                
                 // Crear elemento para la descarga
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `documento_${documentoId}.pdf`;
+                link.download = filename;
                 document.body.appendChild(link);
                 link.click();
                 

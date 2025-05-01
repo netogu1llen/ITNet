@@ -114,64 +114,86 @@ exports.registrarDocumento = async (req, res) => {
 };
 
 
+// Middleware para subir múltiples documentos
 const upload = multer({ storage: multer.memoryStorage() });
-exports.subirDocumentoMiddleware = [
-  upload.single('archivoDocumento'),
+
+exports.subirMultiplesDocumentosMiddleware = [
+  upload.array('archivosDocumento'), // Cambiado a array para múltiples archivos
   async (req, res) => {
-      try {
-          const { nombreDocumento } = req.body;
-          const { IDExpediente } = req.params;
-
-          if (!req.file || req.file.mimetype !== 'application/pdf') {
-              return res.status(400).json({ error: 'Debe subir un archivo PDF válido' });
-          }
-
-          // Obtener datos del paciente para crear la carpeta
-          const expediente = await Psicologia.obtenerExpedientePorId(IDExpediente);
-          
-          // Desencriptar nombres para crear el nombre de la carpeta
-          const nombres = decrypt(expediente.nombres);
-          const apellidoP = decrypt(expediente.apellidoP);
-          const apellidoM = decrypt(expediente.apellidoM);
-          
-          // Crear nombre de carpeta normalizado
-          const nombreCarpeta = `${apellidoP}_${apellidoM}_${nombres}`
-              .toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .replace(/[^a-z0-9]/g, '_');
-
-          // Crear la ruta del archivo en S3
-          const fileName = `psicologia/${nombreCarpeta}/${Date.now()}_${nombreDocumento.replace(/[^a-z0-9]/gi, '_')}`;
-          const fileKey = `${fileName}.pdf`;
-          
-          const params = {
-              Bucket: process.env.AWS_BUCKET_NAME,
-              Key: fileKey,
-              Body: req.file.buffer,
-              ContentType: 'application/pdf',
-          };
-
-          // Subir archivo a S3
-          await s3.upload(params).promise();
-
-          // Guardar en la base de datos
-          const nuevoDocumento = await Psicologia.subirPrueba({
-              IDExpediente,
-              nombre: nombreDocumento,
-              ubicacion: fileKey,
-              fecha: new Date(),
-              eliminado: 0
-          });
-
-          res.status(201).json({
-              message: 'Documento subido correctamente',
-              documento: nuevoDocumento
-          });
-      } catch (error) {
-          console.error('Error al subir el documento:', error);
-          res.status(500).json({ error: 'Error al subir el documento' });
+    try {
+      const { IDExpediente } = req.params;
+      
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ error: 'Debe subir al menos un archivo PDF válido' });
       }
+      
+      // Obtener datos del paciente para crear la carpeta
+      const expediente = await Psicologia.obtenerExpedientePorId(IDExpediente);
+      
+      // Desencriptar nombres para crear el nombre de la carpeta
+      const nombres = decrypt(expediente.nombres);
+      const apellidoP = decrypt(expediente.apellidoP);
+      const apellidoM = decrypt(expediente.apellidoM);
+      
+      // Crear nombre de carpeta normalizado
+      const nombreCarpeta = `${apellidoP}_${apellidoM}_${nombres}`
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '_');
+      
+      // Procesar y subir cada archivo
+      const resultados = [];
+      
+      for (const archivo of req.files) {
+        // Verificar que sea PDF
+        if (archivo.mimetype !== 'application/pdf') {
+          continue; // Saltar archivos que no son PDF
+        }
+        
+        // Extraer el nombre del archivo sin la extensión .pdf
+        let nombreDocumento = path.basename(archivo.originalname, '.pdf');
+        // Normalizar el nombre para evitar caracteres problemáticos
+        nombreDocumento = nombreDocumento.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '_');
+        
+        // Crear la ruta del archivo en S3
+        const fileName = `psicologia/${nombreCarpeta}/${Date.now()}_${nombreDocumento.replace(/[^a-z0-9]/gi, '_')}`;
+        const fileKey = `${fileName}.pdf`;
+        
+        const params = {
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: fileKey,
+          Body: archivo.buffer,
+          ContentType: 'application/pdf',
+        };
+        
+        // Subir archivo a S3
+        await s3.upload(params).promise();
+        
+        // Guardar en la base de datos
+        const nuevoDocumento = await Psicologia.subirPrueba({
+          IDExpediente,
+          nombre: nombreDocumento,
+          ubicacion: fileKey,
+          fecha: new Date(),
+          eliminado: 0
+        });
+        
+        resultados.push({
+          nombre: nombreDocumento,
+          documento: nuevoDocumento
+        });
+      }
+      
+      res.status(201).json({
+        message: `${resultados.length} documento(s) subido(s) correctamente`,
+        documentos: resultados
+      });
+      
+    } catch (error) {
+      console.error('Error al subir los documentos:', error);
+      res.status(500).json({ error: 'Error al subir los documentos' });
+    }
   }
 ];
 
@@ -259,131 +281,138 @@ exports.verDocumento = async (req, res) => {
 };
 
 exports.descargarDocumento = async (req, res) => {
-    try {
-        const { id } = req.params;
-        console.log('1. Iniciando descarga, ID:', id);
+  try {
+      const { id } = req.params;
+      console.log('1. Iniciando descarga, ID:', id);
 
-        // Primero verificar si es un seguimiento
-        const seguimiento = await Psicologia.obtenerPorId(id);
-        
-        if (seguimiento) {
-            console.log('2. Es un seguimiento, obteniendo datos adicionales...');
-            
-            // Obtener datos necesarios para el seguimiento
-            const actividades = await Psicologia.obtenerObjetivosPorSeguimientoId(id);
-            let expediente = await Psicologia.obtenerExpedientePorId(seguimiento.IDExpediente);
-            expediente = desencriptarExpediente(expediente);
+      // Primero verificar si es un seguimiento
+      const seguimiento = await Psicologia.obtenerPorId(id);
+      
+      if (seguimiento) {
+          console.log('2. Es un seguimiento, obteniendo datos adicionales...');
+          
+          // Obtener datos necesarios para el seguimiento
+          const actividades = await Psicologia.obtenerObjetivosPorSeguimientoId(id);
+          let expediente = await Psicologia.obtenerExpedientePorId(seguimiento.IDExpediente);
+          expediente = desencriptarExpediente(expediente);
 
-            console.log('3. Generando PDF del seguimiento...');
+          // Crear nombre de archivo con la fecha del seguimiento
+          const fechaSeguimiento = new Date(seguimiento.fecha);
+          const fechaFormateada = fechaSeguimiento.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+          const nombreArchivo = `Seguimiento_${fechaFormateada}_${expediente.nombreCompleto.replace(/\s+/g, '_')}.pdf`;
+          
+          console.log('3. Generando PDF del seguimiento...');
 
-            // Generar HTML del seguimiento
-            const html = await ejs.renderFile(
-                path.join(__dirname, '../views/pdf/seguimiento.ejs'),
-                { seguimiento, actividades, expediente }
-            );
+          // Generar HTML del seguimiento
+          const html = await ejs.renderFile(
+              path.join(__dirname, '../views/pdf/seguimiento.ejs'),
+              { seguimiento, actividades, expediente }
+          );
 
-            // Guardar HTML para depuración
-            fs.writeFileSync(path.join(__dirname, '../temp_seguimiento.html'), html);
+          // Configurar y generar PDF
+          console.log('4. Iniciando Puppeteer...');
+          const browser = await puppeteer.launch({
+              headless: 'new',
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
+          });
 
-            // Configurar y generar PDF
-            console.log('4. Iniciando Puppeteer...');
-            const browser = await puppeteer.launch({
-                headless: 'new',
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
-            });
+          const page = await browser.newPage();
+          await page.emulateMediaType('screen');
+          await page.setContent(html, { waitUntil: 'networkidle0' });
 
-            const page = await browser.newPage();
-            await page.emulateMediaType('screen');
-            await page.setContent(html, { waitUntil: 'networkidle0' });
+          const pdfBuffer = await page.pdf({
+              format: 'A4',
+              printBackground: true,
+              margin: { top: "20px", bottom: "20px", left: "20px", right: "20px" }
+          });
 
-            const pdfBuffer = await page.pdf({
-                format: 'A4',
-                printBackground: true,
-                margin: { top: "20px", bottom: "20px", left: "20px", right: "20px" }
-            });
+          await browser.close();
+          console.log('5. PDF generado correctamente');
 
-            await browser.close();
-            console.log('5. PDF generado correctamente');
+          // Enviar PDF generado con nombre personalizado
+          res.setHeader('Content-Type', 'application/pdf')
+             .setHeader('Content-Disposition', `attachment; filename="${nombreArchivo}"`)
+             .end(pdfBuffer);
+          return;
+      }
 
-            // Enviar PDF generado
-            res.setHeader('Content-Type', 'application/pdf')
-               .setHeader('Content-Disposition', 'attachment; filename=seguimiento.pdf')
-               .end(pdfBuffer);
-            return;
-        }
+      // Si no es un seguimiento, buscar documento
+      console.log('2. No es seguimiento, buscando documento...');
+      const documento = await Psicologia.obtenerDocumentoPorId(id);
 
-        // Si no es un seguimiento, buscar documento
-        console.log('2. No es seguimiento, buscando documento...');
-        const documento = await Psicologia.obtenerDocumentoPorId(id);
+      if (!documento) {
+          console.error('3. No se encontró ni seguimiento ni documento');
+          return res.status(404).json({
+              error: 'Recurso no encontrado',
+              detalles: 'No se encontró ningún documento o seguimiento con el ID proporcionado'
+          });
+      }
 
-        if (!documento) {
-            console.error('3. No se encontró ni seguimiento ni documento');
-            return res.status(404).json({
-                error: 'Recurso no encontrado',
-                detalles: 'No se encontró ningún documento o seguimiento con el ID proporcionado'
-            });
-        }
+      // Procesar documento desde S3
+      console.log('3. Documento encontrado, procesando...');
+      let rutaArchivo = documento.ubicacion;
+      
+      if ((!rutaArchivo || rutaArchivo.trim() === '') && documento.nombreArchivo) {
+          console.log('4. Usando nombreArchivo alternativo');
+          rutaArchivo = documento.nombreArchivo;
+      }
 
-        // Procesar documento desde S3
-        console.log('3. Documento encontrado, procesando...');
-        let rutaArchivo = documento.ubicacion;
-        
-        if ((!rutaArchivo || rutaArchivo.trim() === '') && documento.nombreArchivo) {
-            console.log('4. Usando nombreArchivo alternativo');
-            rutaArchivo = documento.nombreArchivo;
-        }
+      if (!rutaArchivo || rutaArchivo.trim() === '') {
+          console.error('5. Error: Documento sin ubicación válida');
+          return res.status(404).json({
+              error: 'Documento sin ubicación válida',
+              detalles: 'El documento existe pero no tiene una ruta válida'
+          });
+      }
 
-        if (!rutaArchivo || rutaArchivo.trim() === '') {
-            console.error('5. Error: Documento sin ubicación válida');
-            return res.status(404).json({
-                error: 'Documento sin ubicación válida',
-                detalles: 'El documento existe pero no tiene una ruta válida'
-            });
-        }
+      // Normalizar key para S3
+      let key = rutaArchivo;
+      key = key.replace(/\\/g, '/');
+      
+      if (key.startsWith('http')) {
+          const url = new URL(key);
+          key = url.pathname.replace(/^\/+/, '');
+      }
 
-        // Normalizar key para S3
-        let key = rutaArchivo;
-        key = key.replace(/\\/g, '/');
-        
-        if (key.startsWith('http')) {
-            const url = new URL(key);
-            key = url.pathname.replace(/^\/+/, '');
-        }
+      console.log('6. Intentando obtener archivo de S3:', key);
 
-        console.log('6. Intentando obtener archivo de S3:', key);
+      try {
+          const data = await s3.getObject({
+              Bucket: process.env.AWS_BUCKET_NAME,
+              Key: key
+          }).promise();
 
-        try {
-            const data = await s3.getObject({
-                Bucket: process.env.AWS_BUCKET_NAME,
-                Key: key
-            }).promise();
+          console.log('7. Archivo S3 recuperado correctamente');
+          
+          // Usar el nombre del documento y normalizar para evitar problemas
+          const nombreArchivo = documento.nombre || documento.tipo || 'documento';
+          const nombreNormalizado = nombreArchivo
+              .trim()
+              .replace(/[^\w\s.-]/g, '_') // Reemplazar caracteres no válidos
+              .replace(/\s+/g, '_');      // Reemplazar espacios con guiones bajos
+          
+          res.setHeader('Content-Type', 'application/pdf')
+             .setHeader('Content-Disposition', `attachment; filename="${nombreNormalizado}.pdf"`)
+             .send(data.Body);
 
-            console.log('7. Archivo S3 recuperado correctamente');
-            
-            const nombreDescarga = documento.nombre || documento.tipo || 'documento';
-            
-            res.setHeader('Content-Type', 'application/pdf')
-               .setHeader('Content-Disposition', `attachment; filename="${nombreDescarga}.pdf"`)
-               .send(data.Body);
+      } catch (s3Error) {
+          console.error('8. Error de S3:', s3Error);
+          if (s3Error.code === 'NoSuchKey') {
+              return res.status(404).json({
+                  error: 'Archivo no encontrado en S3',
+                  detalles: `No se encontró el archivo en el almacenamiento`
+              });
+          }
+          throw s3Error;
+      }
 
-        } catch (s3Error) {
-            console.error('8. Error de S3:', s3Error);
-            if (s3Error.code === 'NoSuchKey') {
-                return res.status(404).json({
-                    error: 'Archivo no encontrado en S3',
-                    detalles: `No se encontró el archivo en el almacenamiento`
-                });
-            }
-            throw s3Error;
-        }
-
-    } catch (error) {
-        console.error('Error general:', error);
-        res.status(500).json({
-            error: 'Error al procesar la solicitud',
-            detalles: process.env.NODE_ENV === 'development' ? error.message : 'Error interno del servidor'
-        });
-    }
+  } catch (error) {
+      console.error('Error general:', error);
+      res.status(500).json({
+          error: 'Error al procesar la solicitud',
+          detalles: process.env.NODE_ENV === 'development' ? error.message : 'Error interno del servidor'
+      });
+  }
 };
 
 
