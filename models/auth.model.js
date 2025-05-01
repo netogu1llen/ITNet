@@ -25,7 +25,7 @@ class AuthModel {
   
       // 2. Obtener el rol del usuario
       const [rolesRows] = await db.query(
-        `SELECT r.IDRol, r.Tipo 
+        `SELECT r.Tipo 
          FROM usuarioRol ur
          JOIN rol r ON ur.IDRol = r.IDRol
          WHERE ur.IDUsuario = ?`,
