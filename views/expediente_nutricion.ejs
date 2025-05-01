@@ -205,9 +205,8 @@
             <% documentosHistorial.forEach(doc => { %>
             <tr class="fila-documento" 
                 data-id="<%= doc.id %>" 
-                data-tipo="<%= doc.tipo %>" 
-                data-ruta="<%= doc.ruta %>" 
-                data-num-sesion="<%= doc.numSesion %>">
+                data-tipo="<%= doc.tipo %>"
+                data-sesion="<%= doc.numSesion %>">
               <td>
                 <% if (doc.tipo === 'PDF') { %>
                   <span class="icon-text">

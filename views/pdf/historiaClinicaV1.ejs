@@ -124,7 +124,7 @@ function calcularEdad(fechaNacimiento) {
     <div class="info-basic">
       <div class="columns">
         <div class="column">
-          <strong>No. Expediente: <%= datosSesion?.IDExpediente %></strong>
+          <strong>No. Expediente:<%= expediente.IDExpediente %></strong>
         </div>
         <div class="column">
           <strong>Número de sesión:</strong> <%= datosSesion?.nutricional1?.numSesion || '' %>
@@ -135,21 +135,21 @@ function calcularEdad(fechaNacimiento) {
       
       <div class="columns">
         <div class="column">
-          <p><strong>Nombre Completo:</strong> <%= datosSesion?.nombres %> <%= datosSesion?.apellidoP %> <%= datosSesion?.apellidoM %></p>
+          <p><strong>Nombre Completo:</strong><%= expediente.nombres %> <%= expediente.apellidoP %> <%= expediente.apellidoM %></p>
           <div class="columns">
             <div class="column">
-              <p><strong>Grado:</strong> <%= datosSesion?.grado %></p>
+              <p><strong>Grado:</strong> <%= expediente.grado %></p>
             </div>
             <div class="column">
-              <p><strong>Nivel Escolar:</strong> <%= datosSesion?.nvEscolar %></p>
+              <p><strong>Nivel Escolar:</strong> <%= expediente.nvEscolar %></p>
             </div>
           </div>
           <div class="columns">
             <div class="column">
-              <p><strong>Fecha de nacimiento:</strong> <%= datosSesion?.fechaNacimiento %></p>
+              <p><strong>Fecha de nacimiento:</strong> <%= expediente.fechaNacimiento %></p>
             </div>
             <div class="column">
-              <p><strong>Edad (años):</strong> <%= calcularEdad(datosSesion?.fechaNacimiento) %></p>
+              <p><strong>Edad (años):</strong> <%= calcularEdad(expediente.fechaNacimiento) %></p>
             </div>
           </div>
         </div>

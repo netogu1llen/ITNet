@@ -235,22 +235,24 @@ exports.descargarDocumento = async (req, res) => {
                     // Usar plantilla para Historia Clínica V1
                     html = await ejs.renderFile(
                         path.join(__dirname, '../views/pdf/historiaClinicaV1.ejs'),
-                        { 
+                        {   
+                            idExpediente,
+                            tipo,
+                            expediente,
                             datosSesion, 
                             datosGeneralesPaciente, 
                             fechaGeneracion: new Date().toLocaleDateString() 
                         }
                     );
                 } else if (tipo === 'NUTRICIONAL_V2') {
-                    // Para V2, obtener también la última sesión V1 como referencia
-                    const datosSesionV1 = await Nutricion.obtenerUltimaSesionV1(idExpediente);
-                    
+
                     // Usar plantilla para Historia Clínica V2
                     html = await ejs.renderFile(
                         path.join(__dirname, '../views/pdf/historiaClinicaV2.ejs'),
-                        { 
+                        {   idExpediente,
+                            tipo,
+                            expediente,
                             datosSesion, 
-                            datosSesionV1,
                             datosGeneralesPaciente,
                             fechaGeneracion: new Date().toLocaleDateString() 
                         }
@@ -334,42 +336,42 @@ exports.verDocumento = async (req, res) => {
 
 // Obtener y mostrar un Historial Nutricional V2
 exports.getHistorialNutricionalV2 = async (req, res) => {
-  try {
-    const id = req.query.id;
-    const idExpediente = req.query.expediente;
-    
-    if (!id || !idExpediente) {
-      return res.status(400).send('Se requieren los IDs');
+    try {
+      const id = req.query.id;
+      const idExpediente = req.query.expediente;
+      
+      if (!id || !idExpediente) {
+        return res.status(400).send('Se requieren los IDs');
+      }
+      
+      // Obtener datos del historial nutricional V2 (antes objetivo nutricional)
+      const historial = await Nutricion.obtenerHistorialNutricionalV2PorId(id);
+      
+      if (!historial) {
+        return res.status(404).send('Historial nutricional V2 no encontrado');
+      }
+      
+      // Obtener datos del paciente
+      const pacienteEncriptado = await Nutricion.obtenerPorId(idExpediente);
+      
+      // Desencriptar datos sensibles del paciente
+      const paciente = {
+        nombres: decrypt(pacienteEncriptado.nombres || ''),
+        apellidoP: decrypt(pacienteEncriptado.apellidoP || ''),
+        apellidoM: decrypt(pacienteEncriptado.apellidoM || ''),
+        fechaNacimiento: decrypt(pacienteEncriptado.fechaNacimiento || '')
+      };
+      
+      // Renderizar la vista con los datos
+      res.render('historial_nutricional_v2', { 
+        historial, 
+        paciente
+      });
+    } catch (error) {
+      console.error('Error al obtener historial nutricional V2:', error);
+      res.status(500).send('Error al cargar el historial nutricional V2');
     }
-    
-    // Obtener datos del historial nutricional V2 (antes objetivo nutricional)
-    const historial = await Nutricion.obtenerHistorialNutricionalV2PorId(id);
-    
-    if (!historial) {
-      return res.status(404).send('Historial nutricional V2 no encontrado');
-    }
-    
-    // Obtener datos del paciente
-    const pacienteEncriptado = await Nutricion.obtenerPorId(idExpediente);
-    
-    // Desencriptar datos sensibles del paciente
-    const paciente = {
-      nombres: decrypt(pacienteEncriptado.nombres || ''),
-      apellidoP: decrypt(pacienteEncriptado.apellidoP || ''),
-      apellidoM: decrypt(pacienteEncriptado.apellidoM || ''),
-      fechaNacimiento: decrypt(pacienteEncriptado.fechaNacimiento || '')
-    };
-    
-    // Renderizar la vista con los datos
-    res.render('historial_nutricional_v2', { 
-      historial, 
-      paciente
-    });
-  } catch (error) {
-    console.error('Error al obtener historial nutricional V2:', error);
-    res.status(500).send('Error al cargar el historial nutricional V2');
-  }
-};
+  };
 
 // Eliminar documento o historial
 exports.eliminarDocumento = async (req, res) => {
@@ -509,8 +511,6 @@ exports.renderHistoriaClinica = async (req, res) => {
 exports.guardarHistoriaClinicaV1 = async (req, res) => {
   try {
     const datos = req.body;
-    console.log('Datos recibidos para guardar en historiaclinicav1:', datos);
-
     await Nutricion.insertarHistoriaClinicaV1(datos);
 
     res.json({ success: true });
@@ -571,25 +571,53 @@ exports.checkAndRedirectHistoriaClinica = async (req, res) => {
 exports.guardarHistoriaClinicaV2 = async (req, res) => {
     try {
         const datos = req.body;
-        console.log('Datos recibidos para guardar en historiaClinicaV2:', datos);
+        console.log('Datos recibidos en controlador:', datos);
 
-        // Validar datos requeridos
         if (!datos.IDExpediente || !datos.numSesion) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'ID de expediente y número de sesión son requeridos' 
+            return res.status(400).json({
+                success: false,
+                message: 'ID de expediente y número de sesión son requeridos'
             });
         }
 
-        // Insertar datos usando el método del modelo
-        await Nutricion.insertarHistoriaClinicaV2(datos);
+        // Formatear datos según el modelo
+        const datosFormateados = {
+            IDExpediente: datos.IDExpediente,
+            numSesion: datos.numSesion,
+            
+            // Indicadores bioquímicos
+            parametro: datos.parametro,
+            valorReferencia: datos.valorReferencia,
+            parametroFecha: datos.parametroFecha,
+            
+            // Evaluación antropométrica
+            peso: datos.peso,
+            talla: datos.talla,
+            circunferenciaCintura: datos.circunferenciaCintura,
+            circunferenciaCadera: datos.circunferenciaCadera,
+            
+            // Diagnóstico
+            diagnosticoEvolucion: datos.diagnosticoEvolucion,
+            
+            // Objetivos nutricionales
+            objetivosNutricionales: datos.objetivosNutricionales,
+            
+            // Manejo nutricional
+            energia: datos.energia,
+            hidratosDeCarbono: datos.hidratosDeCarbono,
+            lipidos: datos.lipidos,
+            proteinas: datos.proteinas,
+            fibra: datos.fibra,
+            agua: datos.agua
+        };
 
+        await Nutricion.insertarHistoriaClinicaV2(datosFormateados);
         res.json({ success: true });
     } catch (error) {
         console.error('Error guardando datos de historiaClinicaV2:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Error en el servidor al guardar la historia clínica V2' 
+            message: error.message || 'Error en el servidor' 
         });
     }
 };
@@ -671,19 +699,21 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
 
         let datosSesion = null;
         if (numSesion) {
-            datosSesion = await Nutricion.obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion);
-            
-            // Transformar objetivos al formato esperado
-            if (datosSesion && Array.isArray(datosSesion.objetivo)) {
-                datosSesion.objetivoNutricional = datosSesion.objetivo.map(obj => ({ objetivo: obj }));
-            }
+            // Obtener todos los datos relacionados con la sesión
+            const evaluacionAntropometrica = await Nutricion.obtenerEvaluacionAntropometrica(IDExpediente, numSesion);
+            const diagnosticoEvolucion = await Nutricion.obtenerDiagnosticoEvolucion(IDExpediente, numSesion);
+            const objetivoNutricional = await Nutricion.obtenerObjetivosNutricionales(IDExpediente, numSesion);
+            const indicadoresBioquim = await Nutricion.obtenerIndicadoresBioquimicos(IDExpediente, numSesion);
+            const manejoNutricionalData = await Nutricion.obtenerManejoNutricionalPorSesion(IDExpediente, numSesion);
 
-            // Asegurarse que el diagnóstico tenga el formato correcto
-            if (datosSesion && datosSesion.diagnosticoEvolucion) {
-                datosSesion.diagnosticoEvolucion = {
-                    diagnosticoEvolucion: datosSesion.diagnosticoEvolucion
-                };
-            }
+            datosSesion = {
+                numSesion,
+                evaluacionAntropometrica: evaluacionAntropometrica[0] || {},
+                diagnosticoEvolucion: diagnosticoEvolucion[0] || {},
+                objetivoNutricional: objetivoNutricional || [],
+                manejoNutricional: manejoNutricionalData || {},
+                indicadoresBioquim: indicadoresBioquim || []
+            };
         }
 
         // Para mostrar datos de la última sesión V1
@@ -692,8 +722,7 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
         res.render('historiaClinicaV2', {
             expediente,
             datosSesion,
-            datosSesionV1: ultimaSesionV1,
-            modoEdicion: !!numSesion
+            datosSesionV1: ultimaSesionV1
         });
 
     } catch (error) {
@@ -707,9 +736,9 @@ exports.actualizarHistoriaClinicaV2 = async (req, res) => {
     try {
         const datos = req.body;
         await Nutricion.actualizarHistoriaClinicaV2(datos);
-        res.sendStatus(200); // Solo envía código de estado 200 (OK)
+        res.json({ success: true });
     } catch (error) {
         console.error('Error actualizando historia clínica V2:', error);
-        res.sendStatus(500); // Solo envía código de estado 500 (Error)
+        res.status(500).json({ success: false, message: 'Error al actualizar' });
     }
 };
