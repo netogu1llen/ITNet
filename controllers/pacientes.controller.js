@@ -368,7 +368,6 @@ const obtenerDocumentosPorExpediente = async (req, res) => {
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Agregar después del método subirDocumento
 
 // Middleware para subir múltiples documentos
 const subirMultiplesDocumentos = [
