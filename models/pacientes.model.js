@@ -24,18 +24,22 @@ class Pacientes {
    * @param {string} datosPaciente.sangre
    */
   static async registrarPaciente({
+    IDExpediente, // Nuevo parámetro
     nombres,
     apellidoP,
     apellidoM,
     fechaNacimiento,
     contacto,
+    nombreContacto,
+    apellidoPContacto,
+    apellidoMContacto,
+    parentescoContacto,
     estado,
     ciudad,
     calle,
     cp,
     localidad,
     numCasa,
-    numExpediente,
     enfermedades,
     medicamentos,
     estudioSocioeconomico,
@@ -46,26 +50,44 @@ class Pacientes {
   })
   {
     try {
+      // Verificar que el IDExpediente no exista ya
+      const [existente] = await db.execute(
+        'SELECT IDExpediente FROM expediente WHERE IDExpediente = ?',
+        [IDExpediente]
+      );
+      
+      if (existente && existente.length > 0) {
+        throw new Error(`El ID de expediente ${IDExpediente} ya existe en la base de datos.`);
+      }
+      
       const [result] = await db.execute(
-        `INSERT INTO expediente SET
-          nombres = ?, apellidoP = ?, apellidoM = ?,
-          fechaNacimiento = ?, contacto = ?, estado = ?,  ciudad = ?,
-          calle = ?,  cp = ?,  localidad = ?,  numCasa = ?, numExpediente = ?,
-          enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
-          grado = ?, nvEscolar = ?, sangre = ?, eliminado = 0, sexo= ?`,
+        `INSERT INTO expediente (
+          IDExpediente, nombres, apellidoP, apellidoM,
+          fechaNacimiento, contacto, 
+          nombreContacto, apellidoPContacto, apellidoMContacto, parentescoContacto,
+          estado, ciudad, calle, cp, localidad, numCasa,
+          enfermedades, medicamentos, estudioSocioeconomico,
+          grado, nvEscolar, sangre, eliminado, sexo
+        ) VALUES (
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?
+        )`,
         [
+          IDExpediente,
           nombres,
           apellidoP,
           apellidoM,
           fechaNacimiento,
           contacto,
+          nombreContacto || null,
+          apellidoPContacto || null,
+          apellidoMContacto || null,
+          parentescoContacto || null,
           estado,
           ciudad,
           calle,
           cp,
           localidad,
           numCasa,
-          numExpediente,
           enfermedades,
           medicamentos,
           estudioSocioeconomico,
@@ -75,10 +97,10 @@ class Pacientes {
           sexo
         ]
       );
-      return result;
+      return { ...result, insertId: IDExpediente };
     } catch (error) {
       console.error('Error al registrar paciente:', error);
-      throw new Error('Error al registrar paciente');
+      throw error; // Propagamos el error con el mensaje exacto
     }
   }
   /**
@@ -88,11 +110,11 @@ class Pacientes {
    */
   static async getPaciente(idExpediente) {
     try {
-      // Usamos el método de promesas para la consulta
       const [result] = await db.execute(
-        `SELECT nombres, apellidoP, apellidoM, numExpediente,
-          fechaNacimiento, contacto, estado,  ciudad,
-          calle,  cp,  localidad,  numCasa, enfermedades,
+        `SELECT IDExpediente, nombres, apellidoP, apellidoM,
+          fechaNacimiento, contacto, 
+          nombreContacto, apellidoPContacto, apellidoMContacto, parentescoContacto,
+          estado, ciudad, calle, cp, localidad, numCasa, enfermedades,
           medicamentos, estudioSocioeconomico, grado, nvEscolar, sangre, sexo
          FROM expediente
          WHERE IDExpediente = ? AND eliminado = 0`,
@@ -134,13 +156,16 @@ class Pacientes {
     apellidoM,
     fechaNacimiento,
     contacto,
+    nombreContacto,
+    apellidoPContacto,
+    apellidoMContacto,
+    parentescoContacto,
     estado,
     ciudad,
     calle,
     cp,
     localidad,
     numCasa,
-    numExpediente,
     enfermedades,
     medicamentos,
     estudioSocioeconomico,
@@ -148,45 +173,138 @@ class Pacientes {
     nvEscolar,
     sangre,
     sexo,
+    IDExpediente, // Nuevo parámetro para actualizar el ID
     idExpediente
   }) {
     try {
-      const [result] = await db.execute(
-        `UPDATE expediente SET
-          nombres = ?, apellidoP = ?, apellidoM = ?,
-           fechaNacimiento = ?, contacto = ?, estado = ?,  ciudad = ?,
-           calle = ?,  cp = ?,  localidad = ?,  numCasa = ?, numExpediente = ?,
-           enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
-           grado = ?, nvEscolar = ?, sangre = ?, sexo = ?
-         WHERE IDExpediente = ?`,
-         [
-          nombres,
-          apellidoP,
-          apellidoM,
-          fechaNacimiento,
-          contacto,
-          estado,
-          ciudad,
-          calle,
-          cp,
-          localidad,
-          numCasa,
-          numExpediente,
-          enfermedades,
-          medicamentos,
-          estudioSocioeconomico,
-          grado,
-          nvEscolar,
-          sangre,
-          sexo,
-          idExpediente
-        ]
-      );
-      return result;
-  } catch (error) {
-    console.error('Error al actualizar paciente:', error);
-    throw new Error('Error al actualizar paciente');
-  }
+      console.log('editarPaciente - Valores recibidos:', { 
+        nuevoID: IDExpediente, 
+        idActual: idExpediente, 
+        sonIguales: IDExpediente == idExpediente
+      });
+      
+      // Si el ID ha cambiado, actualizamos el registro con el nuevo ID
+      if (IDExpediente != idExpediente) {
+        console.log('Intentando actualizar IDExpediente de', idExpediente, 'a', IDExpediente);
+        
+        try {
+          // Primero verificamos si existen documentos u otras relaciones con este expediente
+          const [documentos] = await db.execute(
+            `SELECT COUNT(*) as count FROM documentosAdjuntos WHERE IDExpediente = ?`,
+            [idExpediente]
+          );
+          
+          const tieneDocumentos = documentos[0].count > 0;
+          console.log('El expediente tiene documentos asociados:', tieneDocumentos ? 'Sí' : 'No', `(${documentos[0].count})`);
+          
+          if (tieneDocumentos) {
+            // Si hay documentos, primero actualizamos las referencias en la tabla de documentos
+            console.log('Actualizando referencias en documentosAdjuntos...');
+            const [updateDocsResult] = await db.execute(
+              `UPDATE documentosAdjuntos SET IDExpediente = ? WHERE IDExpediente = ?`,
+              [IDExpediente, idExpediente]
+            );
+            console.log('Resultado de actualización de documentos:', updateDocsResult);
+          }
+          
+          // Ahora actualizamos el expediente
+          console.log('Actualizando expediente principal...');
+          const [result] = await db.execute(
+            `UPDATE expediente SET
+              nombres = ?, apellidoP = ?, apellidoM = ?,
+              fechaNacimiento = ?, contacto = ?, 
+              nombreContacto = ?, apellidoPContacto = ?, apellidoMContacto = ?, parentescoContacto = ?,
+              estado = ?, ciudad = ?,
+              calle = ?, cp = ?, localidad = ?, numCasa = ?,
+              enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
+              grado = ?, nvEscolar = ?, sangre = ?, sexo = ?,
+              IDExpediente = ?
+            WHERE IDExpediente = ?`,
+            [
+              nombres,
+              apellidoP,
+              apellidoM,
+              fechaNacimiento,
+              contacto,
+              nombreContacto || null,
+              apellidoPContacto || null,
+              apellidoMContacto || null,
+              parentescoContacto || null,
+              estado,
+              ciudad,
+              calle,
+              cp,
+              localidad,
+              numCasa,
+              enfermedades,
+              medicamentos,
+              estudioSocioeconomico,
+              grado,
+              nvEscolar,
+              sangre,
+              sexo,
+              IDExpediente,
+              idExpediente
+            ]
+          );
+          console.log('Resultado de actualización de expediente:', result);
+          
+          // Verificar si se actualizó correctamente
+          if (result.affectedRows === 0) {
+            console.warn('No se actualizó ninguna fila en la tabla expediente');
+          }
+          
+          return result;
+        } catch (updateError) {
+          console.error('Error específico al actualizar ID:', updateError);
+          // Propagar el error con un mensaje más descriptivo
+          throw new Error(`Error al actualizar ID de expediente: ${updateError.message}`);
+        }
+      } else {
+        // Si el ID no ha cambiado, solo actualizamos el resto de los datos
+        console.log('El ID no ha cambiado, actualizando solo los demás campos');
+        const [result] = await db.execute(
+          `UPDATE expediente SET
+            nombres = ?, apellidoP = ?, apellidoM = ?,
+            fechaNacimiento = ?, contacto = ?, 
+            nombreContacto = ?, apellidoPContacto = ?, apellidoMContacto = ?, parentescoContacto = ?,
+            estado = ?, ciudad = ?,
+            calle = ?, cp = ?, localidad = ?, numCasa = ?,
+            enfermedades = ?, medicamentos = ?, estudioSocioeconomico = ?,
+            grado = ?, nvEscolar = ?, sangre = ?, sexo = ?
+          WHERE IDExpediente = ?`,
+          [
+            nombres,
+            apellidoP,
+            apellidoM,
+            fechaNacimiento,
+            contacto,
+            nombreContacto || null,
+            apellidoPContacto || null,
+            apellidoMContacto || null,
+            parentescoContacto || null,
+            estado,
+            ciudad,
+            calle,
+            cp,
+            localidad,
+            numCasa,
+            enfermedades,
+            medicamentos,
+            estudioSocioeconomico,
+            grado,
+            nvEscolar,
+            sangre,
+            sexo,
+            idExpediente
+          ]
+        );
+        return result;
+      }
+    } catch (error) {
+      console.error('Error general al actualizar paciente:', error);
+      throw error; // Propagar el error original para mejor diagnóstico
+    }
   }
     
   static async eliminarPaciente(idExpediente) {
@@ -221,6 +339,7 @@ class Pacientes {
     try {
         const [results] = await db.execute(`
             SELECT 
+                IDExpediente,
                 nombres, apellidoP, apellidoM,
                 fechaNacimiento, 
                 contacto, 
@@ -228,7 +347,6 @@ class Pacientes {
                 CONCAT(calle, ' ', numCasa) AS domicilio,
                 grado, 
                 nvEscolar AS curso,
-                numExpediente,
                 sexo
             FROM expediente
             WHERE IDExpediente = ? AND eliminado = 0
