@@ -16,6 +16,7 @@ const router = express.Router();
 const apiController = require('../controllers/api.controller');
 const controller = require('../controllers/api.boletas.controller');
 const controller1 = require('../controllers/api.expediente.controller');
+const nutricionalController = require('../controllers/api.nutricional.controller');
 
 /**
  * Ruta que inicia el proceso de autenticación con Google OAuth 2.0
@@ -46,5 +47,11 @@ router.get('/boleta/:idBoleta', controller.getBoletaDetalle);
  * @route GET /api/expediente/:idExpediente
  */
 router.get('/expediente/:idExpediente', controller1.getExpedienteGeneral);
+
+/**
+ * Ruta para obtener todos los datos nutricionales asociados a un expediente.
+ * @route GET /api/nutricional/:idExpediente
+ */
+router.get('/nutricional/:idExpediente', nutricionalController.getDatosNutricionales);
 
 module.exports = router;
