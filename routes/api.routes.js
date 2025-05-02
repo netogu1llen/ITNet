@@ -14,6 +14,7 @@
 const express = require('express');
 const router = express.Router();
 const apiController = require('../controllers/api.controller');
+const nutricionalController = require('../controllers/api.nutricional.controller');
 const controller = require('../controllers/api.boletas.controller');
 const controller1 = require('../controllers/api.expediente.controller');
 const controllerPsi = require('../controllers/api.psicologia.controller');
@@ -59,5 +60,11 @@ router.get('/psicologia/detalle/:idSeguimiento', controllerPsi.getDetalleSeguimi
  * @route GET /api/expediente/:idExpediente
  */
 router.get('/expediente/:idExpediente', controller1.getExpedienteGeneral);
+
+/**
+ * Ruta para obtener todos los datos nutricionales asociados a un expediente.
+ * @route GET /api/nutricional/:idExpediente
+ */
+router.get('/nutricional/:idExpediente', nutricionalController.getDatosNutricionales);
 
 module.exports = router;
