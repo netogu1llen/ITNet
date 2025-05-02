@@ -1071,6 +1071,24 @@ class Nutricion {
             throw error;
         }
     }
+    
+    // Obtener la evolución de peso y talla de un paciente por su ID
+    static async obtenerEvolucionPesoTalla(idExpediente) {
+        try {
+            const [resultados] = await db.execute(
+                `SELECT fecha, peso, talla
+                 FROM evaluacionAntropometrica
+                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+                 ORDER BY fecha ASC`,
+                [idExpediente]
+            );
+            return resultados;
+        } catch (error) {
+            console.error('Error al obtener la evolución de peso y talla:', error.message);
+            throw error;
+        }
+    }
+
 }
 
 module.exports = Nutricion;

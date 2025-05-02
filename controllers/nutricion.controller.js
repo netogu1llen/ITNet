@@ -893,3 +893,17 @@ exports.actualizarHistoriaClinicaV2 = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error al actualizar' });
     }
 };
+
+exports.obtenerEvolucionPesoTalla = async (req, res) => {
+    const { IDExpediente } = req.params;
+
+    try {
+        const resultados = await Nutricion.obtenerEvolucionPesoTalla(IDExpediente);
+        
+        res.json(resultados);
+    } catch (error) {
+        console.error('Error al obtener la evolución de peso y talla:', error);
+        res.status(500).json({ error: 'Error al obtener la evolución de peso y talla.' });
+    }
+};
+

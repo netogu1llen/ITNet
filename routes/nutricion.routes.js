@@ -47,4 +47,6 @@ router.post('/historiaClinica/actualizarHistoriaClinicaV1', nutricionController.
 router.post('/historiaClinica/guardarHistoriaClinicaV2', nutricionController.guardarHistoriaClinicaV2);
 router.post('/historiaClinica/actualizarHistoriaClinicaV2', nutricionController.actualizarHistoriaClinicaV2);
 
+router.get('/evolucion/:IDExpediente', nutricionController.obtenerEvolucionPesoTalla);
+
 module.exports = router;

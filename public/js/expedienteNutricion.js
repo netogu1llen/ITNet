@@ -109,6 +109,52 @@ $(document).ready(function () {
             title: 'Error',
             text: 'No se pudo determinar el ID del expediente. Intente nuevamente o contacte a soporte.'
         });
+    } else {
+        // Cargar la gráfica de evolución de peso y talla
+        fetch(`/nutricion/evolucion/${idExpediente}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data || data.length === 0) {
+                    console.log('No hay datos para graficar');
+                    return;
+                }
+
+                const fechas = data.map(item => new Date(item.fecha).toLocaleDateString('es-ES'));
+                const pesos = data.map(item => item.peso);
+                const tallas = data.map(item => item.talla);
+
+                const ctx = document.getElementById('graficaEvolucionPesoTalla').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: fechas,
+                        datasets: [
+                            {
+                                label: 'Peso (kg)',
+                                data: pesos,
+                                borderWidth: 2,
+                                tension: 0.2
+                            },
+                            {
+                                label: 'Talla (cm)',
+                                data: tallas,
+                                borderWidth: 2,
+                                tension: 0.2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            title: { display: false }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos de evolución:', error);
+            });
     }
 
     // Funciones para mostrar y ocultar el modal de carga
