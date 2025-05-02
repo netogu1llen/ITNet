@@ -14,7 +14,7 @@
   <link rel="icon" href="<%= process.env.PATH_SERVER %>Images/logo.png" type="image/png">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.minimize.css">
   <link rel="stylesheet" href="/vendor/jquery.dataTables.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 
@@ -72,7 +72,17 @@
                         <i class="material-icons">school</i> <!-- Icono de centro de aprendizaje -->
                         <span class="menu-text">Centro de Conocimientos</span>
                     </a>
-                </li>                
+                </li>  
+
+                <!-- Logout (al fondo del menú) -->
+                <li>
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="menu-link" style="background: none; border: none; cursor: pointer; display: flex; align-items: center;">
+                            <i class="material-icons">logout</i>
+                            <span class="menu-text">Cerrar sesión</span>
+                        </button>
+                    </form>
+                </li>
             </ul>
         </div>
     </div>
