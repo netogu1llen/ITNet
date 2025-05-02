@@ -14,9 +14,10 @@
 const express = require('express');
 const router = express.Router();
 const apiController = require('../controllers/api.controller');
+const nutricionalController = require('../controllers/api.nutricional.controller');
 const controller = require('../controllers/api.boletas.controller');
 const controller1 = require('../controllers/api.expediente.controller');
-const nutricionalController = require('../controllers/api.nutricional.controller');
+const controllerPsi = require('../controllers/api.psicologia.controller');
 
 /**
  * Ruta que inicia el proceso de autenticación con Google OAuth 2.0
@@ -41,6 +42,18 @@ router.get('/boletas/:idExpediente', controller.getBoletasByExpediente);
  * @route GET /api/boleta/:idBoleta
  */
 router.get('/boleta/:idBoleta', controller.getBoletaDetalle);
+
+/**
+ * Obtiene todas los seguimientos de un expediente
+ * @route GET /api/psicologia/:idExpediente
+ */
+router.get('/psicologia/:idExpediente', controllerPsi.getSeguimientosPsicologia);
+
+/**
+ * Obtiene el detalle de una boleta con materias
+ * @route GET /api/psicologia/detalle/:idSeguimiento
+ */
+router.get('/psicologia/detalle/:idSeguimiento', controllerPsi.getDetalleSeguimiento);
 
 /**
  * Ruta para consultar expediente general
