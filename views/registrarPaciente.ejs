@@ -12,10 +12,10 @@
       <div class="element-container"></div>
       <div class="element-container"></div>
       <div class="element-container">
-        <label for="numExpediente">Número de Expediente:</label>
+        <label for="IDExpediente">Número de expediente:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="numExpediente" name="numExpediente" maxlength="15"><br>
+          <input type="text" id="IDExpediente" name="IDExpediente" maxlength="15"><br>
         </div>
       </div>
       <div class="element-container"></div>
@@ -73,6 +73,50 @@
           </select>
         </div>
       </div>
+    </div>
+    <hr>
+    <label for="contactoEmergencia">Datos de Contacto de Emergencia</label>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="nombreContacto">Nombre del Contacto:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="nombreContacto" name="nombreContacto" maxlength="100"><br> 
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="apellidoPContacto">Apellido Paterno:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="apellidoPContacto" name="apellidoPContacto" maxlength="60"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="apellidoMContacto">Apellido Materno:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="apellidoMContacto" name="apellidoMContacto" maxlength="60"><br>
+        </div>
+      </div>
+    </div>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="parentescoContacto">Parentesco:</label>
+        <br>
+        <div class="multirow-form-container">
+          <select id="parentescoContacto" name="parentescoContacto">
+            <option value="">Seleccione el parentesco</option>
+            <option value="Padre">Padre</option>
+            <option value="Madre">Madre</option>
+            <option value="Hermano/a">Hermano/a</option>
+            <option value="Tío/a">Tío/a</option>
+            <option value="Abuelo/a">Abuelo/a</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="element-container"></div>
+      <div class="element-container"></div>
     </div>
     <hr>
     <label for="direccion">Direccion de vivienda</label>

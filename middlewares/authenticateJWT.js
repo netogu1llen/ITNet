@@ -27,7 +27,7 @@ const authenticateJWT = (req, res, next) => {
   }
 
   // Si no hay token, devuelve error 401 (No autorizado)
-  if (!token) {
+  else if (!token) {
     return res.status(401).json({ error: 'Token no proporcionado. Acceso denegado.' });
   }
 

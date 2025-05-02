@@ -94,4 +94,7 @@ router.get('/google/callback', authController.googleCallback);
 
 router.post('/google/mobile', authController.googleMobileLogin);
 
+router.post('/logout', authController.logout);
+
+
 module.exports = router;

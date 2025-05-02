@@ -14,6 +14,8 @@
 const express = require('express');
 const router = express.Router();
 const apiController = require('../controllers/api.controller');
+const controller = require('../controllers/api.boletas.controller');
+const controller1 = require('../controllers/api.expediente.controller');
 
 /**
  * Ruta que inicia el proceso de autenticación con Google OAuth 2.0
@@ -23,8 +25,26 @@ const apiController = require('../controllers/api.controller');
  * @memberof module:routes/apiRoutes
  * @inner
  * @param {Object} req - Objeto de solicitud Express
- * @param {Object} res - Objeto de respuesta Express
+ * @param {Object} res - Objeto de respuesta Express 
  */
 router.get('/pacientes', apiController.getPacientes);
+
+/**
+ * Obtiene todas las boletas de un expediente
+ * @route GET /api/boletas/:idExpediente
+ */
+router.get('/boletas/:idExpediente', controller.getBoletasByExpediente);
+
+/**
+ * Obtiene el detalle de una boleta con materias
+ * @route GET /api/boleta/:idBoleta
+ */
+router.get('/boleta/:idBoleta', controller.getBoletaDetalle);
+
+/**
+ * Ruta para consultar expediente general
+ * @route GET /api/expediente/:idExpediente
+ */
+router.get('/expediente/:idExpediente', controller1.getExpedienteGeneral);
 
 module.exports = router;

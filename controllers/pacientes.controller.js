@@ -87,18 +87,22 @@ const getRegistrarPaciente = async (req, res) => {
 const postRegistrarPaciente = async (req, res) => {
   try {
     const {
+      IDExpediente, // Nuevo campo
       nombres,
       apellidoP,
       apellidoM,
       fechaNacimiento,
       contacto,
+      nombreContacto,     // Nuevo campo
+      apellidoPContacto,  // Nuevo campo
+      apellidoMContacto,  // Nuevo campo
+      parentescoContacto, // Nuevo campo
       estado,
       ciudad,
       calle,
       cp,
       localidad,
       numCasa,
-      numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
@@ -108,20 +112,32 @@ const postRegistrarPaciente = async (req, res) => {
       sexo
     } = req.body;
 
+    // Validar que IDExpediente sea un número válido
+    const expedienteID = parseInt(IDExpediente, 10);
+    if (isNaN(expedienteID) || expedienteID <= 0) {
+      return res.status(400).json({ 
+        mensaje: 'El ID de expediente debe ser un número entero positivo.' 
+      });
+    }
+
     // Encriptar los campos sensibles
     const pacienteEncriptado = {
+      IDExpediente: expedienteID, // Usar el ID proporcionado
       nombres: encrypt(nombres).encryptedData,
       apellidoP: encrypt(apellidoP).encryptedData,
       apellidoM: encrypt(apellidoM).encryptedData,
       fechaNacimiento: encrypt(fechaNacimiento).encryptedData,
       contacto: encrypt(contacto).encryptedData,
+      nombreContacto: nombreContacto ? encrypt(nombreContacto).encryptedData : null,
+      apellidoPContacto: apellidoPContacto ? encrypt(apellidoPContacto).encryptedData : null,
+      apellidoMContacto: apellidoMContacto ? encrypt(apellidoMContacto).encryptedData : null,
+      parentescoContacto: parentescoContacto ? encrypt(parentescoContacto).encryptedData : null,
       estado: encrypt(estado).encryptedData,
       ciudad: encrypt(ciudad).encryptedData,
       calle: encrypt(calle).encryptedData,
       cp: encrypt(cp).encryptedData,
       localidad: encrypt(localidad).encryptedData,
       numCasa: encrypt(numCasa).encryptedData,
-      numExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
@@ -131,17 +147,18 @@ const postRegistrarPaciente = async (req, res) => {
       sexo
     };
 
-    const result = await Pacientes.registrarPaciente(pacienteEncriptado);
-    const idExpedienteNuevo = result.insertId;
-
-    const idUsuarioActual = req.session.userId; 
-    console.log('Usuario actual al registrar paciente:', idUsuarioActual);
-    await db.query(
-      'INSERT INTO usuarioExpediente (IDUsuario, IDExpediente, numSesion, fecha) VALUES (?, ?, 1, NOW())',
-      [idUsuarioActual, idExpedienteNuevo]
-    );
-
-    res.status(200).json({ mensaje: 'Datos registrados correctamente' });
+    try {
+      const result = await Pacientes.registrarPaciente(pacienteEncriptado);
+      res.status(200).json({ mensaje: 'Datos registrados correctamente' });
+    } catch (dbError) {
+      // Manejar error específico de ID duplicado
+      if (dbError.message.includes('ya existe')) {
+        return res.status(400).json({
+          mensaje: dbError.message
+        });
+      }
+      throw dbError; // Propagar otros errores
+    }
   } catch (error) {
     console.error('Error al registrar paciente:', error.message);
     res.status(500).json({
@@ -161,6 +178,7 @@ const getEditarPaciente = async (req, res) => {
     console.log("El id del expediente es: ", idExpediente)
     const datosPaciente = await Pacientes.getPaciente(idExpediente);
     let paciente = datosPaciente;
+    
     // Desencriptar campos sensibles
     paciente.nombres = decrypt(paciente.nombres);
     paciente.apellidoP = decrypt(paciente.apellidoP);
@@ -173,9 +191,23 @@ const getEditarPaciente = async (req, res) => {
     paciente.cp = decrypt(paciente.cp);
     paciente.localidad = decrypt(paciente.localidad);
     paciente.numCasa = decrypt(paciente.numCasa);
+    
+    // Desencriptar datos de contacto de emergencia
+    if (paciente.nombreContacto) {
+      paciente.nombreContacto = decrypt(paciente.nombreContacto);
+    }
+    if (paciente.apellidoPContacto) {
+      paciente.apellidoPContacto = decrypt(paciente.apellidoPContacto);
+    }
+    if (paciente.apellidoMContacto) {
+      paciente.apellidoMContacto = decrypt(paciente.apellidoMContacto);
+    }
+    if (paciente.parentescoContacto) {
+      paciente.parentescoContacto = decrypt(paciente.parentescoContacto);
+    }
+    
     paciente.sexo = paciente.sexo ? paciente.sexo : "";
-    console.log(paciente)
-
+    console.log(paciente);
 
     res.render('editarPaciente', { datos: paciente});
   } catch (error) {
@@ -198,13 +230,17 @@ const postEditarPaciente = async (req, res) => {
       apellidoM,
       fechaNacimiento,
       contacto,
+      nombreContacto,
+      apellidoPContacto,
+      apellidoMContacto,
+      parentescoContacto,
       estado,
       ciudad,
       calle,
       cp,
       localidad,
       numCasa,
-      numExpediente,
+      IDExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
@@ -213,19 +249,64 @@ const postEditarPaciente = async (req, res) => {
       sangre,
       sexo
     } = req.body;
+
+    // Verificar si el nuevo ID ya existe, pero no es el mismo que ya tenía
+    if (nuevoIdExpediente != idExpediente) {
+      console.log('El ID ha cambiado, verificando si el nuevo ID ya existe...');
+      const [existente] = await db.execute(
+        'SELECT IDExpediente FROM expediente WHERE IDExpediente = ? AND IDExpediente != ?',
+        [nuevoIdExpediente, idExpediente]
+      );
+      
+      if (existente && existente.length > 0) {
+        return res.status(400).json({
+          mensaje: `El número de expediente ${nuevoIdExpediente} ya existe en la base de datos.`
+        });
+      }
+      
+      console.log('El nuevo ID no existe, procediendo con la actualización');
+    }
+    
+    console.log('Datos de edición recibidos:', {
+      idOriginal: idExpediente,
+      nuevoId: nuevoIdExpediente,
+      idHaCambiado: nuevoIdExpediente != idExpediente
+    });
+    
+    // Verificar si el nuevo ID ya existe, pero no es el mismo que ya tenía
+    if (nuevoIdExpediente != idExpediente) {
+      console.log('El ID ha cambiado, verificando si el nuevo ID ya existe...');
+      const [existente] = await db.execute(
+        'SELECT IDExpediente FROM expediente WHERE IDExpediente = ? AND IDExpediente != ?',
+        [nuevoIdExpediente, idExpediente]
+      );
+      
+      if (existente && existente.length > 0) {
+        return res.status(400).json({
+          mensaje: `El número de expediente ${nuevoIdExpediente} ya existe en la base de datos.`
+        });
+      }
+      
+      console.log('El nuevo ID no existe, procediendo con la actualización');
+    }
+
     const pacienteEncriptado = {
       nombres: encrypt(nombres).encryptedData,
       apellidoP: encrypt(apellidoP).encryptedData,
       apellidoM: encrypt(apellidoM).encryptedData,
       fechaNacimiento: encrypt(fechaNacimiento).encryptedData,
       contacto: encrypt(contacto).encryptedData,
+      nombreContacto: nombreContacto ? encrypt(nombreContacto).encryptedData : null,
+      apellidoPContacto: apellidoPContacto ? encrypt(apellidoPContacto).encryptedData : null,
+      apellidoMContacto: apellidoMContacto ? encrypt(apellidoMContacto).encryptedData : null,
+      parentescoContacto: parentescoContacto ? encrypt(parentescoContacto).encryptedData : null,
       estado: encrypt(estado).encryptedData,
       ciudad: encrypt(ciudad).encryptedData,
       calle: encrypt(calle).encryptedData,
       cp: encrypt(cp).encryptedData,
       localidad: encrypt(localidad).encryptedData,
       numCasa: encrypt(numCasa).encryptedData,
-      numExpediente,
+      IDExpediente: nuevoIdExpediente,
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
@@ -233,26 +314,52 @@ const postEditarPaciente = async (req, res) => {
       nvEscolar,
       sangre,
       sexo,
-      idExpediente
+      idExpediente // ID original para la cláusula WHERE
     };
 
-    await Pacientes.editarPaciente(pacienteEncriptado);
-
-    const idUsuarioActual = req.session.userId;
-    /*await db.query(
-      'UPDATE expediente SET modificadoPor = ?, fechaModificacion = NOW() WHERE IDExpediente = ?',
-      [idUsuarioActual, idExpediente]
-    );*/
-
-    res.status(200).json({ mensaje: 'Datos actualizados correctamente' });
+    try {
+      const resultado = await Pacientes.editarPaciente(pacienteEncriptado);
+      console.log('Resultado de la actualización:', resultado);
+      
+      // Verificar si realmente se actualizó algo
+      if (resultado.affectedRows === 0) {
+        console.warn('No se actualizó ninguna fila');
+        return res.status(404).json({
+          mensaje: 'No se encontró el expediente o no se realizaron cambios.'
+        });
+      }
+      
+      res.status(200).json({ 
+        mensaje: 'Datos actualizados correctamente',
+        detalles: nuevoIdExpediente != idExpediente ? 
+          `Se cambió el número de expediente de ${idExpediente} a ${nuevoIdExpediente}` : 
+          'Se actualizaron los datos sin cambiar el número de expediente'
+      });
+    } catch (dbError) {
+      console.error('Error específico de la base de datos:', dbError);
+      
+      // Detectar errores relacionados con claves foráneas
+      if (dbError.message.includes('foreign key constraint') || 
+          dbError.code === 'ER_ROW_IS_REFERENCED' || 
+          dbError.code === 'ER_NO_REFERENCED_ROW') {
+        return res.status(400).json({
+          mensaje: 'No se puede cambiar el número de expediente porque está siendo usado en otros registros.',
+          error: dbError.message
+        });
+      }
+      
+      throw dbError; // Propagar otros errores
+    }
 
   } catch (error) {
-    console.error('Error al actualizar paciente:', error.message);
+    console.error('Error general al actualizar paciente:', error.message, error.stack);
     res.status(500).json({
-      mensaje: 'Error al actualizar. Por favor, intenta nuevamente más tarde.'
+      mensaje: 'Error al actualizar. Por favor, intenta nuevamente más tarde.',
+      detalles: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
+
 const postEliminarPaciente= async (req, res) => {
   try {
       const idExpediente = req.params.id;     
@@ -312,6 +419,33 @@ const desencriptarExpediente = (expediente) => {
           expediente.domicilio = decrypt(expediente.domicilio);
       }
       
+      // Desencriptar datos de contacto de emergencia
+      let nombreContacto = '';
+      let apellidoPContacto = '';
+      let apellidoMContacto = '';
+      
+      if (expediente.nombreContacto) {
+          nombreContacto = decrypt(expediente.nombreContacto);
+      }
+      
+      if (expediente.apellidoPContacto) {
+          apellidoPContacto = decrypt(expediente.apellidoPContacto);
+      }
+      
+      if (expediente.apellidoMContacto) {
+          apellidoMContacto = decrypt(expediente.apellidoMContacto);
+      }
+      
+      // Crear nombre completo del contacto de emergencia
+      if (nombreContacto || apellidoPContacto || apellidoMContacto) {
+          expediente.nombreContactoEmergencia = `${nombreContacto} ${apellidoPContacto} ${apellidoMContacto}`.trim();
+      }
+      
+      // Desencriptar parentesco de contacto
+      if (expediente.parentescoContacto) {
+          expediente.parentescoContacto = decrypt(expediente.parentescoContacto);
+      }
+      
       return expediente;
   } catch (error) {
       console.error('Error al desencriptar datos del expediente:', error);
@@ -323,13 +457,28 @@ const desencriptarExpediente = (expediente) => {
 const obtenerExpediente = async (req, res) => {
   try {
       const { idExpediente } = req.params;
+      
+      // Obtener datos del expediente y desencriptar
+      let expediente = await Pacientes.obtenerExpedientePorId(idExpediente);
+      
+      // Verificar si se encontró el expediente
+      if (!expediente) {
+          console.error(`No se encontró el expediente con ID ${idExpediente}`);
+          return res.status(404).render('error', { 
+              message: 'Expediente no encontrado', 
+              error: { 
+                  status: 404, 
+                  stack: `El expediente con ID ${idExpediente} no existe o fue eliminado.` 
+              } 
+          });
+      }
+      
+      // Continuar si el expediente existe
+      expediente = desencriptarExpediente(expediente);
+      
       // Obtener documentos
       const documentosAdjuntos = await Pacientes.obtenerDocumentosAdjuntos(idExpediente);
       const documentos = [...documentosAdjuntos];
-
-      // Obtener datos del expediente y desencriptar
-      let expediente = await Pacientes.obtenerExpedientePorId(idExpediente);
-      expediente = desencriptarExpediente(expediente);
 
       // Renderizar la vista con los datos
       res.render('expediente', {
@@ -338,7 +487,13 @@ const obtenerExpediente = async (req, res) => {
       });
   } catch (error) {
       console.error('Error al obtener expediente:', error);
-      res.status(500).json({ error: 'Error al obtener expediente' });
+      res.status(500).render('error', { 
+          message: 'Error al cargar el expediente', 
+          error: { 
+              status: 500, 
+              stack: process.env.NODE_ENV === 'development' ? error.stack : '' 
+          } 
+      });
   }
 };
 
@@ -368,64 +523,121 @@ const obtenerDocumentosPorExpediente = async (req, res) => {
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-const subirDocumento = [
-  upload.single('archivoDocumento'),
+
+// Middleware para subir múltiples documentos
+const subirMultiplesDocumentos = [
+  upload.array('archivosDocumento'), 
   async (req, res) => {
     try {
-      const { nombreDocumento } = req.body;
       const { IDExpediente } = req.params;
-
-      if (!req.file || req.file.mimetype !== 'application/pdf') {
-        return res.status(400).json({ error: 'Debe subir un archivo PDF válido' });
+      console.log('Iniciando subida de múltiples documentos. ID expediente:', IDExpediente);
+      
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ error: 'Debe subir al menos un archivo PDF válido' });
       }
-
-      // Primero obtener los datos del paciente para crear la carpeta
+      
+      console.log('Archivos recibidos:', req.files.length);
+      
+      // Obtener datos del paciente para crear la carpeta
       const paciente = await Pacientes.getPaciente(IDExpediente);
       
-      // Desencriptar nombres para crear el nombre de la carpeta
-      const nombres = decrypt(paciente.nombres);
-      const apellidoP = decrypt(paciente.apellidoP);
-      const apellidoM = decrypt(paciente.apellidoM);
+      if (!paciente) {
+        return res.status(404).json({ error: 'Expediente no encontrado' });
+      }
       
-      // Crear nombre de carpeta normalizado (sin espacios ni caracteres especiales)
+      // Desencriptar nombres con manejo de errores
+      let nombres, apellidoP, apellidoM;
+      try {
+        nombres = decrypt(paciente.nombres);
+        apellidoP = decrypt(paciente.apellidoP);
+        apellidoM = decrypt(paciente.apellidoM);
+      } catch (decryptError) {
+        console.error('Error al desencriptar datos:', decryptError);
+        nombres = `paciente_${IDExpediente}`;
+        apellidoP = 'apellido';
+        apellidoM = '';
+      }
+      
+      // Crear nombre de carpeta normalizado
       const nombreCarpeta = `${apellidoP}_${apellidoM}_${nombres}`
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
-        .replace(/[^a-z0-9]/g, '_'); // Reemplazar caracteres especiales con _
-
-      // Crear la ruta completa del archivo
-      const fileName = `general/${nombreCarpeta}/${Date.now()}_${nombreDocumento.replace(/[^a-z0-9]/gi, '_')}`;
-      const fileKey = `${fileName}.pdf`;
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '_');
       
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: fileKey,
-        Body: req.file.buffer, // Usar el buffer directamente sin convertir a base64
-        ContentType: 'application/pdf',
-      };
-
-      // Subir archivo a S3
-      const data = await s3.upload(params).promise();
-
-      const nuevoDocumento = await Pacientes.subirDocumento({
-        IDExpediente,
-        nombre: nombreDocumento,
-        ubicacion: fileKey, // Guardar solo la Key en lugar de la URL completa
-        fecha: new Date(),
-        eliminado: 0
-      });
-
+      console.log('Nombre de carpeta generado:', nombreCarpeta);
+      
+      // Procesar y subir cada archivo
+      const resultados = [];
+      
+      for (const archivo of req.files) {
+        try {
+          console.log('Procesando archivo:', archivo.originalname);
+          
+          // Verificar que sea PDF
+          if (archivo.mimetype !== 'application/pdf') {
+            console.log('Archivo ignorado - no es PDF:', archivo.originalname);
+            continue;
+          }
+          
+          // Verificar buffer
+          if (!archivo.buffer || archivo.buffer.length === 0) {
+            console.error(`Error: El archivo ${archivo.originalname} no tiene un buffer válido`);
+            continue;
+          }
+          
+          console.log(`Tamaño del buffer: ${archivo.buffer.length} bytes`);
+          
+          // Obtener nombre original del archivo sin extensión
+          const nombreOriginal = path.basename(archivo.originalname, '.pdf');
+          
+          // Crear ruta para S3
+          const fileKey = `general/${nombreCarpeta}/${Date.now()}_${nombreOriginal.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+          
+          // Subir a S3
+          const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: fileKey,
+            Body: archivo.buffer,
+            ContentType: 'application/pdf',
+          };
+          
+          await s3.upload(params).promise();
+          console.log('Archivo subido a S3 exitosamente');
+          
+          // Guardar en base de datos - incluir nombre original para descarga
+          const nuevoDocumento = await Pacientes.subirDocumento({
+            IDExpediente,
+            nombre: nombreOriginal, // Guardar el nombre original
+            ubicacion: fileKey,
+            fecha: new Date(),
+            eliminado: 0
+          });
+          
+          resultados.push({
+            nombre: nombreOriginal,
+            documento: nuevoDocumento
+          });
+        } catch (fileError) {
+          console.error(`Error al procesar archivo ${archivo.originalname}:`, fileError);
+        }
+      }
+      
+      if (resultados.length === 0) {
+        return res.status(400).json({ error: 'No se pudo subir ningún documento' });
+      }
+      
       res.status(201).json({
-        mensaje: 'Documento subido exitosamente',
-        documento: nuevoDocumento
+        message: `${resultados.length} documento(s) subido(s) correctamente`,
+        documentos: resultados
       });
     } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Error al subir el documento' });
+      console.error('Error general:', error);
+      res.status(500).json({ error: 'Error al subir los documentos' });
     }
   }
 ];
+
 
 // VER DOCUMENTO (INLINE)
 const verDocumento = async (req, res) => {
@@ -554,12 +766,17 @@ const descargarDocumento = async (req, res) => {
       
       console.log(`Archivo recuperado de S3, tamaño: ${data.Body.length} bytes`);
       
-      // Usar documento.nombre o documento.tipo para el nombre del archivo
-      const nombreDescarga = documento.nombre || documento.tipo || 'documento';
+      // Priorizar el tipo (es lo que se muestra en la interfaz) sobre el nombre original
+      const nombreDescarga = documento.tipo || documento.nombre || 'documento';
+      
+      // Normalizar el nombre para asegurar que sea válido para descargas
+      const nombreArchivo = nombreDescarga
+        .replace(/[\/\\:*?"<>|]/g, '_') // Reemplazar caracteres no válidos
+        .trim();
       
       res
         .setHeader('Content-Type', 'application/pdf')
-        .setHeader('Content-Disposition', `attachment; filename="${nombreDescarga}.pdf"`)
+        .setHeader('Content-Disposition', `attachment; filename="${nombreArchivo}.pdf"`)
         .send(data.Body);
     } catch (s3Error) {
       console.error(`Error de S3: ${s3Error.code} - ${s3Error.message}`);
@@ -656,7 +873,7 @@ module.exports = {
   getPacientes,
   obtenerExpediente,
   obtenerDocumentosPorExpediente,
-  subirDocumento,
+  subirMultiplesDocumentos,
   descargarDocumento,
   eliminarDocumento,
   verDocumento

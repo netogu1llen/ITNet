@@ -103,7 +103,7 @@
 </section>
 
 
-<!-- Modal Subir Documento -->
+<!-- Modal Subir Documento - VERSIÓN MEJORADA -->
 <div id="modalSubirDocumento" class="modal" style="display: none; z-index: 1050;">
   <!-- Fondo oscuro -->
   <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
@@ -117,32 +117,30 @@
 
     <!-- Cuerpo del modal -->
     <section class="modal-card-body" style="text-align: center;">
-      <h1 class="title is-4">Subir Documento</h1>
+      <h1 class="title is-4">Subir Documentos</h1>
       <p class="subtitle is-6" style="margin-bottom: 25px;">
-        Para asegurarse de que la importación sea correcta, <br>
-        debe escoger un archivo con formato “.pdf”.
+        Seleccione uno o varios archivos PDF para subir.<br>
+        Los documentos se guardarán con sus nombres originales.
       </p>
 
       <!-- Formulario -->
       <form id="subirDocumentoForm" enctype="multipart/form-data" method="POST">
-        <!-- Nombre del documento -->
-        <div class="field">
-          <div class="control">
-            <input class="input" type="text" name="nombreDocumento" placeholder="Nombre del documento" required>
-          </div>
-        </div>
-
         <!-- Archivo -->
         <div class="field">
           <div class="file has-name is-fullwidth">
             <label class="file-label">
-              <input class="file-input" type="file" name="archivoDocumento" accept=".pdf" required>
+              <input class="file-input" type="file" name="archivosDocumento" accept=".pdf" multiple required>
               <span class="file-cta">
-                <span class="file-label">Elegir archivo</span>
+                <span class="file-label">Elegir archivos</span>
               </span>
-              <span class="file-name" id="nombreArchivo">No hay archivo seleccionado</span>
+              <span class="file-name" id="nombreArchivo">No hay archivos seleccionados</span>
             </label>
           </div>
+        </div>
+        
+        <!-- Lista de archivos seleccionados -->
+        <div class="field">
+          <div id="listaArchivosSeleccionados" class="content" style="text-align: left; max-height: 150px; overflow-y: auto; margin-top: 10px;"></div>
         </div>
       </form>
     </section>
