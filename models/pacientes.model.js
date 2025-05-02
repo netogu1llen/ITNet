@@ -454,4 +454,3 @@ class Pacientes {
 
 
 module.exports = Pacientes;
-
