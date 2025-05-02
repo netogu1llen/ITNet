@@ -72,7 +72,17 @@
                         <i class="material-icons">school</i> <!-- Icono de centro de aprendizaje -->
                         <span class="menu-text">Centro de Conocimientos</span>
                     </a>
-                </li>                
+                </li>  
+
+                <!-- Logout (al fondo del menú) -->
+                <li>
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="menu-link" style="background: none; border: none; cursor: pointer; display: flex; align-items: center;">
+                            <i class="material-icons">logout</i>
+                            <span class="menu-text">Cerrar sesión</span>
+                        </button>
+                    </form>
+                </li>
             </ul>
         </div>
     </div>
