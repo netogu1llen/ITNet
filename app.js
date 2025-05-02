@@ -8,6 +8,8 @@ const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 
+const authenticateJWT = require('./middlewares/authenticateJWT');
+
 const jwtSecret = process.env.JWT_SECRET; // Para firmar y verificar JWT
 const sessionSecret = process.env.SESSION_SECRET; // Para las sesiones
 
@@ -87,7 +89,12 @@ app.use('/api', apiExpedienteRoutes);
 
 //Rutas de auth
 const authRoutes = require('./routes/auth.routes');
-app.use('/auth', authRoutes);
+app.use('/', authRoutes);
+
+// Middleware global para proteger todo lo que sigue
+app.use(authenticateJWT);
+
+//Rutas protegidas
 
 //Rutas de rol
 const rolRoutes = require('./routes/rol.routes');
@@ -112,9 +119,9 @@ app.use('/educacion', educacionRoutes);
 const pacientesRoutes = require('./routes/pacientes.routes');
 app.use('/pacientes', pacientesRoutes);
 
-// Rutas principaless
-const mainRoutes = require('./routes/main.routes');
-app.use('/', mainRoutes);
+// Ruta de hisorial de expendientes
+const historialRoutes = require('./routes/historial.routes');
+app.use('/historial', historialRoutes);
 
 // Manejo de errores 404 (Página no encontrada)
 app.use((req, res, next) => {

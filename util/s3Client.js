@@ -10,6 +10,7 @@
  */
 
 const AWS = require('aws-sdk');
+require('dotenv').config();
 
 /**
  * Instancia configurada del cliente AWS S3.
@@ -28,4 +29,12 @@ const s3 = new AWS.S3({
   region: process.env.AWS_REGION,                   // Región del bucket (ej. 'us-east-1')
 });
 
+const testConnection = async () => {
+  try {
+    await s3.listBuckets().promise();
+    console.log('Conexión exitosa a AWS S3');
+  } catch (error) {
+    console.error('Error al conectar con AWS S3:', error);
+  }
+};
 module.exports = s3;

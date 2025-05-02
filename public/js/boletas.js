@@ -1,10 +1,16 @@
 $(document).ready(function () {
+  /**
+   * Inicializa la tabla de boletas con configuración en español
+   */
   const table = $('#boletasTable').DataTable({
     language: {
       info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
       infoEmpty: '',
       infoFiltered: '(filtrado de _MAX_ registros en total)',
-      paginate: { previous: 'Anterior', next: 'Siguiente' },
+      paginate: {
+        previous: 'Anterior',
+        next: 'Siguiente'
+      },
       lengthMenu: 'Mostrar _MENU_ registros por página',
       search: 'Buscar:'
     },
@@ -13,7 +19,7 @@ $(document).ready(function () {
   });
 
   const $logo = $('<img src="/images/boletas.png" alt="Logo" class="dt-logo">');
-  const $btnRegistrar = $('<button class="button is-success is-small registrar-btn">Registrar Boleta</button>');
+  const $btnRegistrar = $('<button class="button button-create">Registrar Boleta</button>');
   const $topBar = $('#TopBar');
 
   $topBar.append($logo);
@@ -21,10 +27,12 @@ $(document).ready(function () {
   $('.dataTables_filter').appendTo($topBar);
   $topBar.append($btnRegistrar);
 
-  $(document).on('click', '.registrar-btn', function () {
+  // Mostrar modal para registrar nueva boleta
+  $(document).on('click', '.button-create', function () {
     $('#modalRegistrarBoleta').css('display', 'flex');
   });
 
+  // Cerrar modales y limpiar formularios
   $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {
     const $modal = $(this).closest('.modal');
     $modal.hide();
@@ -42,7 +50,7 @@ $(document).ready(function () {
     }
   });
 
-  // Búsqueda en materias disponibles - Registrar
+  // Búsqueda dinámica - Registrar boleta
   $('#busquedaMaterias').on('keyup', function () {
     const filtro = $(this).val().toLowerCase();
     $('#tablaMateriasDisponibles tbody tr').each(function () {
@@ -51,7 +59,7 @@ $(document).ready(function () {
     });
   });
 
-  // Búsqueda en materias disponibles - Modificar
+  // Búsqueda dinámica - Modificar boleta
   $('#busquedaMateriasModificar').on('keyup', function () {
     const filtro = $(this).val().toLowerCase();
     $('#tablaMateriasDisponiblesModificar tbody tr').each(function () {
@@ -60,6 +68,7 @@ $(document).ready(function () {
     });
   });
 
+  // Manejo de selección de materias (registrar)
   $(document).on('change', '.checkMateria', function () {
     const id = $(this).val();
     const nombre = $(this).data('nombre');
@@ -79,8 +88,10 @@ $(document).ready(function () {
     }
   });
 
+  // Envío del formulario para registrar boleta
   $('#formRegistrarBoleta').submit(function (e) {
     e.preventDefault();
+
     const periodoEscolar = $('#formRegistrarBoleta input[name="periodoEscolar"]').val();
     const IDExpediente = $('#formRegistrarBoleta input[name="IDExpediente"]').val();
     const materias = [];
@@ -104,6 +115,7 @@ $(document).ready(function () {
     });
   });
 
+  // Carga datos en modal de modificación al hacer clic en fila
   $(document).on('click', 'tr.clickable-row', function () {
     const id = $(this).data('id');
     $('#modalModificarBoleta').css('display', 'flex');
@@ -119,7 +131,8 @@ $(document).ready(function () {
           <tr data-id="${m.IDMateria}">
             <td>${m.materia}</td>
             <td>
-              <input type="number" name="calificaciones[]" class="input" min="0" max="100" value="${m.calificacion}" required>
+              <input type="number" name="calificaciones[]" class="input" min="0" max="100" 
+                value="${m.calificacion}" required>
             </td>
           </tr>
         `);
@@ -128,7 +141,7 @@ $(document).ready(function () {
     });
   });
 
-  // Agregar nuevas materias desde checkboxes en modificar
+  // Manejo de materias nuevas desde checkboxes (modificar)
   $(document).on('change', '.checkMateriaModificar', function () {
     const id = $(this).val();
     const nombre = $(this).data('nombre');
@@ -150,8 +163,10 @@ $(document).ready(function () {
     }
   });
 
+  // Envío del formulario para modificar boleta
   $('#modificarForm').submit(function (e) {
     e.preventDefault();
+
     const idBoleta = $('#modificarForm input[name="idBoleta"]').val();
     const periodoEscolar = $('#modificarForm input[name="periodoEscolar"]').val();
     const materias = [];
@@ -175,9 +190,11 @@ $(document).ready(function () {
     });
   });
 
+  // Confirmación y eliminación lógica de boleta
   $(document).on('click', '.btn-eliminar', function (e) {
     e.stopPropagation();
     const id = $(this).data('id');
+
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Esta acción marcará la boleta como eliminada',
