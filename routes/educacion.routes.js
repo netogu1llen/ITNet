@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 
 // Permisos
-const canVerExpediente = require('../util/can-verExpediente');
+const canConsultarPacientes = require('../util/can-consultarPacientes');
 const canRegistrarBoleta = require('../util/can-registrarBoleta');
 const canEditarBoleta = require('../util/can-editarBoleta');
 const canEliminarBoleta = require('../util/can-eliminarBoleta');
 const canConsultarBoletas = require('../util/can-consultarBoletas');
+const canConsultarMaterias = require('../util/can-consultarMaterias');
 const canRegistrarMateria = require('../util/can-registrarMateria');
 const canEditarMateria = require('../util/can-editarMateria');
 const canEliminarMateria = require('../util/can-eliminarMateria');
@@ -18,27 +19,27 @@ const controller = require('../controllers/educacion.controller');
 /**
  * ========== VISTA PRINCIPAL ==========
  */
-router.get('/', controller.renderEducacionView);
-router.get('/alumnos/data', controller.getAlumnosInfo);
+router.get('/', canConsultarBoletas,controller.renderEducacionView);
+router.get('/alumnos/data', canConsultarBoletas, canConsultarPacientes, controller.getAlumnosInfo);
 
 /**
  * ========== MATERIAS ==========
  */
-router.get('/materias', controller.renderMaterias);
-router.get('/materias/lista', controller.getMateriasList);
-router.get('/materias/:id', controller.getMateriaById);
-router.get('/materias/obtener/:id', controller.obtenerMateria);
-router.post('/materias/registrar', controller.insertMateria);
-router.post('/materias/modificar', controller.updateMateria);
-router.post('/materias/eliminar', controller.deleteMateria);
+router.get('/materias', canConsultarBoletas, canConsultarMaterias, controller.renderMaterias);
+router.get('/materias/lista', canConsultarBoletas, canConsultarMaterias, controller.getMateriasList);
+router.get('/materias/:id', canConsultarBoletas, canConsultarMaterias, controller.getMateriaById);
+router.get('/materias/obtener/:id', canConsultarBoletas, canRegistrarMateria, controller.obtenerMateria);
+router.post('/materias/registrar', canConsultarBoletas, canRegistrarMateria, canRegistrarMateria, controller.insertMateria);
+router.post('/materias/modificar', canConsultarBoletas, canRegistrarMateria, canEditarMateria, controller.updateMateria);
+router.post('/materias/eliminar', canConsultarBoletas, canRegistrarMateria, canEliminarMateria, controller.deleteMateria);
 
 /**
  * ========== BOLETAS ==========
  */
-router.get('/boletas', controller.renderBoletasView);
-router.post('/boletas/registrar', controller.registrarBoleta);
-router.get('/boletas/obtener/:id', controller.obtenerBoletaPorId);
-router.post('/boletas/modificar', controller.modificarBoleta);
-router.post('/boletas/eliminar', controller.eliminarBoleta);
+router.get('/boletas', canConsultarBoletas, canConsultarPacientes, controller.renderBoletasView);
+router.post('/boletas/registrar', canConsultarBoletas, canConsultarPacientes, canRegistrarBoleta, canEditarCalificacion, controller.registrarBoleta);
+router.get('/boletas/obtener/:id', canConsultarBoletas, canConsultarPacientes, controller.obtenerBoletaPorId);
+router.post('/boletas/modificar', canConsultarBoletas, canConsultarPacientes, canEditarBoleta, canEditarCalificacion, controller.modificarBoleta);
+router.post('/boletas/eliminar', canConsultarBoletas, canConsultarPacientes, canEliminarBoleta, controller.eliminarBoleta);
 
 module.exports = router;

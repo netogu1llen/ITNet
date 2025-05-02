@@ -76,7 +76,11 @@ const obtenerUsuarios = async (req, res) => {
         // Desencriptar los datos de cada usuario
         usuarios = usuarios.map(usuario => desencriptarDatosUsuario(usuario));
         
-        res.render('usuarios', { usuarios, roles });
+        res.render('usuarios', { 
+            usuarios, 
+            roles,
+            user: req.user  
+        });
     } catch (error) {
         console.error('Error al obtener usuarios:', error.message);
         res.status(500).send('Error al obtener los usuarios');

@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canRegistrarSeguimiento = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Registrar seguimiento') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Registrar seguimiento') {
             canRegistrarSeguimiento = true;
             break;
         }

@@ -1,14 +1,14 @@
 module.exports = (request, response, next) => {
-    let canEliminarMateria = false;
+    let canAgregarArchivosAdjuntos = false;
 
     for (let privilege of request.user.privileges) {
-        if (privilege == 'Eliminar materia') {
-            canEliminarMateria = true;
+        if (privilege == 'Eliminar archivos adjuntos') {
+            canAgregarArchivosAdjuntos = true;
             break;
         }
     }
 
-    if (canEliminarMateria) {
+    if (canAgregarArchivosAdjuntos) {
         next();
     } else {
         return response.render('404');

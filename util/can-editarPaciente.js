@@ -1,10 +1,9 @@
 module.exports = (request, response, next) => {
     let canEditarPaciente = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Editar Paciente') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Editar Paciente') {
             canEditarPaciente = true;
-            break;
         }
     }
 

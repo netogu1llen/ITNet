@@ -1,16 +1,17 @@
 module.exports = (request, response, next) => {
     let canConsultarPacientes = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Consultar pacientes') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Consultar pacientes') {
             canConsultarPacientes = true;
-            break;
         }
     }
 
     if (canConsultarPacientes) {
         next();
     } else {
-        return response.render('404');
+        return response.status(403).json({ 
+            mensaje: 'Acceso denegado: no tienes permisos suficientes.' 
+        });
     }
-};
+}

@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canEditarCalificacion = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Editar calificación') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Editar calificación') {
             canEditarCalificacion = true;
             break;
         }

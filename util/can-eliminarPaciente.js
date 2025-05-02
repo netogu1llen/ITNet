@@ -1,12 +1,12 @@
 module.exports = (request, response, next) => {
     let canEliminarPaciente = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Eliminar Paciente') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Eliminar Paciente') {
             canEliminarPaciente = true;
             break;
         }
-    }
+    } 
 
     if (canEliminarPaciente) {
         next();

@@ -8,7 +8,7 @@ const get_roles = async (req, res) => {
         const roles = await Rol.fetchRoles();
         const privilegios = await Rol.fetchPrivilegios(); 
       
-        res.render('roles', { roles, privilegios });
+        res.render('roles', { roles, privilegios, user: req.user });
 
     } catch (error) {
         console.error('Error al obtener roles y privilegios:', error);

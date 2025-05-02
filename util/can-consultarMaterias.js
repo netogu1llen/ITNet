@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canConsultarMaterias = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Consultar materias') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Consultar materias') {
             canConsultarMaterias = true;
             break;
         }
