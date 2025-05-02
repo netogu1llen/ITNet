@@ -32,7 +32,6 @@ const getExpedienteGeneral = async (req, res) => {
     const expediente = {
       IDExpediente: e.IDExpediente,
       nombreCompleto: `${desencriptar(e.nombres)} ${desencriptar(e.apellidoP)} ${desencriptar(e.apellidoM)}`.trim(),
-      numExpediente: e.numExpediente,
       fechaNacimiento: desencriptar(e.fechaNacimiento),
       contacto: desencriptar(e.contacto),
       estado: desencriptar(e.estado),
