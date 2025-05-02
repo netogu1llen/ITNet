@@ -1,383 +1,410 @@
 /* ==================== ESTILOS GENERALES ==================== */
 body {
-    margin: 0;
-    font-family: 'Encode Sans', sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
+  margin: 0;
+  font-family: 'Encode Sans', sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
 }
 
 /* ==================== SIDEBAR ==================== */
 .sidebar {
-    width: 50px; /* Tamaño reducido cuando está colapsado */
-    background-color: #FEA02F; /* Color de fondo */
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    color: #fff;
-    transition: width 0.3s ease; /* Animación de despliegue */
-    overflow: hidden; /* Oculta el texto cuando está colapsado */
-    z-index: 1000; /* Asegura que el sidebar esté por encima del contenido */
+  width: 50px; /* Tamaño reducido cuando está colapsado */
+  background-color: #FEA02F; /* Color de fondo */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  color: #fff;
+  transition: width 0.3s ease; /* Animación de despliegue */
+  overflow: hidden; /* Oculta el texto cuando está colapsado */
+  z-index: 1000; /* Asegura que el sidebar esté por encima del contenido */
 }
 
 /* Estilos para el sidebar desplegado */
 .sidebar.is-active {
-    width: 235px; /* Tamaño desplegado */
+  width: 235px; /* Tamaño desplegado */
 }
 
 /* Estilos para el botón de hamburguesa */
 .burger-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-bottom: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .burger-button .material-icons {
-    padding-top: 10px;
-    font-size: 35px; /* Tamaño del ícono */
-    color: #fff; /* Color del ícono */
+  padding-top: 10px;
+  font-size: 35px; /* Tamaño del ícono */
+  color: #fff; /* Color del ícono */
 }
 
 /*Boton para guardar un formulario*/
 .button.is-save {
-    background-color: #013E5A;
-    color: white;
+  background-color: #013E5A;
+  color: white;
 }
-  
+
 .button.is-save:hover {
-    background-color: #002133;
-    color: white; /* Mantener texto blanco */
+  background-color: #002133;
+  color: white; /* Mantener texto blanco */
 }
 
 /*Boton para cancelar el registro de un formulario*/
 .button.is-cancel {
-    background-color: #d62828;
-    color: white;
+  background-color: #d62828;
+  color: white;
+}
+
+.button.is-cancel:hover {
+  background-color: #b91c1c;
+  color: white; /* Mantener texto blanco */
 }
   
-.button.is-cancel:hover {
-    background-color: #b91c1c;
-    color: white; /* Mantener texto blanco */
-}
-    
 
 /* Estilos para el menú desplegable */
 .menu ul {
-    list-style-type: none;
-    padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .menu ul li {
-    margin-bottom: 50px;
-    display: flex;
-    align-items: center;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
 }
 
 .menu ul li .material-icons {
-    font-size: 27px; /* Tamaño del ícono */
-    margin-right: 10px; /* Espacio entre el ícono y el texto */
-    flex-shrink: 0; /* Evita que el ícono se reduzca */
+  font-size: 27px; /* Tamaño del ícono */
+  margin-right: 10px; /* Espacio entre el ícono y el texto */
+  flex-shrink: 0; /* Evita que el ícono se reduzca */
 }
 
 /* Estilos para el texto del menú */
 .menu ul li .menu-text {
-    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-    opacity: 0; /* Oculta el texto inicialmente */
-    transition: opacity 0.3s ease; /* Animación de aparición */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  opacity: 0; /* Oculta el texto inicialmente */
+  transition: opacity 0.3s ease; /* Animación de aparición */
 }
 
 /* Muestra el texto cuando el sidebar está desplegado */
 .sidebar.is-active .menu ul li .menu-text {
-    opacity: 1; /* Muestra el texto */
+  opacity: 1; /* Muestra el texto */
 }
 
 /* Estilos para los enlaces del menú */
 .menu ul li a.menu-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none; /* Elimina el subrayado del enlace */
-    color: #fff; /* Color del texto */
-    width: 100%; /* Ocupa todo el ancho disponible */
-    padding: 10px; /* Espaciado interno */
+  display: flex;
+  align-items: center;
+  text-decoration: none; /* Elimina el subrayado del enlace */
+  color: #fff; /* Color del texto */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  padding: 10px; /* Espaciado interno */
 }
 
 /* Cambia el color al pasar el mouse sobre los enlaces */
 .menu ul li a.menu-link:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
-    border-radius: 5px; /* Bordes redondeados */
+  background-color: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
+  border-radius: 5px; /* Bordes redondeados */
 }
 
 /* Estilos para los íconos */
 .menu ul li a.menu-link .material-icons {
-    font-size: 27px; /* Tamaño del ícono */
-    margin-right: 10px; /* Espacio entre el ícono y el texto */
-    flex-shrink: 0; /* Evita que el ícono se reduzca */
+  font-size: 27px; /* Tamaño del ícono */
+  margin-right: 10px; /* Espacio entre el ícono y el texto */
+  flex-shrink: 0; /* Evita que el ícono se reduzca */
 }
 
 /* Estilos para el texto del menú */
 .menu ul li a.menu-link .menu-text {
-    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-    opacity: 0; /* Oculta el texto inicialmente */
-    transition: opacity 0.3s ease; /* Animación de aparición */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  opacity: 0; /* Oculta el texto inicialmente */
+  transition: opacity 0.3s ease; /* Animación de aparición */
 }
 
 /* Muestra el texto cuando el sidebar está desplegado */
 .sidebar.is-active .menu ul li a.menu-link .menu-text {
-    opacity: 1; /* Muestra el texto */
+  opacity: 1; /* Muestra el texto */
 }
 
 /* ==================== CONTENIDO PRINCIPAL ==================== */
 .container {
-    margin-left: 50px; /* Margen inicial igual al ancho del sidebar colapsado */
-    padding: 20px;
-    transition: margin-left 0.3s ease; /* Transición suave para el margen */
-    max-width: 800px; /* Ancho máximo del contenido */
-    margin-right: auto; /* Centrar el contenedor */
-    margin-left: auto; /* Centrar el contenedor */
-    text-align: center; /* Centrar el texto dentro del contenedor */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrar elementos horizontalmente */
+  margin-left: 50px; /* Margen inicial igual al ancho del sidebar colapsado */
+  padding: 20px;
+  transition: margin-left 0.3s ease; /* Transición suave para el margen */
+  max-width: 800px; /* Ancho máximo del contenido */
+  margin-right: auto; /* Centrar el contenedor */
+  margin-left: auto; /* Centrar el contenedor */
+  text-align: center; /* Centrar el texto dentro del contenedor */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrar elementos horizontalmente */
 }
 
 /* Ajustar el margen cuando el sidebar está expandido */
 .sidebar.is-active + .container {
-    margin-left: 235px; /* Margen igual al ancho del sidebar expandido */
+  margin-left: 235px; /* Margen igual al ancho del sidebar expandido */
 }
 
 /* Estilos para el título */
 .title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
 }
 
 /* Estilos para el contenido */
 .content {
-    padding: 30px; /* Aumentar el espaciado interno */
-    margin-bottom: 30px; /* Aumentar el espacio debajo del contenido */
-    width: 100%; /* Ocupar todo el ancho disponible dentro del contenedor */
-    text-align: center; /* Centrar el texto dentro del contenido */
-    background-color: transparent; /* Sin fondo */
-    border-radius: 0; /* Sin bordes redondeados */
-    box-shadow: none; /* Sin sombra */
+  padding: 30px; /* Aumentar el espaciado interno */
+  margin-bottom: 30px; /* Aumentar el espacio debajo del contenido */
+  width: 100%; /* Ocupar todo el ancho disponible dentro del contenedor */
+  text-align: center; /* Centrar el texto dentro del contenido */
+  background-color: transparent; /* Sin fondo */
+  border-radius: 0; /* Sin bordes redondeados */
+  box-shadow: none; /* Sin sombra */
 }
 
 .content h2 {
-    font-size: 20px;
-    margin-bottom: 15px;
-    color: #555;
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #555;
 }
 
 .content p {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 10px;
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
 }
 
 /* ==================== BOTONES ==================== */
 
 /* Clase base para todos los botones */
 .button {
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-align: center;
-    color: #fff; /* Color de texto común */
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  color: #fff; /* Color de texto común */
 }
 
 /* Botón de opción (Versión 1, Versión 2, etc.) */
 .button-option {
-    background-color: #F36283;
+  background-color: #F36283;
 }
 
 .button-option:hover {
-    background-color: #e05570;
-    color: #fff; /* Mantener texto blanco */
+  background-color: #e05570;
+  color: #fff; /* Mantener texto blanco */
 }
 
 /* Botón "Crear" */
 .button-create {
-    background-color: #007A7B;
+  background-color: #007A7B;
 }
 
 .button-create:hover {
-    background-color: #006666;
-    color: #fff; /* Mantener texto blanco */
+  background-color: #006666;
+  color: #fff; /* Mantener texto blanco */
 }
 
 /* Botón naranja (si aún lo necesitas) */
 .button-primary-orange {
-    background-color: #FEA02F;
+  background-color: #FEA02F;
 }
 
 .button-primary-orange:hover {
-    background-color: #e08c25;
-    color: #fff; /* Mantener texto blanco */
+  background-color: #e08c25;
+  color: #fff; /* Mantener texto blanco */
 }
 
 /* Para asegurar que todos los botones mantengan texto blanco en hover */
 .button:hover {
-    color: #fff !important; /* Forzar texto blanco en todos los estados hover */
+  color: #fff !important; /* Forzar texto blanco en todos los estados hover */
 }
 
 /* Grupo de botones para opciones (Versión 1, Versión 2, etc.) */
 .button-group {
-    display: flex; /* Alinear los botones horizontalmente */
-    gap: 15px; /* Espacio entre los botones */
-    justify-content: center; /* Centrar los botones horizontalmente */
-    margin-bottom: 30px; /* Espacio debajo del grupo de botones */
+  display: flex; /* Alinear los botones horizontalmente */
+  gap: 15px; /* Espacio entre los botones */
+  justify-content: center; /* Centrar los botones horizontalmente */
+  margin-bottom: 30px; /* Espacio debajo del grupo de botones */
 }
 
 /* Estilo específico para el botón de Google */
 .google-login-button img {
-  width: 190px; /* Ajusta este valor según necesites */
-  height: auto; /* Mantiene la proporción */
-  transition: transform 0.2s; /* Opcional: efecto hover */
+width: 190px; /* Ajusta este valor según necesites */
+height: auto; /* Mantiene la proporción */
+transition: transform 0.2s; /* Opcional: efecto hover */
 }
 
 /* Efecto hover opcional */
 .google-login-button:hover img {
-  transform: scale(1.05);
+transform: scale(1.05);
 }
 
 /* ==================== ÍCONOS ==================== */
 .material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-smoothing: antialiased;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ==================== HOME PAGE ==================== */
 .home-container {
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .tercios-container {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-  }
-  
-  .first-second-fragment {
-    width: 66.66%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end; /* Cambia la propiedad align-items a flex-end */
-  }
-  
-  .title-container {
-    text-align: center;
-    z-index: 10;
-    width: 100%;
-    margin-bottom: 110px; /* Ajusta la posición vertical del título */
-  }
-  
-  @font-face {
-    font-family: 'Stuttgart';
-    src: url('/fonts/Stuttgart.ttf') format('truetype');
-  }
-  
-  .title-soffy {
-    font-family: 'Stuttgart', sans-serif;
-    font-size: 6rem;
-    color: #e75179;
-    margin: 0;
-    line-height: 1;
-  }
-  
-  .title-app {
-    font-family: 'Stuttgart', serif;
-    font-size: 4rem;
-    color: #5185c0;
-    margin: 3px 0 0 0;
-  }
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
 
-  .soffy-logo {
-    width: 350px; 
-    height: auto;  
-    margin-top: 300px;
-  }
+.tercios-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
 
+.first-second-fragment {
+  width: 66.66%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: hidden;   
+  overflow-x: visible; 
+}
+
+.title-container {
+  text-align: center;
+  z-index: 10;
+  width: 100%;
+  margin-bottom: 0px; /* Ajusta la posición vertical del título */
+}
+
+@font-face {
+  font-family: 'Stuttgart';
+  src: url('/fonts/Stuttgart.ttf') format('truetype');
+}
+
+.title-soffy {
+  font-family: 'Stuttgart', sans-serif;
+  font-size: 6rem;
+  color: #e75179;
+  margin: 0;
+  line-height: 1;
+}
+
+.title-app {
+  font-family: 'Stuttgart', serif;
+  font-size: 4rem;
+  color: #5185c0;
+  margin: 3px 0 0 0;
+}
+
+.soffy-logo {
+  width: 350px; 
+  height: auto;  
+}
+
+.subtitle {
+  font-family: 'Encode Sans', sans-serif;
+  font-size: 1.2rem;
+  color: #666;
+  margin: -20px 0 0 0;
+}
+
+.third-fragment {
+  width: 33.33%;
+  height: 140vh;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.image {
+  max-width: 256%;
+  max-height: 256%;
+  object-fit: cover;
+  object-position: top center;  /* ← ancla la imagen al top */
+  transform: translateY(-20vh); /* Ajusta la posición vertical de la imagen */
+}
+
+.semicircle {
+  position: absolute;
+  top: 50%;
+  right: 500px; /* Ajusta la posición horizontal para que esté en el lado derecho */
+  width: 66.66vw; /* Ajusta el ancho del semicírculo para que sea más pequeño */
+  height: 120vh; /* Ajusta la altura del semicírculo para que coincida con el tamaño de los tercios */
+  background-color: #f5f5f5;
+  border-top-left-radius: 0; /* Ajusta el radio del semicírculo para que esté en el lado derecho */
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 33.33vw; /* Ajusta el radio del semicírculo para que coincida con el tamaño reducido */
+  border-bottom-right-radius: 33.33vw;
+  transform: translateY(-50%);
+  z-index: 1;
+  clip-path: inset(0 /*top*/ 0 /*right*/ 10vh /*bottom*/ 0 /*left*/);
+}
+
+.download-button {
+  font-family: 'Encode Sans', sans-serif;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #5185c0;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 70px 0 0 0;
+}
+
+.download-button:hover {
+  background-color: #5185c0;
+}
+
+/* Nuevo subtítulo pequeño para el botón */
+.button-subtitle {
+  font-family: 'Encode Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #888;
+  margin: 10px 0 5px 0; /* 35px arriba, 5px abajo para estar cerca del botón */
+}
+
+
+/* Media Query para pantallas menores a 1280px */
+@media (max-width: 1279px) {
   .subtitle {
-    font-family: 'Encode Sans', sans-serif;
-    font-size: 1.2rem;
-    color: #666;
-    margin: 50px 0 0 0;
+    /* Ajusta el ancho máximo para forzar el salto de línea */
+    max-width: 380px; /* Puedes ajustar este valor según sea necesario */
+    /* Centra el bloque de texto si es necesario */
+    margin-left: auto;
+    margin-right: auto;
+    /* Ajusta el margen superior si se ve muy pegado al logo */
+    margin-top: -10px; 
   }
-  
-  .third-fragment {
-    width: 33.33%;
-    height: 100vh;
-    background: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-  
-  .image-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-  
-  .image {
-    max-width: 210%;
-    max-height: 210%;
-    object-fit: cover;
-  }
-  
-  .semicircle {
-    position: absolute;
-    top: 50%;
-    right: 500px; /* Ajusta la posición horizontal para que esté en el lado derecho */
-    width: 66.66vw; /* Ajusta el ancho del semicírculo para que sea más pequeño */
-    height: 150vh; /* Ajusta la altura del semicírculo para que coincida con el tamaño de los tercios */
-    background-color: #f5f5f5;
-    border-top-left-radius: 0; /* Ajusta el radio del semicírculo para que esté en el lado derecho */
-    border-bottom-left-radius: 0;
-    border-top-right-radius: 33.33vw; /* Ajusta el radio del semicírculo para que coincida con el tamaño reducido */
-    border-bottom-right-radius: 33.33vw;
-    transform: translateY(-50%);
-    z-index: 1;
-  }
-
-  .download-button {
-    font-family: 'Encode Sans', sans-serif;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #5185c0;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin: 70px 0 0 0;
-  }
-  
-  .download-button:hover {
-    background-color: #5185c0;
-  }
+}
 
 
 /* ==================== ESTILOS DE LA TABLA ==================== */
@@ -385,9 +412,9 @@ body {
 
 /* Estilos para la barra de búsqueda */  
 .dataTables_filter {
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-    position: relative;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  position: relative;
 }  
 
 .dataTables_filter  label {
@@ -409,54 +436,54 @@ display : flex;
 align-items: center;
 gap:.5rem;
 font-weight: 500;
-    
+  
 }
 /*Estilos arriba de la barra*/
 .dt-top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+margin-bottom: 1rem;
 }
 
 .dt-logo {
-  height: 40px;
-  width: auto;
+height: 40px;
+width: auto;
 }
 
 /*-------------------------------------------------------------------------------------*/
 
 /*Inforamcion de arriba de los botones de paginación*/
 .dataTables_info {
-    margin-bottom: 1rem;
-    color: #555;
-    font-size: 0.95rem;
-    margin-top: 1rem;
-    font-weight: 500;
+  margin-bottom: 1rem;
+  color: #555;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  font-weight: 500;
 }
 /*-------------------------------------------------------------------------------------*/
 
 /*Botones de paginación*/
 .dataTables_wrapper .dataTables_paginate .paginate_button {
 
-  background-color: #3b82f6;
-  border: 1px solid transparent;
-  color: white !important;
-  border-radius: 4px;
-  padding: 6px 12px;
-  margin: 0 3px;
-  font-size: 0.875rem;
+background-color: #3b82f6;
+border: 1px solid transparent;
+color: white !important;
+border-radius: 4px;
+padding: 6px 12px;
+margin: 0 3px;
+font-size: 0.875rem;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-  background-color: #2563eb;
+background-color: #2563eb;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-  background-color: #2563eb;
-  font-weight: bold;
+background-color: #2563eb;
+font-weight: bold;
 }
 
 
@@ -466,8 +493,8 @@ font-weight: 500;
 /*Centrar el contenido de la tabla de nutrición*/
 #nutricionTable td,
 #nutricionTable th {
-  text-align: center;
-  vertical-align: middle;
+text-align: center;
+vertical-align: middle;
 }
 
 
@@ -481,35 +508,35 @@ font-weight: 500;
 /*Centrar el contenido de la tabla de boletas*/
 #boletasTable td,
 #boletasTable th {
-  text-align: center;
-  vertical-align: middle;
+text-align: center;
+vertical-align: middle;
 }
 
 /*Centrar el contenido de la tabla de materias*/
 #materiasTable td,
 #materiasTable th {
-  text-align: center;
-  vertical-align: middle;
+text-align: center;
+vertical-align: middle;
 }
 
 /*Centrar el contenido de la tabla de Mi Equipo*/
 #miEquipoTable td,
 #miEquipoTable th {
-  text-align: center;
-  vertical-align: middle;
+text-align: center;
+vertical-align: middle;
 }
 /*Centrar el contenido de la tabla de expediente psicologico*/
 #expedientePsicologicoTable td,
 #expedientePsicologicoTable th {
-  text-align: center;
-  vertical-align: middle;
+text-align: center;
+vertical-align: middle;
 }
 
 /*Centrar el contenido de la tabla de expediente psicologico*/
 #pacientesTable td,
 #pacientesTable th {
-  text-align: center;
-  vertical-align: middle;
+text-align: center;
+vertical-align: middle;
 }
 
 #pacientesPsicologiaTable td,
@@ -518,165 +545,176 @@ font-weight: 500;
   vertical-align: middle;
 }
 
+#documentosTable td,
+#documentosTable th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+#expedienteTable td,
+#expedienteTable th {
+  text-align: center;
+  vertical-align: middle;
+}
 /* ==================== CONTENEDORES PARA FORMULARIOS ==================== */
 
 
 /*Contenedor gris que contiene formularios*/
 .gray-container {
-    width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
-    margin: 0px 20px 0px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
-    padding: 20px;
-    text-align: left;
-    background-color: #F2F2F2; /* Fondo gris claro */
-    border-radius: 7px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex;
-    flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
-    justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
-}
-.white-container {
   width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
   margin: 0px 20px 0px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
   padding: 20px;
   text-align: left;
-  background-color: #FFFFFF; /* Fondo gris claro */
+  background-color: #F2F2F2; /* Fondo gris claro */
   border-radius: 7px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   display: flex;
   flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
   justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
 }
+.white-container {
+width: calc(100% - 160px); /* Ocupa toda la página menos los márgenes izquierdo (90px) y derecho (20px) */
+margin: 0px 20px 0px 90px; /* Margen de 20px arriba, 20px derecha e inferior, 90px izquierda */
+padding: 20px;
+text-align: left;
+background-color: #FFFFFF; /* Fondo gris claro */
+border-radius: 7px;
+box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+display: flex;
+flex-wrap: wrap; /* Permite que los contenedores se ajusten de manera flexible */
+justify-content: space-between; /* Alinea los contenedores a la izquierda y derecha */
+}
 /*Contenedor para el titulo del tipo de documento que se esta usando(es el que tiene el icono a la izquierda)*/
 .head-container {
-    width: 100%; /* Ocupa todo el ancho */
-    display: flex;
-    justify-content: space-between; /* Alinea título y botones */
-    margin-bottom: 20px; /* Añade un margen inferior para separar de los otros contenedores */
+  width: 100%; /* Ocupa todo el ancho */
+  display: flex;
+  justify-content: space-between; /* Alinea título y botones */
+  margin-bottom: 20px; /* Añade un margen inferior para separar de los otros contenedores */
 }
 /*Formato del titulo anterior*/
 .head-title {
-    display: flex;
-    align-items: center; /* Alinea el icono y el título verticalmente */
-    font-size: 32px;
-    font-weight: Medium;
-    color: #000;
+  display: flex;
+  align-items: center; /* Alinea el icono y el título verticalmente */
+  font-size: 32px;
+  font-weight: Medium;
+  color: #000;
 }
 /*Formato para las letras pequeñas del formulario de color negro*/
 .basic-black{
-    display: flex;
-    align-items: center; /* Alinea el icono y el título verticalmente */
-    font-size: 14px;
-    font-weight: Bold;
-    color: #000;
+  display: flex;
+  align-items: center; /* Alinea el icono y el título verticalmente */
+  font-size: 14px;
+  font-weight: Bold;
+  color: #000;
 }
 /*Formato para las letras pequeñas del formulario de color gris*/
 .basic-gray{
-    display: flex;
-    align-items: center; /* Alinea el icono y el título verticalmente */
-    font-size: 14px;
-    font-weight: Bold;
-    color: #595959;
+  display: flex;
+  align-items: center; /* Alinea el icono y el título verticalmente */
+  font-size: 14px;
+  font-weight: Bold;
+  color: #595959;
 }
 /*Formato para el icono del encabezado*/
 .head-title img {
-    width: 30px; /* Ajusta el tamaño del icono */
-    height: 30px;
-    margin-right: 10px; /* Espacio entre el icono y el texto */
+  width: 30px; /* Ajusta el tamaño del icono */
+  height: 30px;
+  margin-right: 10px; /* Espacio entre el icono y el texto */
 }
 /*Formato del contenedor para los botones. Este contenedor te permite poner los botones hasta la derecha y en fil*/
 .buttons-container {
-    display: flex;
-    gap: 10px; /* Espacio entre los botones */
-    justify-content: flex-end; /* Alinea los botones a la derecha */
+  display: flex;
+  gap: 10px; /* Espacio entre los botones */
+  justify-content: flex-end; /* Alinea los botones a la derecha */
 }
 /*Contenedor blanco que ocupa la mitad del espacio disponible a lo ancho*/
 .half-white-container {
-    display: inline-block;
-    width: 48%;
-    margin: 10px 0;
-    padding: 20px;
-    text-align: center;
-    justify-content: space-between;
-    background-color: #FFFFFF;
-    border-radius: 7px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border: 1px solid #ddd; /* Un pequeño borde para diferenciarlo */
+  display: inline-block;
+  width: 48%;
+  margin: 10px 0;
+  padding: 20px;
+  text-align: center;
+  justify-content: space-between;
+  background-color: #FFFFFF;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: 1px solid #ddd; /* Un pequeño borde para diferenciarlo */
 }
 /*Contenedor blanco que ocupa todo el espacio disponible a lo ancho*/
 .full-white-container{
-    width: 98%;
-    margin: 10px 0;
-    padding: 20px;
-    text-align: center;
-    background-color: #FFFFFF; /* Fondo blanco */
-    border-radius: 7px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border: 1px solid #ddd; /* Un pequeño borde para diferenciarlo */
+  width: 98%;
+  margin: 10px 0;
+  padding: 20px;
+  text-align: center;
+  background-color: #FFFFFF; /* Fondo blanco */
+  border-radius: 7px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: 1px solid #ddd; /* Un pequeño borde para diferenciarlo */
 }
 /*Formato para los campos llenables de los formularios.*/
 /*Para hacer cambiar el numero de filas, se debe poner tal que asi: <textarea name="objetivo" required rows="4" required></textarea> */
 .multirow-form-container textarea {
-  width: 100%; /* Ocupa todo el ancho */
-  padding: 10px; /* Espaciado interno */
-  border: 1px solid #ccc; /* Borde gris claro */
-  border-radius: 10px; /* Bordes redondeados */
-  box-sizing: border-box; /* Evita que el padding aumente el tamaño */
-  font-size: 14px; /* Tamaño del texto */
-  resize: none; /* Evita que el usuario cambie el tamaño del textarea */
+width: 100%; /* Ocupa todo el ancho */
+padding: 10px; /* Espaciado interno */
+border: 1px solid #ccc; /* Borde gris claro */
+border-radius: 10px; /* Bordes redondeados */
+box-sizing: border-box; /* Evita que el padding aumente el tamaño */
+font-size: 14px; /* Tamaño del texto */
+resize: none; /* Evita que el usuario cambie el tamaño del textarea */
 }
 .multirow-form-container input[type="text"],
 .multirow-form-container input[type="input"],
 .multirow-form-container select,
 .multirow-form-container input[type="tel"],
 .multirow-form-container input[type="date"]{
-  width: 100%; /* Ocupa todo el ancho */
-  padding: 10px; /* Espaciado interno */
-  border: 1px solid #ccc; /* Borde gris claro */
-  border-radius: 10px; /* Bordes redondeados */
-  box-sizing: border-box; /* Evita que el padding aumente el tamaño */
-  font-size: 14px; /* Tamaño del texto */
-  resize: none; /* Evita que el usuario cambie el tamaño del textarea */
+width: 100%; /* Ocupa todo el ancho */
+padding: 10px; /* Espaciado interno */
+border: 1px solid #ccc; /* Borde gris claro */
+border-radius: 10px; /* Bordes redondeados */
+box-sizing: border-box; /* Evita que el padding aumente el tamaño */
+font-size: 14px; /* Tamaño del texto */
+resize: none; /* Evita que el usuario cambie el tamaño del textarea */
 }
 /*Contenedor blanco que se usa para la dupla de un formulario, ejemplo: Nombre: Jaime. Es flexible */
 .element-container{
-    flex: 1;
-    min-width: 120px;
-    padding: 10px;
-    text-align: left;
-    background-color: #FFFFFF;
-    border-radius: 7px;
-    /*box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Le quitamos el sombreado por el momento*/
-    /*border: 1px solid #ddd; /* Le quitamos el borde por el momento*/
+  flex: 1;
+  min-width: 120px;
+  padding: 10px;
+  text-align: left;
+  background-color: #FFFFFF;
+  border-radius: 7px;
+  /*box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Le quitamos el sombreado por el momento*/
+  /*border: 1px solid #ddd; /* Le quitamos el borde por el momento*/
 }
 /*Contenedor gris que se usa para los titulos de la seccion, ejemplo: 1.Psicologico, IX.Diagnostico y evolucion del paciente*/
 .element-container-gray {
-  width: 100%; /* Ocupa todo el ancho */
-  flex: 1;
-  min-width: 200px;
-  padding: 10px;
-  text-align: center;
-  background-color: #F2F2F2;
-  border-radius: 7px;
-    /*box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Le quitamos el sombreado por el momento*/
-    /*border: 1px solid #ddd; /* Le quitamos el borde por el momento*/
+width: 100%; /* Ocupa todo el ancho */
+flex: 1;
+min-width: 200px;
+padding: 10px;
+text-align: center;
+background-color: #F2F2F2;
+border-radius: 7px;
+  /*box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Le quitamos el sombreado por el momento*/
+  /*border: 1px solid #ddd; /* Le quitamos el borde por el momento*/
 }
 /*Contenedor blanco para poner los elementos del formulario en formato de filas*/
 /*Distribuye los elementos que contiene de forma uniforme, de modo que mantiene las mismas dimensiones sin importar si tiene 2 o 5 elementos*/
 /*ejemplo: Nombre: Jaime, Apellido Paterno: Trujillo, Apellido Materno: Ruiz*/
 .multirow-container {
-    display: flex;
-    justify-content: space-between; /* Distribuye los elementos uniformemente */
-    gap: 10px; /* Espaciado entre los elementos */
+  display: flex;
+  justify-content: space-between; /* Distribuye los elementos uniformemente */
+  gap: 10px; /* Espaciado entre los elementos */
 }
 
 .multirow-table {
-    width: 100%; /* Ocupará todo el ancho disponible */
-    border-collapse: collapse; /* Unir bordes de celdas */
-  }
+  width: 100%; /* Ocupará todo el ancho disponible */
+  border-collapse: collapse; /* Unir bordes de celdas */
+}
 .multirow-table th,
 .multirow-table td {
-  text-align: center;
-  border: 1px solid #e0e0e0;
+text-align: center;
+border: 1px solid #e0e0e0;
 }
 
 
@@ -744,6 +782,59 @@ font-weight: 500;
   border-color: #3273dc;
   box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
 }
+
+
+/* ==================== EXPEDIENTE NUTRICIONAL ==================== */
+
+  /* Estilos para asegurar la misma altura en los contenedores */
+  .row-equal-height {
+    display: flex;
+    margin: 0;
+    width: 100%;
+  }
+  
+  .row-equal-height .column {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .row-equal-height .full-white-container {
+    flex-grow: 1;
+    height: 100%;
+  }
+  
+  /* Espacio entre filas */
+  .row-container {
+    margin-bottom: 16px;
+  }
+  
+  /* Evitar que el contenido se desborde */
+  .content-scroll {
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  
+  /* Estilo para la barra de desplazamiento */
+  .content-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .content-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .content-scroll::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .content-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  
 
 /* Altura estándar para el contenedor principal en vistas */
 .exp-psicologico-wide.fixed-height {

@@ -5,7 +5,7 @@
   <div class="container">
 
     <!-- Título principal -->
-    <h1 class="title">Expediente Psicologico</h1>
+    <h1 class="title">Expediente del Paciente</h1>
 
     <!-- Barra superior de DataTable (creada dinámicamente con JS) -->
     <div id="TopBar" class="exp-psicologico-wide">
@@ -52,12 +52,16 @@
           <h2 class="basic-gray">Nivel Escolar</h2>
           <h2 class="basic-black"><%= expediente.curso %></h2>
         </div>
+        <div class="element-container">
+          <h2 class="basic-gray">Sexo</h2>
+          <h2 class="basic-black"><%= expediente.sexo %></h2>
+        </div>
       </div>
     </div>
 
     <!-- Tabla -->
     <div style="width: 100%; height: 900px;">
-    <table id="expedientePsicologicoTable" class="table is-striped is-hoverable is-fullwidth">
+    <table id="expedienteTable" class="table is-striped is-hoverable is-fullwidth">
       <thead>
         <tr>
           <th>Tipo de Documento</th>
@@ -72,7 +76,7 @@
               data-id="<%= documento.idDocumento %>" 
               data-tipo="<%= documento.tipo %>">
               
-              <td><%= documento.tipo === 'seguimientoPsicologico' ? 'Seguimiento Psicológico' : documento.tipo %></td>
+              <td><%= documento.tipo %></td>
               <td><%= new Date(documento.fechaCreacion).toLocaleDateString() %></td>
               <td>
                 <span class="btn-descargar" data-id="<%= documento.idDocumento %>" data-tipo="<%= documento.tipo %>" style="cursor: pointer;">
@@ -103,8 +107,8 @@
 </section>
 
 
-<!-- Modal Subir Documento - VERSIÓN MEJORADA -->
-<div id="modalSubirDocumento" class="modal" style="display: none; z-index: 1050;">
+<!-- Modal Subir Múltiples Documentos -->
+<div id="modalSubirDocumentos" class="modal" style="display: none; z-index: 1050;">
   <!-- Fondo oscuro -->
   <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
 
@@ -124,7 +128,7 @@
       </p>
 
       <!-- Formulario -->
-      <form id="subirDocumentoForm" enctype="multipart/form-data" method="POST">
+      <form id="subirMultiplesDocumentosForm" enctype="multipart/form-data" method="POST">
         <!-- Archivo -->
         <div class="field">
           <div class="file has-name is-fullwidth">
@@ -148,8 +152,20 @@
     <!-- Footer -->
     <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
       <button type="button" class="button is-cancel">Cancelar</button>
-      <button type="submit" form="subirDocumentoForm" class="button is-save">Subir</button>
+      <button type="submit" form="subirMultiplesDocumentosForm" class="button is-save">Subir</button>
     </footer>
+  </div>
+</div>
+
+<!-- Modal de carga -->
+<div id="loadingModal" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <div class="box">
+      <h1 id="loadingModalTitle" class="title is-4">Procesando...</h1>
+      <p id="loadingModalMessage">Por favor espere...</p>
+      <progress class="progress is-primary" max="100"></progress>
+    </div>
   </div>
 </div>
 
@@ -164,4 +180,4 @@
 
 <script src="/vendor/jquery-3.6.0.min.js"></script>
 <script src="/vendor/jquery.dataTables.min.js"></script>
-<script src="/js/expedientePsicologico.js"></script>
+<script src="/js/expediente.js"></script>

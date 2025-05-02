@@ -18,8 +18,8 @@ router.get('/', psicologiaController.getPacientesPsicologia);
 router.get('/documentos/:idExpediente', psicologiaController.obtenerDocumentosPorExpediente);
 
 // Ruta para subir un documento a un expediente específico
-// Ahora usa el middleware combinado del controlador
-router.post('/documentos/subir/:IDExpediente', psicologiaController.subirDocumentoMiddleware);
+// Añadir nueva ruta para la carga múltiple
+router.post('/documentos/subir-multiple/:IDExpediente', psicologiaController.subirMultiplesDocumentosMiddleware);
 
 // Ruta para descargar un documento
 router.get('/documentos/descargar/:id', psicologiaController.descargarDocumento);

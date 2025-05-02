@@ -7,6 +7,8 @@ const Educacion = require('../models/educacion.model');
 
 /**
  * Renderiza la vista principal del módulo de educación.
+ * @param {object} req - Objeto de solicitud HTTP.
+ * @param {object} res - Objeto de respuesta HTTP.
  */
 exports.renderEducacionView = (req, res) => {
   res.render('educacion');
@@ -14,6 +16,8 @@ exports.renderEducacionView = (req, res) => {
 
 /**
  * Obtiene la información de todos los alumnos.
+ * @param {object} req
+ * @param {object} res
  */
 exports.getAlumnosInfo = async (req, res) => {
   try {
@@ -27,6 +31,8 @@ exports.getAlumnosInfo = async (req, res) => {
 
 /**
  * Obtiene el nombre completo del alumno desde el modelo.
+ * @param {number} IDExpediente
+ * @returns {Promise<string>}
  */
 exports.obtenerNombreAlumno = async (IDExpediente) => {
   return await Educacion.obtenerNombreAlumno(IDExpediente);
@@ -39,6 +45,8 @@ exports.obtenerNombreAlumno = async (IDExpediente) => {
 
 /**
  * Renderiza la vista de materias.
+ * @param {object} req
+ * @param {object} res
  */
 exports.renderMaterias = async (req, res) => {
   try {
@@ -52,6 +60,8 @@ exports.renderMaterias = async (req, res) => {
 
 /**
  * Obtiene una materia por su ID.
+ * @param {object} req
+ * @param {object} res
  */
 exports.getMateriaById = async (req, res) => {
   try {
@@ -65,6 +75,8 @@ exports.getMateriaById = async (req, res) => {
 
 /**
  * Inserta una nueva materia.
+ * @param {object} req
+ * @param {object} res
  */
 exports.insertMateria = async (req, res) => {
   try {
@@ -78,6 +90,8 @@ exports.insertMateria = async (req, res) => {
 
 /**
  * Modifica una materia existente.
+ * @param {object} req
+ * @param {object} res
  */
 exports.updateMateria = async (req, res) => {
   try {
@@ -91,6 +105,8 @@ exports.updateMateria = async (req, res) => {
 
 /**
  * Elimina lógicamente una materia.
+ * @param {object} req
+ * @param {object} res
  */
 exports.deleteMateria = async (req, res) => {
   try {
@@ -104,6 +120,8 @@ exports.deleteMateria = async (req, res) => {
 
 /**
  * Obtiene una materia para mostrar en el modal.
+ * @param {object} req
+ * @param {object} res
  */
 exports.obtenerMateria = async (req, res) => {
   try {
@@ -117,6 +135,8 @@ exports.obtenerMateria = async (req, res) => {
 
 /**
  * Obtiene lista de materias con solo ID y nombre.
+ * @param {object} req
+ * @param {object} res
  */
 exports.getMateriasList = async (req, res) => {
   try {
@@ -135,6 +155,8 @@ exports.getMateriasList = async (req, res) => {
 
 /**
  * Renderiza la vista de boletas para un alumno específico.
+ * @param {object} req
+ * @param {object} res
  */
 exports.renderBoletasView = async (req, res) => {
   try {
@@ -157,6 +179,8 @@ exports.renderBoletasView = async (req, res) => {
 
 /**
  * Registra una nueva boleta y sus materias.
+ * @param {object} req
+ * @param {object} res
  */
 exports.registrarBoleta = async (req, res) => {
   try {
@@ -170,6 +194,8 @@ exports.registrarBoleta = async (req, res) => {
 
 /**
  * Obtiene una boleta específica con sus materias.
+ * @param {object} req
+ * @param {object} res
  */
 exports.obtenerBoletaPorId = async (req, res) => {
   try {
@@ -183,11 +209,12 @@ exports.obtenerBoletaPorId = async (req, res) => {
 
 /**
  * Modifica una boleta existente.
+ * @param {object} req
+ * @param {object} res
  */
 exports.modificarBoleta = async (req, res) => {
   try {
-    console.log("🔧 Datos recibidos en modificarBoleta:", req.body); // <= AGREGA ESTA LÍNEA
-
+    console.log('🔧 Datos recibidos en modificarBoleta:', req.body);
     await Educacion.modificarBoleta(req.body);
     res.sendStatus(200);
   } catch (error) {
@@ -196,9 +223,10 @@ exports.modificarBoleta = async (req, res) => {
   }
 };
 
-
 /**
  * Elimina lógicamente una boleta.
+ * @param {object} req
+ * @param {object} res
  */
 exports.eliminarBoleta = async (req, res) => {
   try {

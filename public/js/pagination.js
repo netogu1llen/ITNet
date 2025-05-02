@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showPage(parseInt(link.dataset.pagina));
       });
     });
-  
+
     btnPrev.addEventListener('click', () => showPage(paginaActual - 1));
     btnNext.addEventListener('click', () => showPage(paginaActual + 1));
   

@@ -59,6 +59,17 @@
           <input type="tel" id="contacto" name="contacto" maxlength="10" pattern="[0-9]{10}" title="Ingrese un número de teléfono válido de 10 dígitos" value="<%= datos.contacto || '' %>"><br>
         </div>
       </div>
+      <div class="element-container">
+        <label for="sexo">Sexo:</label>
+        <br>
+        <div class="multirow-form-container">
+          <select id="sexo" name="sexo">
+            <option value="">Seleccione una opcion</option>
+            <option value="Masculino" <%= datos.sexo === "Masculino" ? "selected" : "" %>>Masculino</option>
+            <option value="Femenino" <%= datos.sexo === "Femenino" ? "selected" : "" %>>Femenino</option>
+          </select>
+        </div>        
+      </div>
     </div>
     <hr>
     <label for="direccion">Direccion de vivienda</label>
@@ -182,6 +193,7 @@
             <option value="Preescolar" <%= datos.nvEscolar === "Preescolar" ? "selected" : "" %>>Preescolar</option>
             <option value="Primaria" <%= datos.nvEscolar === "Primaria" ? "selected" : "" %>>Primaria</option>
             <option value="Secundaria" <%= datos.nvEscolar === "Secundaria" ? "selected" : "" %>>Secundaria</option>
+            <option value="Preparatoria" <%= datos.nvEscolar === "Preparatoria" ? "selected" : "" %>>Preparatoria</option>
           </select>
           <br>
         </div>
