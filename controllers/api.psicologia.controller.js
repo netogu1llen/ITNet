@@ -27,7 +27,7 @@ const getSeguimientosPsicologia = async (req, res) => {
     // 2. Consulta seguimientos psicológicos
     const [seguimientosRows] = await db.execute(`
       SELECT 
-        idSeguimiento AS idSeguimiento,
+        IDSeguimiento AS idSeguimiento,
         numsesion AS numSesion,
         fecha,
         sesionobjetivo AS sesionObjetivo,
@@ -35,7 +35,7 @@ const getSeguimientosPsicologia = async (req, res) => {
         analisispsicologico AS analisisPsicologico,
         recomendaciones,
         sesionbitacora AS sesionBitacora
-      FROM seguimientopsicologico
+      FROM seguimientoPsicologico
       WHERE idExpediente = ? AND eliminado = 0
       ORDER BY numsesion ASC
     `, [IDExpediente]);
@@ -90,7 +90,7 @@ const getDetalleSeguimiento = async (req, res) => {
     // 1. Obtener el seguimiento principal
     const [seguimientoRows] = await db.execute(`
       SELECT 
-        idSeguimiento,
+        IDSeguimiento AS idSeguimiento,
         numSesion,
         DATE_FORMAT(fecha, '%Y-%m-%d') as fecha,
         sesionObjetivo,
@@ -99,7 +99,7 @@ const getDetalleSeguimiento = async (req, res) => {
         recomendaciones,
         sesionBitacora
       FROM seguimientoPsicologico 
-      WHERE idSeguimiento = ? AND eliminado = 0
+      WHERE IDSeguimiento = ? AND eliminado = 0
     `, [IDSeguimiento]);
 
     if (seguimientoRows.length === 0) {
@@ -119,7 +119,7 @@ const getDetalleSeguimiento = async (req, res) => {
         metodologia,
         observaciones
       FROM objetivoPsicologico
-      WHERE idSeguimiento = ? AND eliminado = 0
+      WHERE IDSeguimiento = ? AND eliminado = 0
     `, [IDSeguimiento]);
 
     const seguimiento = seguimientoRows[0];
