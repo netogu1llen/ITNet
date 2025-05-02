@@ -30,6 +30,16 @@ $(document).ready(function () {
     dtTopBar.append(editarPacienteButton);
     $('#TopBar').append(dtTopBar);
 
+    // Manejar clic en el botón de editar paciente
+    editarPacienteButton.on('click', function() {
+        // Obtener el ID del expediente de la URL
+        const urlPath = window.location.pathname;
+        const idExpediente = urlPath.split('/').pop();
+        
+        // Redirigir a la página de edición
+        window.location.href = `/pacientes/editar/${idExpediente}`;
+    });
+
     // Crear modal de carga y añadirlo al DOM
     const loadingModal = `
         <div id="loadingModal" class="modal">
