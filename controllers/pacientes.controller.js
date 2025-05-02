@@ -249,22 +249,12 @@ const postEditarPaciente = async (req, res) => {
       sangre,
       sexo
     } = req.body;
-
-    // Verificar si el nuevo ID ya existe, pero no es el mismo que ya tenía
-    if (nuevoIdExpediente != idExpediente) {
-      console.log('El ID ha cambiado, verificando si el nuevo ID ya existe...');
-      const [existente] = await db.execute(
-        'SELECT IDExpediente FROM expediente WHERE IDExpediente = ? AND IDExpediente != ?',
-        [nuevoIdExpediente, idExpediente]
-      );
-      
-      if (existente && existente.length > 0) {
-        return res.status(400).json({
-          mensaje: `El número de expediente ${nuevoIdExpediente} ya existe en la base de datos.`
-        });
-      }
-      
-      console.log('El nuevo ID no existe, procediendo con la actualización');
+    // Validar que IDExpediente sea un número válido
+    const nuevoIdExpediente = parseInt(IDExpediente, 10);
+    if (isNaN(nuevoIdExpediente) || nuevoIdExpediente <= 0) {
+      return res.status(400).json({ 
+        mensaje: 'El número de expediente debe ser un número entero positivo.' 
+      });
     }
     
     console.log('Datos de edición recibidos:', {
@@ -272,18 +262,18 @@ const postEditarPaciente = async (req, res) => {
       nuevoId: nuevoIdExpediente,
       idHaCambiado: nuevoIdExpediente != idExpediente
     });
-    
+
     // Verificar si el nuevo ID ya existe, pero no es el mismo que ya tenía
     if (nuevoIdExpediente != idExpediente) {
       console.log('El ID ha cambiado, verificando si el nuevo ID ya existe...');
       const [existente] = await db.execute(
-        'SELECT IDExpediente FROM expediente WHERE IDExpediente = ? AND IDExpediente != ?',
-        [nuevoIdExpediente, idExpediente]
+        'SELECT IDExpediente FROM expediente WHERE IDExpediente = ? AND eliminado = 0',
+        [nuevoIdExpediente]
       );
       
       if (existente && existente.length > 0) {
         return res.status(400).json({
-          mensaje: `El número de expediente ${nuevoIdExpediente} ya existe en la base de datos.`
+          mensaje: `El número de expediente ${nuevoIdExpediente} ya existe en la base de datos. Por favor elija otro número.`
         });
       }
       
