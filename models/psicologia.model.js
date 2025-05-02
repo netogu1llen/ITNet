@@ -40,8 +40,7 @@ class Psicologia {
                     CONCAT(estado, ', ', ciudad) AS ubicacion, 
                     CONCAT(calle, ' ', numCasa) AS domicilio,
                     grado, 
-                    nvEscolar AS curso,
-                    numExpediente
+                    nvEscolar AS curso
                 FROM expediente
                 WHERE IDExpediente = ? AND eliminado = 0
             `, [idExpediente]);
