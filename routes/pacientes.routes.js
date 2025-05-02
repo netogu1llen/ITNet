@@ -23,16 +23,13 @@ router.post('/editar/:id', canConsultarPacientes, canEditarPacientes, pacientesC
 
 router.post('/eliminar/:id', canConsultarPacientes, canEliminarPacientes, pacientesController.postEliminarPaciente);
 
+// Nuevas rutas para manejar expedientes y documentos
 router.get('/expediente/:idExpediente', canConsultarPacientes, canConsultarPaciente, pacientesController.obtenerExpediente);
-
 router.get('/documentos/:idExpediente', canConsultarPacientes, canConsultarPaciente, pacientesController.obtenerDocumentosPorExpediente);
-
-router.post('/documentos/subir/:IDExpediente', canConsultarPacientes, canConsultarPaciente, canAgregarArchivosAdjuntos, pacientesController.subirDocumento);
-
+// Para la subida múltiple de documentos
+router.post('/documentos/subir-multiple/:IDExpediente', canConsultarPacientes, canConsultarPaciente, canAgregarArchivosAdjuntos, pacientesController.subirMultiplesDocumentos);
 router.get('/documentos/descargar/:id', canConsultarPacientes, canConsultarPaciente, canGenerarPDF, canDescargarPDF, pacientesController.descargarDocumento);
-
 router.delete('/documentos/eliminar/:id', canConsultarPacientes, canConsultarPaciente, canEliminarArchivosAdjunto, pacientesController.eliminarDocumento);
-
 router.get('/documentos/ver/:id', canConsultarPacientes, canConsultarPaciente, canGenerarPDF, pacientesController.verDocumento);
 
 module.exports = router;

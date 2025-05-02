@@ -34,8 +34,8 @@ router.get('/documentos/ver/:id', canConsultarExpedienteNutricional, canConsulta
 // Ruta para eliminar documento
 router.delete('/documentos/eliminar/:id', canConsultarExpedienteNutricional, canConsultarPaciente, canEliminarArchivosAdjunto, canEliminarHistorialClinicoVer2, nutricionController.eliminarDocumento);
 
-// Ruta para subir un documento
-router.post('/documentos/subir/:IDExpediente', canConsultarExpedienteNutricional, canConsultarPaciente, canAgregarArchivosAdjuntos, nutricionController.subirDocumentoMiddleware);
+// Ruta para subir múltiples documentos
+router.post('/documentos/subir-multiple/:IDExpediente', canConsultarExpedienteNutricional, canConsultarPaciente,canAgregarArchivosAdjuntos, nutricionController.subirMultiplesDocumentosMiddleware);
 
 // Reorganizar las rutas de historia clínica (el orden es importante)
 router.get('/historiaClinica/create/:id', canConsultarExpedienteNutricional, canConsultarPaciente, canRegistarHistorialClinicoVer1, canRegistarHistorialClinicoVer2, nutricionController.createHistoriaClinicaV1);

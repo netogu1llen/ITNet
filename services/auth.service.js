@@ -128,19 +128,6 @@ class AuthService {
         privileges: user.IDPrivilegios || []
       };
   
-      // Verificación de datos incluidos en el token
-      console.log('Payload del Token JWT:', {
-        datosUsuario: {
-          id: tokenPayload.userId,
-          email: tokenPayload.email
-        },
-        autorizacion: {
-          roles: tokenPayload.roles,
-          privilegios: tokenPayload.privileges
-        },
-        timestamp: new Date().toISOString()
-      });
-  
       return generateUserToken(tokenPayload);
   
     } catch (error) {

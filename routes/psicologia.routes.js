@@ -19,8 +19,8 @@ router.get('/', canConsultarExpedientePsicologico,psicologiaController.getPacien
 // Ruta para obtener documentos por expediente
 router.get('/documentos/:idExpediente', canConsultarExpedientePsicologico, canConsultarPaciente, psicologiaController.obtenerDocumentosPorExpediente);
 
-// Ruta para subir un documento a un expediente específico
-router.post('/documentos/subir/:IDExpediente', canConsultarExpedientePsicologico, canConsultarPaciente, canAgregarArchivosAdjuntos, psicologiaController.subirDocumentoMiddleware);
+// Añadir nueva ruta para la carga múltiple
+router.post('/documentos/subir-multiple/:IDExpediente', canConsultarExpedientePsicologico, canConsultarPaciente, canAgregarArchivosAdjuntos, psicologiaController.subirMultiplesDocumentosMiddleware);
 
 // Ruta para descargar un documento
 router.get('/documentos/descargar/:id', canConsultarExpedientePsicologico, canConsultarPaciente, canGenerarPDF, canDescargarPDF, psicologiaController.descargarDocumento);

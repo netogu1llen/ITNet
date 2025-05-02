@@ -273,11 +273,12 @@ class Nutricion {
     // Obtener documentos adjuntos y historial nutricional del paciente
     static async obtenerDocumentosHistorial(idExpediente) {
         try {
-            // Obtener documentos adjuntos (PDFs)
+            // Obtener documentos adjuntos (PDFs) - solo los de nutrición
             const [documentosRows] = await db.execute(`
                 SELECT IDDocumento, nombre, fecha, ubicacion, 'PDF' as tipo
                 FROM documentosAdjuntos
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+                AND (ubicacion LIKE 'nutricion/%' OR ubicacion LIKE '%/nutricion/%')
                 ORDER BY fecha DESC
             `, [idExpediente]);
             

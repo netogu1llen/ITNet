@@ -32,9 +32,6 @@ router.get('/', (req, res) => {
 // Rutas principales
 router.get('/home', authenticateJWT, authController.getHome);
 
-// Ruta de home 
-router.get('/home-debug', authenticateJWT, authController.getHome);
-
 /**
  * Ruta que inicia el proceso de autenticación con Google OAuth 2.0
  * 
@@ -65,5 +62,8 @@ router.get('/google', authController.googleAuthInit);
 router.get('/google/callback', authController.googleCallback);
 
 router.post('/google/mobile', authController.googleMobileLogin);
+
+router.post('/logout', authController.logout);
+
 
 module.exports = router;

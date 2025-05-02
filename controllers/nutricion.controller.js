@@ -5,27 +5,23 @@ const fs = require('fs');
 const multer = require('multer');
 const ejs = require('ejs');
 const puppeteer = require('puppeteer');
+const s3 = require('../util/s3Client');
 
-// Configuración de Multer para guardar archivos localmente
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-      cb(null, 'uploads/'); // Carpeta donde se guardarán los archivos
-  },
-  filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, uniqueSuffix + path.extname(file.originalname)); // Nombre único para evitar conflictos
-  }
+// Al principio del archivo, reemplaza la configuración actual de multer:
+
+// Configuración unificada de multer
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB máximo
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype === 'application/pdf') {
+        cb(null, true);
+      } else {
+        cb(new Error('Solo se permiten archivos PDF.'));
+      }
+    }
 });
-
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'application/pdf') {
-      cb(null, true); // Aceptar solo archivos PDF
-  } else {
-      cb(new Error('Solo se permiten archivos PDF.'));
-  }
-};
-
-const upload = multer({ storage, fileFilter });
+  
 
 
 const { request, response } = require("express");
@@ -185,155 +181,242 @@ function calcularEdad(fechaNacimiento) {
 }
 
 // Descargar documento
-// Modificar la función descargarDocumento en controllers/nutricion.controller.js
 exports.descargarDocumento = async (req, res) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params;
         const tipo = req.query.tipo;
         const numSesion = req.query.numSesion;
         
-        // Primero intentar obtener como documento PDF almacenado
-        let documento = await Nutricion.obtenerDocumentoPorId(id);
-
-        if (!documento) {
-            console.log('No se encontró documento PDF, intentando generar expediente...');
+        console.log('Iniciando descarga, ID:', id, 'Tipo:', tipo, 'Sesión:', numSesion);
+        
+        // Si es una historia clínica generada dinámicamente
+        if ((tipo === 'NUTRICIONAL_V1' || tipo === 'NUTRICIONAL_V2') && numSesion) {
+            const idExpediente = req.query.expediente;
             
-            // Determinar el tipo de documento a generar
-            if (tipo === 'NUTRICIONAL_V1' || tipo === 'NUTRICIONAL_V2') {
-                // Obtener datos para el expediente
-                const idExpediente = req.query.expediente; // Nuevo parámetro
-                
-                if (!idExpediente) {
-                    return res.status(400).send('ID de expediente requerido');
-                }
-                
-                // Obtener datos del expediente
-                const expediente = await Nutricion.obtenerPorId(idExpediente);
-                
-                if (!expediente) {
-                    return res.status(404).send('Expediente no encontrado');
-                }
-
-                // Obtener datos completos de la sesión
-                const datosSesion = await Nutricion.obtenerDatosSesionCompletos(idExpediente, numSesion);
-                
-                if (!datosSesion) {
-                    return res.status(404).send('Sesión no encontrada');
-                }
-                
-                // Desencriptar datos del paciente para el PDF
-                const datosGeneralesPaciente = {
-                    nombres: expediente.nombres,
-                    apellidoP: expediente.apellidoP,
-                    apellidoM: expediente.apellidoM,
-                    fechaNacimiento: expediente.fechaNacimiento,
-                    edadPaciente: calcularEdad(expediente.fechaNacimiento)
-                };
-
-                // Generar HTML según el tipo de documento
-                let html;
-                if (tipo === 'NUTRICIONAL_V1') {
-                    // Usar plantilla para Historia Clínica V1
-                    html = await ejs.renderFile(
-                        path.join(__dirname, '../views/pdf/historiaClinicaV1.ejs'),
-                        {   
-                            idExpediente,
-                            tipo,
-                            expediente,
-                            datosSesion, 
-                            datosGeneralesPaciente, 
-                            fechaGeneracion: new Date().toLocaleDateString() 
-                        }
-                    );
-                } else if (tipo === 'NUTRICIONAL_V2') {
-
-                    // Usar plantilla para Historia Clínica V2
-                    html = await ejs.renderFile(
-                        path.join(__dirname, '../views/pdf/historiaClinicaV2.ejs'),
-                        {   idExpediente,
-                            tipo,
-                            expediente,
-                            datosSesion, 
-                            datosGeneralesPaciente,
-                            fechaGeneracion: new Date().toLocaleDateString() 
-                        }
-                    );
-                } else {
-                    return res.status(400).send('Tipo de documento no válido');
-                }
-
-                // Generar PDF con Puppeteer
-                const browser = await puppeteer.launch({
-                    args: ['--no-sandbox', '--disable-setuid-sandbox']
-                });
-                const page = await browser.newPage();
-                await page.setContent(html, { waitUntil: 'networkidle0' });
-                
-                const pdfBuffer = await page.pdf({
-                    format: 'A4',
-                    margin: {
-                        top: "20px",
-                        bottom: "20px",
-                        left: "20px",
-                        right: "20px"
-                    }
-                });
-
-                await browser.close();
-
-                // Enviar el PDF generado
-                res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader('Content-Disposition', `attachment; filename=${tipo === 'NUTRICIONAL_V1' ? 'historial_clinico_v1' : 'historial_clinico_v2'}.pdf`);
-                return res.end(pdfBuffer);
+            if (!idExpediente) {
+                return res.status(400).send('ID de expediente requerido');
             }
+            
+            // Obtener datos del expediente con manejo de errores en desencriptación
+            const expediente = await Nutricion.obtenerPorId(idExpediente);
+            
+            if (!expediente) {
+                return res.status(404).send('Expediente no encontrado');
+            }
+            
+            // Obtener datos de la sesión
+            const datosSesion = await Nutricion.obtenerDatosSesionCompletos(idExpediente, numSesion);
+            
+            if (!datosSesion) {
+                return res.status(404).send('Sesión no encontrada');
+            }
+            
+            // Desencriptar datos del paciente con manejo de errores
+            let nombres, apellidoP, apellidoM, fechaNacimiento, edadPaciente;
+            
+            try {
+                nombres = decrypt(expediente.nombres);
+                apellidoP = decrypt(expediente.apellidoP);
+                apellidoM = decrypt(expediente.apellidoM);
+                fechaNacimiento = decrypt(expediente.fechaNacimiento);
+                edadPaciente = calcularEdad(fechaNacimiento);
+            } catch (decryptError) {
+                console.error('Error al desencriptar datos:', decryptError);
+                nombres = `Paciente_${idExpediente}`;
+                apellidoP = '';
+                apellidoM = '';
+                fechaNacimiento = new Date().toISOString().split('T')[0];
+                edadPaciente = 'No disponible';
+            }
+            
+            // Crear un nombre descriptivo para el archivo
+            const fechaActual = new Date().toISOString().split('T')[0];
+            const nombrePaciente = `${apellidoP}_${apellidoM}_${nombres}`
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/gi, '_');
+            
+            const nombreDescarga = `Historia${tipo === 'NUTRICIONAL_V1' ? 'V1' : 'V2'}_${nombrePaciente}_Sesion${numSesion}_${fechaActual}.pdf`;
+            
+            // Generar el HTML y el PDF como en la implementación original
+            let html;
+            const templatePath = tipo === 'NUTRICIONAL_V1' 
+                ? '../views/pdf/historiaClinicaV1.ejs'
+                : '../views/pdf/historiaClinicaV2.ejs';
+                
+            const datosGeneralesPaciente = { nombres, apellidoP, apellidoM, fechaNacimiento, edadPaciente };
+            
+            html = await ejs.renderFile(
+                path.join(__dirname, templatePath),
+                {
+                    idExpediente,
+                    tipo,
+                    expediente,
+                    datosSesion,
+                    datosGeneralesPaciente,
+                    fechaGeneracion: new Date().toLocaleDateString()
+                }
+            );
+            
+            // Generar PDF con Puppeteer
+            const browser = await puppeteer.launch({
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
+            const page = await browser.newPage();
+            await page.setContent(html, { waitUntil: 'networkidle0' });
+            
+            const pdfBuffer = await page.pdf({
+                format: 'A4',
+                margin: {
+                    top: "20px",
+                    bottom: "20px",
+                    left: "20px",
+                    right: "20px"
+                }
+            });
+            
+            await browser.close();
+            
+            // Enviar PDF generado
+            res.setHeader('Content-Type', 'application/pdf')
+               .setHeader('Content-Disposition', `attachment; filename="${nombreDescarga}"`)
+               .end(pdfBuffer);
+            return;
         }
 
-        // Si es un documento almacenado, enviarlo desde el sistema de archivos
-        const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo);
-        if (fs.existsSync(rutaDocumento)) {
-            return res.download(rutaDocumento);
-        } else {
-            console.error('Archivo no encontrado:', rutaDocumento);
-            return res.status(404).send('Archivo no encontrado');
+        // Si es un documento almacenado
+        const documento = await Nutricion.obtenerDocumentoPorId(id);
+        
+        if (!documento) {
+            return res.status(404).json({ error: 'Documento no encontrado' });
         }
-
+        
+        // Obtener la ruta del archivo (ahora guardada en nombreArchivo)
+        let key = documento.nombreArchivo;
+        
+        if (!key || key.trim() === '') {
+            return res.status(404).json({ error: 'Documento sin ubicación válida' });
+        }
+        
+        // Normalizar key para S3
+        key = key.replace(/\\/g, '/');
+        
+        if (key.startsWith('http')) {
+            const url = new URL(key);
+            key = url.pathname.replace(/^\/+/, '');
+        }
+        
+        try {
+            const data = await s3.getObject({
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: key
+            }).promise();
+            
+            // Usar el nombre del documento normalizado
+            const nombreArchivo = documento.tipo || 'documento';
+            const nombreNormalizado = nombreArchivo
+                .trim()
+                .replace(/[^\w\s.-]/g, '_')
+                .replace(/\s+/g, '_');
+            
+            res.setHeader('Content-Type', 'application/pdf')
+               .setHeader('Content-Disposition', `attachment; filename="${nombreNormalizado}.pdf"`)
+               .send(data.Body);
+               
+        } catch (s3Error) {
+            console.error('Error de S3:', s3Error);
+            if (s3Error.code === 'NoSuchKey') {
+                return res.status(404).json({ error: 'Archivo no encontrado en S3' });
+            }
+            throw s3Error;
+        }
     } catch (error) {
-        console.error('Error al procesar la solicitud de descarga:', error);
-        return res.status(500).send('Error interno del servidor');
+        console.error('Error general:', error);
+        res.status(500).json({
+            error: 'Error al procesar la solicitud',
+            detalles: process.env.NODE_ENV === 'development' ? error.message : 'Error interno del servidor'
+        });
     }
 };
 
-// Ver documento
+// Ver documento (con soporte para S3)
 exports.verDocumento = async (req, res) => {
-  try {
-      const id = req.params.id;
-      
-      // Obtener información del documento
-      const documento = await Nutricion.obtenerDocumentoPorId(id);
-      
-      if (!documento) {
-          return res.status(404).send('Documento no encontrado');
-      }
-      
-      // Construir la ruta del archivo
-      const rutaDocumento = path.join(__dirname, '..', documento.nombreArchivo);
-      
-      // Verificar si el archivo existe
-      if (!fs.existsSync(rutaDocumento)) {
-          return res.status(404).send('Archivo no encontrado');
-      }
-      
-      // Establecer el tipo MIME correcto para PDF
-      res.setHeader('Content-Type', 'application/pdf');
-      
-      // Enviar el archivo como respuesta
-      res.sendFile(rutaDocumento);
-  } catch (error) {
-      console.error('Error al mostrar documento:', error);
-      res.status(500).send('Error al mostrar el documento');
-  }
+    try {
+        const { id } = req.params;
+        console.log(`Intentando visualizar documento con ID: ${id}`);
+        
+        // Primero intentar obtener el documento
+        const documento = await Nutricion.obtenerDocumentoPorId(id);
+        
+        if (!documento) {
+            console.error(`Documento con ID ${id} no encontrado en la base de datos`);
+            return res.status(404).json({
+                error: 'Documento no encontrado en la base de datos',
+                detalles: 'El documento solicitado no existe en nuestros registros'
+            });
+        }
+        
+        // Verificar ubicación en ambos campos posibles
+        let rutaArchivo = documento.nombreArchivo;
+        
+        if (!rutaArchivo || rutaArchivo.trim() === '') {
+            console.error(`Documento con ID ${id} no tiene ubicación definida:`, documento);
+            return res.status(404).json({
+                error: 'Documento sin ubicación válida',
+                detalles: 'El documento existe pero no tiene una ruta válida',
+                sugerencia: 'Contacte al administrador del sistema'
+            });
+        }
+        
+        console.log(`Documento encontrado, ubicación: ${rutaArchivo}`);
+        
+        // Normalizar la key para S3
+        let key = rutaArchivo;
+        key = key.replace(/\\/g, '/');
+        
+        if (key.startsWith('http')) {
+            const url = new URL(key);
+            key = url.pathname.replace(/^\/+/, '');
+        }
+        
+        console.log(`Intentando obtener archivo de S3 con clave normalizada: ${key}`);
+        console.log(`Bucket: ${process.env.AWS_BUCKET_NAME}`);
+        
+        try {
+            const data = await s3.getObject({
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: key
+            }).promise();
+            
+            console.log(`Archivo recuperado de S3, tamaño: ${data.Body.length} bytes`);
+            
+            // Usar nombre del documento o tipo, con fallback a 'documento'
+            const nombreArchivo = documento.tipo || 'documento';
+            
+            res
+                .setHeader('Content-Type', 'application/pdf')
+                .setHeader('Content-Disposition', `inline; filename="${nombreArchivo}.pdf"`)
+                .send(data.Body);
+                
+        } catch (s3Error) {
+            console.error(`Error de S3: ${s3Error.code} - ${s3Error.message}`);
+            if (s3Error.code === 'NoSuchKey') {
+                return res.status(404).json({
+                    error: 'Archivo no encontrado en S3',
+                    detalles: `La clave ${key} no existe en el bucket ${process.env.AWS_BUCKET_NAME}`,
+                    sugerencia: 'El archivo puede haber sido eliminado del almacenamiento'
+                });
+            }
+            throw s3Error;
+        }
+    } catch (error) {
+        console.error('Error al mostrar documento:', error);
+        res.status(500).json({
+            error: 'Error al procesar la solicitud',
+            mensaje: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
 };
-
 
 // Obtener y mostrar un Historial Nutricional V2
 exports.getHistorialNutricionalV2 = async (req, res) => {
@@ -421,46 +504,114 @@ exports.eliminarDocumento = async (req, res) => {
 
 
 
-// Middleware de subida con controlador integrado
-exports.subirDocumentoMiddleware = [
-  upload.single('archivoDocumento'),
-  async (req, res) => {
+// Middleware para subir múltiples documentos a S3
+exports.subirMultiplesDocumentosMiddleware = [
+    upload.array('archivosDocumento'), 
+    async (req, res) => {
       try {
-          const { nombreDocumento } = req.body;
-          const { IDExpediente } = req.params; // Obtener ID del expediente desde la URL
-
-          if (!req.file) {
-              return res.status(400).json({ error: 'Debe subir un archivo válido.' });
+        const { IDExpediente } = req.params;
+        console.log('Iniciando subida de múltiples documentos. ID expediente:', IDExpediente);
+        
+        if (!req.files || req.files.length === 0) {
+          return res.status(400).json({ error: 'Debe subir al menos un archivo PDF válido' });
+        }
+        
+        console.log('Archivos recibidos:', req.files.length);
+        
+        // Obtener datos del paciente
+        const expediente = await Nutricion.obtenerPorId(IDExpediente);
+        
+        if (!expediente) {
+          return res.status(404).json({ error: 'Expediente no encontrado' });
+        }
+        
+        // Desencriptar nombres con manejo de errores
+        let nombres, apellidoP, apellidoM;
+        try {
+          nombres = decrypt(expediente.nombres);
+          apellidoP = decrypt(expediente.apellidoP);
+          apellidoM = decrypt(expediente.apellidoM);
+        } catch (decryptError) {
+          console.error('Error al desencriptar datos:', decryptError);
+          nombres = `paciente_${IDExpediente}`;
+          apellidoP = 'apellido';
+          apellidoM = '';
+        }
+        
+        // Crear nombre de carpeta normalizado
+        const nombreCarpeta = `${apellidoP}_${apellidoM}_${nombres}`
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]/g, '_');
+        
+        console.log('Nombre de carpeta generado:', nombreCarpeta);
+        
+        // Procesar y subir cada archivo
+        const resultados = [];
+        
+        for (const archivo of req.files) {
+          try {
+            console.log('Procesando archivo:', archivo.originalname);
+            
+            // Verificar buffer
+            if (!archivo.buffer || archivo.buffer.length === 0) {
+              console.error(`Error: El archivo ${archivo.originalname} no tiene un buffer válido`);
+              continue;
+            }
+            
+            console.log(`Tamaño del buffer: ${archivo.buffer.length} bytes`);
+            
+            // Extraer nombre del archivo
+            let nombreDocumento = path.basename(archivo.originalname, '.pdf');
+            nombreDocumento = nombreDocumento.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '_');
+            
+            // Crear ruta para S3
+            const fileKey = `nutricion/${nombreCarpeta}/${Date.now()}_${nombreDocumento.replace(/\s+/g, '_')}.pdf`;
+            
+            // Subir a S3
+            const params = {
+              Bucket: process.env.AWS_BUCKET_NAME,
+              Key: fileKey,
+              Body: archivo.buffer,
+              ContentType: 'application/pdf',
+            };
+            
+            await s3.upload(params).promise();
+            console.log('Archivo subido a S3 exitosamente');
+            
+            // Guardar en base de datos
+            const nuevoDocumento = await Nutricion.subirDocumento({
+                IDExpediente: IDExpediente, // Debe ser mayúscula "ID"
+                nombre: nombreDocumento,    // "tipo" → "nombre" 
+                ubicacion: fileKey,         // "nombreArchivo" → "ubicacion"
+                fecha: new Date(),          // "fechaCreacion" → "fecha"
+                eliminado: 0                // Parámetro faltante
+              });
+            
+            resultados.push({
+              nombre: nombreDocumento,
+              documento: nuevoDocumento
+            });
+          } catch (fileError) {
+            console.error(`Error al procesar archivo ${archivo.originalname}:`, fileError);
           }
-
-          // Creamos la ruta completa al archivo
-          const ubicacion = req.file.path;
-          const fecha = new Date(); // Fecha actual
-          const eliminado = 0; // Por defecto, no eliminado
-
-          console.log('Subiendo documento:', {
-              IDExpediente,
-              nombre: nombreDocumento,
-              ubicacion,
-              fecha
-          });
-
-          // Guardar en la base de datos
-          const nuevoDocumento = await Nutricion.subirDocumento({
-              IDExpediente,
-              nombre: nombreDocumento,
-              ubicacion,
-              fecha,
-              eliminado
-          });
-
-          res.status(201).json({ message: 'Documento subido correctamente', documento: nuevoDocumento });
+        }
+        
+        if (resultados.length === 0) {
+          return res.status(400).json({ error: 'No se pudo subir ningún documento' });
+        }
+        
+        res.status(201).json({
+          message: `${resultados.length} documento(s) subido(s) correctamente`,
+          documentos: resultados
+        });
       } catch (error) {
-          console.error('Error al subir el documento:', error);
-          res.status(500).json({ error: 'Error al subir el documento' });
+        console.error('Error general:', error);
+        res.status(500).json({ error: 'Error al subir los documentos' });
       }
-  }
-];
+    }
+  ];
 
 // Mostrar el formulario de historia clínica con datos del expediente
 exports.renderHistoriaClinica = async (req, res) => {

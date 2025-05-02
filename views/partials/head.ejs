@@ -11,12 +11,64 @@
   <link href="https://fonts.googleapis.com/css2?family=Encode+Sans&display=swap" rel="stylesheet">
 
   <!-- Favicon -->
-  <link rel="icon" href="<%= process.env.PATH_SERVER %>Images/logo.png" type="image/png">
+  <link rel="icon" href="<%= process.env.PATH_SERVER %>Images/soffy.png" type="image/png">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.minimize.css">
   <link rel="stylesheet" href="/vendor/jquery.dataTables.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  
+  <style>
+    /* Estilos para el sidebar y el botón de logout */
+    .sidebar {
+      width: 60px; /* Ancho del sidebar cuando está colapsado */
+      transition: width 0.3s ease;
+      overflow: hidden; /* Importante: oculta el contenido que se sale */
+    }
+    
+    .sidebar.is-active {
+      width: 220px; /* Ancho del sidebar cuando está expandido */
+    }
+    
+    .sidebar .menu {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 220px; /* Ancho fijo del menú */
+    }
+    
+    .main-menu {
+      flex-grow: 1;
+    }
+    
+    .logout-container {
+      margin-top: auto;
+      margin-bottom: 20px;
+    }
+    
+    .logout-button {
+      width: 100%;
+      text-align: left;
+      padding: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+    
+    .menu-text {
+      font-size: 14px;
+      opacity: 0; /* Ocultar el texto por defecto */
+      transition: opacity 0.3s ease;
+      white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+    }
+    
+    .sidebar.is-active .menu-text {
+      opacity: 1; /* Mostrar el texto cuando el sidebar está activo */
+    }
+  </style>
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,18 +78,21 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <!-- Botón de hamburguesa -->
-        <button id="burgerButton" class="burger-button">
-            <i class="material-icons">menu</i> <!-- Icono de menú -->
-        </button>
-
         <!-- Menú desplegable -->
         <div class="menu" id="menu">
-            <ul>
+            <ul class="main-menu">
+                <!-- Home (Inicio) ahora dentro del menú -->
+                <li>
+                    <a href="/home" id="homeButton" class="menu-link">
+                        <img src="/images/home.png" alt="Home" style="width: 28px; height: 28px; margin-right: 10px;">
+                        <span class="menu-text">Inicio</span>
+                    </a>
+                </li>
+
                 <!-- Categoría: Usuario -->
                 <li>
                     <a href="<%= process.env.PATH_SERVER %>usuarios" class="menu-link">
-                        <i class="material-icons">person</i> <!-- Icono de usuario -->
+                        <i class="material-icons">person</i>
                         <span class="menu-text">Usuarios</span>
                     </a>
                 </li>
@@ -45,23 +100,23 @@
                 <!-- Categoría: Expediente -->
                 <li>
                     <a href="<%= process.env.PATH_SERVER %>pacientes" class="menu-link">
-                        <i class="material-icons">medical_information</i> <!-- Icono de expediente -->
+                        <i class="material-icons">medical_information</i>
                         <span class="menu-text">Pacientes</span>
                     </a>
                 </li>
 
-                 <!-- Categoría: Expedientes psicologicos -->
+                <!-- Categoría: Expedientes psicologicos -->
                 <li>
                     <a href="<%= process.env.PATH_SERVER %>psicologia" class="menu-link">
-		        <img src="/images/psychologywhite.png" alt="Psicología" style="width: 28px; height: 28px; margin-right: 10px;">
-		        <span class="menu-text">Psicología</span>
+                        <img src="/images/psychologywhite.png" alt="Psicología" style="width: 28px; height: 28px; margin-right: 10px;">
+                        <span class="menu-text">Psicología</span>
                     </a>
                 </li>
 
-                 <!-- Categoría: Expedientes nutricionales -->
+                <!-- Categoría: Expedientes nutricionales -->
                 <li>
                     <a href="<%= process.env.PATH_SERVER %>nutricion" class="menu-link">
-                        <i class="material-icons">dining</i> <!-- Icono de nutrición -->
+                        <i class="material-icons">dining</i>
                         <span class="menu-text">Nutrición</span>
                     </a>
                 </li>
@@ -69,11 +124,21 @@
                 <!-- Categoría: Centro de Aprendizaje -->
                 <li>
                     <a href="<%= process.env.PATH_SERVER %>educacion" class="menu-link">
-                        <i class="material-icons">school</i> <!-- Icono de centro de aprendizaje -->
+                        <i class="material-icons">school</i>
                         <span class="menu-text">Centro de Conocimientos</span>
                     </a>
-                </li>                
+                </li>  
             </ul>
+            
+            <!-- Logout separado para situarlo en la parte inferior -->
+            <div class="logout-container">
+                <form action="/logout" method="POST">
+                    <button type="submit" class="logout-button">
+                        <i class="material-icons" style="font-size: 28px; margin-right: 10px;">logout</i>
+                        <span class="menu-text">Cerrar sesión</span>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
