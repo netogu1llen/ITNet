@@ -89,7 +89,7 @@ class Nutricion {
             // Obtener la última sesión con datos antropométricos
             const [ultimaSesionRows] = await db.execute(`
                 SELECT MAX(numSesion) as ultimaSesion
-                FROM evaluacionantropometrica
+                FROM evaluacionAntropometrica
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
             `, [idExpediente]);
             
@@ -113,7 +113,7 @@ class Nutricion {
                             THEN circunferenciaCintura/circunferenciaCadera
                             ELSE NULL
                        END as indiceCinturaCadera
-                FROM evaluacionantropometrica
+                FROM evaluacionAntropometrica
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [idExpediente, ultimaSesion]);
             
@@ -366,7 +366,7 @@ class Nutricion {
             );
 
             const [evaluacionAntropometrica] = await connection.execute(
-                'SELECT talla, peso, circunferenciaCintura, circunferenciaCadera FROM evaluacionantropometrica WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT talla, peso, circunferenciaCintura, circunferenciaCadera FROM evaluacionAntropometrica WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
@@ -561,7 +561,7 @@ class Nutricion {
 
             // Insertar en evaluacionAntropometrica
             await connection.execute(`
-                INSERT INTO evaluacionantropometrica (
+                INSERT INTO evaluacionAntropometrica (
                     IDExpediente, numSesion, talla, peso, circunferenciaCintura, circunferenciaCadera
                 ) VALUES (?, ?, ?, ?, ?, ?)
             `, [
@@ -661,7 +661,7 @@ class Nutricion {
 
             // 2. Insertar evaluación antropométrica
             await connection.execute(`
-                INSERT INTO evaluacionantropometrica 
+                INSERT INTO evaluacionAntropometrica 
                 (IDExpediente, numSesion, peso, talla, circunferenciaCintura, circunferenciaCadera)
                 VALUES (?, ?, ?, ?, ?, ?)
             `, [
@@ -737,7 +737,7 @@ class Nutricion {
     
             // Actualizar evaluación antropométrica
             await connection.execute(`
-                UPDATE evaluacionantropometrica 
+                UPDATE evaluacionAntropometrica 
                 SET talla = ?, peso = ?, circunferenciaCintura = ?, circunferenciaCadera = ?
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [
@@ -836,7 +836,7 @@ class Nutricion {
                     mn.energia, mn.proteinas, mn.hidratosDeCarbono, 
                     mn.lipidos, mn.fibra, mn.agua
                 FROM nutricional1 n
-                LEFT JOIN evaluacionantropometrica ea 
+                LEFT JOIN evaluacionAntropometrica ea 
                     ON n.IDExpediente = ea.IDExpediente 
                     AND n.numSesion = ea.numSesion
                 LEFT JOIN manejonutricional mn 
@@ -883,7 +883,7 @@ class Nutricion {
             );
 
             const [evaluacionAntropometrica] = await db.execute(
-                'SELECT * FROM evaluacionantropometrica WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM evaluacionAntropometrica WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -932,7 +932,7 @@ class Nutricion {
                 { nombre: 'transtornos', campos: ['vomito', 'reflujo', 'disfagia', 'diarrea', 'flatulencias', 'estrenimiento', 'distencion', 'colitis', 'pirosis', 'gastritis', 'otro'] },
                 { nombre: 'actividaddiaria', campos: ['ejercicioFisico', 'fechaInicio', 'frecuencia'] },
                 { nombre: 'diagnosticoevolucion', campos: ['diagnosticoEvolucion'] },
-                { nombre: 'evaluacionantropometrica', campos: ['talla', 'peso', 'circunferenciaCintura', 'circunferenciaCadera'] },
+                { nombre: 'evaluacionAntropometrica', campos: ['talla', 'peso', 'circunferenciaCintura', 'circunferenciaCadera'] },
                 { nombre: 'manejonutricional', campos: ['energia', 'hidratosDeCarbono', 'lipidos', 'proteinas', 'fibra', 'agua'] }
             ];
 
@@ -1005,7 +1005,7 @@ class Nutricion {
             const [rows] = await db.execute(
                 `SELECT n.*, ea.* 
                  FROM nutricional1 n 
-                 LEFT JOIN evaluacionantropometrica ea 
+                 LEFT JOIN evaluacionAntropometrica ea 
                  ON n.IDExpediente = ea.IDExpediente AND n.numSesion = ea.numSesion 
                  WHERE n.IDExpediente = ? 
                  AND (n.eliminado IS NULL OR n.eliminado = 0) 
@@ -1024,7 +1024,7 @@ class Nutricion {
         try {
             const [rows] = await db.execute(`
                 SELECT talla, peso, circunferenciaCintura, circunferenciaCadera 
-                FROM evaluacionantropometrica 
+                FROM evaluacionAntropometrica 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
             return rows;
