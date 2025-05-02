@@ -32,36 +32,8 @@ router.get('/', (req, res) => {
 // Rutas principales
 router.get('/home', authenticateJWT, authController.getHome);
 
-/**
- * Ruta para depuración - Muestra el contenido completo de req.user
- * NOTA: Esta ruta es solo para desarrollo y debe eliminarse en producción
- */
-router.get('/debug/user', authenticateJWT, (req, res) => {
-    res.json({
-        user: req.user,
-        tokenInfo: {
-            expiresAt: req.user.exp ? new Date(req.user.exp * 1000).toISOString() : null,
-            issuedAt: req.user.iat ? new Date(req.user.iat * 1000).toISOString() : null,
-        },
-        requestInfo: {
-            headers: req.headers,
-            cookies: req.cookies
-        }
-    });
-});
-
-/**
- * Middleware de depuración temporal para ver el contenido de req.user en la consola
- */
-const debugUserMiddleware = (req, res, next) => {
-    console.log('===== CONTENIDO DE REQ.USER =====');
-    console.log(JSON.stringify(req.user, null, 2));
-    console.log('=================================');
-    next();
-};
-
-// Ruta de home con middleware de depuración
-router.get('/home-debug', authenticateJWT, debugUserMiddleware, authController.getHome);
+// Ruta de home 
+router.get('/home-debug', authenticateJWT, authController.getHome);
 
 /**
  * Ruta que inicia el proceso de autenticación con Google OAuth 2.0

@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canAgregarArchivosAdjuntos = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Agregar archivos adjuntos') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Agregar archivos adjuntos') {
             canAgregarArchivosAdjuntos = true;
             break;
         }

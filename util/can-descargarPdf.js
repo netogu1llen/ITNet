@@ -1,9 +1,9 @@
 module.exports = (request, response, next) => {
     let canDescargarPdf = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Descargar PDF') {
-            canDescargarPdfNeto = true;
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Descargar PDF') {
+            canDescargarPdf = true;
             break;
         }
     }

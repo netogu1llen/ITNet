@@ -156,7 +156,8 @@ exports.getExpedienteNutricion = async (req, res) => {
             datosAntropometricos,
             manejoNutricional: manejoNutricionalData.manejoNutricional,
             documentosHistorial: documentosHistorialFormateados,
-            nutricional1
+            nutricional1,
+            user: req.user
         });
     } catch (error) {
         console.error('Error al obtener el expediente nutricional:', error.message);
@@ -500,7 +501,8 @@ exports.renderHistoriaClinica = async (req, res) => {
         res.render('historiaClinica', { 
             expediente, 
             datosSesion,
-            modoEdicion: !!numSesion 
+            modoEdicion: !!numSesion,
+            user: req.user
         });
     } catch (error) {
         console.error('Error al renderizar historia clínica:', error);
@@ -647,7 +649,8 @@ exports.editHistoriaClinicaV1 = async (req, res) => {
         res.render('historiaClinica', { 
             expediente, 
             datosSesion,
-            modoEdicion: true
+            modoEdicion: true,
+            user: req.user
         });
 
     } catch (error) {
@@ -674,7 +677,8 @@ exports.createHistoriaClinicaV1 = async (req, res) => {
         res.render('historiaClinica', { 
             expediente, 
             datosSesion: null,
-            modoEdicion: false
+            modoEdicion: false,
+            user: req.user
         });
 
     } catch (error) {
@@ -722,7 +726,8 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
         res.render('historiaClinicaV2', {
             expediente,
             datosSesion,
-            datosSesionV1: ultimaSesionV1
+            datosSesionV1: ultimaSesionV1,
+            user: req.user,
         });
 
     } catch (error) {

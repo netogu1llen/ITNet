@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canConsultarExpedienteNutricional = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Consultar expediente nutricional') {
+    for (let privilege of request.user.privileges) {
+        if (privilege === 'Consultar expediente nutricional') {
             canConsultarExpedienteNutricional = true;
             break;
         }

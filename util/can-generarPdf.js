@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canGenerarPdf = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Generar PDF') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Generar PDF') {
             canGenerarPdf = true;
             break;
         }

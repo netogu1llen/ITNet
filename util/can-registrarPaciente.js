@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canRegistrarPaciente = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Registrar Paciente') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Registrar Paciente') {
             canRegistrarPaciente = true;
             break;
         }

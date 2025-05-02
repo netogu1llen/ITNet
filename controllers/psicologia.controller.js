@@ -85,7 +85,8 @@ exports.obtenerDocumentosPorExpediente = async (req, res) => {
       // Renderizar la vista con los datos dinámicos
       res.render('expedientePsicologico', {
           expediente,
-          documentos
+          documentos,
+          user: req.user,
       });
   } catch (error) {
       console.error('Error al obtener documentos:', error);
@@ -454,7 +455,8 @@ exports.get_editar_seguimiento = async (req, res) => {
       res.render('editarSeguimiento', {
           seguimiento,
           objetivos: objetivos || [],
-          expediente
+          expediente,
+          user: req.user
       });
   } catch (err) {
       console.error('Error al obtener seguimiento:', err);
@@ -546,7 +548,7 @@ exports.get_registrar_seguimiento = async (req, res) => {
         // Desencriptar expediente
         expediente = desencriptarExpediente(expediente);
         
-        res.render('registrarSeguimiento', { expediente });
+        res.render('registrarSeguimiento', { expediente, user: req.user });
     } catch (error) {
         console.error('Error al obtener la información:', error.message);
         res.status(500).send('Error al obtener la información');
@@ -683,7 +685,7 @@ exports.getPacientesPsicologia = async (req, res) => {
       }
     });
     
-    res.render('psicologia', { pacientes: pacientesDesencriptados });
+    res.render('psicologia', { pacientes: pacientesDesencriptados, user: req.user });
   } catch (error) {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');
