@@ -1,6 +1,5 @@
 const db = require('../util/database');
 const { decrypt } = require('../util/encryptData');
-//Cammelcase
 class Nutricion {
     // Obtener todos los pacientes (excluyendo los eliminados)
     static async obtenerTodos() {
@@ -500,7 +499,7 @@ class Nutricion {
 
             // Insertar en indicadoresClinicos
             await connection.execute(`
-                INSERT INTO indicadoresclinicos (
+                INSERT INTO indicadorEsclinicos (
                     IDExpediente, numSesion, cabello, conjunto, unias, boca, dientes, piel, edema
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `, [
@@ -538,7 +537,7 @@ class Nutricion {
 
             // Insertar en actividadDiaria
             await connection.execute(`
-                INSERT INTO actividaddiaria (
+                INSERT INTO actividadDiaria (
                     IDExpediente, numSesion, ejercicioFisico, fechaInicio, frecuencia
                 ) VALUES (?, ?, ?, ?, ?)
             `, [
@@ -551,7 +550,7 @@ class Nutricion {
 
             // Insertar en diagnosticoEvolucion
             await connection.execute(`
-                INSERT INTO diagnosticoevolucion (
+                INSERT INTO diagnosticoEvolucion (
                     IDExpediente, numSesion, diagnosticoEvolucion
                 ) VALUES (?, ?, ?)
             `, [
@@ -579,7 +578,7 @@ class Nutricion {
                 for (let i = 0; i < data.parametro.length; i++) {
                     if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
                         await connection.execute(`
-                            INSERT INTO indicadoresbioquim (
+                            INSERT INTO indicadoresBioquim (
                                 IDExpediente, numSesion, parametro, valorReferencia, parametroFecha
                             ) VALUES (?, ?, ?, ?, ?)
                         `, [
@@ -598,7 +597,7 @@ class Nutricion {
                 for (let i = 0; i < data.objetivo.length; i++) {
                     if (data.objetivo[i]) {
                         await connection.execute(`
-                            INSERT INTO objetivonutricional (
+                            INSERT INTO objetivoNutricional (
                                 IDExpediente, numSesion, objetivo
                             ) VALUES (?, ?, ?)
                         `, [
@@ -612,7 +611,7 @@ class Nutricion {
 
             // Insertar en manejoNutricional
             await connection.execute(`
-                INSERT INTO manejonutricional (
+                INSERT INTO manejoNutricional (
                     IDExpediente, numSesion, energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `, [
@@ -646,7 +645,7 @@ class Nutricion {
                 for (let i = 0; i < data.parametro.length; i++) {
                     if (data.parametro[i] && data.valorReferencia[i]) {
                         await connection.execute(`
-                            INSERT INTO indicadoresbioquim 
+                            INSERT INTO indicadoresBioquim 
                             (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha)
                             VALUES (?, ?, ?, ?, ?)
                         `, [
@@ -676,7 +675,7 @@ class Nutricion {
 
             // 3. Insertar diagnóstico evolución
             await connection.execute(`
-                INSERT INTO diagnosticoevolucion 
+                INSERT INTO diagnosticoEvolucion 
                 (IDExpediente, numSesion, diagnosticoEvolucion)
                 VALUES (?, ?, ?)
             `, [
@@ -690,7 +689,7 @@ class Nutricion {
                 for (const objetivo of data.objetivosNutricionales) {
                     if (objetivo) {
                         await connection.execute(`
-                            INSERT INTO objetivonutricional 
+                            INSERT INTO objetivoNutricional 
                             (IDExpediente, numSesion, objetivo)
                             VALUES (?, ?, ?)
                         `, [
@@ -704,7 +703,7 @@ class Nutricion {
 
             // 5. Insertar manejo nutricional
             await connection.execute(`
-                INSERT INTO manejonutricional 
+                INSERT INTO manejoNutricional 
                 (IDExpediente, numSesion, energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `, [
@@ -790,7 +789,7 @@ class Nutricion {
                 for (let i = 0; i < data.parametro.length; i++) {
                     if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
                         await connection.execute(
-                            'INSERT INTO indicadoresbioquim (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha) VALUES (?, ?, ?, ?, ?)',
+                            'INSERT INTO indicadoresBioquim (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha) VALUES (?, ?, ?, ?, ?)',
                             [
                                 data.IDExpediente,
                                 data.numSesion,
@@ -814,7 +813,7 @@ class Nutricion {
             if (data.objetivo) {
                 for (const obj of data.objetivo) {
                     await connection.execute(
-                        'INSERT INTO objetivonutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
+                        'INSERT INTO objetivoNutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
                         [data.IDExpediente, data.numSesion, obj]
                     );
                 }
@@ -973,7 +972,7 @@ class Nutricion {
             if (data.objetivo && Array.isArray(data.objetivo)) {
                 for (const objetivo of data.objetivo) {
                     await connection.execute(
-                        'INSERT INTO objetivonutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
+                        'INSERT INTO objetivoNutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
                         [data.IDExpediente, data.numSesion, objetivo]
                     );
                 }
