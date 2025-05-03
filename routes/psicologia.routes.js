@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-
-const canDescargarPDF = require('../util/can-descargarPDF');
+//PDF EN MINUSCULAS
+const canDescargarPDF = require('../util/can-descargarPdf');
 const canAgregarArchivosAdjuntos = require('../util/can-agregarArchivosAdjuntos');
-const canGenerarPDF = require('../util/can-generarPDF');
+const canGenerarPDF = require('../util/can-generarPdf');
 const canConsultarPaciente = require('../util/can-consultarPaciente');
 const canEliminarArchivosAdjunto = require('../util/can-eliminarArchivosAdjunto');
 const canConsultarExpedientePsicologico = require('../util/can-consultarExpedientePsicologico');
