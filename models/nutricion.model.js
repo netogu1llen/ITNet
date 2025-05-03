@@ -221,24 +221,20 @@ class Nutricion {
         }
     }
     
-    static async obtenermanejoNutricionalPorSesion(idExpediente, numSesion) {
+    static async obtenerManejoNutricionalPorSesion(IDExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
-                SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
-                FROM manejoNutricional
+                SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua 
+                FROM manejoNutricional 
                 WHERE IDExpediente = ? AND numSesion = ?
-                LIMIT 1
-            `, [idExpediente, numSesion]);
-            
-            return rows.length > 0 ? rows[0] : null;
+            `, [IDExpediente, numSesion]);
+            return rows[0];
         } catch (error) {
-            console.error('Error al obtener manejo nutricional por sesión:', error);
+            console.error('Error al obtener manejo nutricional:', error);
             throw error;
         }
     }
-
-    // Obtener manejo nutricional
-    static async obtenermanejoNutricional(idExpediente) {
+    static async obtenerManejoNutricional(idExpediente) {
         try {
             // Obtener la última sesión de manejoNutricional
             const [ultimaSesionRows] = await db.execute(`
@@ -251,7 +247,14 @@ class Nutricion {
             
             if (!ultimaSesion) {
                 return {
-                    manejoNutricional: null
+                    manejoNutricional: {
+                        energia: 'No registrado',
+                        proteinas: 'No registrado',
+                        hidratosDeCarbono: 'No registrado',
+                        lipidos: 'No registrado',
+                        fibra: 'No registrado',
+                        agua: 'No registrado'
+                    }
                 };
             }
             
@@ -262,11 +265,18 @@ class Nutricion {
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [idExpediente, ultimaSesion]);
             
-            // Preparar la respuesta
             return {
-                manejoNutricional: manejoRows.length > 0 ? manejoRows[0] : null
+                manejoNutricional: manejoRows[0] || {
+                    energia: 'No registrado',
+                    proteinas: 'No registrado',
+                    hidratosDeCarbono: 'No registrado',
+                    lipidos: 'No registrado',
+                    fibra: 'No registrado',
+                    agua: 'No registrado'
+                }
             };
         } catch (error) {
+            console.error('Error al obtener manejo nutricional:', error);
             throw error;
         }
     }
@@ -1021,46 +1031,35 @@ class Nutricion {
         }
     }
 
-    static async obtenerevaluacionAntropometrica(IDExpediente, numSesion) {
+    static async obtenerEvaluacionAntropometrica(IDExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
                 SELECT talla, peso, circunferenciaCintura, circunferenciaCadera 
                 FROM evaluacionAntropometrica 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
-            return rows;
+            return rows[0];
         } catch (error) {
+            console.error('Error al obtener evaluación antropométrica:', error);
             throw error;
         }
     }
 
-    static async obtenerdiagnosticoEvolucion(IDExpediente, numSesion) {
+    static async obtenerDiagnosticoEvolucion(IDExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
                 SELECT diagnosticoEvolucion 
                 FROM diagnosticoEvolucion 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
-            return rows;
+            return rows[0];
         } catch (error) {
+            console.error('Error al obtener diagnóstico evolución:', error);
             throw error;
         }
     }
 
-    static async obtenerObjetivosNutricionales(IDExpediente, numSesion) {
-        try {
-            const [rows] = await db.execute(`
-                SELECT objetivo 
-                FROM objetivoNutricional 
-                WHERE IDExpediente = ? AND numSesion = ?
-            `, [IDExpediente, numSesion]);
-            return rows;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    static async obtenerindicadoresBioquimicos(IDExpediente, numSesion) {
+    static async obtenerIndicadoresBioquimicos(IDExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
                 SELECT parametro, valorReferencia, parametroFecha 
@@ -1069,6 +1068,23 @@ class Nutricion {
             `, [IDExpediente, numSesion]);
             return rows;
         } catch (error) {
+            console.error('Error al obtener indicadores bioquímicos:', error);
+            throw error;
+        }
+    }
+
+    static async obtenerObjetivosNutricionales(IDExpediente, numSesion) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT IDobjetivoNutricional, objetivo 
+                FROM objetivoNutricional 
+                WHERE IDExpediente = ? AND numSesion = ?
+                AND (eliminado IS NULL OR eliminado = 0)
+            `, [IDExpediente, numSesion]);
+
+            return rows || [];
+        } catch (error) {
+            console.error('Error al obtener objetivos nutricionales:', error);
             throw error;
         }
     }

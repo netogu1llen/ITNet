@@ -13,9 +13,8 @@ const canRegistarHistorialClinicoVer2 = require('../util/can-registrarHistorialC
 const canEditarHistorialClinicoVer2 = require('../util/can-editarHistorialClinicoVer2');
 const canEliminarHistorialClinicoVer2 = require('../util/can-eliminarHistorialClinicoVer2');
 
-
+// Importar el controlador de nutrición
 const nutricionController = require('../controllers/nutricion.controller');
-
 // Ruta para obtener la vista y los historiales clínicos
 router.get('/', canConsultarExpedienteNutricional, nutricionController.obtenerHistoriales);
 
