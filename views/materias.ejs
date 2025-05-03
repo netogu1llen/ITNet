@@ -1,0 +1,157 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/styles.css">
+
+<section class="section">
+  <div class="container">
+    <h1 class="title is-4">Materias Registradas</h1>
+
+    <div id="TopBar" class="dt-top-bar exp-psicologico-wide"></div>
+
+    <div class="exp-psicologico-wide fixed-height">
+      <table id="materiasTable" class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th class="has-text-centered">Materia</th>
+            <th class="has-text-centered">Grado</th>
+            <th class="has-text-centered">Nivel Escolar</th>
+            <th class="has-text-centered">Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% materias.forEach(m => { %>
+            <tr data-id="<%= m.IDMateria %>">
+              <td><%= m.materia %></td>
+              <td><%= m.grado %>°</td>
+              <td><%= m.nvEscolar %></td>
+              <td>
+                <button
+                  class="button is-danger is-small btn-eliminar"
+                  data-id="<%= m.IDMateria %>">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Modal para registrar nueva materia -->
+<div id="modalRegistrar" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Registrar Materia</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <form id="registrarForm">
+        <div class="field">
+          <label class="label">Nombre de la materia</label>
+          <div class="control">
+            <input class="input" type="text" name="materia" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Grado</label>
+          <div class="select is-fullwidth">
+            <select name="grado" required>
+              <option value="">Selecciona un grado</option>
+              <option value="1">1°</option>
+              <option value="2">2°</option>
+              <option value="3">3°</option>
+              <option value="4">4°</option>
+              <option value="5">5°</option>
+              <option value="6">6°</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Nivel Escolar</label>
+          <div class="select is-fullwidth">
+            <select name="nvEscolar" required>
+              <option value="">Selecciona nivel escolar</option>
+              <option value="Preescolar">Preescolar</option>
+              <option value="Primaria">Primaria</option>
+              <option value="Secundaria">Secundaria</option>
+              <option value="Preparatoria">Preparatoria</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot">
+      <button type="submit" class="button is-primary" form="registrarForm">
+        Guardar
+      </button>
+      <button class="button is-cancel">Cancelar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal para modificar materia -->
+<div id="modalModificar" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Modificar Materia</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <form id="modificarForm">
+        <input type="hidden" name="idMateria">
+
+        <div class="field">
+          <label class="label">Nombre de la materia</label>
+          <div class="control">
+            <input class="input" type="text" name="materia" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Grado</label>
+          <div class="select is-fullwidth">
+            <select name="grado" required>
+              <option value="">Selecciona un grado</option>
+              <option value="1">1°</option>
+              <option value="2">2°</option>
+              <option value="3">3°</option>
+              <option value="4">4°</option>
+              <option value="5">5°</option>
+              <option value="6">6°</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Nivel Escolar</label>
+          <div class="select is-fullwidth">
+            <select name="nvEscolar" required>
+              <option value="">Selecciona nivel escolar</option>
+              <option value="Preescolar">Preescolar</option>
+              <option value="Primaria">Primaria</option>
+              <option value="Secundaria">Secundaria</option>
+              <option value="Preparatoria">Preparatoria</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot">
+      <button type="submit" class="button is-primary" form="modificarForm">
+        Guardar cambios
+      </button>
+      <button class="button is-cancel">Cancelar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="/vendor/jquery-3.6.0.min.js"></script>
+<script src="/vendor/jquery.dataTables.min.js"></script>
+<script src="/vendor/sweetalert2/sweetalert2.all.min.js"></script>
+<script src="/js/materias.js"></script>

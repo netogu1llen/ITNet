@@ -1,0 +1,44 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/styles.css">
+
+<section class="section">
+  <div class="container">
+    <h1 class="title">Pacientes</h1>
+
+    <!-- Contenedor para la barra superior -->
+    <div id="pacientesTopBar" class="dt-top-bar">
+      <!-- La imagen, el selector de registros, la barra de búsqueda y el botón de registrar se agregarán dinámicamente desde pacientes.js -->
+    </div>
+
+    <!-- Tabla -->
+    <div style="width: 100%; height: 900px;">
+      <table id="pacientesTable" class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th>Nombre Completo</th>
+            <th>Fecha de Nacimiento</th>
+            <th>Nivel Escolar</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% pacientes.forEach(paciente => { %>
+            <tr class="fila-paciente" data-id="<%= paciente.IDExpediente %>">
+              <td><%= paciente.nombreCompleto %></td>
+              <td><%= paciente.fechaNacimiento %></td>
+              <td><%= paciente.nvEscolar || 'Sin nivel registrado' %></td>
+              <td>
+                <button class="button is-small is-danger btn-eliminar" data-id="<%= paciente.IDExpediente %>">Eliminar</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Scripts -->
+<script src="/vendor/jquery-3.6.0.min.js"></script>
+<script src="/vendor/jquery.dataTables.min.js"></script>
+<script src="/js/pacientes.js"></script>

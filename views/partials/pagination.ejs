@@ -1,0 +1,23 @@
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+   <!-- partials/pagination.ejs -->
+  <nav class="pagination is-centered" role="navigation" aria-label="pagination" style="justify-content: center; margin-top: 50px;">
+    <a class="pagination-previous" id="pagina-anterior" style="margin-left: 20%;">Anterior</a>
+    <a class="pagination-next" id="pagina-siguiente" style="margin-right: 100px;">Siguiente</a>
+    <ul class="pagination-list" id="pagination-list">
+      <% for(let i = 1; i <= totalPaginas; i++) { %>
+        <li>
+          <a class="pagination-link <%= paginaActual === i ? 'is-current' : '' %>" 
+            aria-label="Goto page <%= i %>"
+            data-pagina="<%= i %>">
+            <%= i %>
+          </a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+  
+  <script src="<%= process.env.PATH_SERVER %>js/pagination.js"></script> 
+</body>

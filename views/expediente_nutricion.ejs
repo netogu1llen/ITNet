@@ -1,0 +1,339 @@
+<%- include('partials/head') %>
+<link rel="stylesheet" href="/styles.css">
+
+<section class="section">
+    <div class="container">
+      <!-- Título principal -->
+      <h1 class="title">Expediente Nutrición</h1>
+  
+      <!-- Barra superior personalizada -->
+      <div id="TopBar" class="exp-psicologico-wide" style="margin-bottom: 0px;">
+        <!-- Aquí se inyectará dinámicamente la barra superior desde JS -->
+      </div>
+      
+      <!-- Primera fila: Información general + Manejo Nutricional -->
+      <div class="columns row-equal-height row-container is-marginless" style="width: 100%;">
+        <!-- Información general del paciente -->
+        <div class="column is-half" style="padding-right: 15px;">
+          <div class="full-white-container exp-psicologico-wide" style="height: 250px;"> <!-- Altura reducida -->
+            <h2 class="title-letters">Información General del Paciente</h2>
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 50px);">
+              <div class="content-scroll" style="text-align: center;">
+                <!-- Primera fila con información del paciente -->
+                <div class="multirow-container">
+                  <div class="element-container">
+                    <h2 class="basic-gray">Nombre Completo</h2>
+                    <h2 class="basic-black"><%= datosGeneralesPaciente.nombres + " " + datosGeneralesPaciente.apellidoP + " " + datosGeneralesPaciente.apellidoM %></h2>
+                  </div>
+                  <div class="element-container">
+                    <h2 class="basic-gray">Sexo</h2>
+                    <h2 class="basic-black"><%= datosGeneralesPaciente.sexo %></h2>
+                  </div>
+                  <div class="element-container">
+                    <h2 class="basic-gray">Fecha de Nacimiento</h2>
+                    <h2 class="basic-black"><%= datosGeneralesPaciente.fechaNacimiento %></h2>
+                  </div>
+                </div>
+                
+                <!-- Segunda fila con más información del paciente -->
+                <div class="multirow-container">
+                  <div class="element-container">
+                    <h2 class="basic-gray">Edad</h2>
+                    <h2 class="basic-black"><%= datosGeneralesPaciente.edadPaciente + " años" %></h2>
+                  </div>
+                  <div class="element-container">
+                    <h2 class="basic-gray">Teléfono</h2>
+                    <h2 class="basic-black"><%= datosGeneralesPaciente.telefono %></h2>
+                  </div>
+                  <div class="element-container">
+                    <h2 class="basic-gray">Tipo de Sangre</h2>
+                    <h2 class="basic-black"><%= datosGeneralesPaciente.tipoSangre %></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+                <!-- Manejo Nutricional -->
+    <div class="column is-half" style="padding-left: 15px;">
+      <div class="full-white-container exp-psicologico-wide" style="min-height: 250px;"> <!-- Cambiado height por min-height -->
+        <h2 class="title-letters">Manejo Nutricional</h2>
+        <!-- Reducido padding inferior y altura calculada para ajustar espacio -->
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 60px); padding: 15px 0 5px 0;"> 
+          <!-- Primera fila - 3 elementos -->
+          <div class="multirow-container" style="text-align: center; margin-bottom: 15px;"> <!-- Reducido margen inferior -->
+              <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Energía</h3>
+                <!-- Muestra directamente el valor (asumiendo que ya incluye la unidad) -->
+                <p><%= manejoNutricional && manejoNutricional.energia ? manejoNutricional.energia : "Sin registro" %></p> 
+                </div>
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Proteínas</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.proteinas ? manejoNutricional.proteinas : "Sin registro" %></p> 
+                </div>
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Hidratos de C.</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.hidratosDeCarbono ? manejoNutricional.hidratosDeCarbono : "Sin registro" %></p> 
+                </div>
+            </div>
+            
+            <!-- Segunda fila - 3 elementos -->
+            <!-- Reducido margen inferior -->
+            <div class="multirow-container" style="text-align: center; margin-bottom: 10px;"> 
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Lípidos</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.lipidos ? manejoNutricional.lipidos : "Sin registro" %></p> 
+                </div>
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Fibra</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.fibra ? manejoNutricional.fibra : "Sin registro" %></p> 
+                </div>
+                <div class="element-container" style="margin: 0 20px;">
+                <h3 class="basic-gray">Agua</h3>
+                <!-- Muestra directamente el valor -->
+                <p><%= manejoNutricional && manejoNutricional.agua ? manejoNutricional.agua : "Sin registro" %></p> 
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  
+      <!-- Segunda fila: Antecedentes (ancho completo) -->
+      <div class="columns row-container is-marginless" style="width: 100%; margin-top: 20px;"> <!-- Añadido margen superior -->
+        <!-- Antecedentes del paciente -->
+        <div class="column is-full" style="padding: 0;"> <!-- Ocupa todo el ancho y sin padding -->
+          <div class="full-white-container exp-psicologico-wide">
+            <h2 class="title-letters">Antecedentes del Paciente</h2>
+            <div class="content-scroll">
+              <div class="multirow-container">
+                <!-- Antecedentes heredofamiliares -->
+                <div class="element-container">
+                  <h2 class="basic-gray">Antecedentes Heredofamiliares</h2>
+                  <div class="multirow-container">
+                    <div class="element-container">
+                      <h3 class="basic-gray">Diabetes</h3>
+                      <p><%= antecedentesHeredofamiliares.diabetes %></p>
+                    </div>
+                    <div class="element-container">
+                      <h3 class="basic-gray">Cáncer</h3>
+                      <p><%= antecedentesHeredofamiliares.cancer %></p>
+                    </div>
+                  </div>
+                  <div class="multirow-container">  
+                    <div class="element-container">
+                      <h3 class="basic-gray">Dislipidemia</h3>
+                      <p><%= antecedentesHeredofamiliares.dislipidemia %></p>
+                    </div>
+                    <div class="element-container">
+                      <h3 class="basic-gray">Obesidad</h3>
+                      <p><%= antecedentesHeredofamiliares.obesidad %></p>
+                    </div>
+                  </div>
+                  <div class="multirow-container">
+                    <div class="element-container">
+                      <h3 class="basic-gray">Anemia</h3>
+                      <p><%= antecedentesHeredofamiliares.anemia %></p>
+                    </div>
+                    <div class="element-container">
+                      <h3 class="basic-gray">Hipertensión Arterial</h3>
+                      <p><%= antecedentesHeredofamiliares.hipertensionArterial %></p>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Datos Antropométricos -->
+                <div class="element-container">
+                  <h2 class="basic-gray">Datos Antropométricos</h2>
+                  <div class="multirow-container">
+                    <div class="element-container">
+                      <h3 class="basic-gray">Peso</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.peso !== 'No registrado' ? datosAntropometricos.peso + " kg" : "No registrado" %></p>
+                    </div>
+                    <div class="element-container">
+                      <h3 class="basic-gray">Talla</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.talla !== 'No registrado' ? datosAntropometricos.talla + " cm" : "No registrado" %></p>
+                    </div>
+                  </div>
+                  <div class="multirow-container">
+                    <div class="element-container">
+                      <h3 class="basic-gray">IMC</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.imc !== 'No registrado' ? datosAntropometricos.imc + " kg/m²" : "No registrado" %></p>
+                    </div>
+                    <div class="element-container">
+                      <h3 class="basic-gray">Circunferencia Cintura</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.circunferenciaCintura !== 'No registrado' ? datosAntropometricos.circunferenciaCintura + " cm" : "No registrado" %></p>
+                    </div>
+                  </div>
+                  <div class="multirow-container">
+                    <div class="element-container">
+                      <h3 class="basic-gray">Circunferencia Cadera</h3>
+                      <p><%= datosAntropometricos && datosAntropometricos.circunferenciaCadera !== 'No registrado' ? datosAntropometricos.circunferenciaCadera + " cm" : "No registrado" %></p>
+                    </div>
+                    <div class="element-container">
+                      <h3 class="basic-gray">Índice Cintura-Cadera</h3>
+                      <p>No registrado</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+     <!-- Documentos/Historiales del paciente (fila completa) -->
+<div class="full-white-container exp-psicologico-wide" style="margin-top: 20px;">
+    <h2 class="title-letters">Documentos e Historiales</h2>
+    <div style="width: 100%; height: auto; padding: 10px 0;">
+      <table id="documentosTable" class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th>Tipo de Documento</th>
+            <th>Fecha de Creación</th>
+            <th>Descargar</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (documentosHistorial && documentosHistorial.length > 0) { %>
+            <% documentosHistorial.forEach(doc => { %>
+            <tr class="fila-documento" 
+                data-id="<%= doc.id %>" 
+                data-tipo="<%= doc.tipo %>"
+                data-sesion="<%= doc.numSesion %>">
+              <td>
+                <% if (doc.tipo === 'PDF') { %>
+                  <span class="icon-text">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf" style="color: #e2423b;"></i>
+                    </span>
+                    <span><%= doc.nombre %></span>
+                  </span>
+                <% } else if (doc.tipo === 'NUTRICIONAL_V1') { %>
+                  <span class="icon-text">
+                    <span class="icon">
+                      <i class="fas fa-clipboard-list" style="color: #23a094;"></i>
+                    </span>
+                    <span><%= doc.nombre %></span>
+                  </span>
+                <% } else if (doc.tipo === 'NUTRICIONAL_V2') { %>
+                    <div class="mt-2">
+                        <strong>Sesión:</strong> <%= doc.numSesion %><br>
+                        <% if (doc.objetivo) { %>
+                            <strong>Objetivo:</strong> <%= doc.objetivo %><br>
+                        <% } %>
+                        <% if (doc.energia) { %>
+                            <strong>Energía:</strong> <%= doc.energia %> kcal<br>
+                        <% } %>
+                    </div>
+                <% } %>
+              </td>
+              <td><%= doc.fechaFormateada %></td>
+              <td>
+                <span class="btn-descargar" 
+                    data-id="<%= doc.id %>" 
+                    data-tipo="<%= doc.tipo %>"
+                    data-num-sesion="<%= doc.numSesion %>"
+                    data-expediente="<%= expediente.IDExpediente %>"
+                    style="cursor: pointer;">
+                    <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
+                </span>
+              </td>
+              <td>
+                <% if (doc.tipo !== 'NUTRICIONAL_V1') { %>
+                  <button class="button is-small is-danger btn-eliminar" data-id="<%= doc.id %>" data-tipo="<%= doc.tipo %>">Eliminar</button>
+                <% } else { %>
+                  <span></span>
+                <% } %>
+              </td>
+            </tr>
+            <% }); %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+    <!-- MODAL DE VISTA PREVIA DEL DOCUMENTO -->
+    <div id="modalVistaPreviaDocumento" class="modal" style="display: none; z-index: 1050;">
+      <div class="modal-background"></div>
+      <div class="modal-content" style="width: 80%; height: 80%;">
+          <div class="box p-0" style="width: 100%; height: 100%; overflow: hidden;">
+              <iframe id="iframeVistaPreviaDocumento" width="100%" height="100%" style="border: none;"></iframe>
+          </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close"></button>
+  </div>
+<!-- Modal Subir Documento - VERSIÓN MEJORADA -->
+<div id="modalSubirDocumento" class="modal" style="display: none; z-index: 1050;">
+  <!-- Fondo oscuro -->
+  <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
+
+  <!-- Contenedor del modal -->
+  <div class="modal-card" style="width: 450px;">
+    <!-- Cabecera con botón de cierre -->
+    <header class="modal-card-head" style="border-bottom: none; justify-content: flex-end; background-color: white;">
+      <button class="delete" aria-label="close"></button>
+    </header>
+
+    <!-- Cuerpo del modal -->
+    <section class="modal-card-body" style="text-align: center;">
+      <h1 class="title is-4">Subir Documentos</h1>
+      <p class="subtitle is-6" style="margin-bottom: 25px;">
+        Seleccione uno o varios archivos PDF para subir.<br>
+        Los documentos se guardarán con sus nombres originales.
+      </p>
+
+      <!-- Formulario -->
+      <form id="subirDocumentoForm" enctype="multipart/form-data" method="POST">
+        <!-- Archivo -->
+        <div class="field">
+          <div class="file has-name is-fullwidth">
+            <label class="file-label">
+              <input class="file-input" type="file" name="archivosDocumento" accept=".pdf" multiple required>
+              <span class="file-cta">
+                <span class="file-label">Elegir archivos</span>
+              </span>
+              <span class="file-name" id="nombreArchivo">No hay archivos seleccionados</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Lista de archivos seleccionados -->
+        <div class="field">
+          <div id="listaArchivosSeleccionados" class="content" style="text-align: left; max-height: 150px; overflow-y: auto; margin-top: 10px;"></div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="modal-card-foot" style="justify-content: center; background-color: white;">
+      <button type="button" class="button is-cancel">Cancelar</button>
+      <button type="submit" form="subirDocumentoForm" class="button is-save">Subir</button>
+    </footer>
+  </div>
+</div>
+  
+  <!-- Modal de carga -->
+  <div id="loadingModal" class="modal" style="display:none;">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+      <div class="box has-text-centered">
+        <p class="title is-4 mb-3" id="loadingModalTitle">Procesando...</p>
+        <progress class="progress is-primary" max="100"></progress>
+        <p id="loadingModalMessage" class="mt-3">Por favor espere mientras se procesa su solicitud.</p>
+      </div>
+    </div>
+  </div>
+  
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/jquery.dataTables.min.js"></script>
+  <script src="/js/expedienteNutricion.js"></script>
