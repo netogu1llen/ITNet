@@ -1,6 +1,6 @@
 const db = require('../util/database');
 const { decrypt } = require('../util/encryptData');
-
+//Cammelcase
 class Nutricion {
     // Obtener todos los pacientes (excluyendo los eliminados)
     static async obtenerTodos() {
@@ -127,6 +127,7 @@ class Nutricion {
                 };
             }
             
+
             return {
                 peso: antropometricosRows[0].peso || 'No registrado',
                 talla: antropometricosRows[0].talla || 'No registrado',
@@ -224,7 +225,7 @@ class Nutricion {
         try {
             const [rows] = await db.execute(`
                 SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
-                FROM manejonutricional
+                FROM manejoNutricional
                 WHERE IDExpediente = ? AND numSesion = ?
                 LIMIT 1
             `, [idExpediente, numSesion]);
@@ -300,7 +301,7 @@ class Nutricion {
                     'NUTRICIONAL_V2' as tipo,
                     o.numSesion,
                     o.objetivo
-                FROM objetivonutricional o
+                FROM objetivoNutricional o
                 WHERE o.IDExpediente = ? AND (o.eliminado IS NULL OR o.eliminado = 0)
                 ORDER BY o.fecha DESC
             `, [idExpediente]);
@@ -349,19 +350,19 @@ class Nutricion {
         try {
             // Obtener diagnóstico evolución
             const [diagnosticoEvolucion] = await connection.execute(
-                'SELECT diagnosticoEvolucion FROM diagnosticoevolucion WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT diagnosticoEvolucion FROM diagnosticoEvolucion WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
             // Obtener objetivos nutricionales
             const [objetivoNutricional] = await connection.execute(
-                'SELECT objetivo FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT objetivo FROM objetivoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
             // Resto de las consultas existentes
             const [indicadoresBioquim] = await connection.execute(
-                'SELECT parametro, valorReferencia, parametroFecha FROM indicadoresbioquim WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT parametro, valorReferencia, parametroFecha FROM indicadoresBioquim WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
@@ -371,7 +372,7 @@ class Nutricion {
             );
 
             const [manejoNutricional] = await connection.execute(
-                'SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua FROM manejonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua FROM manejoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
@@ -780,7 +781,7 @@ class Nutricion {
             // Actualizar indicadores bioquímicos
             // Primero eliminar los existentes
             await connection.execute(
-                'DELETE FROM indicadoresbioquim WHERE IDExpediente = ? AND numSesion = ?',
+                'DELETE FROM indicadoresBioquim WHERE IDExpediente = ? AND numSesion = ?',
                 [data.IDExpediente, data.numSesion]
             );
     
@@ -805,7 +806,7 @@ class Nutricion {
             // Actualizar objetivos nutricionales
             // Primero eliminar los existentes
             await connection.execute(
-                'DELETE FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'DELETE FROM objetivoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [data.IDExpediente, data.numSesion]
             );
     
@@ -863,7 +864,7 @@ class Nutricion {
             );
 
             const [indicadoresClinicos] = await db.execute(
-                'SELECT * FROM indicadoresclinicos WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM indicadoresClinicos WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -878,7 +879,7 @@ class Nutricion {
             );
 
             const [diagnosticoEvolucion] = await db.execute(
-                'SELECT * FROM diagnosticoevolucion WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM diagnosticoEvolucion WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -888,7 +889,7 @@ class Nutricion {
             );
 
             const [manejoNutricional] = await db.execute(
-                'SELECT * FROM manejonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM manejoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -898,7 +899,7 @@ class Nutricion {
             );
 
             const [objetivoNutricional] = await db.execute(
-                'SELECT objetivo FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT objetivo FROM objetivoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -965,7 +966,7 @@ class Nutricion {
 
             // Actualizar objetivoNutricional
             await connection.execute(
-                'DELETE FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'DELETE FROM objetivoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [data.IDExpediente, data.numSesion]
             );
 
@@ -1037,7 +1038,7 @@ class Nutricion {
         try {
             const [rows] = await db.execute(`
                 SELECT diagnosticoEvolucion 
-                FROM diagnosticoevolucion 
+                FROM diagnosticoEvolucion 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
             return rows;
@@ -1050,7 +1051,7 @@ class Nutricion {
         try {
             const [rows] = await db.execute(`
                 SELECT objetivo 
-                FROM objetivonutricional 
+                FROM objetivoNutricional 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
             return rows;
@@ -1063,7 +1064,7 @@ class Nutricion {
         try {
             const [rows] = await db.execute(`
                 SELECT parametro, valorReferencia, parametroFecha 
-                FROM indicadoresbioquim 
+                FROM indicadoresBioquim 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
             return rows;
