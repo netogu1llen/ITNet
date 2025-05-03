@@ -1,5 +1,6 @@
 const db = require('../util/database');
 const { decrypt } = require('../util/encryptData');
+//cammel
 class Nutricion {
     // Obtener todos los pacientes (excluyendo los eliminados)
     static async obtenerTodos() {
@@ -220,7 +221,7 @@ class Nutricion {
         }
     }
     
-    static async obtenerManejoNutricionalPorSesion(idExpediente, numSesion) {
+    static async obtenermanejoNutricionalPorSesion(idExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
                 SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
@@ -237,7 +238,7 @@ class Nutricion {
     }
 
     // Obtener manejo nutricional
-    static async obtenerManejoNutricional(idExpediente) {
+    static async obtenermanejoNutricional(idExpediente) {
         try {
             // Obtener la última sesión de manejoNutricional
             const [ultimaSesionRows] = await db.execute(`
@@ -294,7 +295,7 @@ class Nutricion {
             // Actualizar la consulta de objetivos nutricionales (V2)
             const [objetivosRows] = await db.execute(`
                 SELECT 
-                    o.IDObjetivoNutricional as ID, 
+                    o.IDobjetivoNutricional as ID, 
                     'Historial Clínico V2' as nombre,
                     o.fecha,
                     'NUTRICIONAL_V2' as tipo,
@@ -343,7 +344,7 @@ class Nutricion {
         }
     }
 
-    // Cambiar de obtenerObjetivoNutricionalPorId a obtenerHistorialNutricionalV2PorId
+    // Cambiar de obtenerobjetivoNutricionalPorId a obtenerHistorialNutricionalV2PorId
     static async obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion) {
         const connection = await db.getConnection();
         try {
@@ -438,9 +439,9 @@ class Nutricion {
     static async eliminarHistorialV2(id) {
         try {
             const [result] = await db.execute(`
-                UPDATE objetivonutricional
+                UPDATE objetivoNutricional
                 SET eliminado = 1
-                WHERE IDObjetivoNutricional = ?
+                WHERE IDobjetivoNutricional = ?
             `, [id]);
             return result;
         } catch (error) {
@@ -499,7 +500,7 @@ class Nutricion {
 
             // Insertar en indicadoresClinicos
             await connection.execute(`
-                INSERT INTO indicadorEsclinicos (
+                INSERT INTO indicadoresClinicos (
                     IDExpediente, numSesion, cabello, conjunto, unias, boca, dientes, piel, edema
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `, [
@@ -751,7 +752,7 @@ class Nutricion {
     
             // Actualizar diagnóstico evolución
             await connection.execute(`
-                UPDATE diagnosticoevolucion 
+                UPDATE diagnosticoEvolucion 
                 SET diagnosticoEvolucion = ?
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [
@@ -762,7 +763,7 @@ class Nutricion {
     
             // Actualizar manejo nutricional
             await connection.execute(`
-                UPDATE manejonutricional 
+                UPDATE manejoNutricional 
                 SET energia = ?, hidratosDeCarbono = ?, lipidos = ?, 
                     proteinas = ?, fibra = ?, agua = ?
                 WHERE IDExpediente = ? AND numSesion = ?
@@ -839,7 +840,7 @@ class Nutricion {
                 LEFT JOIN evaluacionAntropometrica ea 
                     ON n.IDExpediente = ea.IDExpediente 
                     AND n.numSesion = ea.numSesion
-                LEFT JOIN manejonutricional mn 
+                LEFT JOIN manejoNutricional mn 
                     ON n.IDExpediente = mn.IDExpediente 
                     AND n.numSesion = mn.numSesion
                 WHERE n.IDExpediente = ? 
@@ -873,7 +874,7 @@ class Nutricion {
             );
 
             const [actividadDiaria] = await db.execute(
-                'SELECT * FROM actividaddiaria WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM actividadDiaria WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -928,12 +929,12 @@ class Nutricion {
             // Actualizar cada tabla
             const tablas = [
                 { nombre: 'nutricional1', campos: ['diabetes', 'cancer', 'dislipidemia', 'obesidad', 'anemia', 'hipertensionArterial', 'pesoNacer', 'tallaNacer', 'alimentacionRecibida', 'sdg', 'tipoParto', 'complicaciones', 'lactancia', 'tiempo', 'edadAlimentacionComplementaria', 'alimentosPrimerAnio'] },
-                { nombre: 'indicadoresclinicos', campos: ['cabello', 'conjunto', 'unias', 'boca', 'dientes', 'piel', 'edema'] },
+                { nombre: 'indicadoresClinicos', campos: ['cabello', 'conjunto', 'unias', 'boca', 'dientes', 'piel', 'edema'] },
                 { nombre: 'transtornos', campos: ['vomito', 'reflujo', 'disfagia', 'diarrea', 'flatulencias', 'estrenimiento', 'distencion', 'colitis', 'pirosis', 'gastritis', 'otro'] },
-                { nombre: 'actividaddiaria', campos: ['ejercicioFisico', 'fechaInicio', 'frecuencia'] },
-                { nombre: 'diagnosticoevolucion', campos: ['diagnosticoEvolucion'] },
+                { nombre: 'actividadDiaria', campos: ['ejercicioFisico', 'fechaInicio', 'frecuencia'] },
+                { nombre: 'diagnosticoEvolucion', campos: ['diagnosticoEvolucion'] },
                 { nombre: 'evaluacionAntropometrica', campos: ['talla', 'peso', 'circunferenciaCintura', 'circunferenciaCadera'] },
-                { nombre: 'manejonutricional', campos: ['energia', 'hidratosDeCarbono', 'lipidos', 'proteinas', 'fibra', 'agua'] }
+                { nombre: 'manejoNutricional', campos: ['energia', 'hidratosDeCarbono', 'lipidos', 'proteinas', 'fibra', 'agua'] }
             ];
 
             for (const tabla of tablas) {
@@ -1020,7 +1021,7 @@ class Nutricion {
         }
     }
 
-    static async obtenerEvaluacionAntropometrica(IDExpediente, numSesion) {
+    static async obtenerevaluacionAntropometrica(IDExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
                 SELECT talla, peso, circunferenciaCintura, circunferenciaCadera 
@@ -1033,7 +1034,7 @@ class Nutricion {
         }
     }
 
-    static async obtenerDiagnosticoEvolucion(IDExpediente, numSesion) {
+    static async obtenerdiagnosticoEvolucion(IDExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
                 SELECT diagnosticoEvolucion 
@@ -1059,7 +1060,7 @@ class Nutricion {
         }
     }
 
-    static async obtenerIndicadoresBioquimicos(IDExpediente, numSesion) {
+    static async obtenerindicadoresBioquimicos(IDExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
                 SELECT parametro, valorReferencia, parametroFecha 
