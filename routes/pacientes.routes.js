@@ -5,9 +5,9 @@ const canConsultarPacientes = require('../util/can-consultarPacientes');
 const canRegistrarPaciente = require('../util/can-registrarPaciente');
 const canEditarPacientes = require('../util/can-editarPaciente');
 const canEliminarPacientes = require('../util/can-eliminarPaciente');
-const canDescargarPDF = require('../util/can-descargarPDF');
+const canDescargarPDF = require('../util/can-descargarPdf');
 const canAgregarArchivosAdjuntos = require('../util/can-agregarArchivosAdjuntos');
-const canGenerarPDF = require('../util/can-generarPDF');
+const canGenerarPDF = require('../util/can-generarPdf');
 const canConsultarPaciente = require('../util/can-consultarPaciente');
 const canEliminarArchivosAdjunto = require('../util/can-eliminarArchivosAdjunto');
 

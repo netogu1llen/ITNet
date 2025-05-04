@@ -122,7 +122,41 @@
         <label for="direccion">Estado:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="estado" name="estado" maxlength="100" value="<%= datos.estado || '' %>"><br>
+          <select id="estado" name="estado" style="max-height: 100px; overflow-y: auto;">
+            <option value="">Seleccione un estado</option>
+            <option value="Aguascalientes" <%= datos.estado === "Aguascalientes" ? "selected" : "" %>>Aguascalientes</option>
+            <option value="Baja California" <%= datos.estado === "Baja California" ? "selected" : "" %>>Baja California</option>
+            <option value="Baja California Sur" <%= datos.estado === "Baja California Sur" ? "selected" : "" %>>Baja California Sur</option>
+            <option value="Campeche" <%= datos.estado === "Campeche" ? "selected" : "" %>>Campeche</option>
+            <option value="Chiapas" <%= datos.estado === "Chiapas" ? "selected" : "" %>>Chiapas</option>
+            <option value="Chihuahua" <%= datos.estado === "Chihuahua" ? "selected" : "" %>>Chihuahua</option>
+            <option value="Ciudad de México" <%= datos.estado === "Ciudad de México" ? "selected" : "" %>>Ciudad de México</option>
+            <option value="Coahuila" <%= datos.estado === "Coahuila" ? "selected" : "" %>>Coahuila</option>
+            <option value="Colima" <%= datos.estado === "Colima" ? "selected" : "" %>>Colima</option>
+            <option value="Durango" <%= datos.estado === "Durango" ? "selected" : "" %>>Durango</option>
+            <option value="Estado de México" <%= datos.estado === "Estado de México" ? "selected" : "" %>>Estado de México</option>
+            <option value="Guanajuato" <%= datos.estado === "Guanajuato" ? "selected" : "" %>>Guanajuato</option>
+            <option value="Guerrero" <%= datos.estado === "Guerrero" ? "selected" : "" %>>Guerrero</option>
+            <option value="Hidalgo" <%= datos.estado === "Hidalgo" ? "selected" : "" %>>Hidalgo</option>
+            <option value="Jalisco" <%= datos.estado === "Jalisco" ? "selected" : "" %>>Jalisco</option>
+            <option value="Michoacán" <%= datos.estado === "Michoacán" ? "selected" : "" %>>Michoacán</option>
+            <option value="Morelos" <%= datos.estado === "Morelos" ? "selected" : "" %>>Morelos</option>
+            <option value="Nayarit" <%= datos.estado === "Nayarit" ? "selected" : "" %>>Nayarit</option>
+            <option value="Nuevo León" <%= datos.estado === "Nuevo León" ? "selected" : "" %>>Nuevo León</option>
+            <option value="Oaxaca" <%= datos.estado === "Oaxaca" ? "selected" : "" %>>Oaxaca</option>
+            <option value="Puebla" <%= datos.estado === "Puebla" ? "selected" : "" %>>Puebla</option>
+            <option value="Querétaro" <%= datos.estado === "Querétaro" ? "selected" : "" %>>Querétaro</option>
+            <option value="Quintana Roo" <%= datos.estado === "Quintana Roo" ? "selected" : "" %>>Quintana Roo</option>
+            <option value="San Luis Potosí" <%= datos.estado === "San Luis Potosí" ? "selected" : "" %>>San Luis Potosí</option>
+            <option value="Sinaloa" <%= datos.estado === "Sinaloa" ? "selected" : "" %>>Sinaloa</option>
+            <option value="Sonora" <%= datos.estado === "Sonora" ? "selected" : "" %>>Sonora</option>
+            <option value="Tabasco" <%= datos.estado === "Tabasco" ? "selected" : "" %>>Tabasco</option>
+            <option value="Tamaulipas" <%= datos.estado === "Tamaulipas" ? "selected" : "" %>>Tamaulipas</option>
+            <option value="Tlaxcala" <%= datos.estado === "Tlaxcala" ? "selected" : "" %>>Tlaxcala</option>
+            <option value="Veracruz" <%= datos.estado === "Veracruz" ? "selected" : "" %>>Veracruz</option>
+            <option value="Yucatán" <%= datos.estado === "Yucatán" ? "selected" : "" %>>Yucatán</option>
+            <option value="Zacatecas" <%= datos.estado === "Zacatecas" ? "selected" : "" %>>Zacatecas</option>
+          </select>
         </div>
       </div>
       <div class="element-container">

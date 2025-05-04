@@ -162,6 +162,10 @@ const modificarUsuario = async (req, res) => {
 const eliminarUsuario = async (req, res) => {
     try {
         const idUsuario = req.params.id;
+        // Evitar auto-eliminación
+        if (parseInt(idUsuario) === req.user.userId) {
+            return res.status(400).json({ error: 'No puedes eliminar tu propia cuenta' });
+        }
         await Usuario.eliminar(idUsuario);
         res.status(200).json({ message: 'Usuario eliminado correctamente' });
     } catch (error) {
@@ -189,11 +193,13 @@ const cambiarRolUsuario = async (req, res) => {
     try {
         const idUsuario = req.params.id;
         const { idRol } = req.body;
-        
+        // Evitar auto-cambio de rol
+        if (parseInt(idUsuario) === req.user.userId) {
+            return res.status(400).json({ error: 'No puedes cambiar tu propio rol' });
+        }
         if (!idRol) {
             return res.status(400).json({ error: 'Se requiere un rol válido' });
         }
-        
         await Usuario.asignarRol(idUsuario, idRol);
         res.status(200).json({ message: 'Rol actualizado correctamente' });
     } catch (error) {
