@@ -8,7 +8,7 @@ module.exports = (request, response, next) => {
         }
     }
 
-    if (canDescargarPdfNeto) {
+    if (canDescargarPdf) {
         next();
     } else {
         return response.render('404');
