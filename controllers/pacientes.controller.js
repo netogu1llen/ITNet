@@ -58,7 +58,7 @@ const getPacientes = async (req, res) => {
       }
     });
     
-    res.render('pacientes', { pacientes: pacientesDesencriptados }), {user: req.user};
+    res.render('pacientes', { pacientes: pacientesDesencriptados, user: req.user });
   } catch (error) {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');
