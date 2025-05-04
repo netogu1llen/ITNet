@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canEliminarRol = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Eliminar rol') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Eliminar rol') {
             canEliminarRol = true;
             break;
         }

@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canCrearRol = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Crear rol') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Crear rol') {
             canCrearRol = true;
             break;
         }

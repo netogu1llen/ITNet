@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canConsultarRoles = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Consultar roles') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Consultar roles') {
             canConsultarRoles = true;
             break;
         }

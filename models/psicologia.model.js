@@ -40,8 +40,7 @@ class Psicologia {
                     CONCAT(estado, ', ', ciudad) AS ubicacion, 
                     CONCAT(calle, ' ', numCasa) AS domicilio,
                     grado, 
-                    nvEscolar AS curso,
-                    numExpediente
+                    nvEscolar AS curso
                 FROM expediente
                 WHERE IDExpediente = ? AND eliminado = 0
             `, [idExpediente]);
@@ -112,7 +111,7 @@ class Psicologia {
   static async obtenerPorId(id) {
     try {
       const [results] = await db.execute(
-        'SELECT * FROM seguimientopsicologico WHERE IDSeguimiento = ?',
+        'SELECT * FROM seguimientoPsicologico WHERE IDSeguimiento = ?',
         [id]
       );
 
@@ -137,7 +136,7 @@ class Psicologia {
   static async actualizarSeguimiento(id, objetivoSesion,justificacionSesion,analisisPsicologico,recomendaciones,bitacora) {
     
     try {
-      await db.execute('UPDATE seguimientopsicologico SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ? WHERE IDSeguimiento = ?', [objetivoSesion, justificacionSesion, analisisPsicologico,recomendaciones,bitacora, id]);
+      await db.execute('UPDATE seguimientoPsicologico SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ? WHERE IDSeguimiento = ?', [objetivoSesion, justificacionSesion, analisisPsicologico,recomendaciones,bitacora, id]);
     } catch (err) {
       throw err;
     }
@@ -171,7 +170,7 @@ class Psicologia {
             const fecha = new Date();  // Fecha de creación
             // Se inserta el seguimiento sin valor para "ubicacion"
             const [result] = await db.execute(
-                'INSERT INTO seguimientopsicologico SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ?, IDExpediente = ?, fecha = ?, eliminado = 0',
+                'INSERT INTO seguimientoPsicologico SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ?, IDExpediente = ?, fecha = ?, eliminado = 0',
                 [objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora, idExpediente, fecha]
             );
             return result.insertId;
@@ -185,7 +184,7 @@ static async eliminarSeguimiento(id) {
     try {
       // Primero actualizamos el seguimiento
       await db.execute(
-        'UPDATE seguimientopsicologico SET eliminado = 1 WHERE IDSeguimiento = ?', 
+        'UPDATE seguimientoPsicologico SET eliminado = 1 WHERE IDSeguimiento = ?', 
         [id]
       );
       

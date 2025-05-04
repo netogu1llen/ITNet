@@ -39,7 +39,6 @@ exports.googleCallback = async (req, res, next) => {
 
     // 1. Autenticación con Google
     const googleUser = await authService.authenticateWithGoogle(code);
-    console.log('Información de usuario de Google:', JSON.stringify(googleUser, null, 2));
 
     // 2. Validar que el usuario esté registrado en la BD y obtener token
     const token = await authService.handleGoogleUser(googleUser);
@@ -77,15 +76,7 @@ exports.logout = (req, res) => {
 };
 
 exports.getHome = (req, res) => {
-  // Ahora puedes acceder a la información del usuario
-  const userData = {
-    id: req.user.id,
-    email: req.user.email,
-    // otros datos que hayas incluido en el token
-  };
-  
-  // Pasar los datos del usuario a la vista
-  res.render('home', { user: userData });
+  res.render('home', { user: req.user });
 };
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID_ANDROID); // Usa el client ID de Android

@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canEditarSeguimiento = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Editar seguimiento') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Editar seguimiento') {
             canEditarSeguimiento = true;
             break;
         }
