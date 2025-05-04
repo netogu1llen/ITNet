@@ -1,7 +1,7 @@
 <%- include('partials/head') %>
 <link rel="stylesheet" href="/styles.css">
 
-<section class="section">
+<section class="section" data-current-user-id="<%= user.userId %>">
   <div class="container">
     <h1 class="title">Usuarios</h1>
 
@@ -36,7 +36,7 @@
               </td>
               <td>
                 <div class="select-rol-container">
-                  <select class="select-rol" data-id="<%= usuario.IDUsuario %>">
+                  <select class="select-rol" data-id="<%= usuario.IDUsuario %>" <% if (usuario.IDUsuario === user.userId) { %> disabled title="No puedes cambiar tu propio rol" <% } %>>
                     <option value="0">Sin rol</option>
                     <% roles.forEach(rol => { %>
                       <option value="<%= rol.IDRol %>" <%= usuario.rol === rol.Tipo ? 'selected' : '' %>><%= rol.Tipo %></option>
@@ -45,7 +45,8 @@
                 </div>
               </td>
               <td>
-                <button class="button is-small is-danger btn-eliminar" data-id="<%= usuario.IDUsuario %>">Eliminar</button>
+                <button class="button is-small is-danger btn-eliminar" data-id="<%= usuario.IDUsuario %>" 
+                  <% if (usuario.IDUsuario === user.userId) { %> disabled title="No puedes eliminar tu propia cuenta" <% } %>>Eliminar</button>
               </td>
             </tr>
           <% }) %>

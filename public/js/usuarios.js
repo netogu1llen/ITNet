@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    // Obtener el ID del usuario actual desde el atributo data
+    const currentUserId = $('.section').data('current-user-id');
+    
     // Inicializar DataTable para la tabla de usuarios
     const table = $('#miEquipoTable').DataTable({
         language: {
@@ -320,6 +323,12 @@ $(document).ready(function () {
     $(document).on('click', '.btn-eliminar', function (e) {
         e.stopPropagation(); // Evita que se propague al evento de la fila
         const idUsuario = $(this).data('id');
+
+        // Evitar eliminación de sí mismo en cliente
+        if (idUsuario == currentUserId) {
+            Swal.fire('Error', 'No puedes eliminar tu propia cuenta.', 'error');
+            return;
+        }
 
         // Usar SweetAlert para la confirmación
         Swal.fire({
