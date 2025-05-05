@@ -1,6 +1,6 @@
 <%- include('partials/head') %>
 <!-- Campo oculto para almacenar el IDExpediente -->
-<input type="hidden" id="IDExpediente" value="<%= expediente.IDExpediente %>">
+<input type="hidden" name="IDExpediente" id="IDExpediente" value="<%= expediente.IDExpediente %>">
 <body>
     <div class="gray-container">
         <div class="head-container">
@@ -36,7 +36,7 @@
                     <div class="element-container">
                         <div class="basic-gray">Número de Expediente</div>
                         <br>
-                        <div class="basic-black"><%= expediente.numExpediente || 'Sin dato' %></div>
+                        <div class="basic-black"><%= expediente.IDExpedienteDesencriptado || 'Sin dato' %></div>
                     </div>
                     <div class="element-container">
                         <div class="basic-gray">Fecha de Nacimiento</div>

@@ -38,8 +38,8 @@ $(document).ready(function () {
     $(document).on('click', '.fila-paciente', function(e) {
         // Evitar la redirección si se hizo clic en el botón de eliminar
         if(!$(e.target).hasClass('btn-eliminar') && !$(e.target).closest('.btn-eliminar').length) {
-            const idExpediente = $(this).data('id');
-            window.location.href = `/pacientes/expediente/${idExpediente}`;
+            const idExpedienteEncriptado = $(this).data('id');
+            window.location.href = `/pacientes/expediente/${idExpedienteEncriptado}`;
         }
     });
 
@@ -75,7 +75,7 @@ $(document).ready(function () {
     // Evento para eliminar paciente con confirmación
     $(document).on('click', '.btn-eliminar', function(e) {
         e.stopPropagation(); // Evitar que se propague al evento de la fila
-        const idExpediente = $(this).data('id');
+        const idExpedienteEncriptado = $(this).data('id');
 
         // Mostrar el modal de confirmación con SweetAlert
         Swal.fire({
@@ -89,7 +89,7 @@ $(document).ready(function () {
             cancelButtonText: "Cancelar"
         }).then((result) => {
             if (result.isConfirmed) {
-                enviarPost(`/pacientes/eliminar/${idExpediente}`, { accion: "eliminar" });
+                enviarPost(`/pacientes/eliminar/${idExpedienteEncriptado}`, { accion: "eliminar" });
             }
         });
     });

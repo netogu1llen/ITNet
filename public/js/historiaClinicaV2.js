@@ -278,8 +278,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire("No se guardaron los cambios", "", "info").then(() => {
-                        const idExpediente = document.getElementById('idExpediente').value;
-                        window.location.href = `/nutricion/documentos/${idExpediente}`;
+                        const idExpedienteEncriptado = document.getElementById('idExpedienteEncriptado').value;
+                        window.location.href = `/nutricion/documentos/${idExpedienteEncriptado}`;
                     });
                 }
             });
@@ -288,10 +288,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function recopilarDatosFormulario() {
-    const idExpediente = document.getElementById('idExpediente')?.value;
+    const idExpedienteEncriptado = document.getElementById('idExpedienteEncriptado')?.value;
     const numSesion = document.getElementById('numSesion')?.value;
 
-    if (!idExpediente || !numSesion) {
+    if (!idExpedienteEncriptado || !numSesion) {
         Swal.fire({
             title: "Error!",
             text: "ID de expediente y número de sesión son requeridos.",
@@ -313,7 +313,7 @@ function recopilarDatosFormulario() {
         .map(input => input.value.trim());
 
     return {
-        IDExpediente: idExpediente,
+        IDExpediente: idExpedienteEncriptado,
         numSesion: numSesion,
         
         // Indicadores bioquímicos

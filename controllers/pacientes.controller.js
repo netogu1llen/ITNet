@@ -18,7 +18,7 @@ const getPacientes = async (req, res) => {
         // Verificar que cada campo existe antes de desencriptar
         if (!paciente.nombres || !paciente.apellidoP || !paciente.apellidoM || !paciente.fechaNacimiento) {
           return {
-            IDExpediente: paciente.IDExpediente,
+            IDExpediente: paciente.IDExpediente, // Mantener ID encriptado para referencia
             nombreCompleto: '[Datos incompletos]',
             fechaNacimiento: '[Fecha no disponible]',
             nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
@@ -26,7 +26,10 @@ const getPacientes = async (req, res) => {
         }
         
         // Desencriptar con manejo específico para cada campo
-        let nombres, apellidoP, apellidoM, fechaNacimiento;
+        let nombres, apellidoP, apellidoM, fechaNacimiento, idExpediente;
+        
+        try { idExpediente = decrypt(paciente.IDExpediente); } 
+        catch (e) { idExpediente = paciente.IDExpediente; console.error(`Error al desencriptar ID: ${e.message}`); }
         
         try { nombres = decrypt(paciente.nombres); } 
         catch (e) { nombres = '[Error]'; console.error(`Error al desencriptar nombre: ${e.message}`); }
@@ -41,7 +44,8 @@ const getPacientes = async (req, res) => {
         catch (e) { fechaNacimiento = '[Error]'; console.error(`Error al desencriptar fecha: ${e.message}`); }
         
         return {
-          IDExpediente: paciente.IDExpediente,
+          IDExpedienteEncriptado: paciente.IDExpediente, // Mantener ID encriptado para URLs y referencias
+          IDExpediente: idExpediente, // ID desencriptado para mostrar
           nombreCompleto: `${nombres} ${apellidoP} ${apellidoM}`.trim(),
           fechaNacimiento: fechaNacimiento,
           nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
@@ -50,7 +54,8 @@ const getPacientes = async (req, res) => {
         console.error(`Error al desencriptar paciente ID ${paciente.IDExpediente}:`, error);
         // En caso de error, devolvemos datos genéricos para ese paciente
         return {
-          IDExpediente: paciente.IDExpediente,
+          IDExpedienteEncriptado: paciente.IDExpediente,
+          IDExpediente: '[Error]',
           nombreCompleto: '[Error en datos]',
           fechaNacimiento: '[Error en fecha]',
           nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
@@ -112,17 +117,16 @@ const postRegistrarPaciente = async (req, res) => {
       sexo
     } = req.body;
 
-    // Validar que IDExpediente sea un número válido
-    const expedienteID = parseInt(IDExpediente, 10);
-    if (isNaN(expedienteID) || expedienteID <= 0) {
+    // Validar que IDExpediente no esté vacío
+    if (!IDExpediente === '') {
       return res.status(400).json({ 
-        mensaje: 'El ID de expediente debe ser un número entero positivo.' 
+        mensaje: 'El ID de expediente no puede estar vacío.' 
       });
     }
 
     // Encriptar los campos sensibles
     const pacienteEncriptado = {
-      IDExpediente: expedienteID, // Usar el ID proporcionado
+      IDExpediente: encrypt(IDExpediente.toString()).encryptedData, // Encriptar el ID
       nombres: encrypt(nombres).encryptedData,
       apellidoP: encrypt(apellidoP).encryptedData,
       apellidoM: encrypt(apellidoM).encryptedData,
@@ -175,41 +179,48 @@ const postRegistrarPaciente = async (req, res) => {
 const getEditarPaciente = async (req, res) => {
   try {
     const idExpediente = req.params.id;
-    console.log("El id del expediente es: ", idExpediente)
     const datosPaciente = await Pacientes.getPaciente(idExpediente);
     let paciente = datosPaciente;
     
-    // Desencriptar campos sensibles
-    paciente.nombres = decrypt(paciente.nombres);
-    paciente.apellidoP = decrypt(paciente.apellidoP);
-    paciente.apellidoM = decrypt(paciente.apellidoM);
-    paciente.fechaNacimiento = decrypt(paciente.fechaNacimiento);
-    paciente.contacto = decrypt(paciente.contacto);
-    paciente.estado = decrypt(paciente.estado);
-    paciente.ciudad = decrypt(paciente.ciudad);
-    paciente.calle = decrypt(paciente.calle);
-    paciente.cp = decrypt(paciente.cp);
-    paciente.localidad = decrypt(paciente.localidad);
-    paciente.numCasa = decrypt(paciente.numCasa);
-    
-    // Desencriptar datos de contacto de emergencia
-    if (paciente.nombreContacto) {
-      paciente.nombreContacto = decrypt(paciente.nombreContacto);
-    }
-    if (paciente.apellidoPContacto) {
-      paciente.apellidoPContacto = decrypt(paciente.apellidoPContacto);
-    }
-    if (paciente.apellidoMContacto) {
-      paciente.apellidoMContacto = decrypt(paciente.apellidoMContacto);
-    }
-    if (paciente.parentescoContacto) {
-      paciente.parentescoContacto = decrypt(paciente.parentescoContacto);
+    // Desencriptar todos los campos sensibles, incluido el IDExpediente
+    try {
+      // Desencriptar datos sensibles
+      paciente.IDExpediente = decrypt(paciente.IDExpediente);
+      paciente.nombres = decrypt(paciente.nombres);
+      paciente.apellidoP = decrypt(paciente.apellidoP);
+      paciente.apellidoM = decrypt(paciente.apellidoM);
+      paciente.fechaNacimiento = decrypt(paciente.fechaNacimiento);
+      paciente.contacto = decrypt(paciente.contacto);
+      paciente.estado = decrypt(paciente.estado);
+      paciente.ciudad = decrypt(paciente.ciudad);
+      paciente.calle = decrypt(paciente.calle);
+      paciente.cp = decrypt(paciente.cp);
+      paciente.localidad = decrypt(paciente.localidad);
+      paciente.numCasa = decrypt(paciente.numCasa);
+      
+      // Desencriptar datos de contacto de emergencia
+      if (paciente.nombreContacto) {
+        paciente.nombreContacto = decrypt(paciente.nombreContacto);
+      }
+      if (paciente.apellidoPContacto) {
+        paciente.apellidoPContacto = decrypt(paciente.apellidoPContacto);
+      }
+      if (paciente.apellidoMContacto) {
+        paciente.apellidoMContacto = decrypt(paciente.apellidoMContacto);
+      }
+      if (paciente.parentescoContacto) {
+        paciente.parentescoContacto = decrypt(paciente.parentescoContacto);
+      }
+    } catch (e) {
+      console.error(`Error al desencriptar datos del paciente: ${e.message}`);
     }
     
     paciente.sexo = paciente.sexo ? paciente.sexo : "";
-    console.log(paciente);
-
-    res.render('editarPaciente', { datos: paciente, user: req.user});
+    
+    res.render('editarPaciente', { 
+      datos: paciente, 
+      user: req.user
+    });
   } catch (error) {
     console.error('Error al obtener la información:', error.message);
     res.status(500).send('Error al obtener la información');
@@ -249,22 +260,21 @@ const postEditarPaciente = async (req, res) => {
       sangre,
       sexo
     } = req.body;
-    // Validar que IDExpediente sea un número válido
-    const nuevoIdExpediente = parseInt(IDExpediente, 10);
-    if (isNaN(nuevoIdExpediente) || nuevoIdExpediente <= 0) {
-      return res.status(400).json({ 
-        mensaje: 'El número de expediente debe ser un número entero positivo.' 
-      });
+    
+    // Remover parseInt y trabajar con la cadena:
+    const nuevoIdExpediente = IDExpediente.trim();
+    if (!nuevoIdExpediente) {
+      return res.status(400).json({ mensaje: 'El ID de expediente no puede estar vacío.' });
     }
     
     console.log('Datos de edición recibidos:', {
       idOriginal: idExpediente,
       nuevoId: nuevoIdExpediente,
-      idHaCambiado: nuevoIdExpediente != idExpediente
+      idHaCambiado: nuevoIdExpediente !== idExpediente
     });
 
     // Verificar si el nuevo ID ya existe, pero no es el mismo que ya tenía
-    if (nuevoIdExpediente != idExpediente) {
+    if (nuevoIdExpediente !== idExpediente) {
       console.log('El ID ha cambiado, verificando si el nuevo ID ya existe...');
       const [existente] = await db.execute(
         'SELECT IDExpediente FROM expediente WHERE IDExpediente = ? AND eliminado = 0',
@@ -296,7 +306,7 @@ const postEditarPaciente = async (req, res) => {
       cp: encrypt(cp).encryptedData,
       localidad: encrypt(localidad).encryptedData,
       numCasa: encrypt(numCasa).encryptedData,
-      IDExpediente: nuevoIdExpediente,
+      IDExpediente: encrypt(nuevoIdExpediente).encryptedData, // Reencriptar el nuevo IDExpediente
       enfermedades,
       medicamentos,
       estudioSocioeconomico,
@@ -304,7 +314,7 @@ const postEditarPaciente = async (req, res) => {
       nvEscolar,
       sangre,
       sexo,
-      idExpediente // ID original para la cláusula WHERE
+      idExpediente // Usar el ID original encriptado para la cláusula WHERE
     };
 
     try {
@@ -321,9 +331,10 @@ const postEditarPaciente = async (req, res) => {
       
       res.status(200).json({ 
         mensaje: 'Datos actualizados correctamente',
-        detalles: nuevoIdExpediente != idExpediente ? 
+        detalles: nuevoIdExpediente !== idExpediente ? 
           `Se cambió el número de expediente de ${idExpediente} a ${nuevoIdExpediente}` : 
-          'Se actualizaron los datos sin cambiar el número de expediente'
+          'Se actualizaron los datos sin cambiar el número de expediente',
+        nuevoIdEncriptado: pacienteEncriptado.IDExpediente // Agregar esta propiedad para el frontend
       });
     } catch (dbError) {
       console.error('Error específico de la base de datos:', dbError);
@@ -361,155 +372,190 @@ const postEliminarPaciente= async (req, res) => {
   }
 };
 
-// Función helper para desencriptar expediente con manejo de errores
 const desencriptarExpediente = (expediente) => {
   if (!expediente) return expediente;
   
   try {
-      // Desencriptar datos individuales
-      let nombres = '';
-      let apellidoP = '';
-      let apellidoM = '';
-      
-      // Desencriptar nombres
-      if (expediente.nombres) {
-          nombres = decrypt(expediente.nombres);
-      }
-      
-      // Desencriptar apellido paterno
-      if (expediente.apellidoP) {
-          apellidoP = decrypt(expediente.apellidoP);
-      }
-      
-      // Desencriptar apellido materno
-      if (expediente.apellidoM) {
-          apellidoM = decrypt(expediente.apellidoM);
-      }
-      
-      // Crear nombre completo con los valores desencriptados
-      expediente.nombreCompleto = `${nombres} ${apellidoP} ${apellidoM}`.trim();
-      
-      // Desencriptar fecha de nacimiento
-      if (expediente.fechaNacimiento) {
-          expediente.fechaNacimiento = decrypt(expediente.fechaNacimiento);
-      }
-      
-      // Desencriptar contacto
-      if (expediente.contacto) {
-          expediente.contacto = decrypt(expediente.contacto);
-      }
-      
-      // Desencriptar ubicación si existe
-      if (expediente.ubicacion) {
-          expediente.ubicacion = decrypt(expediente.ubicacion);
-      }
-      
-      // Desencriptar domicilio si existe
-      if (expediente.domicilio) {
-          expediente.domicilio = decrypt(expediente.domicilio);
-      }
-      
-      // Desencriptar datos de contacto de emergencia
-      let nombreContacto = '';
-      let apellidoPContacto = '';
-      let apellidoMContacto = '';
-      
-      if (expediente.nombreContacto) {
-          nombreContacto = decrypt(expediente.nombreContacto);
-      }
-      
-      if (expediente.apellidoPContacto) {
-          apellidoPContacto = decrypt(expediente.apellidoPContacto);
-      }
-      
-      if (expediente.apellidoMContacto) {
-          apellidoMContacto = decrypt(expediente.apellidoMContacto);
-      }
-      
-      // Crear nombre completo del contacto de emergencia
-      if (nombreContacto || apellidoPContacto || apellidoMContacto) {
-          expediente.nombreContactoEmergencia = `${nombreContacto} ${apellidoPContacto} ${apellidoMContacto}`.trim();
-      }
-      
-      // Desencriptar parentesco de contacto
-      if (expediente.parentescoContacto) {
-          expediente.parentescoContacto = decrypt(expediente.parentescoContacto);
-      }
-      
-      return expediente;
+    // Desencriptar datos individuales
+    let nombres = '';
+    let apellidoP = '';
+    let apellidoM = '';
+    
+    // Desencriptar nombres
+    if (expediente.nombres) {
+      nombres = decrypt(expediente.nombres);
+    }
+    
+    // Desencriptar apellido paterno
+    if (expediente.apellidoP) {
+      apellidoP = decrypt(expediente.apellidoP);
+    }
+    
+    // Desencriptar apellido materno
+    if (expediente.apellidoM) {
+      apellidoM = decrypt(expediente.apellidoM);
+    }
+    
+    // Crear nombre completo con los valores desencriptados
+    expediente.nombreCompleto = `${nombres} ${apellidoP} ${apellidoM}`.trim();
+    
+    // Desencriptar fecha de nacimiento
+    if (expediente.fechaNacimiento) {
+      expediente.fechaNacimiento = decrypt(expediente.fechaNacimiento);
+    }
+    
+    // Desencriptar contacto
+    if (expediente.contacto) {
+      expediente.contacto = decrypt(expediente.contacto);
+    }
+    
+    // Desencriptar ubicación si existe
+    if (expediente.ubicacion) {
+      expediente.ubicacion = decrypt(expediente.ubicacion);
+  }
+  
+  // Desencriptar domicilio si existe
+  if (expediente.domicilio) {
+      expediente.domicilio = decrypt(expediente.domicilio);
+  }
+    
+    // Desencriptar datos de contacto de emergencia
+    let nombreContacto = '';
+    let apellidoPContacto = '';
+    let apellidoMContacto = '';
+    
+    if (expediente.nombreContacto) {
+      nombreContacto = decrypt(expediente.nombreContacto);
+    }
+    
+    if (expediente.apellidoPContacto) {
+      apellidoPContacto = decrypt(expediente.apellidoPContacto);
+    }
+    
+    if (expediente.apellidoMContacto) {
+      apellidoMContacto = decrypt(expediente.apellidoMContacto);
+    }
+    
+    // Crear nombre completo del contacto de emergencia
+    if (nombreContacto || apellidoPContacto || apellidoMContacto) {
+      expediente.nombreContactoEmergencia = `${nombreContacto} ${apellidoPContacto} ${apellidoMContacto}`.trim();
+    }
+    
+    // Desencriptar parentesco de contacto
+    if (expediente.parentescoContacto) {
+      expediente.parentescoContacto = decrypt(expediente.parentescoContacto);
+    }
+    
+    return expediente;
   } catch (error) {
-      console.error('Error al desencriptar datos del expediente:', error);
-      return expediente; // Devolver el expediente original si hay error
+    console.error('Error al desencriptar datos del expediente:', error);
+    return expediente; // Devolver el expediente original si hay error
   }
 };
 
 // Obtener expediente completo con documentos
 const obtenerExpediente = async (req, res) => {
   try {
-      const { idExpediente } = req.params;
-      
-      // Obtener datos del expediente y desencriptar
-      let expediente = await Pacientes.obtenerExpedientePorId(idExpediente);
-      
-      // Verificar si se encontró el expediente
-      if (!expediente) {
-          console.error(`No se encontró el expediente con ID ${idExpediente}`);
-          return res.status(404).render('error', { 
-              message: 'Expediente no encontrado', 
-              error: { 
-                  status: 404, 
-                  stack: `El expediente con ID ${idExpediente} no existe o fue eliminado.` 
-              } 
-          });
-      }
-      
-      // Continuar si el expediente existe
-      expediente = desencriptarExpediente(expediente);
-      
-      // Obtener documentos
-      const documentosAdjuntos = await Pacientes.obtenerDocumentosAdjuntos(idExpediente);
-      const documentos = [...documentosAdjuntos];
+    const idExpedienteEncriptado = req.params.idExpediente;
+    
+    // Obtener datos del expediente
+    let expediente = await Pacientes.obtenerExpedientePorId(idExpedienteEncriptado);
+    
+    // Verificar si se encontró el expediente
+    if (!expediente) {
+      console.error(`No se encontró el expediente con ID encriptado ${idExpedienteEncriptado}`);
+      return res.status(404).render('error', { 
+        message: 'Expediente no encontrado', 
+        error: { 
+          status: 404, 
+          stack: `El expediente solicitado no existe o fue eliminado.` 
+        },
+        user: req.user
+      });
+    }
+    
+    // IMPORTANTE: Guardar una copia del ID encriptado antes de la desencriptación
+    expediente.IDExpedienteEncriptado = expediente.IDExpediente;
+    
+    // Desencriptar el ID para mostrarlo en la interfaz
+    try {
+      // Aquí desencriptamos el ID y reemplazamos el valor encriptado en el objeto
+      expediente.IDExpediente = decrypt(expediente.IDExpediente);
+    } catch (decryptError) {
+      console.error(`Error al desencriptar IDExpediente: ${decryptError.message}`);
+      // Si hay error, no cambiamos el IDExpediente original para mantener el encriptado
+      expediente.IDExpedienteError = 'Error al desencriptar el ID';
+    }
+    
+    // Continuar con la desencriptación del resto de campos
+    expediente = desencriptarExpediente(expediente);
+    
+    // Obtener documentos usando el ID encriptado
+    const documentosAdjuntos = await Pacientes.obtenerDocumentosAdjuntos(idExpedienteEncriptado);
+    const documentos = [...documentosAdjuntos];
 
-      // Renderizar la vista con los datos
-      res.render('expediente',  {
-          expediente,
-          documentos,
-          user: req.user
-      });
+    // Renderizar la vista con los datos
+    res.render('expediente', {
+      expediente,
+      documentos,
+      user: req.user
+    });
   } catch (error) {
-      console.error('Error al obtener expediente:', error);
-      res.status(500).render('error', { 
-          message: 'Error al cargar el expediente', 
-          error: { 
-              status: 500, 
-              stack: process.env.NODE_ENV === 'development' ? error.stack : '' 
-          } 
-      });
+    console.error('Error al obtener expediente:', error);
+    res.status(500).render('error', { 
+      message: 'Error al cargar el expediente', 
+      error: { 
+        status: 500, 
+        stack: process.env.NODE_ENV === 'development' ? error.stack : '' 
+      },
+      user: req.user
+    });
   }
 };
 
 // Obtener documentos de un expediente
 const obtenerDocumentosPorExpediente = async (req, res) => {
   try {
-      const { idExpediente } = req.params;
+    const idExpedienteEncriptado = req.params.idExpediente;
 
-      // Obtener documentos
-      const documentosAdjuntos = await Pacientes.obtenerDocumentosAdjuntos(idExpediente);
-      const documentos = [...documentosAdjuntos];
+    // Obtener documentos usando el ID encriptado
+    const documentosAdjuntos = await Pacientes.obtenerDocumentosAdjuntos(idExpedienteEncriptado);
+    const documentos = [...documentosAdjuntos];
 
-      // Obtener datos del expediente y desencriptar
-      let expediente = await Pacientes.obtenerExpedientePorId(idExpediente);
-      expediente = desencriptarExpediente(expediente);
-
-      // Renderizar la vista con los datos
-      res.render('expediente', {
-          expediente,
-          documentos,
-          user: req.user
+    // Obtener datos del expediente y desencriptar
+    let expediente = await Pacientes.obtenerExpedientePorId(idExpedienteEncriptado);
+    
+    if (!expediente) {
+      return res.status(404).render('error', { 
+        message: 'Expediente no encontrado', 
+        error: { status: 404, stack: 'El expediente solicitado no existe o fue eliminado.' },
+        user: req.user
       });
+    }
+
+    // IMPORTANTE: Guardar una copia del ID encriptado antes de la desencriptación
+    expediente.IDExpedienteEncriptado = expediente.IDExpediente;
+    
+    // Desencriptar el ID para mostrarlo en la interfaz
+    try {
+      // Aquí reemplazamos directamente el ID encriptado con el ID desencriptado
+      expediente.IDExpediente = decrypt(expediente.IDExpediente);
+    } catch (decryptError) {
+      console.error(`Error al desencriptar IDExpediente: ${decryptError.message}`);
+      expediente.IDExpedienteError = 'Error al desencriptar el ID';
+    }
+    
+    expediente = desencriptarExpediente(expediente);
+
+    // Renderizar la vista con los datos
+    res.render('expediente', {
+      expediente,
+      documentos,
+      user: req.user
+    });
   } catch (error) {
-      console.error('Error al obtener documentos:', error);
-      res.status(500).json({ error: 'Error al obtener documentos' });
+    console.error('Error al obtener documentos:', error);
+    res.status(500).json({ error: 'Error al obtener documentos' });
   }
 };
 

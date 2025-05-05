@@ -98,6 +98,25 @@ exports.getExpedienteNutricion = async (req, res) => {
         }
 
         const expediente = await Nutricion.obtenerPorId(idExpediente);
+        
+        // Añadir el ID desencriptado para mostrar en la vista, manteniendo el original para operaciones
+        try {
+            expediente.IDExpedienteDesencriptado = decrypt(expediente.IDExpediente);
+        } catch (decryptError) {
+            console.error('Error al desencriptar IDExpediente:', decryptError);
+            expediente.IDExpedienteDesencriptado = 'Error al desencriptar';
+        }
+        
+        // Asegurar que el ID encriptado esté disponible para el frontend
+        expediente.IDExpedienteEncriptado = expediente.IDExpediente;
+        
+        // Ahora intentamos desencriptar el ID para mostrar al usuario
+        try {
+            expediente.IDExpediente = decrypt(expediente.IDExpediente);
+        } catch (decryptError) {
+            console.error('Error al desencriptar IDExpediente:', decryptError);
+            // Si hay error, mantenemos el ID encriptado como está
+        }
 
         // Desencriptar y formatear datos del paciente
         const datosGeneralesPaciente = {
@@ -173,8 +192,9 @@ exports.descargarDocumento = async (req, res) => {
         const { id } = req.params;
         const tipo = req.query.tipo;
         const numSesion = req.query.numSesion;
+        const nombreDocumentoEnviado = req.query.nombre; // Nuevo parámetro que recibimos del frontend
         
-        console.log('Iniciando descarga, ID:', id, 'Tipo:', tipo, 'Sesión:', numSesion);
+        console.log('Iniciando descarga, ID:', id, 'Tipo:', tipo, 'Sesión:', numSesion, 'Nombre:', nombreDocumentoEnviado);
         
         // Si es una historia clínica generada dinámicamente
         if ((tipo === 'NUTRICIONAL_V1' || tipo === 'NUTRICIONAL_V2') && numSesion) {
@@ -299,10 +319,27 @@ exports.descargarDocumento = async (req, res) => {
                 Key: key
             }).promise();
             
-            // Usar el nombre del documento normalizado
-            const nombreArchivo = documento.tipo || 'documento';
+            // Determinar el nombre para la descarga:
+            // 1. Usar el nombre enviado desde el frontend si existe
+            // 2. Si no, usar el nombre original del documento
+            // 3. Como último recurso, usar el tipo o "documento" como fallback
+            let nombreArchivo = '';
+            
+            // Prioridad 1: Nombre enviado desde el frontend
+            if (nombreDocumentoEnviado && nombreDocumentoEnviado.trim() !== '') {
+                nombreArchivo = nombreDocumentoEnviado.trim();
+            } 
+            // Prioridad 2: Nombre del documento en la base de datos
+            else if (documento.tipo && documento.tipo.trim() !== '') {
+                nombreArchivo = documento.tipo.trim();
+            }
+            // Prioridad 3: Fallback genérico
+            else {
+                nombreArchivo = `documento_${id}`;
+            }
+            
+            // Normalizar el nombre para la descarga
             const nombreNormalizado = nombreArchivo
-                .trim()
                 .replace(/[^\w\s.-]/g, '_')
                 .replace(/\s+/g, '_');
             
@@ -614,6 +651,17 @@ exports.renderHistoriaClinica = async (req, res) => {
         if (!expediente) {
             return res.status(404).send('Expediente no encontrado.');
         }
+        
+        // Guardar una copia del ID encriptado antes de desencriptar
+        expediente.IDExpedienteEncriptado = expediente.IDExpediente;
+        
+        // Desencriptar el ID para mostrar en la interfaz
+        try {
+            expediente.IDExpediente = decrypt(expediente.IDExpediente);
+        } catch (decryptError) {
+            console.error('Error al desencriptar IDExpediente:', decryptError);
+            // Mantener el ID encriptado si hay un error
+        }
 
         let datosSesion = null;
         if (numSesion) {
@@ -777,6 +825,17 @@ exports.editHistoriaClinicaV1 = async (req, res) => {
             return res.status(404).send('Expediente no encontrado.');
         }
 
+        // Guardar una copia del ID encriptado antes de desencriptar
+        expediente.IDExpedienteEncriptado = expediente.IDExpediente;
+        
+        // Desencriptar el ID para mostrar en la interfaz
+        try {
+            expediente.IDExpediente = decrypt(expediente.IDExpediente);
+        } catch (decryptError) {
+            console.error('Error al desencriptar IDExpediente:', decryptError);
+            // Mantener el ID encriptado si hay un error
+        }
+
         // Obtener los datos de la sesión específica
         const datosSesion = await Nutricion.obtenerDatosSesionCompletos(IDExpediente, numSesion);
         if (!datosSesion) {
@@ -811,6 +870,17 @@ exports.createHistoriaClinicaV1 = async (req, res) => {
             return res.status(404).send('Expediente no encontrado.');
         }
 
+        // Guardar una copia del ID encriptado antes de desencriptar
+        expediente.IDExpedienteEncriptado = expediente.IDExpediente;
+        
+        // Desencriptar el ID para mostrar en la interfaz
+        try {
+            expediente.IDExpediente = decrypt(expediente.IDExpediente);
+        } catch (decryptError) {
+            console.error('Error al desencriptar IDExpediente:', decryptError);
+            // Mantener el ID encriptado si hay un error
+        }
+
         // Renderizar el formulario V1 directamente
         res.render('historiaClinica', { 
             expediente, 
@@ -837,6 +907,17 @@ exports.renderHistoriaClinicaV2 = async (req, res) => {
         const expediente = await Nutricion.obtenerPorId(IDExpediente);
         if (!expediente) {
             return res.status(404).send('Expediente no encontrado.');
+        }
+
+        // Guardar una copia del ID encriptado antes de desencriptar
+        expediente.IDExpedienteEncriptado = expediente.IDExpediente;
+        
+        // Desencriptar el ID para mostrar en la interfaz
+        try {
+            expediente.IDExpediente = decrypt(expediente.IDExpediente);
+        } catch (decryptError) {
+            console.error('Error al desencriptar IDExpediente:', decryptError);
+            // Mantener el ID encriptado si hay un error
         }
 
         let datosSesion = null;

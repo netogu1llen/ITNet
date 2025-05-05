@@ -34,7 +34,10 @@ class Psicologia {
         try {
             const [results] = await db.execute(`
                 SELECT 
-                    nombres, apellidoP, apellidoM,
+                    IDExpediente,
+                    nombres, 
+                    apellidoP, 
+                    apellidoM,
                     fechaNacimiento, 
                     contacto, 
                     CONCAT(estado, ', ', ciudad) AS ubicacion, 
