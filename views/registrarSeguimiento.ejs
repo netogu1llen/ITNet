@@ -27,6 +27,16 @@
                 <div>
                 <!-- Información General del Expediente (estructura similar a expedientePsicologico) -->
                 <!-- Primera fila: 4 elementos -->
+                 <div class="multirow-container">
+                    <div class="multirow-form-container"></div>
+                    <div class="multirow-form-container"></div>
+                    <div class="multirow-form-container"></div>
+                    <div class="multirow-form-container"></div>
+                    <div class="multirow-form-container">
+                        <div class="basic-gray">Número de Sesión:</div>
+                        <input name= "numSesion" id="numSesion" class="input" type="number">
+                    </div>
+                 </div>
                 <div class="multirow-container">
                     <div class="element-container">
                         <div class="basic-gray">Nombre Completo</div>
@@ -36,7 +46,7 @@
                     <div class="element-container">
                         <div class="basic-gray">Número de Expediente</div>
                         <br>
-                        <div class="basic-black"><%= expediente.numExpediente || 'Sin dato' %></div>
+                        <div class="basic-black"><%= expediente.IDExpediente || 'Sin dato' %></div>
                     </div>
                     <div class="element-container">
                         <div class="basic-gray">Fecha de Nacimiento</div>
