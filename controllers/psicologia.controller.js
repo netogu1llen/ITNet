@@ -79,7 +79,6 @@ exports.obtenerDocumentosPorExpediente = async (req, res) => {
       let expediente = await Psicologia.obtenerExpedientePorId(idExpediente);
       
       // Log antes de desencriptar
-      console.log('DATOS DEL EXPEDIENTE ANTES DE DESENCRIPTAR:', JSON.stringify(expediente, null, 2));
       expediente = desencriptarExpediente(expediente);
 
       // Renderizar la vista con los datos dinámicos
@@ -496,6 +495,7 @@ exports.get_editar_seguimiento = async (req, res) => {
 exports.post_editar_seguimiento = async (req, res) => {
     const id = req.params.id;
     const {
+      numSesion,
       objetivoSesion,
       justificacionSesion,
       analisisPsicologico,
@@ -513,48 +513,39 @@ exports.post_editar_seguimiento = async (req, res) => {
       // Obtener el IDExpediente del seguimiento actual
       const seguimiento = await Psicologia.obtenerPorId(id);
       if (!seguimiento) {
+        console.log("Error")
         throw new Error('Seguimiento no encontrado');
       }
-  
-      // Actualizar el seguimiento
-      await Psicologia.actualizarSeguimiento(id, objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora);
-  
-      // Obtener los objetivos existentes
-      const objetivosExistentes = await Psicologia.obtenerObjetivosPorSeguimientoId(id);
-      const objetivosExistentesIds = objetivosExistentes.map(obj => obj.IDObjetivo);
-      
-      // Procesar los objetivos
-      const maxLength = Math.max(
-        actividad.length,
-        tiempo.length,
-        metodologia.length,
-        objetivo.length,
-        observaciones.length
+      //Se revisa que no haya un seguimiento con el mismo numSesion
+      const duplicado = await Psicologia.buscarSeguimientoDuplicadoEdicion(
+        numSesion,
+        seguimiento.IDExpediente,
+        id
       );
-  
-      for (let i = 0; i < maxLength; i++) {
-        // Si hay un ID de objetivo existente, actualizamos
-        if (objetivoId[i] && objetivosExistentesIds.includes(parseInt(objetivoId[i]))) {
-          await Psicologia.actualizarObjetivo(
-            objetivoId[i],
-            actividad[i], 
-            tiempo[i], 
-            metodologia[i], 
-            objetivo[i], 
-            observaciones[i]
-          );
-        } else {
-          // Si no hay ID o no existe, creamos uno nuevo
-          await Psicologia.insertarObjetivos(
-            id, 
-            actividad[i], 
-            tiempo[i], 
-            metodologia[i], 
-            objetivo[i], 
-            observaciones[i]
-          );
-        }
+      if (duplicado) {
+        return res.status(400).json({
+          mensaje: `Ya existe un seguimiento con el número de sesión ${numSesion} para este expediente.`
+        });
       }
+
+      // Actualizar el seguimiento
+      await Psicologia.actualizarSeguimiento(id, numSesion, objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora);
+  
+      // Eliminar los objetivos existentes
+    await Psicologia.eliminarObjetivosPorSeguimientoId(id);
+
+    // Crear nuevos objetivos
+    const maxLength = Math.max(
+      actividad.length,
+      tiempo.length,
+      metodologia.length,
+      objetivo.length,
+      observaciones.length
+    );
+
+    for (let i = 0; i < maxLength; i++) {
+      await Psicologia.insertarObjetivos(id, actividad[i], tiempo[i], metodologia[i], objetivo[i], observaciones[i]);
+    }
   
       // Responder con éxito y el IDExpediente para la redirección
       res.status(200).json({ 
@@ -576,6 +567,7 @@ exports.get_registrar_seguimiento = async (req, res) => {
         
         // Desencriptar expediente
         expediente = desencriptarExpediente(expediente);
+        console.log(expediente)
         
         res.render('registrarSeguimiento', { expediente, user: req.user });
     } catch (error) {
@@ -592,6 +584,7 @@ exports.post_registrar_seguimiento = async (req, res) => {
     }
 
     const {
+      numSesion,
       objetivoSesion,
       justificacionSesion,
       analisisPsicologico,
@@ -609,7 +602,19 @@ exports.post_registrar_seguimiento = async (req, res) => {
       return res.status(400).json({ mensaje: 'Todos los campos son requeridos' });
     }
 
+    //Se revisa que no haya un seguimiento con el mismo numSesion
+    const duplicado = await Psicologia.buscarSeguimientoDuplicado(
+      numSesion,
+      idExpediente
+    );
+
+    if (duplicado) {
+      return res.status(400).json({
+        mensaje: `Ya existe un seguimiento con el número de sesión ${numSesion} para este expediente.`
+      });
+    }
     const idSeguimiento = await Psicologia.registrarSeguimiento(
+      numSesion,
       idExpediente,
       objetivoSesion,
       justificacionSesion,
