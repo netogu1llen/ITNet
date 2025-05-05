@@ -46,10 +46,8 @@
                     <h2 class="basic-black"><%= datosGeneralesPaciente.telefono %></h2>
                   </div>
                   <div class="element-container">
-                    <h2 class="basic-gray">ID Expediente</h2>
-                    <h2 class="basic-black"><%= expediente.IDExpedienteDesencriptado %></h2>
-                    <!-- Almacenar el ID encriptado para operaciones -->
-                    <input type="hidden" id="idExpedienteEncriptado" value="<%= expediente.IDExpedienteEncriptado %>">
+                    <h2 class="basic-gray">Escuela</h2>
+                    <h2 class="basic-black"><%= datosGeneralesPaciente.escuela %></h2>
                   </div>
                 </div>
               </div>
@@ -66,19 +64,19 @@
           <!-- Primera fila - 3 elementos -->
           <div class="multirow-container" style="text-align: center; margin-bottom: 15px;"> <!-- Reducido margen inferior -->
               <div class="element-container" style="margin: 0 20px;">
-                <h3 class="basic-gray">Energía</h3>
+                <h3 class="basic-gray">Energía </h3>
                 <!-- Muestra directamente el valor (asumiendo que ya incluye la unidad) -->
-                <p><%= manejoNutricional && manejoNutricional.energia ? manejoNutricional.energia : "Sin registro" %></p> 
+                <p><%= manejoNutricional && manejoNutricional.energia ? manejoNutricional.energia : "Sin registro" %> kcal</p> 
                 </div>
                 <div class="element-container" style="margin: 0 20px;">
                 <h3 class="basic-gray">Proteínas</h3>
                 <!-- Muestra directamente el valor -->
-                <p><%= manejoNutricional && manejoNutricional.proteinas ? manejoNutricional.proteinas : "Sin registro" %></p> 
+                <p><%= manejoNutricional && manejoNutricional.proteinas ? manejoNutricional.proteinas : "Sin registro" %> g</p> 
                 </div>
                 <div class="element-container" style="margin: 0 20px;">
                 <h3 class="basic-gray">Hidratos de C.</h3>
                 <!-- Muestra directamente el valor -->
-                <p><%= manejoNutricional && manejoNutricional.hidratosDeCarbono ? manejoNutricional.hidratosDeCarbono : "Sin registro" %></p> 
+                <p><%= manejoNutricional && manejoNutricional.hidratosDeCarbono ? manejoNutricional.hidratosDeCarbono : "Sin registro" %> g</p> 
                 </div>
             </div>
             
@@ -88,17 +86,17 @@
                 <div class="element-container" style="margin: 0 20px;">
                 <h3 class="basic-gray">Lípidos</h3>
                 <!-- Muestra directamente el valor -->
-                <p><%= manejoNutricional && manejoNutricional.lipidos ? manejoNutricional.lipidos : "Sin registro" %></p> 
+                <p><%= manejoNutricional && manejoNutricional.lipidos ? manejoNutricional.lipidos : "Sin registro" %> g</p> 
                 </div>
                 <div class="element-container" style="margin: 0 20px;">
                 <h3 class="basic-gray">Fibra</h3>
                 <!-- Muestra directamente el valor -->
-                <p><%= manejoNutricional && manejoNutricional.fibra ? manejoNutricional.fibra : "Sin registro" %></p> 
+                <p><%= manejoNutricional && manejoNutricional.fibra ? manejoNutricional.fibra : "Sin registro" %> g</p> 
                 </div>
                 <div class="element-container" style="margin: 0 20px;">
                 <h3 class="basic-gray">Agua</h3>
                 <!-- Muestra directamente el valor -->
-                <p><%= manejoNutricional && manejoNutricional.agua ? manejoNutricional.agua : "Sin registro" %></p> 
+                <p><%= manejoNutricional && manejoNutricional.agua ? manejoNutricional.agua : "Sin registro" %> L</p> 
                 </div>
             </div>
           </div>
@@ -149,37 +147,27 @@
                   </div>
                 </div>
                 
-                <!-- Datos Antropométricos -->
+                <!-- Antecedentes personales -->
                 <div class="element-container">
-                  <h2 class="basic-gray">Datos Antropométricos</h2>
+                  <h2 class="basic-gray">Antecedentes Personales</h2>
                   <div class="multirow-container">
                     <div class="element-container">
-                      <h3 class="basic-gray">Peso</h3>
-                      <p><%= datosAntropometricos && datosAntropometricos.peso !== 'No registrado' ? datosAntropometricos.peso + " kg" : "No registrado" %></p>
+                      <h3 class="basic-gray">Peso al Nacer</h3>
+                      <p><%= antecedentesPersonales.pesoNacer + " kg" %></p>
                     </div>
                     <div class="element-container">
-                      <h3 class="basic-gray">Talla</h3>
-                      <p><%= datosAntropometricos && datosAntropometricos.talla !== 'No registrado' ? datosAntropometricos.talla + " cm" : "No registrado" %></p>
+                      <h3 class="basic-gray">Talla al Nacer</h3>
+                      <p><%= antecedentesPersonales.tallaNacer + " cm" %></p>
                     </div>
                   </div>
                   <div class="multirow-container">
                     <div class="element-container">
-                      <h3 class="basic-gray">IMC</h3>
-                      <p><%= datosAntropometricos && datosAntropometricos.imc !== 'No registrado' ? datosAntropometricos.imc + " kg/m²" : "No registrado" %></p>
+                      <h3 class="basic-gray">SDG</h3>
+                      <p><%= antecedentesPersonales.sdg %></p>
                     </div>
                     <div class="element-container">
-                      <h3 class="basic-gray">Circunferencia Cintura</h3>
-                      <p><%= datosAntropometricos && datosAntropometricos.circunferenciaCintura !== 'No registrado' ? datosAntropometricos.circunferenciaCintura + " cm" : "No registrado" %></p>
-                    </div>
-                  </div>
-                  <div class="multirow-container">
-                    <div class="element-container">
-                      <h3 class="basic-gray">Circunferencia Cadera</h3>
-                      <p><%= datosAntropometricos && datosAntropometricos.circunferenciaCadera !== 'No registrado' ? datosAntropometricos.circunferenciaCadera + " cm" : "No registrado" %></p>
-                    </div>
-                    <div class="element-container">
-                      <h3 class="basic-gray">Índice Cintura-Cadera</h3>
-                      <p>No registrado</p>
+                      <h3 class="basic-gray">Tipo de Parto</h3>
+                      <p><%= antecedentesPersonales.tipoParto %></p>
                     </div>
                   </div>
                 </div>
@@ -205,15 +193,17 @@
         <tbody>
           <% if (documentosHistorial && documentosHistorial.length > 0) { %>
             <% documentosHistorial.forEach(doc => { %>
+            <!-- En la sección donde muestras las sesiones -->
             <tr class="fila-documento" 
                 data-id="<%= doc.id %>" 
                 data-tipo="<%= doc.tipo %>"
-                data-sesion="<%= doc.numSesion %>">
+                data-num-sesion="<%= doc.numSesion %>"
+                data-expediente="<%= expediente.IDExpediente %>">
               <td>
                 <% if (doc.tipo === 'PDF') { %>
                   <span class="icon-text">
                     <span class="icon">
-                      <i class="fas fa-file-pdf" style="color: #e2423b;"></i>
+                      <i class="fas fa-file-pdf" style="color: #e2423b;"></i>Z
                     </span>
                     <span><%= doc.nombre %></span>
                   </span>
@@ -242,7 +232,7 @@
                     data-id="<%= doc.id %>" 
                     data-tipo="<%= doc.tipo %>"
                     data-num-sesion="<%= doc.numSesion %>"
-                    data-expediente="<%= expediente.IDExpedienteEncriptado %>"
+                    data-expediente="<%= expediente.IDExpediente %>"
                     style="cursor: pointer;">
                     <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
                 </span>
@@ -266,15 +256,17 @@
 
     <!-- MODAL DE VISTA PREVIA DEL DOCUMENTO -->
     <div id="modalVistaPreviaDocumento" class="modal" style="display: none; z-index: 1050;">
-      <div class="modal-background"></div>
-      <div class="modal-content" style="width: 80%; height: 80%;">
-          <div class="box p-0" style="width: 100%; height: 100%; overflow: hidden;">
-              <iframe id="iframeVistaPreviaDocumento" width="100%" height="100%" style="border: none;"></iframe>
-          </div>
-      </div>
-      <button class="modal-close is-large" aria-label="close"></button>
-  </div>
-<!-- Modal Subir Documento - VERSIÓN MEJORADA -->
+        <div class="modal-background"></div>
+        <div class="modal-content" style="width: 80%; height: 80%;">
+        <iframe id="iframeVistaPreviaDocumento" style="width: 100%; height: 100%;" frameborder="0"></iframe>
+        </div>
+        <button class="modal-close is-large delete" aria-label="close"></button>
+    </div>
+  </section>
+
+  <!-- Agregar antes del cierre de la etiqueta </section> -->
+
+<!-- Modal Subir Documento -->
 <div id="modalSubirDocumento" class="modal" style="display: none; z-index: 1050;">
   <!-- Fondo oscuro -->
   <div class="modal-background" style="background-color: rgba(0, 0, 0, 0.8);"></div>
@@ -288,30 +280,32 @@
 
     <!-- Cuerpo del modal -->
     <section class="modal-card-body" style="text-align: center;">
-      <h1 class="title is-4">Subir Documentos</h1>
+      <h1 class="title is-4">Subir Documento</h1>
       <p class="subtitle is-6" style="margin-bottom: 25px;">
-        Seleccione uno o varios archivos PDF para subir.<br>
-        Los documentos se guardarán con sus nombres originales.
+        Para asegurarse de que la importación sea correcta, <br>
+        debe escoger un archivo con formato ".pdf".
       </p>
 
       <!-- Formulario -->
       <form id="subirDocumentoForm" enctype="multipart/form-data" method="POST">
+        <!-- Nombre del documento -->
+        <div class="field">
+          <div class="control">
+            <input class="input" type="text" name="nombreDocumento" placeholder="Nombre del documento" required>
+          </div>
+        </div>
+
         <!-- Archivo -->
         <div class="field">
           <div class="file has-name is-fullwidth">
             <label class="file-label">
-              <input class="file-input" type="file" name="archivosDocumento" accept=".pdf" multiple required>
+              <input class="file-input" type="file" name="archivoDocumento" accept=".pdf" required>
               <span class="file-cta">
-                <span class="file-label">Elegir archivos</span>
+                <span class="file-label">Elegir archivo</span>
               </span>
-              <span class="file-name" id="nombreArchivo">No hay archivos seleccionados</span>
+              <span class="file-name" id="nombreArchivo">No hay archivo seleccionado</span>
             </label>
           </div>
-        </div>
-        
-        <!-- Lista de archivos seleccionados -->
-        <div class="field">
-          <div id="listaArchivosSeleccionados" class="content" style="text-align: left; max-height: 150px; overflow-y: auto; margin-top: 10px;"></div>
         </div>
       </form>
     </section>
