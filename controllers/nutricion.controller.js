@@ -893,3 +893,30 @@ exports.actualizarHistoriaClinicaV2 = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error al actualizar' });
     }
 };
+
+exports.guardarHistoriaClinica = async (req, res) => {
+    try {
+        const { IDExpediente, datosSesion } = req.body;
+
+        // Verificar si ya existe un registro en nutricional1 para este expediente
+        const existeHistoria = await Nutricion.obtenerHistoriaNutricional1(IDExpediente);
+
+        if (existeHistoria) {
+            // Actualizar registro existente en nutricional1
+            await Nutricion.actualizarHistoriaNutricional1(IDExpediente, datosSesion.nutricional1);
+        } else {
+            // Insertar nuevo registro en nutricional1
+            await Nutricion.crearHistoriaNutricional1(IDExpediente, datosSesion.nutricional1);
+        }
+
+        // Guardar o actualizar las demás tablas (indicadores, manejo nutricional, etc.)
+        await Nutricion.guardarIndicadoresBioquimicos(IDExpediente, datosSesion.indicadoresBioquim);
+        await Nutricion.guardarManejoNutricional(IDExpediente, datosSesion.manejoNutricional);
+        // ...guardar otras tablas según sea necesario...
+
+        res.json({ success: true, message: 'Historia clínica guardada correctamente.' });
+    } catch (error) {
+        console.error('Error al guardar la historia clínica:', error);
+        res.status(500).json({ success: false, message: 'Error al guardar la historia clínica.' });
+    }
+};

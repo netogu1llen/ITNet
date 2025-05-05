@@ -42,6 +42,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             tablaIndicadores.appendChild(nuevaFila);
             configurarBotonesEliminarFila();
+
+            // Establecer fecha máxima para los datepickers
+            const hoy = new Date().toISOString().split('T')[0];
+            setTimeout(() => {
+                document.querySelectorAll('input[type="date"]').forEach(input => {
+                    input.max = hoy;
+                });
+            }, 0);
         });
     }
 
@@ -285,6 +293,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Establecer fecha máxima para los datepickers
+    const hoy = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.max = hoy;
+    });
 });
 
 function recopilarDatosFormulario() {
@@ -341,4 +355,38 @@ function recopilarDatosFormulario() {
         fibra: document.getElementById('fibra')?.value || '',
         agua: document.getElementById('agua')?.value || ''
     };
+}
+
+function actualizarHistoriaClinica(idExpediente, datosHistoria) {
+    $.ajax({
+        url: `/historiaClinicaV2/actualizar/${idExpediente}`,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(datosHistoria),
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'La historia clínica se actualizó correctamente.',
+                    icon: 'success'
+                }).then(() => {
+                    // Refrescar la tabla de documentos e historiales
+                    $('#documentosTable').DataTable().ajax.reload(null, false);
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: response.message || 'Hubo un problema al actualizar la historia clínica.',
+                    icon: 'error'
+                });
+            }
+        },
+        error: function(xhr) {
+            Swal.fire({
+                title: 'Error',
+                text: xhr.responseJSON?.message || 'Error desconocido al actualizar la historia clínica.',
+                icon: 'error'
+            });
+        }
+    });
 }

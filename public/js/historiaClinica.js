@@ -17,6 +17,12 @@ document.addEventListener('DOMContentLoaded', function() {
     tabla.appendChild(nuevaFila);
 
     configurarBotonesEliminarFila(); // Vuelve a configurar los botones de eliminar
+
+    setTimeout(() => {
+      document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.max = hoy;
+      });
+    }, 0);
   });
 
   // Función para configurar botones de eliminar
@@ -335,4 +341,72 @@ function recopilarDatosFormulario() {
         agua: document.getElementById('agua')?.value || '',
     };
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha máxima para los datepickers
+    const hoy = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.max = hoy;
+    });
+
+    // Cuando se agrega una nueva fila, establecer la fecha máxima
+    const botonAgregar = document.getElementById('btn-agregar-fila');
+    if (botonAgregar) {
+        botonAgregar.addEventListener('click', function() {
+            setTimeout(() => {
+                document.querySelectorAll('input[type="date"]').forEach(input => {
+                    input.max = hoy;
+                });
+            }, 0);
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para validar caracteres especiales
+    function validarCaracteresEspeciales(e) {
+        const caracteresProhibidos = /['"%;<>\\]/;
+        if (caracteresProhibidos.test(e.key)) {
+            e.preventDefault();
+            return false;
+        }
+    }
+
+    // Aplicar validación a todos los inputs de texto
+    const textInputs = document.querySelectorAll('input[type="text"], textarea');
+    textInputs.forEach(input => {
+        input.addEventListener('keypress', validarCaracteresEspeciales);
+        
+        // Limpiar caracteres especiales al pegar texto
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const texto = (e.clipboardData || window.clipboardData).getData('text');
+            const textoLimpio = texto.replace(/['"%;<>\\]/g, '');
+            document.execCommand('insertText', false, textoLimpio);
+        });
+    });
+
+    // Validación adicional al enviar el formulario
+    function sanitizarValor(valor) {
+        if (typeof valor === 'string') {
+            return valor.replace(/['"%;<>\\]/g, '');
+        }
+        return valor;
+    }
+
+    // Modificar la función recopilarDatosFormulario
+    const recopilarDatosOriginal = recopilarDatosFormulario;
+    recopilarDatosFormulario = function() {
+        const datos = recopilarDatosOriginal();
+        // Sanitizar todos los valores string
+        Object.keys(datos).forEach(key => {
+            if (Array.isArray(datos[key])) {
+                datos[key] = datos[key].map(val => sanitizarValor(val));
+            } else {
+                datos[key] = sanitizarValor(datos[key]);
+            }
+        });
+        return datos;
+    };
+});
 
