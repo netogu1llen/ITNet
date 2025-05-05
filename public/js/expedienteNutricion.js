@@ -115,13 +115,29 @@ $(document).ready(function () {
             .then(response => response.json())
             .then(data => {
                 if (!data || data.length === 0) {
-                    console.log('No hay datos para graficar');
+                    console.log('No hay datos para mostrar la gráfica');
+                    $('#graficaPesoTallaContainer').hide();
                     return;
                 }
-
-                const fechas = data.map(item => new Date(item.fecha).toLocaleDateString('es-ES'));
-                const pesos = data.map(item => item.peso);
-                const tallas = data.map(item => item.talla);
+            
+                // Filtrar solo los registros válidos (peso, talla y fecha deben ser válidos)
+                const registrosValidos = data.filter(item => {
+                    const pesoValido = item.peso !== null && !isNaN(item.peso);
+                    const tallaValida = item.talla !== null && !isNaN(item.talla);
+                    const fechaValida = item.fecha !== null && !isNaN(new Date(item.fecha).getTime());
+                    return pesoValido && tallaValida && fechaValida;
+                });
+            
+                if (registrosValidos.length < 2) {
+                    console.log('No hay suficientes datos válidos para mostrar la gráfica (se requieren al menos 2 mediciones válidas)');
+                    $('#graficaPesoTallaContainer').hide();  // Ocultar toda la sección de la gráfica
+                    return;
+                }
+            
+                // Solo graficamos los datos válidos
+                const fechas = registrosValidos.map(item => new Date(item.fecha).toLocaleDateString('es-ES'));
+                const pesos = registrosValidos.map(item => item.peso);
+                const tallas = registrosValidos.map(item => item.talla);
 
                 const ctx = document.getElementById('graficaEvolucionPesoTalla').getContext('2d');
                 new Chart(ctx, {

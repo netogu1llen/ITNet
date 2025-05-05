@@ -47,6 +47,6 @@ router.post('/historiaClinica/actualizarHistoriaClinicaV1', canConsultarExpedien
 router.post('/historiaClinica/guardarHistoriaClinicaV2', canConsultarExpedienteNutricional, canConsultarPaciente, canRegistarHistorialClinicoVer2, nutricionController.guardarHistoriaClinicaV2);
 router.post('/historiaClinica/actualizarHistoriaClinicaV2', canConsultarExpedienteNutricional, canConsultarPaciente, canEditarHistorialClinicoVer2, nutricionController.actualizarHistoriaClinicaV2);
 
-router.get('/evolucion/:IDExpediente', nutricionController.obtenerEvolucionPesoTalla);
+router.get('/evolucion/:IDExpediente', canConsultarExpedienteNutricional, canConsultarPaciente, nutricionController.obtenerEvolucionPesoTalla);
 
 module.exports = router;
