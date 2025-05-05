@@ -316,15 +316,21 @@ function recopilarDatosFormulario() {
 
     // Recopilar datos de indicadores bioquímicos
     const parametro = Array.from(document.querySelectorAll('input[name="parametroBioquimico[]"]'))
-        .map(input => input.value.trim());
+        .map(input => input.value.trim())
+        .filter(value => value !== ''); // Filtrar valores vacíos
+    
     const valorReferencia = Array.from(document.querySelectorAll('input[name="valorReferencia[]"]'))
-        .map(input => input.value.trim());
+        .map(input => input.value.trim())
+        .filter(value => value !== '');
+    
     const parametroFecha = Array.from(document.querySelectorAll('input[name="fechaParametro[]"]'))
-        .map(input => input.value.trim());
+        .map(input => input.value.trim())
+        .filter(value => value !== '');
 
     // Recopilar objetivos nutricionales
     const objetivosNutricionales = Array.from(document.querySelectorAll('input[name="objetivosNutricionales[]"]'))
-        .map(input => input.value.trim());
+        .map(input => input.value.trim())
+        .filter(value => value !== ''); // Filtrar valores vacíos
 
     return {
         IDExpediente: idExpediente,
@@ -355,38 +361,4 @@ function recopilarDatosFormulario() {
         fibra: document.getElementById('fibra')?.value || '',
         agua: document.getElementById('agua')?.value || ''
     };
-}
-
-function actualizarHistoriaClinica(idExpediente, datosHistoria) {
-    $.ajax({
-        url: `/historiaClinicaV2/actualizar/${idExpediente}`,
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(datosHistoria),
-        success: function(response) {
-            if (response.success) {
-                Swal.fire({
-                    title: 'Éxito',
-                    text: 'La historia clínica se actualizó correctamente.',
-                    icon: 'success'
-                }).then(() => {
-                    // Refrescar la tabla de documentos e historiales
-                    $('#documentosTable').DataTable().ajax.reload(null, false);
-                });
-            } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: response.message || 'Hubo un problema al actualizar la historia clínica.',
-                    icon: 'error'
-                });
-            }
-        },
-        error: function(xhr) {
-            Swal.fire({
-                title: 'Error',
-                text: xhr.responseJSON?.message || 'Error desconocido al actualizar la historia clínica.',
-                icon: 'error'
-            });
-        }
-    });
 }
