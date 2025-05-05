@@ -41,7 +41,7 @@ function enviarPost(url, data) {
     console.error("Error:", error);
     Swal.fire({
         title: "Error!",
-        text: `Hubo un problema al procesar la solicitud de ${data.accion}`,
+        text: error || `Hubo un problema al procesar la solicitud de ${data.accion}`,
         icon: "error"
     });
 });
@@ -142,6 +142,7 @@ if (btnGuardar) {
           const bitacora = document.getElementById('bitacora').value;
           const objetivoSesion = document.getElementById('objetivoSesion').value;
           const justificacionSesion = document.getElementById('justificacionSesion').value;
+          const numSesion = document.getElementById('numSesion').value;
     
           // Obtener los valores de la tabla multi-fila (con las filas dinámicas)
           const actividad = Array.from(document.querySelectorAll('textarea[name^="actividad[]"]')).map(input => input.value.trim());
@@ -155,7 +156,8 @@ if (btnGuardar) {
             { id: 'recomendaciones', nombre: 'Recomendaciones' },
             { id: 'bitacora', nombre: 'Bitácora' },
             { id: 'objetivoSesion', nombre: 'Objetivo de Sesión' },
-            { id: 'justificacionSesion', nombre: 'Justificación de Sesión' }
+            { id: 'justificacionSesion', nombre: 'Justificación de Sesión' },
+            { id: 'numSesion', nombre: 'Numero de sesion' }
           ];
           
           let camposVacios = [];
@@ -208,6 +210,7 @@ if (btnGuardar) {
 
         // Crear un objeto con los datos principales
         const datos = {
+          numSesion,
           objetivoSesion,
           justificacionSesion,
           analisisPsicologico,
@@ -283,6 +286,7 @@ if (btnRegistrar) {
       const bitacora = document.getElementById('bitacora').value;
       const objetivoSesion = document.getElementById('objetivoSesion').value;
       const justificacionSesion = document.getElementById('justificacionSesion').value;
+      const numSesion = document.getElementById('numSesion').value;
 
       // Obtener los valores de la tabla multi-fila (con las filas dinámicas)
       const actividad = Array.from(document.querySelectorAll('textarea[name="actividad[]"]')).map(input => input.value.trim());
@@ -297,7 +301,8 @@ if (btnRegistrar) {
         { id: 'recomendaciones', nombre: 'Recomendaciones' },
         { id: 'bitacora', nombre: 'Bitácora' },
         { id: 'objetivoSesion', nombre: 'Objetivo de Sesión' },
-        { id: 'justificacionSesion', nombre: 'Justificación de Sesión' }
+        { id: 'justificacionSesion', nombre: 'Justificación de Sesión' },
+        { id: 'numSesion', nombre: 'Numero de sesión' }
       ];
       
       let camposVacios = [];
@@ -347,9 +352,9 @@ if (btnRegistrar) {
         });
         return;
       }
-
       // Crear un objeto con los datos principales
       const datos = {
+        numSesion,
         objetivoSesion,
         justificacionSesion,
         analisisPsicologico,

@@ -12,10 +12,10 @@
       <div class="element-container"></div>
       <div class="element-container"></div>
       <div class="element-container">
-        <label for="numExpediente">Número de Expediente:</label>
+        <label for="IDExpediente">Número de expediente:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="numExpediente" name="numExpediente" maxlength="15"><br>
+          <input type="text" id="IDExpediente" name="IDExpediente" maxlength="15"><br>
         </div>
       </div>
       <div class="element-container"></div>
@@ -75,13 +75,91 @@
       </div>
     </div>
     <hr>
+    <label for="contactoEmergencia">Datos de Contacto de Emergencia</label>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="nombreContacto">Nombre del Contacto:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="nombreContacto" name="nombreContacto" maxlength="100"><br> 
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="apellidoPContacto">Apellido Paterno:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="apellidoPContacto" name="apellidoPContacto" maxlength="60"><br>
+        </div>
+      </div>
+      <div class="element-container">
+        <label for="apellidoMContacto">Apellido Materno:</label>
+        <br>
+        <div class="multirow-form-container">
+          <input type="text" id="apellidoMContacto" name="apellidoMContacto" maxlength="60"><br>
+        </div>
+      </div>
+    </div>
+    <div class="multirow-container">
+      <div class="element-container">
+        <label for="parentescoContacto">Parentesco:</label>
+        <br>
+        <div class="multirow-form-container">
+          <select id="parentescoContacto" name="parentescoContacto">
+            <option value="">Seleccione el parentesco</option>
+            <option value="Padre">Padre</option>
+            <option value="Madre">Madre</option>
+            <option value="Hermano/a">Hermano/a</option>
+            <option value="Tío/a">Tío/a</option>
+            <option value="Abuelo/a">Abuelo/a</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="element-container"></div>
+      <div class="element-container"></div>
+    </div>
+    <hr>
     <label for="direccion">Direccion de vivienda</label>
     <div class="multirow-container">
       <div class="element-container">
         <label for="direccion">Estado:</label>
         <br>
         <div class="multirow-form-container">
-          <input type="text" id="estado" name="estado" maxlength="100"><br>
+          <select id="estado" name="estado" style="max-height: 100px; overflow-y: auto;">
+            <option value="">Seleccione un estado</option>
+            <option value="Aguascalientes">Aguascalientes</option>
+            <option value="Baja California">Baja California</option>
+            <option value="Baja California Sur">Baja California Sur</option>
+            <option value="Campeche">Campeche</option>
+            <option value="Chiapas">Chiapas</option>
+            <option value="Chihuahua">Chihuahua</option>
+            <option value="Ciudad de México">Ciudad de México</option>
+            <option value="Coahuila">Coahuila</option>
+            <option value="Colima">Colima</option>
+            <option value="Durango">Durango</option>
+            <option value="Estado de México">Estado de México</option>
+            <option value="Guanajuato">Guanajuato</option>
+            <option value="Guerrero">Guerrero</option>
+            <option value="Hidalgo">Hidalgo</option>
+            <option value="Jalisco">Jalisco</option>
+            <option value="Michoacán">Michoacán</option>
+            <option value="Morelos">Morelos</option>
+            <option value="Nayarit">Nayarit</option>
+            <option value="Nuevo León">Nuevo León</option>
+            <option value="Oaxaca">Oaxaca</option>
+            <option value="Puebla">Puebla</option>
+            <option value="Querétaro">Querétaro</option>
+            <option value="Quintana Roo">Quintana Roo</option>
+            <option value="San Luis Potosí">San Luis Potosí</option>
+            <option value="Sinaloa">Sinaloa</option>
+            <option value="Sonora">Sonora</option>
+            <option value="Tabasco">Tabasco</option>
+            <option value="Tamaulipas">Tamaulipas</option>
+            <option value="Tlaxcala">Tlaxcala</option>
+            <option value="Veracruz">Veracruz</option>
+            <option value="Yucatán">Yucatán</option>
+            <option value="Zacatecas">Zacatecas</option>
+          </select>
         </div>
       </div>
       <div class="element-container">

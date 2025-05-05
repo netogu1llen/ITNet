@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canRegistrarHistorialClinicoVer1 = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Registrar historial clínico ver1') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Registrar historial clínico ver1') {
             canRegistrarHistorialClinicoVer1 = true;
             break;
         }

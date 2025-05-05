@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canDescargarSoffyapp = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Descargar Soffyapp') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Descargar Soffyapp') {
             canDescargarSoffyapp = true;
             break;
         }

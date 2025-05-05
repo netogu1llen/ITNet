@@ -30,6 +30,16 @@ $(document).ready(function () {
     dtTopBar.append(editarPacienteButton);
     $('#TopBar').append(dtTopBar);
 
+    // Manejar clic en el botón de editar paciente
+    editarPacienteButton.on('click', function() {
+        // Obtener el ID del expediente de la URL
+        const urlPath = window.location.pathname;
+        const idExpedienteEncriptado = urlPath.split('/').pop();
+        
+        // Redirigir a la página de edición
+        window.location.href = `/pacientes/editar/${idExpedienteEncriptado}`;
+    });
+
     // Crear modal de carga y añadirlo al DOM
     const loadingModal = `
         <div id="loadingModal" class="modal">
@@ -143,7 +153,7 @@ $(document).ready(function () {
         
         // Obtener el ID del expediente de la URL actual
         const urlPath = window.location.pathname;
-        const expedienteId = urlPath.split('/').pop();
+        const idExpedienteEncriptado = urlPath.split('/').pop();
         
         const formData = new FormData();
         
@@ -153,7 +163,7 @@ $(document).ready(function () {
         }
         
         $.ajax({
-            url: `/pacientes/documentos/subir-multiple/${expedienteId}`,
+            url: `/pacientes/documentos/subir-multiple/${idExpedienteEncriptado}`,
             method: 'POST',
             data: formData,
             processData: false,

@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canModificarUsuario = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Modificar usuario') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Modificar usuario') {
             canModificarUsuario = true;
             break;
         }

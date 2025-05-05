@@ -29,15 +29,15 @@ function enviarPost(url, data) {
             text: response.mensaje || "Operación realizada con éxito",
             icon: "success"
         }).then(() => {
-            const idExpediente = window.location.pathname.split('/').pop();
-            window.location.href = `/pacientes/expediente/${idExpediente}`;
+            // Usar el valor encriptado para redireccionar
+            window.location.href = `/pacientes/expediente/${response.nuevoIdEncriptado}`;
         });
     })
     .catch(error => {
         console.error("Error:", error);
         Swal.fire({
             title: "Error!",
-            text: `Hubo un problema al procesar la solicitud de ${data.accion}`,
+            text: error.message || `Hubo un problema al procesar la solicitud de ${data.accion}`,
             icon: "error"
         });
     });
@@ -60,9 +60,16 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
             const nombres = document.getElementById('nombres').value;
             const apellidoP = document.getElementById('apellidoP').value;
             const apellidoM = document.getElementById('apellidoM').value;
-            const numExpediente = document.getElementById('numExpediente').value;
+            const IDExpediente = document.getElementById('IDExpediente').value; // Corregido de numExpediente a IDExpediente
             const fechaNacimiento = document.getElementById('fechaNacimiento').value;
             const contacto = document.getElementById('contacto').value;
+            
+            // Nuevos campos de contacto de emergencia
+            const nombreContacto = document.getElementById('nombreContacto').value;
+            const apellidoPContacto = document.getElementById('apellidoPContacto').value;
+            const apellidoMContacto = document.getElementById('apellidoMContacto').value;
+            const parentescoContacto = document.getElementById('parentescoContacto').value;
+            
             const estado = document.getElementById('estado').value;
             const ciudad = document.getElementById('ciudad').value;
             const calle = document.getElementById('calle').value;
@@ -82,7 +89,7 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
                 { id: 'nombres', nombre: 'nombres' },
                 { id: 'apellidoP', nombre: 'apellidoP' },
                 { id: 'apellidoM', nombre: 'apellidoM' },
-                { id: 'numExpediente', nombre: 'numExpediente' },
+                { id: 'IDExpediente', nombre: 'IDExpediente' }, // Corregido
                 { id: 'fechaNacimiento', nombre: 'fechaNacimiento' },
                 { id: 'estado', nombre: 'estado' },
                 { id: 'ciudad', nombre: 'ciudad' },
@@ -169,13 +176,17 @@ document.getElementById('btn-guardar').addEventListener('click', function() {
                 apellidoM,
                 fechaNacimiento,
                 contacto,
+                nombreContacto,
+                apellidoPContacto,
+                apellidoMContacto,
+                parentescoContacto,
                 estado,
                 ciudad,
                 calle,
                 cp,
                 localidad,
                 numCasa,
-                numExpediente,
+                IDExpediente, // Corregido
                 enfermedades,
                 medicamentos,
                 estudioSocioeconomico,

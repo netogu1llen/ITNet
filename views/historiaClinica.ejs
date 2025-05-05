@@ -1,6 +1,9 @@
 <%- include('partials/head') %>
 
-<input type="hidden" id="idExpediente" data-modo-edicion="<%= datosSesion ? 'true' : 'false' %>" value="<%= expediente.IDExpediente %>">
+<!-- Mantener el ID encriptado para operaciones de backend -->
+<input type="hidden" id="idExpediente" data-modo-edicion="<%= datosSesion ? 'true' : 'false' %>" value="<%= expediente.IDExpedienteEncriptado || expediente.IDExpediente %>">
+<!-- El ID desencriptado se almacena aparte para mostrarlo en la interfaz -->
+<input type="hidden" id="idExpedienteDesencriptado" value="<%= expediente.IDExpediente %>">
 <body>
   <main clas="container"> 
     
@@ -22,6 +25,7 @@
           <div class="box" style="background-color: #ffffff; ">
             <div class="columns">
               <div class="column has-text-black has-text-weight-semibold">
+                <!-- Mostrar el ID desencriptado para el usuario -->
                 No. Expediente: <%= expediente.IDExpediente %>
               </div>
               <div class="column has-text-black has-text-weight-semibold">
@@ -481,10 +485,13 @@
                               <div class="columns is-vcentered">
                                   
                                   <div class="column is-half">
-                                    <label class="label" style="margin-left: 10%;">¿Realiza ejercicio físico? Sí/No</label>
+                                    <label class="label" style="margin-left: 10%;">¿Realiza ejercicio físico?</label>
                                     <div class="control">
-                                      <input id="ejercicioFisico" maxlength="2" required class="input" type="text" 
-                                          value="<%= datosSesion?.actividadDiaria?.ejercicioFisico || '' %>" />
+                                      <select id="ejercicioFisico" class="input" required>
+                                        <option value="" disabled>Seleccione</option>
+                                        <option value="Si" <%= datosSesion?.actividadDiaria?.ejercicioFisico === 'Si' ? 'selected' : '' %>>Sí</option>
+                                        <option value="No" <%= datosSesion?.actividadDiaria?.ejercicioFisico === 'No' ? 'selected' : '' %>>No</option>
+                                      </select>
                                     </div>
                                   </div>
                                 
@@ -502,6 +509,7 @@
                                         class="input" 
                                         type="date" 
                                         value="<%= fechaInicioFormateada %>" 
+                                        max=""
                                       />
                                     </div>
                                   </div>
@@ -571,8 +579,8 @@
                             value="<%= indicador.valorReferencia %>" placeholder="Valor de referencia..." required>
                         </td>
                         <td>
-                          <input class="input" required type="date" name="fechaParametro[]" 
-                            value="<%= fechaIndicador %>" required>
+                          <input class="input" type="date" name="fechaParametro[]" 
+                            value="<%= new Date().toISOString().split('T')[0] %>" required>
                         </td>
                         <td>
                           <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
@@ -589,7 +597,8 @@
                         <input class="input" required maxlength="30" type="text" name="valorReferencia[]" placeholder="Valor de referencia..." required>
                       </td>
                       <td>
-                        <input class="input" required type="date" name="fechaParametro[]" required>
+                        <input class="input" type="date" name="fechaParametro[]" 
+                          max="<%= new Date().toISOString().split('T')[0] %>" required>
                       </td>
                       <td>
                         <button type="button" class="button is-cancel btn-eliminar-fila">-</button>

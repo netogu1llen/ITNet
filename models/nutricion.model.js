@@ -1,6 +1,6 @@
 const db = require('../util/database');
 const { decrypt } = require('../util/encryptData');
-
+//cammel
 class Nutricion {
     // Obtener todos los pacientes (excluyendo los eliminados)
     static async obtenerTodos() {
@@ -89,7 +89,7 @@ class Nutricion {
             // Obtener la última sesión con datos antropométricos
             const [ultimaSesionRows] = await db.execute(`
                 SELECT MAX(numSesion) as ultimaSesion
-                FROM evaluacionantropometrica
+                FROM evaluacionAntropometrica
                 WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
             `, [idExpediente]);
             
@@ -113,7 +113,7 @@ class Nutricion {
                             THEN circunferenciaCintura/circunferenciaCadera
                             ELSE NULL
                        END as indiceCinturaCadera
-                FROM evaluacionantropometrica
+                FROM evaluacionAntropometrica
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [idExpediente, ultimaSesion]);
             
@@ -127,6 +127,7 @@ class Nutricion {
                 };
             }
             
+
             return {
                 peso: antropometricosRows[0].peso || 'No registrado',
                 talla: antropometricosRows[0].talla || 'No registrado',
@@ -220,23 +221,19 @@ class Nutricion {
         }
     }
     
-    static async obtenerManejoNutricionalPorSesion(idExpediente, numSesion) {
+    static async obtenerManejoNutricionalPorSesion(IDExpediente, numSesion) {
         try {
             const [rows] = await db.execute(`
-                SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
-                FROM manejonutricional
+                SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua 
+                FROM manejoNutricional 
                 WHERE IDExpediente = ? AND numSesion = ?
-                LIMIT 1
-            `, [idExpediente, numSesion]);
-            
-            return rows.length > 0 ? rows[0] : null;
+            `, [IDExpediente, numSesion]);
+            return rows[0];
         } catch (error) {
-            console.error('Error al obtener manejo nutricional por sesión:', error);
+            console.error('Error al obtener manejo nutricional:', error);
             throw error;
         }
     }
-
-    // Obtener manejo nutricional
     static async obtenerManejoNutricional(idExpediente) {
         try {
             // Obtener la última sesión de manejoNutricional
@@ -250,7 +247,14 @@ class Nutricion {
             
             if (!ultimaSesion) {
                 return {
-                    manejoNutricional: null
+                    manejoNutricional: {
+                        energia: 'No registrado',
+                        proteinas: 'No registrado',
+                        hidratosDeCarbono: 'No registrado',
+                        lipidos: 'No registrado',
+                        fibra: 'No registrado',
+                        agua: 'No registrado'
+                    }
                 };
             }
             
@@ -261,14 +265,23 @@ class Nutricion {
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [idExpediente, ultimaSesion]);
             
-            // Preparar la respuesta
             return {
-                manejoNutricional: manejoRows.length > 0 ? manejoRows[0] : null
+                manejoNutricional: manejoRows[0] || {
+                    energia: 'No registrado',
+                    proteinas: 'No registrado',
+                    hidratosDeCarbono: 'No registrado',
+                    lipidos: 'No registrado',
+                    fibra: 'No registrado',
+                    agua: 'No registrado'
+                }
             };
         } catch (error) {
+            console.error('Error al obtener manejo nutricional:', error);
             throw error;
         }
     }
+
+    
 
     // Obtener documentos adjuntos y historial nutricional del paciente
     static async obtenerDocumentosHistorial(idExpediente) {
@@ -284,38 +297,42 @@ class Nutricion {
             
             // Obtener historial clínico V1
             const [nutricionalRows] = await db.execute(`
-                SELECT IDNutricional1 as ID, 'Historial Clínico V1' as nombre, 
-                    fecha, 'NUTRICIONAL_V1' as tipo, numSesion
-                FROM nutricional1
-                WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
-                ORDER BY fecha DESC
+                SELECT n.IDNutricional1 as ID, 'Historial Clínico V1' as nombre, 
+                    n.fecha, 'NUTRICIONAL_V1' as tipo, n.numSesion
+                FROM nutricional1 n
+                WHERE n.IDExpediente = ? AND (n.eliminado IS NULL OR n.eliminado = 0)
+                ORDER BY n.fecha DESC
             `, [idExpediente]);
             
-            // Actualizar la consulta de objetivos nutricionales (V2)
+            // Obtener historial clínico V2 (asegurarnos de que sea solo V2)
             const [objetivosRows] = await db.execute(`
                 SELECT 
-                    o.IDObjetivoNutricional as ID, 
+                    o.IDobjetivoNutricional as ID,
                     'Historial Clínico V2' as nombre,
                     o.fecha,
                     'NUTRICIONAL_V2' as tipo,
                     o.numSesion,
                     o.objetivo
-                FROM objetivonutricional o
+                FROM objetivoNutricional o
                 WHERE o.IDExpediente = ? AND (o.eliminado IS NULL OR o.eliminado = 0)
+                AND o.numSesion NOT IN (
+                    SELECT numSesion 
+                    FROM nutricional1 
+                    WHERE IDExpediente = ? AND (eliminado IS NULL OR eliminado = 0)
+                )
                 ORDER BY o.fecha DESC
-            `, [idExpediente]);
+            `, [idExpediente, idExpediente]);
             
-            
-            // Combinar todos los resultados - Sin ordenar aquí
+            // Combinar todos los resultados
             const documentosHistorial = [
-                ...nutricionalRows.map(hist => ({  // Colocamos los V1 primero en el array
+                ...nutricionalRows.map(hist => ({
                     id: hist.ID,
                     nombre: hist.nombre,
                     fecha: hist.fecha,
                     tipo: hist.tipo,
                     ruta: null,
                     numSesion: hist.numSesion,
-                    orden: 1  // Valor para ordenar en el frontend (prioridad alta)
+                    orden: 1
                 })),
                 ...documentosRows.map(doc => ({
                     id: doc.IDDocumento,
@@ -324,7 +341,7 @@ class Nutricion {
                     tipo: doc.tipo,
                     ruta: doc.ubicacion,
                     numSesion: null,
-                    orden: 2  // Valor para ordenar (prioridad media)
+                    orden: 2
                 })),
                 ...objetivosRows.map(obj => ({
                     id: obj.ID,
@@ -333,7 +350,7 @@ class Nutricion {
                     tipo: obj.tipo,
                     ruta: null,
                     numSesion: obj.numSesion,
-                    orden: 3  // Valor para ordenar (prioridad baja)
+                    orden: 3
                 }))
             ];
             
@@ -343,35 +360,35 @@ class Nutricion {
         }
     }
 
-    // Cambiar de obtenerObjetivoNutricionalPorId a obtenerHistorialNutricionalV2PorId
+    // Cambiar de obtenerobjetivoNutricionalPorId a obtenerHistorialNutricionalV2PorId
     static async obtenerHistorialNutricionalV2PorId(IDExpediente, numSesion) {
         const connection = await db.getConnection();
         try {
             // Obtener diagnóstico evolución
             const [diagnosticoEvolucion] = await connection.execute(
-                'SELECT diagnosticoEvolucion FROM diagnosticoevolucion WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT diagnosticoEvolucion FROM diagnosticoEvolucion WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
             // Obtener objetivos nutricionales
             const [objetivoNutricional] = await connection.execute(
-                'SELECT objetivo FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT objetivo FROM objetivoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
             // Resto de las consultas existentes
             const [indicadoresBioquim] = await connection.execute(
-                'SELECT parametro, valorReferencia, parametroFecha FROM indicadoresbioquim WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT parametro, valorReferencia, parametroFecha FROM indicadoresBioquim WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
             const [evaluacionAntropometrica] = await connection.execute(
-                'SELECT talla, peso, circunferenciaCintura, circunferenciaCadera FROM evaluacionantropometrica WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT talla, peso, circunferenciaCintura, circunferenciaCadera FROM evaluacionAntropometrica WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
             const [manejoNutricional] = await connection.execute(
-                'SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua FROM manejonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua FROM manejoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [IDExpediente, numSesion]
             );
 
@@ -438,9 +455,9 @@ class Nutricion {
     static async eliminarHistorialV2(id) {
         try {
             const [result] = await db.execute(`
-                UPDATE objetivonutricional
+                UPDATE objetivoNutricional
                 SET eliminado = 1
-                WHERE IDObjetivoNutricional = ?
+                WHERE IDobjetivoNutricional = ?
             `, [id]);
             return result;
         } catch (error) {
@@ -499,7 +516,7 @@ class Nutricion {
 
             // Insertar en indicadoresClinicos
             await connection.execute(`
-                INSERT INTO indicadoresclinicos (
+                INSERT INTO indicadoresClinicos (
                     IDExpediente, numSesion, cabello, conjunto, unias, boca, dientes, piel, edema
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `, [
@@ -537,7 +554,7 @@ class Nutricion {
 
             // Insertar en actividadDiaria
             await connection.execute(`
-                INSERT INTO actividaddiaria (
+                INSERT INTO actividadDiaria (
                     IDExpediente, numSesion, ejercicioFisico, fechaInicio, frecuencia
                 ) VALUES (?, ?, ?, ?, ?)
             `, [
@@ -550,7 +567,7 @@ class Nutricion {
 
             // Insertar en diagnosticoEvolucion
             await connection.execute(`
-                INSERT INTO diagnosticoevolucion (
+                INSERT INTO diagnosticoEvolucion (
                     IDExpediente, numSesion, diagnosticoEvolucion
                 ) VALUES (?, ?, ?)
             `, [
@@ -561,7 +578,7 @@ class Nutricion {
 
             // Insertar en evaluacionAntropometrica
             await connection.execute(`
-                INSERT INTO evaluacionantropometrica (
+                INSERT INTO evaluacionAntropometrica (
                     IDExpediente, numSesion, talla, peso, circunferenciaCintura, circunferenciaCadera
                 ) VALUES (?, ?, ?, ?, ?, ?)
             `, [
@@ -578,7 +595,7 @@ class Nutricion {
                 for (let i = 0; i < data.parametro.length; i++) {
                     if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
                         await connection.execute(`
-                            INSERT INTO indicadoresbioquim (
+                            INSERT INTO indicadoresBioquim (
                                 IDExpediente, numSesion, parametro, valorReferencia, parametroFecha
                             ) VALUES (?, ?, ?, ?, ?)
                         `, [
@@ -597,7 +614,7 @@ class Nutricion {
                 for (let i = 0; i < data.objetivo.length; i++) {
                     if (data.objetivo[i]) {
                         await connection.execute(`
-                            INSERT INTO objetivonutricional (
+                            INSERT INTO objetivoNutricional (
                                 IDExpediente, numSesion, objetivo
                             ) VALUES (?, ?, ?)
                         `, [
@@ -611,7 +628,7 @@ class Nutricion {
 
             // Insertar en manejoNutricional
             await connection.execute(`
-                INSERT INTO manejonutricional (
+                INSERT INTO manejoNutricional (
                     IDExpediente, numSesion, energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `, [
@@ -639,13 +656,24 @@ class Nutricion {
         try {
             await connection.beginTransaction();
             console.log('Iniciando inserción de Historia Clínica V2:', data);
-
+    
+            // Asegurarnos de que no existe ya un V1 para esta sesión
+            const [existeV1] = await connection.execute(`
+                SELECT COUNT(*) as count 
+                FROM nutricional1 
+                WHERE IDExpediente = ? AND numSesion = ? AND (eliminado IS NULL OR eliminado = 0)
+            `, [data.IDExpediente, data.numSesion]);
+    
+            if (existeV1[0].count > 0) {
+                throw new Error('Ya existe un Historia Clínica V1 para esta sesión');
+            }
+    
             // 1. Insertar indicadores bioquímicos
             if (data.parametro && Array.isArray(data.parametro)) {
                 for (let i = 0; i < data.parametro.length; i++) {
                     if (data.parametro[i] && data.valorReferencia[i]) {
                         await connection.execute(`
-                            INSERT INTO indicadoresbioquim 
+                            INSERT INTO indicadoresBioquim 
                             (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha)
                             VALUES (?, ?, ?, ?, ?)
                         `, [
@@ -658,10 +686,10 @@ class Nutricion {
                     }
                 }
             }
-
+    
             // 2. Insertar evaluación antropométrica
             await connection.execute(`
-                INSERT INTO evaluacionantropometrica 
+                INSERT INTO evaluacionAntropometrica 
                 (IDExpediente, numSesion, peso, talla, circunferenciaCintura, circunferenciaCadera)
                 VALUES (?, ?, ?, ?, ?, ?)
             `, [
@@ -672,10 +700,10 @@ class Nutricion {
                 data.circunferenciaCintura,
                 data.circunferenciaCadera
             ]);
-
+    
             // 3. Insertar diagnóstico evolución
             await connection.execute(`
-                INSERT INTO diagnosticoevolucion 
+                INSERT INTO diagnosticoEvolucion 
                 (IDExpediente, numSesion, diagnosticoEvolucion)
                 VALUES (?, ?, ?)
             `, [
@@ -683,13 +711,13 @@ class Nutricion {
                 data.numSesion,
                 data.diagnosticoEvolucion
             ]);
-
+    
             // 4. Insertar objetivos nutricionales
             if (data.objetivosNutricionales && Array.isArray(data.objetivosNutricionales)) {
                 for (const objetivo of data.objetivosNutricionales) {
                     if (objetivo) {
                         await connection.execute(`
-                            INSERT INTO objetivonutricional 
+                            INSERT INTO objetivoNutricional 
                             (IDExpediente, numSesion, objetivo)
                             VALUES (?, ?, ?)
                         `, [
@@ -700,10 +728,10 @@ class Nutricion {
                     }
                 }
             }
-
+    
             // 5. Insertar manejo nutricional
             await connection.execute(`
-                INSERT INTO manejonutricional 
+                INSERT INTO manejoNutricional 
                 (IDExpediente, numSesion, energia, hidratosDeCarbono, lipidos, proteinas, fibra, agua)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `, [
@@ -716,7 +744,7 @@ class Nutricion {
                 data.fibra,
                 data.agua
             ]);
-
+    
             await connection.commit();
             console.log('Historia Clínica V2 insertada correctamente');
             return { success: true };
@@ -737,7 +765,7 @@ class Nutricion {
     
             // Actualizar evaluación antropométrica
             await connection.execute(`
-                UPDATE evaluacionantropometrica 
+                UPDATE evaluacionAntropometrica 
                 SET talla = ?, peso = ?, circunferenciaCintura = ?, circunferenciaCadera = ?
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [
@@ -751,7 +779,7 @@ class Nutricion {
     
             // Actualizar diagnóstico evolución
             await connection.execute(`
-                UPDATE diagnosticoevolucion 
+                UPDATE diagnosticoEvolucion 
                 SET diagnosticoEvolucion = ?
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [
@@ -762,7 +790,7 @@ class Nutricion {
     
             // Actualizar manejo nutricional
             await connection.execute(`
-                UPDATE manejonutricional 
+                UPDATE manejoNutricional 
                 SET energia = ?, hidratosDeCarbono = ?, lipidos = ?, 
                     proteinas = ?, fibra = ?, agua = ?
                 WHERE IDExpediente = ? AND numSesion = ?
@@ -778,18 +806,22 @@ class Nutricion {
             ]);
     
             // Actualizar indicadores bioquímicos
-            // Primero eliminar los existentes
-            await connection.execute(
-                'DELETE FROM indicadoresbioquim WHERE IDExpediente = ? AND numSesion = ?',
-                [data.IDExpediente, data.numSesion]
-            );
+            // Solo eliminar los existentes si hay nuevos datos para insertar
+            if (data.parametro && data.parametro.length > 0 && 
+                data.valorReferencia && data.valorReferencia.length > 0 && 
+                data.parametroFecha && data.parametroFecha.length > 0) {
+                
+                // Eliminar solo si tenemos datos válidos para reemplazar
+                await connection.execute(
+                    'DELETE FROM indicadoresBioquim WHERE IDExpediente = ? AND numSesion = ?',
+                    [data.IDExpediente, data.numSesion]
+                );
     
-            // Insertar los nuevos indicadores
-            if (data.parametro && data.valorReferencia && data.parametroFecha) {
+                // Insertar los nuevos indicadores
                 for (let i = 0; i < data.parametro.length; i++) {
                     if (data.parametro[i] && data.valorReferencia[i] && data.parametroFecha[i]) {
                         await connection.execute(
-                            'INSERT INTO indicadoresbioquim (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha) VALUES (?, ?, ?, ?, ?)',
+                            'INSERT INTO indicadoresBioquim (IDExpediente, numSesion, parametro, valorReferencia, parametroFecha) VALUES (?, ?, ?, ?, ?)',
                             [
                                 data.IDExpediente,
                                 data.numSesion,
@@ -803,19 +835,23 @@ class Nutricion {
             }
     
             // Actualizar objetivos nutricionales
-            // Primero eliminar los existentes
-            await connection.execute(
-                'DELETE FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
-                [data.IDExpediente, data.numSesion]
-            );
+            // Solo eliminar los existentes si hay nuevos datos para insertar
+            if (data.objetivosNutricionales && data.objetivosNutricionales.length > 0) {
+                
+                // Eliminar solo si tenemos datos válidos para reemplazar
+                await connection.execute(
+                    'DELETE FROM objetivoNutricional WHERE IDExpediente = ? AND numSesion = ?',
+                    [data.IDExpediente, data.numSesion]
+                );
     
-            // Insertar los nuevos objetivos
-            if (data.objetivo) {
-                for (const obj of data.objetivo) {
-                    await connection.execute(
-                        'INSERT INTO objetivonutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
-                        [data.IDExpediente, data.numSesion, obj]
-                    );
+                // Insertar los nuevos objetivos
+                for (const obj of data.objetivosNutricionales) {
+                    if (obj) { // Solo insertar si el objetivo no está vacío
+                        await connection.execute(
+                            'INSERT INTO objetivoNutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
+                            [data.IDExpediente, data.numSesion, obj]
+                        );
+                    }
                 }
             }
     
@@ -836,10 +872,10 @@ class Nutricion {
                     mn.energia, mn.proteinas, mn.hidratosDeCarbono, 
                     mn.lipidos, mn.fibra, mn.agua
                 FROM nutricional1 n
-                LEFT JOIN evaluacionantropometrica ea 
+                LEFT JOIN evaluacionAntropometrica ea 
                     ON n.IDExpediente = ea.IDExpediente 
                     AND n.numSesion = ea.numSesion
-                LEFT JOIN manejonutricional mn 
+                LEFT JOIN manejoNutricional mn 
                     ON n.IDExpediente = mn.IDExpediente 
                     AND n.numSesion = mn.numSesion
                 WHERE n.IDExpediente = ? 
@@ -863,7 +899,7 @@ class Nutricion {
             );
 
             const [indicadoresClinicos] = await db.execute(
-                'SELECT * FROM indicadoresclinicos WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM indicadoresClinicos WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -873,22 +909,22 @@ class Nutricion {
             );
 
             const [actividadDiaria] = await db.execute(
-                'SELECT * FROM actividaddiaria WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM actividadDiaria WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
             const [diagnosticoEvolucion] = await db.execute(
-                'SELECT * FROM diagnosticoevolucion WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM diagnosticoEvolucion WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
             const [evaluacionAntropometrica] = await db.execute(
-                'SELECT * FROM evaluacionantropometrica WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM evaluacionAntropometrica WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
             const [manejoNutricional] = await db.execute(
-                'SELECT * FROM manejonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT * FROM manejoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -898,7 +934,7 @@ class Nutricion {
             );
 
             const [objetivoNutricional] = await db.execute(
-                'SELECT objetivo FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'SELECT objetivo FROM objetivoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [idExpediente, numSesion]
             );
 
@@ -928,12 +964,12 @@ class Nutricion {
             // Actualizar cada tabla
             const tablas = [
                 { nombre: 'nutricional1', campos: ['diabetes', 'cancer', 'dislipidemia', 'obesidad', 'anemia', 'hipertensionArterial', 'pesoNacer', 'tallaNacer', 'alimentacionRecibida', 'sdg', 'tipoParto', 'complicaciones', 'lactancia', 'tiempo', 'edadAlimentacionComplementaria', 'alimentosPrimerAnio'] },
-                { nombre: 'indicadoresclinicos', campos: ['cabello', 'conjunto', 'unias', 'boca', 'dientes', 'piel', 'edema'] },
+                { nombre: 'indicadoresClinicos', campos: ['cabello', 'conjunto', 'unias', 'boca', 'dientes', 'piel', 'edema'] },
                 { nombre: 'transtornos', campos: ['vomito', 'reflujo', 'disfagia', 'diarrea', 'flatulencias', 'estrenimiento', 'distencion', 'colitis', 'pirosis', 'gastritis', 'otro'] },
-                { nombre: 'actividaddiaria', campos: ['ejercicioFisico', 'fechaInicio', 'frecuencia'] },
-                { nombre: 'diagnosticoevolucion', campos: ['diagnosticoEvolucion'] },
-                { nombre: 'evaluacionantropometrica', campos: ['talla', 'peso', 'circunferenciaCintura', 'circunferenciaCadera'] },
-                { nombre: 'manejonutricional', campos: ['energia', 'hidratosDeCarbono', 'lipidos', 'proteinas', 'fibra', 'agua'] }
+                { nombre: 'actividadDiaria', campos: ['ejercicioFisico', 'fechaInicio', 'frecuencia'] },
+                { nombre: 'diagnosticoEvolucion', campos: ['diagnosticoEvolucion'] },
+                { nombre: 'evaluacionAntropometrica', campos: ['talla', 'peso', 'circunferenciaCintura', 'circunferenciaCadera'] },
+                { nombre: 'manejoNutricional', campos: ['energia', 'hidratosDeCarbono', 'lipidos', 'proteinas', 'fibra', 'agua'] }
             ];
 
             for (const tabla of tablas) {
@@ -965,14 +1001,14 @@ class Nutricion {
 
             // Actualizar objetivoNutricional
             await connection.execute(
-                'DELETE FROM objetivonutricional WHERE IDExpediente = ? AND numSesion = ?',
+                'DELETE FROM objetivoNutricional WHERE IDExpediente = ? AND numSesion = ?',
                 [data.IDExpediente, data.numSesion]
             );
 
             if (data.objetivo && Array.isArray(data.objetivo)) {
                 for (const objetivo of data.objetivo) {
                     await connection.execute(
-                        'INSERT INTO objetivonutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
+                        'INSERT INTO objetivoNutricional (IDExpediente, numSesion, objetivo) VALUES (?, ?, ?)',
                         [data.IDExpediente, data.numSesion, objetivo]
                     );
                 }
@@ -1005,7 +1041,7 @@ class Nutricion {
             const [rows] = await db.execute(
                 `SELECT n.*, ea.* 
                  FROM nutricional1 n 
-                 LEFT JOIN evaluacionantropometrica ea 
+                 LEFT JOIN evaluacionAntropometrica ea 
                  ON n.IDExpediente = ea.IDExpediente AND n.numSesion = ea.numSesion 
                  WHERE n.IDExpediente = ? 
                  AND (n.eliminado IS NULL OR n.eliminado = 0) 
@@ -1024,11 +1060,12 @@ class Nutricion {
         try {
             const [rows] = await db.execute(`
                 SELECT talla, peso, circunferenciaCintura, circunferenciaCadera 
-                FROM evaluacionantropometrica 
+                FROM evaluacionAntropometrica 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
-            return rows;
+            return rows[0];
         } catch (error) {
+            console.error('Error al obtener evaluación antropométrica:', error);
             throw error;
         }
     }
@@ -1037,24 +1074,12 @@ class Nutricion {
         try {
             const [rows] = await db.execute(`
                 SELECT diagnosticoEvolucion 
-                FROM diagnosticoevolucion 
+                FROM diagnosticoEvolucion 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
-            return rows;
+            return rows[0];
         } catch (error) {
-            throw error;
-        }
-    }
-
-    static async obtenerObjetivosNutricionales(IDExpediente, numSesion) {
-        try {
-            const [rows] = await db.execute(`
-                SELECT objetivo 
-                FROM objetivonutricional 
-                WHERE IDExpediente = ? AND numSesion = ?
-            `, [IDExpediente, numSesion]);
-            return rows;
-        } catch (error) {
+            console.error('Error al obtener diagnóstico evolución:', error);
             throw error;
         }
     }
@@ -1063,11 +1088,28 @@ class Nutricion {
         try {
             const [rows] = await db.execute(`
                 SELECT parametro, valorReferencia, parametroFecha 
-                FROM indicadoresbioquim 
+                FROM indicadoresBioquim 
                 WHERE IDExpediente = ? AND numSesion = ?
             `, [IDExpediente, numSesion]);
             return rows;
         } catch (error) {
+            console.error('Error al obtener indicadores bioquímicos:', error);
+            throw error;
+        }
+    }
+
+    static async obtenerObjetivosNutricionales(IDExpediente, numSesion) {
+        try {
+            const [rows] = await db.execute(`
+                SELECT IDobjetivoNutricional, objetivo 
+                FROM objetivoNutricional 
+                WHERE IDExpediente = ? AND numSesion = ?
+                AND (eliminado IS NULL OR eliminado = 0)
+            `, [IDExpediente, numSesion]);
+
+            return rows || [];
+        } catch (error) {
+            console.error('Error al obtener objetivos nutricionales:', error);
             throw error;
         }
     }

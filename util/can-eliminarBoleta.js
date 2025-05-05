@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canEliminarBoleta = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Eliminar boleta') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Eliminar boleta') {
             canEliminarBoleta = true;
             break;
         }

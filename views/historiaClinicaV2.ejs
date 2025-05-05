@@ -1,6 +1,7 @@
 <%- include('partials/head') %>
 
 <input type="hidden" id="idExpediente" data-modo-edicion="<%= datosSesion ? 'true' : 'false' %>" value="<%= expediente.IDExpediente %>">
+<input type="hidden" id="idExpedienteEncriptado" value="<%= expediente.IDExpedienteEncriptado %>">
 <body>
   <main class="container">
     <!-- Página 1 -->
@@ -110,7 +111,7 @@
                         </td>
                         <td>
                           <input class="input" type="date" name="fechaParametro[]" 
-                            value="<%= fechaIndicador %>" required>
+                            value="<%= fechaIndicador %>" max="<%= new Date().toISOString().split('T')[0] %>" required>
                         </td>
                         <td>
                           <button type="button" class="button is-cancel btn-eliminar-fila">-</button>
@@ -127,7 +128,7 @@
                         <input class="input" type="text" name="valorReferencia[]" placeholder="Valor de referencia..." required>
                       </td>
                       <td>
-                        <input class="input" type="date" name="fechaParametro[]" required>
+                        <input class="input" type="date" name="fechaParametro[]" max="<%= new Date().toISOString().split('T')[0] %>" required>
                       </td>
                       <td>
                         <button type="button" class="button is-cancel btn-eliminar-fila">-</button>

@@ -1,8 +1,8 @@
 module.exports = (request, response, next) => {
     let canSidebar = false;
 
-    for (let privilegio of request.session.privilegios) {
-        if (privilegio.Privilegio === 'Sidebar') {
+    for (let privilege of request.user.privileges) {
+        if (privilege == 'Consultar paciente') {
             canSidebar = true;
             break;
         }

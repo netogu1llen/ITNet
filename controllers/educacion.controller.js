@@ -22,7 +22,7 @@ exports.renderEducacionView = (req, res) => {
 exports.getAlumnosInfo = async (req, res) => {
   try {
     const alumnos = await Educacion.getAlumnos();
-    res.json({ data: alumnos });
+    res.json({ data: alumnos }), {user: req.user};
   } catch (err) {
     console.error('Error al obtener alumnos:', err);
     res.status(500).send('Error al obtener alumnos');
@@ -51,7 +51,7 @@ exports.obtenerNombreAlumno = async (IDExpediente) => {
 exports.renderMaterias = async (req, res) => {
   try {
     const materias = await Educacion.getMaterias();
-    res.render('materias', { materias });
+    res.render('materias', { materias, user: req.user });
   } catch (error) {
     console.error('Error al renderizar vista de materias:', error);
     res.status(500).send('Error interno del servidor');
@@ -169,7 +169,8 @@ exports.renderBoletasView = async (req, res) => {
       IDExpediente,
       nombreAlumno,
       boletas,
-      materias
+      materias,
+      user: req.user
     });
   } catch (error) {
     console.error('Error al renderizar vista de boletas:', error);
