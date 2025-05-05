@@ -157,7 +157,52 @@ $(document).ready(function () {
                 text: 'No se pudo determinar el ID del expediente.'
             });
         }
+        $.ajax({
+            url: `/nutricion/historiaClinica/${idExpediente}`,
+            method: 'GET',
+            success: function(data) {
+                // Refrescar la tabla de documentos e historiales
+                table.ajax.reload(null, false); // Recargar datos sin reiniciar la paginación
+            },
+            error: function(xhr) {
+                console.error('Error al generar historia clínica:', xhr);
+            }
+        });
     });
+
+        // Función para actualizar la tabla de documentos e historiales
+        function actualizarDocumentosHistoriales(documentosHistorial) {
+            const tbody = document.querySelector('#documentosTable tbody');
+            tbody.innerHTML = ''; // Limpiar contenido existente
+    
+            documentosHistorial.forEach(doc => {
+                const row = document.createElement('tr');
+                row.classList.add('fila-documento');
+                row.dataset.id = doc.id;
+                row.dataset.tipo = doc.tipo;
+                row.dataset.numSesion = doc.numSesion;
+                row.dataset.expediente = '<%= expediente.IDExpediente %>';
+    
+                row.innerHTML = `
+                    <td>${doc.nombre}</td>
+                    <td>${doc.fechaFormateada}</td>
+                    <td>
+                        <span class="btn-descargar" data-id="${doc.id}" data-tipo="${doc.tipo}" data-num-sesion="${doc.numSesion}" data-expediente="<%= expediente.IDExpediente %>">
+                            <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
+                        </span>
+                    </td>
+                    <td>
+                        ${doc.tipo !== 'NUTRICIONAL_V1' ? `<button class="button is-small is-danger btn-eliminar" data-id="${doc.id}" data-tipo="${doc.tipo}">Eliminar</button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    
+        // Escuchar respuesta del servidor después de actualizar una historia clínica
+        document.addEventListener('historiaClinicaActualizada', function(event) {
+            actualizarDocumentosHistoriales(event.detail.documentosHistorial);
+        });
     
     // CERRAR MODAL
     $(document).on('click', '.modal-background, .delete, .button.is-cancel', function () {

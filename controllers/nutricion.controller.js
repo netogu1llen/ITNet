@@ -730,24 +730,46 @@ exports.checkAndRedirectHistoriaClinica = async (req, res) => {
             return res.status(400).send('ID del expediente no válido.');
         }
 
-        // Si se está intentando editar un V1 existente, ir directamente a edición
+        console.log(`Verificando historia clínica para expediente ${IDExpediente}, sesión ${numSesion}`);
+
+        if (numSesion && !editMode) {
+            // Si ya existe una sesión, verificar si es V1 o V2
+            const [v1Data] = await db.execute(`
+                SELECT IDNutricional1 
+                FROM nutricional1 
+                WHERE IDExpediente = ? AND numSesion = ? AND (eliminado IS NULL OR eliminado = 0)
+            `, [IDExpediente, numSesion]);
+
+            const [v2Data] = await db.execute(`
+                SELECT IDobjetivoNutricional 
+                FROM objetivoNutricional 
+                WHERE IDExpediente = ? AND numSesion = ? AND (eliminado IS NULL OR eliminado = 0)
+            `, [IDExpediente, numSesion]);
+
+            if (v1Data.length > 0) {
+                // Existe V1, redirigir a edición
+                return res.redirect(`/nutricion/historiaClinica/edit/${IDExpediente}?numSesion=${numSesion}`);
+            } else if (v2Data.length > 0) {
+                // Existe V2, redirigir a V2
+                return res.redirect(`/nutricion/historiaClinicaV2/${IDExpediente}?numSesion=${numSesion}`);
+            }
+        }
+
+        // Si se está editando o no hay sesión específica, continúa con la lógica existente
         if (editMode) {
             return res.redirect(`/nutricion/historiaClinica/edit/${IDExpediente}?numSesion=${numSesion || ''}`);
         }
 
-        // Si se fuerza V1, ir a creación
         if (forceV1) {
             return res.redirect(`/nutricion/historiaClinica/create/${IDExpediente}`);
         }
 
-        // Verificar si existe una Historia Clínica V1
         const existeV1 = await Nutricion.verificarExistenciaHistoriaV1(IDExpediente);
         
         if (!existeV1) {
             return res.redirect(`/nutricion/historiaClinica/create/${IDExpediente}?forceV1=true`);
         }
 
-        // Si existe V1, redirigir a V2
         res.redirect(`/nutricion/historiaClinicaV2/${IDExpediente}?numSesion=${numSesion || ''}`);
         
     } catch (error) {

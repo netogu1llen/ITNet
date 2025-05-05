@@ -42,6 +42,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             tablaIndicadores.appendChild(nuevaFila);
             configurarBotonesEliminarFila();
+
+            // Establecer fecha máxima para los datepickers
+            const hoy = new Date().toISOString().split('T')[0];
+            setTimeout(() => {
+                document.querySelectorAll('input[type="date"]').forEach(input => {
+                    input.max = hoy;
+                });
+            }, 0);
         });
     }
 
@@ -285,6 +293,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Establecer fecha máxima para los datepickers
+    const hoy = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.max = hoy;
+    });
 });
 
 function recopilarDatosFormulario() {
@@ -302,15 +316,21 @@ function recopilarDatosFormulario() {
 
     // Recopilar datos de indicadores bioquímicos
     const parametro = Array.from(document.querySelectorAll('input[name="parametroBioquimico[]"]'))
-        .map(input => input.value.trim());
+        .map(input => input.value.trim())
+        .filter(value => value !== ''); // Filtrar valores vacíos
+    
     const valorReferencia = Array.from(document.querySelectorAll('input[name="valorReferencia[]"]'))
-        .map(input => input.value.trim());
+        .map(input => input.value.trim())
+        .filter(value => value !== '');
+    
     const parametroFecha = Array.from(document.querySelectorAll('input[name="fechaParametro[]"]'))
-        .map(input => input.value.trim());
+        .map(input => input.value.trim())
+        .filter(value => value !== '');
 
     // Recopilar objetivos nutricionales
     const objetivosNutricionales = Array.from(document.querySelectorAll('input[name="objetivosNutricionales[]"]'))
-        .map(input => input.value.trim());
+        .map(input => input.value.trim())
+        .filter(value => value !== ''); // Filtrar valores vacíos
 
     return {
         IDExpediente: idExpedienteEncriptado,
