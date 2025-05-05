@@ -72,7 +72,7 @@
               data-id="<%= documento.idDocumento %>" 
               data-tipo="<%= documento.tipo %>">
               
-              <td><%= documento.tipo === 'seguimientoPsicologico' ? 'Seguimiento Psicológico' : documento.tipo %></td>
+              <td><%= documento.tipo === 'seguimientoPsicologico' ? 'Seguimiento Psicológico '+ documento.sesion : documento.tipo %></td>
               <td><%= new Date(documento.fechaCreacion).toLocaleDateString() %></td>
               <td>
                 <span class="btn-descargar" data-id="<%= documento.idDocumento %>" data-tipo="<%= documento.tipo %>" style="cursor: pointer;">

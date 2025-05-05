@@ -31,6 +31,16 @@
                 <!-- Información General del Expediente (estructura similar a expedientePsicologico) -->
                 <!-- Primera fila: 4 elementos -->
                 <div class="multirow-container">
+                    <div class="multirow-form-container"></div>
+                    <div class="multirow-form-container"></div>
+                    <div class="multirow-form-container"></div>
+                    <div class="multirow-form-container"></div>
+                    <div class="multirow-form-container">
+                        <div class="basic-gray">Número de Sesión:</div>
+                        <input id="numSesion" class="input" type="number" value="<%= seguimiento.numSesion %>">
+                    </div>
+                 </div>
+                <div class="multirow-container">
                     <div class="element-container">
                         <div class="basic-gray">Nombre Completo</div>
                         <br>
@@ -40,6 +50,7 @@
                         <div class="basic-gray">Número de Expediente</div>
                         <br>
                         <div class="basic-black"><%= expediente.IDExpedienteDesencriptado || 'Sin dato' %></div>
+
                     </div>
                     <div class="element-container">
                         <div class="basic-gray">Fecha de Nacimiento</div>

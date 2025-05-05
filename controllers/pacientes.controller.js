@@ -360,7 +360,11 @@ const postEditarPaciente = async (req, res) => {
     });
   }
 };
-
+/**
+ * Elimina logicamente el registro de un paciente en la base de datos.
+ * @param {Request} req 
+ * @param {Response} res 
+ */
 const postEliminarPaciente= async (req, res) => {
   try {
       const idExpediente = req.params.id;     

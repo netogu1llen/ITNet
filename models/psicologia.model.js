@@ -19,7 +19,7 @@ class Psicologia {
     static async obtenerSeguimientosPsicologicos(idExpediente) {
         try {
             const [results] = await db.execute(`
-                SELECT IDSeguimiento AS idDocumento, IDExpediente AS idExpediente, 'seguimientoPsicologico' AS tipo, fecha AS fechaCreacion
+                SELECT IDSeguimiento AS idDocumento, IDExpediente AS idExpediente, 'seguimientoPsicologico' AS tipo, fecha AS fechaCreacion, numSesion As sesion
                 FROM seguimientoPsicologico
                 WHERE IDExpediente = ? AND eliminado = 0
             `, [idExpediente]);
@@ -42,7 +42,8 @@ class Psicologia {
                     contacto, 
                     CONCAT(estado, ', ', ciudad) AS ubicacion, 
                     CONCAT(calle, ' ', numCasa) AS domicilio,
-                    grado, 
+                    grado,
+                    IDExpediente,
                     nvEscolar AS curso
                 FROM expediente
                 WHERE IDExpediente = ? AND eliminado = 0
@@ -136,10 +137,10 @@ class Psicologia {
 
 
   // Actualizar seguimiento
-  static async actualizarSeguimiento(id, objetivoSesion,justificacionSesion,analisisPsicologico,recomendaciones,bitacora) {
+  static async actualizarSeguimiento(id,numSesion, objetivoSesion,justificacionSesion,analisisPsicologico,recomendaciones,bitacora) {
     
     try {
-      await db.execute('UPDATE seguimientoPsicologico SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ? WHERE IDSeguimiento = ?', [objetivoSesion, justificacionSesion, analisisPsicologico,recomendaciones,bitacora, id]);
+      await db.execute('UPDATE seguimientoPsicologico SET numSesion = ?, sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ? WHERE IDSeguimiento = ?', [numSesion,objetivoSesion, justificacionSesion, analisisPsicologico,recomendaciones,bitacora, id]);
     } catch (err) {
       throw err;
     }
@@ -168,20 +169,45 @@ class Psicologia {
       throw err;
     }
   }
-    static async registrarSeguimiento(idExpediente, objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora) {
-        try {
-            const fecha = new Date();  // Fecha de creación
-            // Se inserta el seguimiento sin valor para "ubicacion"
-            const [result] = await db.execute(
-                'INSERT INTO seguimientoPsicologico SET sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ?, IDExpediente = ?, fecha = ?, eliminado = 0',
-                [objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora, idExpediente, fecha]
-            );
-            return result.insertId;
-        } catch (error) {
-            console.error('Error al registrar seguimiento:', error);
-            throw new Error('Error al registrar seguimiento');
-        }
+  // Eliminar objetivos por ID de seguimiento
+  static async eliminarObjetivosPorSeguimientoId(id) {
+    try {
+      await db.execute('UPDATE objetivopsicologico SET eliminado = 1 WHERE IDSeguimiento = ?', [id]);
+    } catch (err) {
+      console.error('Error al eliminaar los objetivos:', err);
+      throw err;
     }
+  }
+  static async registrarSeguimiento(numSesion,idExpediente, objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora) {
+      try {
+          const fecha = new Date();  // Fecha de creación
+          // Se inserta el seguimiento sin valor para "ubicacion"
+          const [result] = await db.execute(
+              'INSERT INTO seguimientoPsicologico SET numSesion = ?, sesionObjetivo = ?, sesionJustificacion = ?, analisisPsicologico = ?, recomendaciones = ?, sesionBitacora = ?, IDExpediente = ?, fecha = ?, eliminado = 0',
+              [numSesion,objetivoSesion, justificacionSesion, analisisPsicologico, recomendaciones, bitacora, idExpediente, fecha]
+          );
+          return result.insertId;
+      } catch (error) {
+          console.error('Error al registrar seguimiento:', error);
+          throw new Error('Error al registrar seguimiento');
+      }
+  }
+  //Busca si ya existe un seguimiento con el mismo numero de sesion para un paciente
+  static async buscarSeguimientoDuplicado(numSesion, idExpediente) {
+    const [rows] = await db.execute(`
+      SELECT * FROM seguimientoPsicologico 
+      WHERE numSesion = ? AND IDExpediente = ? AND eliminado != 1
+    `, [numSesion, idExpediente]);
+    return rows.length > 0 ? rows[0] : null;
+  }
+  //Busca si ya existe un seguimiento con el mismo numero de sesion para un paciente
+  static async buscarSeguimientoDuplicadoEdicion(numSesion, idExpediente, idSeguimiento) {
+    const [rows] = await db.execute(`
+      SELECT * FROM seguimientoPsicologico 
+      WHERE numSesion = ? AND IDExpediente = ? AND eliminado != 1 AND IDSeguimiento != ?
+    `, [numSesion, idExpediente, idSeguimiento]);
+    return rows.length > 0 ? rows[0] : null;
+  }
     // Eliminar seguimiento (borrado lógico) - Simplificado sin transacciones
 static async eliminarSeguimiento(id) {
     try {
