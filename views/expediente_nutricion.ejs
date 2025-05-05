@@ -46,8 +46,10 @@
                     <h2 class="basic-black"><%= datosGeneralesPaciente.telefono %></h2>
                   </div>
                   <div class="element-container">
-                    <h2 class="basic-gray">Tipo de Sangre</h2>
-                    <h2 class="basic-black"><%= datosGeneralesPaciente.tipoSangre %></h2>
+                    <h2 class="basic-gray">ID Expediente</h2>
+                    <h2 class="basic-black"><%= expediente.IDExpedienteDesencriptado %></h2>
+                    <!-- Almacenar el ID encriptado para operaciones -->
+                    <input type="hidden" id="idExpedienteEncriptado" value="<%= expediente.IDExpedienteEncriptado %>">
                   </div>
                 </div>
               </div>
@@ -240,7 +242,7 @@
                     data-id="<%= doc.id %>" 
                     data-tipo="<%= doc.tipo %>"
                     data-num-sesion="<%= doc.numSesion %>"
-                    data-expediente="<%= expediente.IDExpediente %>"
+                    data-expediente="<%= expediente.IDExpedienteEncriptado %>"
                     style="cursor: pointer;">
                     <img src="/images/download.png" alt="Descargar" style="width: 16px; height: 16px;">
                 </span>

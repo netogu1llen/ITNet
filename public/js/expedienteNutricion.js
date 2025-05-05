@@ -334,12 +334,14 @@ $(document).on('click', '.btn-descargar', function(event) {
     const tipo = button.attr('data-tipo');
     const numSesion = button.attr('data-num-sesion');
     const idExpediente = button.attr('data-expediente');
+    const nombreDocumento = button.closest('tr').find('td:first-child').text().trim();
     
     console.log('Datos para descarga:', {
         documentoId,
         tipo,
         numSesion,
-        idExpediente
+        idExpediente,
+        nombreDocumento
     });
     
     if (!numSesion && tipo.includes('NUTRICIONAL')) {
@@ -354,8 +356,8 @@ $(document).on('click', '.btn-descargar', function(event) {
     
     showLoadingModal('Preparando descarga', 'Por favor espere mientras se prepara el documento...');
     
-    // Construir URL con todos los parámetros
-    const downloadUrl = `/nutricion/documentos/descargar/${documentoId}?tipo=${tipo}&numSesion=${numSesion}&expediente=${idExpediente}`;
+    // Construir URL con todos los parámetros incluyendo el nombre del documento
+    const downloadUrl = `/nutricion/documentos/descargar/${documentoId}?tipo=${tipo}&numSesion=${numSesion}&expediente=${idExpediente}&nombre=${encodeURIComponent(nombreDocumento)}`;
     
     // Realizar la descarga
     $.ajax({
@@ -364,7 +366,7 @@ $(document).on('click', '.btn-descargar', function(event) {
         xhrFields: {
             responseType: 'blob'
         },
-        success: function(data) {
+        success: function(data, status, xhr) {
             hideLoadingModal();
             
             const blob = new Blob([data], { type: 'application/pdf' });
@@ -372,14 +374,27 @@ $(document).on('click', '.btn-descargar', function(event) {
             const link = document.createElement('a');
             link.href = url;
             
-            // Nombre del archivo según el tipo
+            // Obtener el nombre del archivo del Content-Disposition header si existe
             let filename;
-            if (tipo === 'NUTRICIONAL_V1') {
-                filename = `historial_clinico_v1_sesion_${numSesion}.pdf`;
-            } else if (tipo === 'NUTRICIONAL_V2') {
-                filename = `historial_clinico_v2_sesion_${numSesion}.pdf`;
-            } else {
-                filename = `documento_${documentoId}.pdf`;
+            const disposition = xhr.getResponseHeader('Content-Disposition');
+            if (disposition && disposition.indexOf('filename=') !== -1) {
+                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) {
+                    filename = matches[1].replace(/['"]/g, '');
+                }
+            }
+            
+            // Si no hay nombre en el header, crear uno según el tipo
+            if (!filename) {
+                if (tipo === 'NUTRICIONAL_V1') {
+                    filename = `historial_clinico_v1_sesion_${numSesion}.pdf`;
+                } else if (tipo === 'NUTRICIONAL_V2') {
+                    filename = `historial_clinico_v2_sesion_${numSesion}.pdf`;
+                } else {
+                    // Usar el nombre del documento como aparece en la interfaz
+                    filename = `${nombreDocumento.replace(/\s+/g, '_')}.pdf`;
+                }
             }
             
             link.download = filename;

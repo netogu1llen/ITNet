@@ -54,6 +54,11 @@ const desencriptarExpediente = (expediente) => {
       if (expediente.domicilio) {
           expediente.domicilio = decrypt(expediente.domicilio);
       }
+
+      // Desencriptar IDExpediente
+      if (expediente.IDExpediente) {
+          expediente.IDExpedienteDesencriptado = decrypt(expediente.IDExpediente);
+      }
       
       return expediente;
   } catch (error) {
@@ -494,6 +499,7 @@ exports.get_editar_seguimiento = async (req, res) => {
   
 exports.post_editar_seguimiento = async (req, res) => {
     const id = req.params.id;
+    console.log('POST editar_seguimiento, IDSeguimiento:', id);
     const {
       numSesion,
       objetivoSesion,
@@ -513,8 +519,9 @@ exports.post_editar_seguimiento = async (req, res) => {
       // Obtener el IDExpediente del seguimiento actual
       const seguimiento = await Psicologia.obtenerPorId(id);
       if (!seguimiento) {
-        console.log("Error")
-        throw new Error('Seguimiento no encontrado');
+        console.error('No se encontró el seguimiento a editar');
+        return res.status(404).json({ mensaje: 'Seguimiento no encontrado' });
+
       }
       //Se revisa que no haya un seguimiento con el mismo numSesion
       const duplicado = await Psicologia.buscarSeguimientoDuplicadoEdicion(
@@ -579,6 +586,10 @@ exports.get_registrar_seguimiento = async (req, res) => {
 exports.post_registrar_seguimiento = async (req, res) => {
   try {
     const idExpediente = req.params.id;
+    console.log('POST registrar_seguimiento, IDExpediente:', idExpediente);
+    if (!idExpediente) {
+      return res.status(400).json({ mensaje: 'Falta IDExpediente en la ruta' });
+    }
     if (!req.body || Object.keys(req.body).length === 0) {
       return res.status(400).json({ mensaje: 'No se recibieron datos' });
     }

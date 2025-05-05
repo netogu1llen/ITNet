@@ -29,9 +29,8 @@ function enviarPost(url, data) {
             text: response.mensaje || "Operación realizada con éxito",
             icon: "success"
         }).then(() => {
-            // Usar el nuevo ID para la redirección si el ID ha cambiado
-            const nuevoId = data.datos.IDExpediente;
-            window.location.href = `/pacientes/expediente/${nuevoId}`;
+            // Usar el valor encriptado para redireccionar
+            window.location.href = `/pacientes/expediente/${response.nuevoIdEncriptado}`;
         });
     })
     .catch(error => {

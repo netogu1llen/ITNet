@@ -23,12 +23,12 @@
         </thead>
         <tbody>
           <% pacientes.forEach(paciente => { %>
-            <tr class="fila-paciente" data-id="<%= paciente.IDExpediente %>">
+            <tr class="fila-paciente" data-id="<%= paciente.IDExpedienteEncriptado %>">
               <td><%= paciente.nombreCompleto %></td>
               <td><%= paciente.fechaNacimiento %></td>
               <td><%= paciente.nvEscolar || 'Sin nivel registrado' %></td>
               <td>
-                <button class="button is-small is-danger btn-eliminar" data-id="<%= paciente.IDExpediente %>">Eliminar</button>
+                <button class="button is-small is-danger btn-eliminar" data-id="<%= paciente.IDExpedienteEncriptado %>">Eliminar</button>
               </td>
             </tr>
           <% }) %>

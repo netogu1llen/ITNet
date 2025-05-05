@@ -1,6 +1,9 @@
 <%- include('partials/head') %>
 
-<input type="hidden" id="idExpediente" data-modo-edicion="<%= datosSesion ? 'true' : 'false' %>" value="<%= expediente.IDExpediente %>">
+<!-- Mantener el ID encriptado para operaciones de backend -->
+<input type="hidden" id="idExpediente" data-modo-edicion="<%= datosSesion ? 'true' : 'false' %>" value="<%= expediente.IDExpedienteEncriptado || expediente.IDExpediente %>">
+<!-- El ID desencriptado se almacena aparte para mostrarlo en la interfaz -->
+<input type="hidden" id="idExpedienteDesencriptado" value="<%= expediente.IDExpediente %>">
 <body>
   <main clas="container"> 
     
@@ -22,6 +25,7 @@
           <div class="box" style="background-color: #ffffff; ">
             <div class="columns">
               <div class="column has-text-black has-text-weight-semibold">
+                <!-- Mostrar el ID desencriptado para el usuario -->
                 No. Expediente: <%= expediente.IDExpediente %>
               </div>
               <div class="column has-text-black has-text-weight-semibold">

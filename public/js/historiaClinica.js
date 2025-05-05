@@ -229,6 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function recopilarDatosFormulario() {
+    // Usamos el ID encriptado para operaciones de backend
     const idExpediente = document.getElementById('idExpediente')?.value;
 
     if (!idExpediente) {
@@ -265,7 +266,8 @@ function recopilarDatosFormulario() {
     const objetivo = Array.from(document.querySelectorAll('input[name="objetivosNutricionales[]"]')).map(input => input.value.trim());
 
     return {
-        IDExpediente: document.getElementById('idExpediente')?.value || null,
+        // Usar el ID encriptado para la base de datos
+        IDExpediente: idExpediente,
 
         // Página 1
         numSesion: document.getElementById('numSesion')?.value || '',
