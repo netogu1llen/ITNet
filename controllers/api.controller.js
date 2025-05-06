@@ -73,7 +73,7 @@ const getPacientes = async (req, res) => {
 
         // Retorna el objeto paciente con campos desencriptados o valores alternativos
         return {
-          IDExpediente: paciente.IDExpediente,
+          IDExpediente: idExpediente,
           nombreCompleto: `${nombres} ${apellidoP} ${apellidoM}`.trim(),
           fechaNacimiento: fechaNacimiento,
           nvEscolar: paciente.nvEscolar || 'Sin nivel registrado'
