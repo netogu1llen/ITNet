@@ -34,7 +34,14 @@ const getPacientes = async (req, res) => {
         }
 
         // Intenta desencriptar cada campo individualmente con manejo de errores
-        let nombres, apellidoP, apellidoM, fechaNacimiento;
+        let nombres, apellidoP, apellidoM, fechaNacimiento,idExpediente;
+
+        try {
+          idExpediente = parseInt(decrypt(paciente.idExpediente),10);
+        } catch (e) {
+          nombres = '[Error]';
+          console.error(`Error al desencriptar id: ${e.message}`);
+        }
 
         try {
           nombres = decrypt(paciente.nombres);
